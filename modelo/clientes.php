@@ -8,6 +8,7 @@ class Clientes extends Conexion{
     private $telefono;
     private $email;
     private $direccion;
+    private $status;
 
 
 public function __construct(){
@@ -56,7 +57,12 @@ public function setDireccion($direccion){
     $this->direccion=$direccion;
 }
 
-
+public function getstatus(){
+    return $this->status;
+}
+public function setstatus($valor){
+    $this->status=$valor;
+}
 
 /*==============================
 REGISTRAR CLIENTE
@@ -119,6 +125,50 @@ public function buscar($valor){
 
 }
 
+public function actualizar($valor){
+    $cod=$valor;
 
+    $registro="UPDATE clientes SET nombre=:nombre, apellido=:apellido, cedula_rif=:cedula_rif, telefono=:telefono, email=:email, direccion=:direccion, status=:status WHERE cod_cliente=$cod";
+
+    $strExec = $this->conex->prepare($registro);
+
+    #instanciar metodo bindparam
+    $strExec->bindParam(':nombre', $this->nombre);
+    $strExec->bindParam(':apellido', $this->apellido);
+    $strExec->bindParam(':cedula_rif', $this->cedula);
+    $strExec->bindParam(':telefono', $this->telefono);
+    $strExec->bindParam(':email', $this->email);
+    $strExec->bindParam(':direccion', $this->direccion);
+    $strExec->bindParam(':status', $this->status);
+    $resul = $strExec->execute();
+    if($resul){
+        $r = 1;
+    }else{
+        $r = 0;
+    }
+    return $r;
+}
+
+public function eliminar($valor){
+    $registro="SELECT COUNT(*) AS n_ventas FROM ventas WHERE cod_cliente =$valor ";
+    $strExec = $this->conex->prepare($registro);
+    $resul = $strExec->execute();
+    if($resul){
+        $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
+        if ($resultado['n_ventas']>0){
+            $logico="UPDATE clientes SET status=2 WHERE cod_cliente=$valor";
+            $strExec=$this->conex->prepare($logico);
+            $strExec->execute();
+        }else{
+            $fisico="DELETE FROM clientes WHERE cod_cliente=$valor";
+            $strExec=$this->conex->prepare($fisico);
+            $strExec->execute();
+        }
+        $r=1;
+    }else {
+        $r=0;
+    }
+    return $r;
+}
 
 }

@@ -17,15 +17,55 @@ if(isset($_POST['buscar'])){
         if($result==1){
             echo "<script>
                     alert('registado con exito');
+                    window.location = 'tpago'
                 </script>";
         }else {
             echo "<script>
                     alert('no se pudo registrar');
+                    window.location = 'tpago'
                 </script>";
             }
         }
     }
-} 
+}else if(isset($_POST['editar'])){
+    if(!empty($_POST['tpago'])){
+        if($_POST['tpago'] !== $_POST['origin']){
+            if($obj->buscar($_POST['tpago'])){
+                echo "<script>
+                    alert('el tipo de pago ya existe');
+                    window.location = 'tpago'
+                </script>";
+            }
+            
+        }else {
+            $obj->setmetodo($_POST['tpago']);
+            $obj->setstatus($_POST['status']);
+            $result=$obj->editar($_POST['codigo']);
+            if($result==1){
+                echo "<script>
+                        alert('modificado con exito');
+                        window.location = 'tpago'
+                    </script>";
+            }else {
+                echo "<script>
+                        alert('no se pudo modificar');
+                        window.location = 'tpago'
+                    </script>";
+            }
+        }
+    }
+}else if(isset($_POST['borrar'])){
+    if(!empty($_POST['tpagoCodigo'])){
+    $result = $obj->eliminar($_POST["tpagoCodigo"]);
+        if($result == 1){
+            echo "<script>alert('se ha eliminado con exito');
+            window.location = 'tpago' </script>";
+        }else{
+            echo "<script>alert('No se pudo eliminar');
+            window.location = 'tpago' </script>";
+        }
+    }
+}
 
 $registro=$obj->consultar();
 

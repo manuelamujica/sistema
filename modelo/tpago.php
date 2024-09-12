@@ -5,6 +5,7 @@ class Tpago extends Conexion{
     private $metodo; 
     private $moneda; 
     private $conex;
+    private $status;
 
     public function __construct(){
         $this->conex= new Conexion();
@@ -53,12 +54,54 @@ class Tpago extends Conexion{
     
     }
 
+    public function editar($valor){
+        $registro="UPDATE tipo_pago SET medio_pago=:medio_pago, status=:status WHERE cod_tipo_pago=$valor";
+    
+        $strExec = $this->conex->prepare($registro);
+    
+        #instanciar metodo bindparam
+        $strExec->bindParam(':medio_pago', $this->metodo);
+        $strExec->bindParam(':status', $this->status);
+        $resul = $strExec->execute();
+        if($resul){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+    }
+
+    public function eliminar($valor){
+        $registro="SELECT COUNT(*) AS v_count FROM detalle_pagos dp WHERE dp.cod_tipo_pago=$valor;";
+        $strExec = $this->conex->prepare($registro);
+        $resul = $strExec->execute();
+        if($resul){
+            $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
+            if ($resultado['v_count']>0){
+                $logico="UPDATE tipo_pago SET status=2 WHERE cod_tipo_pago=$valor";
+                $strExec=$this->conex->prepare($logico);
+                $strExec->execute();
+            }else{
+                $fisico="DELETE FROM tipo_pago WHERE cod_tipo_pago=$valor";
+                $strExec=$this->conex->prepare($fisico);
+                $strExec->execute();
+            }
+            $r=1;
+        }else {
+            $r=0;
+        }
+        return $r;
+    }
+
     #set
     public function setmetodo($valor){
         $this->metodo=$valor;
     }
     public function setmoneda($valor){
         $this->moneda=$valor;
+    }
+    public function setstatus($valor){
+        $this->status=$valor;
     }
 
     #get
@@ -67,5 +110,8 @@ class Tpago extends Conexion{
     }
     public function getmoneda(){
         return $this->moneda;
+    }
+    public function getstatus(){
+        return $this->status;
     }
 }

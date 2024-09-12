@@ -5,6 +5,7 @@ class Divisa extends Conexion{
     private $nombre;
     private $simbolo;
     private $conex;
+    private $status;
 
 
     public function __construct(){
@@ -51,7 +52,46 @@ class Divisa extends Conexion{
             }else{
                 return false;
             }
+    }
+
+    public function editar($valor){
+        $registro="UPDATE divisas SET nombre=:nombre, abreviatura=:abreviatura, status=:status WHERE cod_divisa=$valor";
     
+        $strExec = $this->conex->prepare($registro);
+    
+        #instanciar metodo bindparam
+        $strExec->bindParam(':nombre', $this->nombre);
+        $strExec->bindParam(':abreviatura', $this->simbolo);
+        $strExec->bindParam(':status', $this->status);
+        $resul = $strExec->execute();
+        if($resul){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+    }
+
+    public function eliminar($valor){
+        $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN cambio_ventas cv ON cd.cod_cambio = cv.cod_cambio WHERE cd.cod_divisa = $valor";
+        $strExec = $this->conex->prepare($registro);
+        $resul = $strExec->execute();
+        if($resul){
+            $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
+            if ($resultado['v_count']>0){
+                $logico="UPDATE divisas SET status=2 WHERE cod_divisa=$valor";
+                $strExec=$this->conex->prepare($logico);
+                $strExec->execute();
+            }else{
+                $fisico="DELETE FROM divisas WHERE cod_divisa=$valor";
+                $strExec=$this->conex->prepare($fisico);
+                $strExec->execute();
+            }
+            $r=1;
+        }else {
+            $r=0;
+        }
+        return $r;
     }
 
     public function setnombre($valor){
