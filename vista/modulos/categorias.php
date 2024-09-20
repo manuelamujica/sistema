@@ -31,7 +31,7 @@ require_once "controlador/categorias.php";
                         </div>
                         <div class="card-body">
                         <div class="table-responsive">
-                            <table id="categorias" class="table table-bordered table-striped table-hover">
+                            <table id="categorias" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
@@ -43,23 +43,31 @@ require_once "controlador/categorias.php";
                                 <tbody>
                                 <!-- Tabla con los datos que se muestren dinamicamente -->
                                     <?php
-                                    foreach ($registro as $datos){
+                                    foreach ($registro as $categoria){
                                         ?>
                                         <tr>
-                                            <td> <?php echo $datos["cod_categoria"] ?></td>
-                                            <td> <?php echo $datos["nombre"] ?></td>
+                                            <td> <?php echo $categoria["cod_categoria"] ?></td>
+                                            <td> <?php echo $categoria["nombre"] ?></td>
                                             <td>
-                                                <?php if ($datos['status']==1):?>
+                                                <?php if ($categoria['status']==1):?>
                                                     <span class="badge bg-success">Activo</span>
                                                 <?php else:?>
                                                     <span class="badge bg-danger">Inactivo</span>
                                                 <?php endif;?>
                                             </td>
+                                            <!-- Botones -->
                                             <td>
-                                                <form method="post">
-                                                    <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
-                                                    <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Eliminar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
-                                                </form>
+                                                <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
+                                                data-codigo="<?php echo $categoria["cod_categoria"]; ?>"
+                                                data-nombre="<?php echo $categoria["nombre"]; ?>"
+                                                data-status="<?php echo $categoria["status"]; ?>">
+                                                <i class="fas fa-pencil-alt"></i></button>
+
+                                                <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
+                                                data-codigo="<?php echo $categoria["cod_categoria"]; ?>"
+                                                data-nombre="<?php echo $categoria["nombre"]; ?>">
+                                                <i class="fas fa-trash-alt"></i></button>
+                                                
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -85,7 +93,7 @@ require_once "controlador/categorias.php";
                                     <form id="formRegistrarCategoria" method="post">
                                         <div class="form-group">
                                             <label for="nombre">Nombre de la categoría</label>
-                                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
                                         </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">
@@ -96,12 +104,78 @@ require_once "controlador/categorias.php";
                             </div>
                         </div>
                     </div>
-                </div>   
+<!-- =============================
+    MODAL EDITAR CATEGORÍA 
+================================== -->
+                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editForm" method="post">
+                                        <div class="form-group">
+                                            <label for="codigo">Código</label>
+                                            <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="codigo">Nombre</label>
+                                            <input type="text" class="form-control" id="name" name="nombre">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!-- ====================================
+    MODAL CONFIRMAR ELIMINAR CATEGORÍA 
+========================================= -->
+                    <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger">
+                                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar categoría</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="eliminarForm" method="post">
+                                        <div class="form-group">
+                                            <p>¿Estás seguro que deseas eliminar a <b><span id="catnombre"></b></span>?</p>
+                                            <input type="hidden" id="catcodigo" name="catcodigo">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" form="eliminarForm" class="btn btn-danger" id="confimDelete" name="borrar">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>  
         </div>      
     </section>
 </div>
 <script>
+    //Validar registro
     $('#nombre').blur(function (e){
         var buscar=$('#nombre').val();
         $.post('index.php?pagina=categorias', {buscar}, function(response){
@@ -109,5 +183,37 @@ require_once "controlador/categorias.php";
                 alert('La categoria ya se encuentra registrada');
             }
         },'json');
+    });
+    //Validar editar
+    $('#name').blur(function (e){
+        var buscar=$('#name').val();
+        $.post('index.php?pagina=categorias', {buscar}, function(response){
+            if(response != ''){
+                alert('La categoria ya se encuentra registrada');
+            }
+        },'json');
+    });
+    //Editar
+    $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var codigo = button.data('codigo');
+            var nombre = button.data('nombre');
+            var status = button.data('status');
+
+            // Modal
+            var modal = $(this); 
+            modal.find('.modal-body #codigo').val(codigo);
+            modal.find('.modal-body #name').val(nombre);
+            modal.find('.modal-body #status').val(status);
+        });
+    //Eliminar
+    $('#eliminarModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); 
+        var nombre = button.data('nombre');
+        var codigo = button.data('codigo');
+
+        var modal = $(this);
+        modal.find('#catnombre').text(nombre);
+        modal.find('.modal-body #catcodigo').val(codigo);
     });
 </script>

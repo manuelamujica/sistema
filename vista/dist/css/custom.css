@@ -90,7 +90,9 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
     font-weight: bold;
 }
 
-
-
+.page-item.active .page-link{
+    background-color: #db6a00;
+    border-color: #db6a00;
+}
 
 

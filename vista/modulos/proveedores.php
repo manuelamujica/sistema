@@ -26,7 +26,7 @@
                         <div class="card-header">
                             <!-- Botón para ventana modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalProv">Registrar proveedor</button>
-                            <!-- Botones PDF y Excel -->
+                            <!-- Botones PDF y Excel 
                             <div class="card-tools">
                                 <div class="float-right">
                                     <button type="button" class="btn btn-success btn-sm">
@@ -36,10 +36,10 @@
                                         <i class="fas fa-file-pdf"></i> PDF
                                     </button>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                         <div class="card-body">
-                            <!-- Barra de búsqueda -->
+                            <!-- Barra de búsqueda 
                             <div class="input-group input-group-sm">
                                 <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar">
                                 <div class="input-group-append">
@@ -48,10 +48,10 @@
                                     </button>
                                 </div>
                             </div>
-                            <br>
+                            <br>-->
                             <!-- Tabla de proveedores -->
                             <div class="table-responsive">
-                            <table id="proveedores" class="table table-bordered table-striped table-hover">
+                            <table id="proveedores" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Código</th>

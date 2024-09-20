@@ -21,16 +21,64 @@ if(isset($_POST['buscar'])){
             $result=$objCategoria->getregistrar();
             
             if($result == 1){
-                    echo "<script>alert('Registrado con exito');
-                    location = '?pagina=categorias' </script>";
+                    echo "<script>
+                    alert('Registrado con exito');
+                    location = 'categorias' </script>";
+            }else{
+                    echo "<script>
+                    alert('No se permiten campos vacios');
+                    location = 'categorias' </script>";
             }
         }
-    }else{
-    echo "<script>alert('No se permiten campos vacios');
-        location = '?pagina=categorias' </script>";
+    }
+}else if (isset($_POST['actualizar'])){
+    if(!empty($_POST['nombre'])){
+        
+        $objCategoria->setNombre($_POST['nombre']);
+        $objCategoria->setStatus($_POST['status']);
+
+        $result=$objCategoria->editar($_POST['codigo']);
+
+        if($result==1){
+            echo "<script>
+                    alert('modificado con exito');
+                    location = 'categorias'
+                </script>";
+        }else {
+            echo "<script>
+                    alert('no se pudo modificar');
+                    location = 'categorias'
+                </script>";
+        }
+    }
+}else if(isset($_POST['borrar'])){
+    if(!empty($_POST['catcodigo'])){
+    $result = $objCategoria->eliminar($_POST["catcodigo"]);
+    
+    if ($result == 'success') {
+        echo "<script>
+                alert('Categoría eliminada exitosamente.');
+                location = 'categorias';
+              </script>";
+    } elseif ($result == 'error_associated') {
+        echo "<script>
+                alert('No se puede eliminar la categoría porque tiene productos asociados.');
+                location = 'categorias';
+              </script>";
+    } elseif ($result == 'error_delete') {
+        echo "<script>
+                alert('Hubo un error al intentar eliminar la categoría.');
+                location = 'categorias';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Hubo un error al intentar verificar la categoría.');
+                location = 'categorias';
+              </script>";
     }
 }
 
+}
 
 $registro = $objCategoria->mostrar();
 

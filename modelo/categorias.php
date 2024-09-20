@@ -85,5 +85,55 @@ MOSTRAR CATEGORIAS
         }
 
     }
-    
+/*==============================
+EDITAR CATEGORIAS
+================================*/
+    public function editar($valor){
+        $sql="UPDATE categorias SET nombre=:nombre, status=:status WHERE cod_categoria=$valor";
+        $strExec = $this->conex->prepare($sql);
+
+        #Instanciar metodo BINDPARAM
+        $strExec->bindParam(':nombre', $this->nombre);
+        $strExec->bindParam(':status', $this->status);
+        $resul = $strExec->execute();
+        if($resul){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+    }
+/*==============================
+ELIMINAR CATEGORIAS
+================================*/
+    public function eliminar($valor){
+        $sql="SELECT COUNT(*) AS count FROM categorias c JOIN productos p ON c.cod_categoria = p.cod_categoria WHERE c.cod_categoria=$valor";
+        $strExec = $this->conex->prepare($sql);
+        $resul = $strExec->execute();
+
+        $resultado=$strExec->fetch(PDO::FETCH_ASSOC);
+
+        if($resultado){
+            if($resultado["count"]==0){
+                $fisico = "DELETE FROM categorias WHERE cod_categoria=$valor";
+                $strExec=$this->conex->prepare($fisico);
+                $delete = $strExec->execute();
+
+                if($delete){
+                    $r='success';
+                    return $r;
+                }else{
+                    $r='error_delete';
+                    return $r;
+                }
+            }else{
+                $r='error_associated';
+                return $r;
+            }
+            
+        } else{
+            $r='error_query';
+            return $r;
+        }
+    }
 }
