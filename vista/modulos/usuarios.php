@@ -30,7 +30,8 @@ require_once "controlador/usuarios.php";
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarusuario">Registrar usuario</button>
                         </div>
                         <div class="card-body">
-                            <table id="usuarios" class="table table-bordered table-striped table-hoverdatatable" style="width: 100%;">
+                        <div class="table-responsive">
+                            <table id="usuarios" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
@@ -69,13 +70,14 @@ require_once "controlador/usuarios.php";
                                                 <i class="fas fa-pencil-alt"></i></button>
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
-                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>">
+                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>"data-nombre="<?php echo $usuario["nombre"]; ?>">
                                                 <i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 
@@ -93,7 +95,6 @@ require_once "controlador/usuarios.php";
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-
                                 <div class="modal-body">
                                     <form id="formregistrarusuario" method="post">
                                         <div class="form-group">

@@ -169,7 +169,7 @@ ELIMINAR USUARIO
 ================================*/
 public function eliminar($valor) {
 
-    // Verificar si el usuario a eliminar es administrador
+    // el usuario a eliminar es administrador?
     $sql = "SELECT cod_tipo_usuario FROM usuarios WHERE cod_usuario = :valor";
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
@@ -185,17 +185,16 @@ public function eliminar($valor) {
             $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
 
             if ($resultado['total'] == 1) {
-                return 'error_ultimo'; // No se puede eliminar al último administrador
+                return 'error_ultimo';
             }
         }
 
-        // Proceder con la eliminación del usuario
         $sqlDelete = "DELETE FROM usuarios WHERE cod_usuario = :valor";
         $strExecDelete = $this->conex->prepare($sqlDelete);
         $strExecDelete->bindParam(':valor', $valor, PDO::PARAM_INT);
         $delete = $strExecDelete->execute();
 
-        return $delete ? 'success' : 'error_delete'; // Resultado de la eliminación
+        return $delete ? 'success' : 'error_delete'; 
         }
     }
 }

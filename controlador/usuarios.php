@@ -22,13 +22,20 @@ if(isset($_POST['buscar'])){
             $objuser->setNombre($_POST["nombre"]);
             $objuser->setUser($_POST["user"]);
 
-#falta validar la longitud de la contraseña
-            $password = password_hash($_POST["pass"], PASSWORD_DEFAULT); // guardar la contraseña cifrada con HASH
-            $objuser->setPassword($password);
+        #Validar la longitud de la contraseña
+            $longitud = strlen($_POST["pass"]);
 
+            if($longitud > 8){
+                $password = password_hash($_POST["pass"], PASSWORD_DEFAULT); // guardar la contraseña cifrada con HASH
+                $objuser->setPassword($password);
+            }else{
+                echo "<script>
+                alert('La contraseña es demasiado corta. Debe tener más de 8 caracteres.');
+                location = 'usuarios' </script>";
+            }
+            
             $rol = $_POST["rol"];
             $result = $objuser->getregistrar($rol);
-
             
             if($result == 1){
                     echo "<script>

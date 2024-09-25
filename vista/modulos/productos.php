@@ -1,6 +1,7 @@
-<!-- MÓDULO TRANSACCIONAL, SOLO VISTA-->
-
-
+<?php 
+#Requerir al controlador
+require_once "controlador/productos.php";
+?>
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -37,12 +38,14 @@
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Marca</th>
-                                        <th>Categoría</th>
+                                        <!--<th>Categoría</th>-->
                                         <th>Stock</th>
                                         <th>Costo</th>
-                                        <th>Precio de venta</th>
-                                        <th>Fecha de creación</th>
                                         <th>IVA</th>
+                                        <th>Precio de venta</th>
+                                        <!--<th>Fecha de creación</th>-->
+                                        <th>Status</th>
+                                        <th>Detalle</th>
                                         <th>Acciones</th>
                                     </tr>         
                                 </thead>
@@ -52,7 +55,9 @@
                                     foreach ($registro as $producto){
                                         ?>
                                         <tr>
-                                            <td> <?php echo $producto["cod_categoria"] ?></td>
+                                            <td> <?php echo $producto["codigo"] ?></td>
+                                            <td> <?php echo $producto["nombre"] ?></td>
+                                            <td> <?php echo $producto["marca"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
                                             <td>
                                                 <?php if ($producto['status']==1):?>
