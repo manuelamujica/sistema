@@ -19,8 +19,13 @@ if(isset($_POST["ingresar"])){
 	if (!empty($respuesta) && isset($respuesta["user"])) {
 		// Verificamos la contraseña utilizando password_verify() para mayor seguridad
 		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
+			
 			$_SESSION["iniciarsesion"] = "ok";
+			$_SESSION["user"] = $respuesta["user"];
+			$_SESSION["nombre"] = $respuesta["nombre"];
+
 			echo '<script>window.location="inicio";</script>';
+
 		} else {
 			echo "<script>
 			alert('Error al ingresar, vuelve a intentarlo');
