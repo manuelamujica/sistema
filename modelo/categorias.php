@@ -69,6 +69,11 @@ public function buscar($valor){
             return false;
         }
 }
+
+public function getbuscar($valor){
+    return $this->buscar($valor);
+}
+
 /*==============================
 MOSTRAR CATEGORIAS
 ================================*/
@@ -85,6 +90,10 @@ MOSTRAR CATEGORIAS
         }
 
     }
+    public function getmostrar(){
+        return $this->mostrar();
+    }
+
 /*==============================
 EDITAR CATEGORIAS
 ================================*/
@@ -103,6 +112,11 @@ EDITAR CATEGORIAS
         }
         return $r;
     }
+
+    public function geteditar($valor){
+        return $this->editar($valor);
+    }    
+
 /*==============================
 ELIMINAR CATEGORIAS
 ================================*/
@@ -136,4 +150,8 @@ ELIMINAR CATEGORIAS
             return $r;
         }
     }
+
+    public function geteliminar($valor){
+        return $this->eliminar($valor);
+    }  
 }

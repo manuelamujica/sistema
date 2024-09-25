@@ -6,7 +6,7 @@ $objCategoria= new Categoria();
 
 if(isset($_POST['buscar'])){
     $nombre = $_POST['buscar']; #Se asigna el valor de buscar a la variable nombre
-    $result = $objCategoria->buscar($nombre); #Se instancia al metodo buscar y le enviamos por parametro el nombre
+    $result = $objCategoria->getbuscar($nombre); #Se instancia al metodo buscar y le enviamos por parametro el nombre
     header('Content-Type: application/json'); #establece el encabezado de la respuesta http, indica que el JSON
     echo json_encode($result); #Se envia $result como JSON al cliente 
     exit;
@@ -15,7 +15,7 @@ if(isset($_POST['buscar'])){
 
     if(!empty($_POST["nombre"])){
 
-        if (!$objCategoria->buscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
+        if (!$objCategoria->getbuscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
 
             $objCategoria->setNombre($_POST["nombre"]);
             $result=$objCategoria->getregistrar();
@@ -37,7 +37,7 @@ if(isset($_POST['buscar'])){
         $objCategoria->setNombre($_POST['nombre']);
         $objCategoria->setStatus($_POST['status']);
 
-        $result=$objCategoria->editar($_POST['codigo']);
+        $result=$objCategoria->geteditar($_POST['codigo']);
 
         if($result==1){
             echo "<script>
@@ -53,7 +53,7 @@ if(isset($_POST['buscar'])){
     }
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['catcodigo'])){
-    $result = $objCategoria->eliminar($_POST["catcodigo"]);
+    $result = $objCategoria->geteliminar($_POST["catcodigo"]);
     
     if ($result == 'success') {
         echo "<script>
@@ -80,7 +80,7 @@ if(isset($_POST['buscar'])){
 
 }
 
-$registro = $objCategoria->mostrar();
+$registro = $objCategoria->getmostrar();
 
 $_GET['ruta'] = 'categorias';
 require_once 'plantilla.php';
