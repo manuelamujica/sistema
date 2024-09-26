@@ -46,9 +46,8 @@
                         </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    foreach ($registro as $datos){
-                        ?>
+                    <?php foreach ($registro as $datos){ ?>
+                    <?php if ($datos['status'] != 2): ?>
                         <tr>
                             <td> <?php echo $datos["cod_cliente"] ?></td>
                             <td> <?php echo $datos["nombre"] ?></td>
@@ -65,11 +64,24 @@
                                 <?php endif;?>
                             </td>
                             <td>
-                                <form method="post" >
-                                    <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
-                                    <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt" ></i></button>
-                                </form>
+                            <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
+                            data-cedula_rif="<?php echo $datos["cedula_rif"]; ?>" 
+                            data-codigo="<?php echo $datos["cod_cliente"]; ?>" 
+                            data-nombre="<?php echo $datos["nombre"]; ?>" 
+                            data-apellido="<?php echo $datos["apellido"]; ?>" 
+                            data-telefono="<?php echo $datos["telefono"]; ?>" 
+                            data-email="<?php echo $datos["email"]; ?>"
+                            data-direccion="<?php echo $datos["direccion"]; ?>" 
+                            data-status="<?php echo $datos["status"]; ?>">
+                            <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarcliente"
+                                data-codigo="<?php echo $datos["cod_cliente"]; ?>" 
+                                data-nombre="<?php echo $datos["nombre"]; ?>">
+                                <i class="fas fa-trash-alt" ></i>
+                            </button>
                             </td>
+                        <?php endif; ?>
                         <?php } ?>
                 </tbody>
             </table>
@@ -123,6 +135,96 @@ MODAL REGISTRAR CLIENTES
             </div>
         </div>
     </div>
+
+
+<!-- =======================
+MODAL EDITAR CLIENTES 
+============================= -->
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" method="post">
+                    <div class="form-group">
+                        <label for="codigo">Código</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cedula_rif">Cédula-Rif</label>
+                        <input type="text" class="form-control" id="cedularif" name="cedula_rif" required>
+                        <input type="hidden" class="form-control" id="origin" name="origin" >
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <textarea class="form-control" id="direccion" name="direccion"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =======================
+MODAL CONFIRMAR ELIMINAR 
+============================= -->
+
+    <div class="modal fade" id="eliminarcliente" tabindex="-1" aria-labelledby="eliminarclienteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarclienteLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <form id="elimodal" method="post"> 
+                    <p>¿Está seguro que desea eliminar a <span id="clienteNombre"></span>?</p>
+                    <input type="hidden" id="clienteCodigo" name="clienteCodigo"> 
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" form="elimodal" class="btn btn-danger" id="confirmDelete" name="borrar">Eliminar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 </div>
 <script>
@@ -133,5 +235,50 @@ MODAL REGISTRAR CLIENTES
                 alert('El cliente ya se encuentra registrado');
             }
         },'json');
+    });
+
+    $('#cedularif').blur(function (e){
+        var buscar=$('#cedularif').val();
+        $.post('index.php?pagina=clientes', {buscar}, function(response){
+            if(response != ''){
+                alert('La cedula ya existe');
+            }
+        },'json');
+    });
+
+
+    $('#editModal').on('show.bs.modal', function (event) {
+            var button=$(event.relatedTarget);
+            var codigo=button.data('codigo');
+            var nombre=button.data('nombre');
+            var apellido=button.data('apellido');
+            var cedula_rif=button.data('cedula_rif');
+            var telefono=button.data('telefono');
+            var email=button.data('email');
+            var direccion=button.data('direccion');
+            var status=button.data('status');
+            var origin=button.data('cedula_rif');
+
+            // Modal
+            var modal = $(this);
+            modal.find('.modal-body #codigo').val(codigo);
+            modal.find('.modal-body #nombre').val(nombre);
+            modal.find('.modal-body #apellido').val(apellido);
+            modal.find('.modal-body #cedularif').val(cedula_rif);
+            modal.find('.modal-body #telefono').val(telefono);
+            modal.find('.modal-body #email').val(email);
+            modal.find('.modal-body #direccion').val(direccion);
+            modal.find('.modal-body #status').val(status);
+            modal.find('.modal-body #origin').val(origin);
+        });
+
+    $('#eliminarcliente').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); 
+        var nombre = button.data('nombre');
+        var codigo = button.data('codigo');
+
+        var modal = $(this);
+        modal.find('#clienteNombre').text(nombre);
+        modal.find('.modal-body #clienteCodigo').val(codigo);
     });
 </script>
