@@ -1,13 +1,15 @@
 <?php
 
 require_once "modelo/usuario.php"; 
+require_once "modelo/general.php";
 
+$obj = new General();
 $objuser= new Usuario();
 
 if(isset($_POST["ingresar"])){
 
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
-	preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingPassword"])){
+	preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingPassword"])){ //REVISAR
 
 		$item = "user";
 		$valor = $_POST["ingUsuario"];
@@ -17,14 +19,19 @@ if(isset($_POST["ingresar"])){
 	}
 
 	if (!empty($respuesta) && isset($respuesta["user"])) {
-		// Verificamos la contraseña utilizando password_verify() para mayor seguridad
+		// Verificamos la contraseña utilizando password_verify()
 		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
 			
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
 
-			echo '<script>window.location="inicio";</script>';
+			$logo = $obj->mostrar();
+			$_SESSION["logo"] = $logo["logo"];
+
+			echo '<script>
+			window.location="inicio";
+			</script>';
 
 		} else {
 			echo "<script>

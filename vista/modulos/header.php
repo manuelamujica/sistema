@@ -63,7 +63,7 @@
             <i class="fa fa-user"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-        <span class="dropdown-header"> <?php echo $_SESSION["nombre"] ?></span>
+        <span class="dropdown-header"> <?php var_dump($_SESSION["logo"]); ?></span>
         <div class="dropdown-divider"></div>
         <a href="#" class="dropdown-item">
             <i class="fas fa-user mr-2"></i> Ver perfil

@@ -3,7 +3,12 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 <!-- Logo -->
     <a href="inicio" class="brand-link">
-        <img src="vista/dist/img/logo-icono.png" alt="Quesera Don Pedro" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <?php 
+        if(isset($_SESSION['logo'])): ?>
+            <img src="<?php echo $_SESSION['logo'];?>" alt="Quesera Don Pedro" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <?php else: ?>
+            <img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <?php endif; ?>
         <span class="brand-text font-weight-bold">SAVYC</span>
     </a>
     
