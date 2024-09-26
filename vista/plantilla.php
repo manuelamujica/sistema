@@ -69,7 +69,9 @@ PLUGINGS DE CSS
 
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
-    $_GET["ruta"] == "categorias" || 
+    $_GET["ruta"] == "categorias" ||
+    $_GET["ruta"] == "productos" ||
+    $_GET["ruta"] == "usuarios" ||
     $_GET["ruta"] == "tpago" || 
     $_GET["ruta"] == "divisa" || 
     $_GET["ruta"] == "proveedores" || 

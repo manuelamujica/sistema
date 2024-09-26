@@ -1,6 +1,6 @@
 <?php
 
-require_once "modelo/login.php"; 
+require_once "modelo/usuario.php"; 
 
 $objuser= new Usuario();
 
@@ -16,22 +16,32 @@ if(isset($_POST["ingresar"])){
 
 	}
 
-	if(($respuesta["user"]) == $_POST["ingUsuario"] && $respuesta["password"] == $_POST["ingPassword"]){
-	
-		$_SESSION["iniciarsesion"] = "ok";
-		
-		#echo '<br> <div class="alert alert-sucess">Bienvenido al Sistema</div>';
+	if (!empty($respuesta) && isset($respuesta["user"])) {
+		// Verificamos la contraseña utilizando password_verify() para mayor seguridad
+		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
+			
+			$_SESSION["iniciarsesion"] = "ok";
+			$_SESSION["user"] = $respuesta["user"];
+			$_SESSION["nombre"] = $respuesta["nombre"];
 
-		echo '<script>
-		window.location="inicio";
-		</script>';
+			echo '<script>window.location="inicio";</script>';
 
-	
-		}else{
-			echo '<br><div class="alert alert-danger">Error al ingresar, vuelve a intentarlo</div>';
+		} else {
+			echo "<script>
+			alert('Error al ingresar, vuelve a intentarlo');
+			location = 'login';
+			</script>";
+			#echo '<div class="alert alert-danger">Error al ingresar, vuelve a intentarlo</div>';
 		}
-}
-
+	} else {
+		echo "<script>
+		alert('Usuario no encontrado');
+		location = 'login';
+		</script>";
+	}
+		#echo: Lo muestra bonito pero no agarra las clases de adminLTE
+		#'<div class="alert alert-danger">Usuario no encontrado</div>';
 	
-
+	
+}
 
