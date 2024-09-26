@@ -66,7 +66,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="venta" class="nav-link">
+                    <a href="venta2" class="nav-link">
                         <i class="nav-icon fa fa-file"></i>
                             <p>
                                 Ventas 
