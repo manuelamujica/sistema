@@ -167,6 +167,7 @@ MODAL EDITAR CLIENTES
                     <div class="form-group">
                         <label for="cedula_rif">Cédula-Rif</label>
                         <input type="text" class="form-control" id="cedularif" name="cedula_rif" required>
+                        <input type="hidden" class="form-control" id="origin" name="origin" >
                     </div>
                     <div class="form-group">
                         <label for="telefono">Teléfono</label>
@@ -247,15 +248,16 @@ MODAL CONFIRMAR ELIMINAR
 
 
     $('#editModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var codigo = button.data('codigo');
-            var nombre = button.data('nombre');
-            var apellido = button.data('apellido');
-            var cedula_rif = button.data('cedula_rif');
-            var telefono = button.data('telefono');
-            var email = button.data('email');
-            var direccion = button.data('direccion');
-            var status = button.data('status');
+            var button=$(event.relatedTarget);
+            var codigo=button.data('codigo');
+            var nombre=button.data('nombre');
+            var apellido=button.data('apellido');
+            var cedula_rif=button.data('cedula_rif');
+            var telefono=button.data('telefono');
+            var email=button.data('email');
+            var direccion=button.data('direccion');
+            var status=button.data('status');
+            var origin=button.data('cedula_rif');
 
             // Modal
             var modal = $(this);
@@ -267,6 +269,7 @@ MODAL CONFIRMAR ELIMINAR
             modal.find('.modal-body #email').val(email);
             modal.find('.modal-body #direccion').val(direccion);
             modal.find('.modal-body #status').val(status);
+            modal.find('.modal-body #origin').val(origin);
         });
 
     $('#eliminarcliente').on('show.bs.modal', function (event) {

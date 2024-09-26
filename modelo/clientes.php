@@ -125,7 +125,11 @@ public function buscar($valor){
 
 }
 
-public function actualizar($valor){
+public function getactualizar($valor){
+    return $this->actualizar($valor);
+}
+
+private function actualizar($valor){
     $cod=$valor;
 
     $registro="UPDATE clientes SET nombre=:nombre, apellido=:apellido, cedula_rif=:cedula_rif, telefono=:telefono, email=:email, direccion=:direccion, status=:status WHERE cod_cliente=$cod";
@@ -149,7 +153,11 @@ public function actualizar($valor){
     return $r;
 }
 
-public function eliminar($valor){
+public function geteliminar($valor){
+    return $this->eliminar($valor);
+}
+
+private function eliminar($valor){
     $registro="SELECT COUNT(*) AS n_ventas FROM ventas WHERE cod_cliente =$valor ";
     $strExec = $this->conex->prepare($registro);
     $resul = $strExec->execute();

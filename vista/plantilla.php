@@ -77,6 +77,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "general" ||
     $_GET["ruta"] == "clientes" ||
     $_GET["ruta"] == "roles" ||
+    $_GET["ruta"] == "venta2" ||
     $_GET["ruta"] == "cerrarsesion"){
       
       include "modulos/". $_GET["ruta"] . ".php";
