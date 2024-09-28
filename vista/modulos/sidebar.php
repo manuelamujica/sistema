@@ -4,8 +4,8 @@
 <!-- Logo -->
     <a href="inicio" class="brand-link">
         <?php 
-        if(isset($_SESSION['logo'])): ?>
-            <img src="<?php echo $_SESSION['logo'];?>" alt="Quesera Don Pedro" class="brand-image img-circle elevation-3" style="opacity: .8">
+        if(isset($_SESSION["logo"])): ?>
+            <img src="<?php echo $_SESSION["logo"];?>" alt="Quesera Don Pedro" class="brand-image img-circle elevation-3" style="opacity: .8">
         <?php else: ?>
             <img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro" class="brand-image img-circle elevation-3" style="opacity: .8">
         <?php endif; ?>

@@ -27,8 +27,9 @@ if(isset($_POST["ingresar"])){
 			$_SESSION["nombre"] = $respuesta["nombre"];
 
 			$logo = $obj->mostrar();
-			$_SESSION["logo"] = $logo["logo"];
-
+			if(!empty($logo)){
+			$_SESSION["logo"] = $logo[0]["logo"];
+			}
 			echo '<script>
 			window.location="inicio";
 			</script>';
