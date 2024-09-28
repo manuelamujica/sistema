@@ -94,7 +94,7 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
     border-color: #db6a00;
 }
 
-
+/* LOGIN*/
 .input-group .icon-password {
     position: absolute;
     right: 45px;
@@ -105,6 +105,15 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
     z-index: 10;
 }
 
-.input-group{
+.input-group{/* No estoy segura, probar!!!*/
     position: relative;
+}
+
+.login-box-msg{
+    color:#6c757d;
+    font-weight: normal;
+}
+
+.login-box{
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
 }

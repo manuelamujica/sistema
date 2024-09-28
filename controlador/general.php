@@ -76,5 +76,10 @@ if(isset($_POST['buscar'])){
 }
 
 $datos=$objGeneral->mostrar();
+if(isset($datos)){
+    if(!empty($_SESSION["logo"])){
+        $_SESSION["logo"]=$datos[0]["logo"];
+    }
+}
 $_GET['ruta']='general';
 require_once 'plantilla.php';

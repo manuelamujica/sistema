@@ -10,7 +10,7 @@ require_once "controlador/login.php";
                     <h1 class="h1"><b>SAVYC</h1>
                 </div>
                 <div class="card-body">
-                    <p class="login-box-msg">Iniciar sesión</p>
+                    <p class="login-box-msg">Ingresa tus datos para iniciar sesión</p>
                     <form method="post">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="Usuario" name="ingUsuario" required>
