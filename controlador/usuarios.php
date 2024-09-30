@@ -1,10 +1,12 @@
 <?php
 
 require_once "modelo/usuario.php"; 
+require_once "modelo/roles.php"; 
 
 $objuser= new Usuario();
+$objroles = new Rol();
 
-$roles = $objuser->roles(); // Obtener los roles para pasarlos a la vista
+$roles = $objroles->consultar(); // Obtener los roles para pasarlos a la vista
 
 if(isset($_POST['buscar'])){
     $user = $_POST['buscar']; 

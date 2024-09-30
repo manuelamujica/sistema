@@ -104,6 +104,21 @@ require_once "controlador/categorias.php";
                             </div>
                         </div>
                     </div>
+<?php 
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
 <!-- =============================
     MODAL EDITAR CATEGORÍA 
 ================================== -->
@@ -142,6 +157,22 @@ require_once "controlador/categorias.php";
                             </div>
                         </div>
                     </div>
+<?php 
+if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
+
 <!-- ====================================
     MODAL CONFIRMAR ELIMINAR CATEGORÍA 
 ========================================= -->

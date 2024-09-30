@@ -50,6 +50,9 @@ PLUGINGS DE CSS
 
 <!-- Custom JS -->
 <script src="vista/dist/js/custom.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="vista/plugins/sweetalert2/sweetalert2.all.js"></script>
 </head>
 
 <!-- =======================

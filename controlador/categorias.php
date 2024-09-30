@@ -21,13 +21,19 @@ if(isset($_POST['buscar'])){
             $result=$objCategoria->getregistrar();
             
             if($result == 1){
-                    echo "<script>
-                    alert('Registrado con exito');
-                    location = 'categorias' </script>";
+                #PRUEBA USANDO SWEETALERT2
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "La categoría ha sido registrada",
+                    "icon" => "success"
+                ];
+                
             }else{
-                    echo "<script>
-                    alert('No se permiten campos vacios');
-                    location = 'categorias' </script>";
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar la categoría",
+                    "icon" => "error"
+                ];
             }
         }
     }
@@ -39,18 +45,20 @@ if(isset($_POST['buscar'])){
 
         $result=$objCategoria->geteditar($_POST['codigo']);
 
-        if($result==1){
-            echo "<script>
-                    alert('modificado con exito');
-                    location = 'categorias'
-                </script>";
+        if($result == 1){
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "La categoría ha sido actualizada",
+                "icon" => "success"
+            ];
         }else {
-            echo "<script>
-                    alert('no se pudo modificar');
-                    location = 'categorias'
-                </script>";
-        }
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar la categoría",
+                "icon" => "error"
+            ];
     }
+}
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['catcodigo'])){
     $result = $objCategoria->geteliminar($_POST["catcodigo"]);

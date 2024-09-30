@@ -1,3 +1,8 @@
+
+<!-- Preloader -->
+<div class="preloader flex-column justify-content-center align-items-center">
+    <img class="" src="vista/dist/img/logo-horizontal.png" alt="Logo-Don-Pedro" height="200" width="200">
+</div>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->

@@ -62,7 +62,7 @@ class Usuario extends Conexion{
             }
     }
 
-//Conocer los roles para seleccionarlos
+/*Lo quite para usar el metodo de consulta en la clase ROL
 
 public function roles(){
     $registro = "select * from tipo_usuario";
@@ -77,7 +77,7 @@ public function roles(){
         return $r=[];
     }
 
-}
+}*/
 
 
 /*==============================
