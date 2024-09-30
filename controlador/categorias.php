@@ -64,25 +64,29 @@ if(isset($_POST['buscar'])){
     $result = $objCategoria->geteliminar($_POST["catcodigo"]);
     
     if ($result == 'success') {
-        echo "<script>
-                alert('Categoría eliminada exitosamente.');
-                location = 'categorias';
-              </script>";
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "La categoría ha sido eliminada",
+            "icon" => "success"
+        ];
     } elseif ($result == 'error_associated') {
-        echo "<script>
-                alert('No se puede eliminar la categoría porque tiene productos asociados.');
-                location = 'categorias';
-              </script>";
+        $eliminar = [
+            "title" => "Error",
+            "message" => "La categoría no se puede eliminar porque tiene productos asociados",
+            "icon" => "error"
+        ];
     } elseif ($result == 'error_delete') {
-        echo "<script>
-                alert('Hubo un error al intentar eliminar la categoría.');
-                location = 'categorias';
-              </script>";
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la categoría",
+            "icon" => "error"
+        ];
     } else {
-        echo "<script>
-                alert('Hubo un error al intentar verificar la categoría.');
-                location = 'categorias';
-              </script>";
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la categoría",
+            "icon" => "error"
+        ];
     }
 }
 

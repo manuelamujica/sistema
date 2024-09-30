@@ -205,6 +205,22 @@ if (isset($editar)): ?>
         </div>      
     </section>
 </div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+
 <script>
     //Validar registro
     $('#nombre').blur(function (e){
