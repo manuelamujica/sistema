@@ -28,7 +28,7 @@ class Rol extends Conexion{
 /*==============================
 REGISTRAR TIPOS DE USUARIO
 ================================*/
-    private function crearRol(){
+    private function crearRol($permisos){
 
         $sql = "INSERT INTO tipo_usuario(rol,status) VALUES(:rol, 1)";
 
@@ -38,15 +38,26 @@ REGISTRAR TIPOS DE USUARIO
         $resul = $strExec->execute();
 
         if($resul){
+            $nuevo_cod=$this->conex->lastInsertId();
+
+            foreach($permisos as $cod_permisos){
+            $sqlpermiso="INSERT INTO tpu_permisos (cod_tipo_usuario, cod_permiso) VALUES (:cod_tipo_usuario, :cod_permiso)";
+            $strExec = $this->conex->prepare($sqlpermiso);
+            $strExec->bindParam(":cod_tipo_usuario", $nuevo_cod);
+            $strExec->bindParam(":cod_permiso", $cod_permisos);
+            $strExec->execute();
+            }
             $r = 1;
         }else{
             $r = 0;
         }
         return $r;
 
+        
+
     }
-    public function getcrearRol(){
-        return $this->crearRol();
+    public function getcrearRol($valor){
+        return $this->crearRol($valor);
     }
 
     public function consultar(){
@@ -74,6 +85,19 @@ REGISTRAR TIPOS DE USUARIO
                 return false;
             }
     
+    }
+
+    public function permisos(){
+        $registro = "select * from permisos";
+        $accesos= "";
+            $dato=$this->conex->prepare($registro);
+            $resul=$dato->execute();
+            $accesos=$dato->fetchAll(PDO::FETCH_ASSOC);
+            if ($resul) {
+                return $accesos;
+            }else{
+                return false;
+            }
     }
 
 }

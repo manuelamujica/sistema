@@ -16,7 +16,7 @@ if(isset($_POST['buscar'])){
         if(!$objRol->buscar($_POST['rol'])){
         #Instanciar los setter
         $objRol->setRol($_POST["rol"]);
-        $resul=$objRol->getcrearRol();
+        $resul=$objRol->getcrearRol($_POST['permisos']);
 
         if($resul == 1){
             echo    "<script>
@@ -32,6 +32,8 @@ if(isset($_POST['buscar'])){
     }
 
 }
+
+$permiso=$objRol->permisos();
 
 $registro=$objRol->consultar();
 $_GET['ruta']='roles';

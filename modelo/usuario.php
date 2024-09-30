@@ -79,6 +79,23 @@ public function roles(){
 
 }*/
 
+public function accesos($valor){
+    $sql= "SELECT p.cod_permiso FROM usuarios u
+        INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
+        INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario
+        INNER JOIN permisos p ON tp.cod_permiso = p.cod_permiso
+        WHERE u.cod_usuario = $valor;";
+    $strExec = $this->conex->prepare($sql);
+    $resul=$strExec->execute();
+    $datos=$strExec->fetchAll(PDO::FETCH_ASSOC);
+    if($resul){
+        return $datos;
+    }else{
+        return $res=[];
+    }
+
+}
+
 
 /*==============================
 REGISTRAR CATEGORIA

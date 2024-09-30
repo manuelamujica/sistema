@@ -95,7 +95,20 @@ MODAL REGISTRAR ROLES
                                 <label for="rol">Rol</label>
                                 <input type="text" class="form-control" id="rol" name="rol" placeholder="Ingresa el nombre">
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <label for="permisos">Selecciona los permisos:</label><br>
+                                <?php foreach ($permiso as $datos): ?>
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" name="permisos[]" value="<?php echo $datos['cod_permiso']; ?>" id="categoria<?php echo $datos['cod_permiso']; ?>">
+                                        <label for="categoria<?php echo $datos['cod_permiso']; ?>">
+                                            <?php echo $datos['nombre'] ?>
+                                        </label>
+                                    </div>
+                                    <br>
+                                <?php endforeach; ?>
+                            </div>
+
+                    </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>

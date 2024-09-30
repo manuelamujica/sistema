@@ -76,8 +76,8 @@ if(isset($_POST['buscar'])){
 }
 
 $datos=$objGeneral->mostrar();
-if(isset($datos)){
-    if(!empty($_SESSION["logo"])){
+if(!empty($datos)){
+    if(!isset($_SESSION["logo"])){
         $_SESSION["logo"]=$datos[0]["logo"];
     }
 }

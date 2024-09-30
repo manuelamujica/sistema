@@ -1,8 +1,14 @@
-
-<!-- Preloader -->
+<!-- Preloader-->
 <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="" src="vista/dist/img/logo-horizontal.png" alt="Logo-Don-Pedro" height="200" width="200">
+<?php 
+        if(isset($_SESSION["logo"])): ?>
+            <img src="<?php echo $_SESSION["logo"];?>" alt="Quesera Don Pedro" class="" height="200" width="200">
+        <?php else: ?>
+            <img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro"  class="" height="200" width="200">
+        <?php endif; ?>
 </div>
+
+>>>>>>> main
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
