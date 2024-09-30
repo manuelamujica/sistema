@@ -1,8 +1,4 @@
 
-<!-- Preloader -->
-<div class="preloader flex-column justify-content-center align-items-center">
-    <img class="" src="vista/dist/img/logo-horizontal.png" alt="Logo-Don-Pedro" height="200" width="200">
-</div>
 
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">

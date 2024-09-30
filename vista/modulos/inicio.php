@@ -1,3 +1,13 @@
+<!-- Preloader-->
+<div class="preloader flex-column justify-content-center align-items-center">
+<?php 
+        if(isset($_SESSION["logo"])): ?>
+            <img src="<?php echo $_SESSION["logo"];?>" alt="Quesera Don Pedro" class="" height="200" width="200">
+        <?php else: ?>
+            <img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro"  class="" height="200" width="200">
+        <?php endif; ?>
+</div>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->

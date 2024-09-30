@@ -26,6 +26,26 @@ if(isset($_POST["ingresar"])){
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
 
+			$_SESSION["configuracion"]=0;
+			$_SESSION["inventario"]=0;
+			$_SESSION["venta"]=0;
+			$_SESSION["compra"]=0;
+
+			//obtenemos los permisos asociados al usuario
+			$accesos=$objuser->accesos($respuesta["cod_usuario"]);
+			foreach($accesos as $cod_permiso){
+				if ($cod_permiso["cod_permiso"] == 1) {
+					$_SESSION["configuracion"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 2) {
+					$_SESSION["inventario"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 3) {
+					$_SESSION["venta"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 4) {
+					$_SESSION["compra"] = 1;
+				}
+			}
+			
+			//obtenemos el logo de la empresa
 			$logo = $obj->mostrar();
 			if(!empty($logo)){
 			$_SESSION["logo"] = $logo[0]["logo"];
