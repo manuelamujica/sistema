@@ -104,6 +104,21 @@ require_once "controlador/categorias.php";
                             </div>
                         </div>
                     </div>
+<?php 
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
 <!-- =============================
     MODAL EDITAR CATEGORÍA 
 ================================== -->
@@ -142,6 +157,22 @@ require_once "controlador/categorias.php";
                             </div>
                         </div>
                     </div>
+<?php 
+if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
+
 <!-- ====================================
     MODAL CONFIRMAR ELIMINAR CATEGORÍA 
 ========================================= -->
@@ -174,6 +205,22 @@ require_once "controlador/categorias.php";
         </div>      
     </section>
 </div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+
 <script>
     //Validar registro
     $('#nombre').blur(function (e){

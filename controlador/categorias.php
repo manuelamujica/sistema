@@ -21,13 +21,19 @@ if(isset($_POST['buscar'])){
             $result=$objCategoria->getregistrar();
             
             if($result == 1){
-                    echo "<script>
-                    alert('Registrado con exito');
-                    location = 'categorias' </script>";
+                #PRUEBA USANDO SWEETALERT2
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "La categoría ha sido registrada",
+                    "icon" => "success"
+                ];
+                
             }else{
-                    echo "<script>
-                    alert('No se permiten campos vacios');
-                    location = 'categorias' </script>";
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar la categoría",
+                    "icon" => "error"
+                ];
             }
         }
     }
@@ -39,42 +45,48 @@ if(isset($_POST['buscar'])){
 
         $result=$objCategoria->geteditar($_POST['codigo']);
 
-        if($result==1){
-            echo "<script>
-                    alert('modificado con exito');
-                    location = 'categorias'
-                </script>";
+        if($result == 1){
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "La categoría ha sido actualizada",
+                "icon" => "success"
+            ];
         }else {
-            echo "<script>
-                    alert('no se pudo modificar');
-                    location = 'categorias'
-                </script>";
-        }
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar la categoría",
+                "icon" => "error"
+            ];
     }
+}
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['catcodigo'])){
     $result = $objCategoria->geteliminar($_POST["catcodigo"]);
     
     if ($result == 'success') {
-        echo "<script>
-                alert('Categoría eliminada exitosamente.');
-                location = 'categorias';
-              </script>";
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "La categoría ha sido eliminada",
+            "icon" => "success"
+        ];
     } elseif ($result == 'error_associated') {
-        echo "<script>
-                alert('No se puede eliminar la categoría porque tiene productos asociados.');
-                location = 'categorias';
-              </script>";
+        $eliminar = [
+            "title" => "Error",
+            "message" => "La categoría no se puede eliminar porque tiene productos asociados",
+            "icon" => "error"
+        ];
     } elseif ($result == 'error_delete') {
-        echo "<script>
-                alert('Hubo un error al intentar eliminar la categoría.');
-                location = 'categorias';
-              </script>";
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la categoría",
+            "icon" => "error"
+        ];
     } else {
-        echo "<script>
-                alert('Hubo un error al intentar verificar la categoría.');
-                location = 'categorias';
-              </script>";
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la categoría",
+            "icon" => "error"
+        ];
     }
 }
 
