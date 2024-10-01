@@ -142,20 +142,24 @@
                 <div class="container-fluid">
                     <div class="row">
                         <!-- Información del Cliente y Nro de Venta -->
-                        <div class="col-md-8">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cedula-rif">Cédula/RIF</label>
+                                <input type="text" class="form-control form-control-sm" id="cedula-rif" placeholder="Cédula o RIF">
+                            </div>
+                            <div class="form-group">
+                                <label for="nombre-cliente">Numero de telefono</label>
+                                <input type="text" class="form-control form-control-sm" id="numero-cliente" placeholder="Nombre del cliente">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nombre-cliente">Nombre del Cliente</label>
                                 <input type="text" class="form-control form-control-sm" id="nombre-cliente" placeholder="Nombre del cliente">
                             </div>
                             <div class="form-group">
-                                <label for="cedula-rif">Cédula/RIF</label>
-                                <input type="text" class="form-control form-control-sm" id="cedula-rif" placeholder="Cédula o RIF">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
                                 <label for="numero">Nro Venta</label>
-                                <input type="text" class="form-control form-control-sm" id="numero" value="0000005" readonly>
+                                <input type="text" class="form-control form-control-sm" id="codigo" value="0000005" readonly>
                             </div>
                         </div>
                     </div>
