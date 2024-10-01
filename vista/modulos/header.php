@@ -1,9 +1,4 @@
 
-<!-- Preloader -->
-<div class="preloader flex-column justify-content-center align-items-center">
-    <img class="" src="vista/dist/img/logo-horizontal.png" alt="Logo-Don-Pedro" height="200" width="200">
-</div>
-
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Navbar links IZQUIERDA-->
@@ -63,7 +58,7 @@
             <i class="fa fa-user"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-        <span class="dropdown-header">Perfil de usuario</span>
+        <span class="dropdown-header"> <?php echo $_SESSION["nombre"]; ?></span>
         <div class="dropdown-divider"></div>
         <a href="#" class="dropdown-item">
             <i class="fas fa-user mr-2"></i> Ver perfil

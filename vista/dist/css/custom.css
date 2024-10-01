@@ -89,8 +89,31 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
     color: #E89005; 
     font-weight: bold;
 }
+.page-item.active .page-link{
+    background-color: #db6a00;
+    border-color: #db6a00;
+}
 
+/* LOGIN*/
+.input-group .icon-password {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
 
+.input-group{/* No estoy segura, probar!!!*/
+    position: relative;
+}
 
+.login-box-msg{
+    color:#6c757d;
+    font-weight: normal;
+}
 
-
+.login-box{
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+}

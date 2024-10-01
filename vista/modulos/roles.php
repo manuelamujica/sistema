@@ -28,9 +28,10 @@
             </div>
             <div class="card-body">
             <div class="table-responsive">
-            <table id="categorias" class="table table-bordered table-striped">
+            <table id="categorias" class="table table-bordered table-striped datatable">
                 <thead>
                         <tr>
+                            <th>Código</th>
                             <th>Rol</th>
                             <th>Status</th>
                             <th>Acciones</th>
@@ -42,7 +43,12 @@
                     foreach ($registro as $dato) {
                 ?>
                     <tr>
-                        <td><?php echo $dato['rol']?></td>
+                        <td>
+                            <?php echo $dato['cod_tipo_usuario']?>
+                        </td>
+                        <td>
+                            <?php echo $dato['rol']?>
+                        </td>
                         <td>
                             <?php if ($dato['status']==1): ?>
                                 <span class="badge bg-success">Activo</span>
@@ -87,9 +93,22 @@ MODAL REGISTRAR ROLES
                             <!--   NOMBRE DEL ROL     -->
                             <div class="form-group">
                                 <label for="rol">Rol</label>
-                                <input type="text" class="form-control" id="rol" name="rol" required>
+                                <input type="text" class="form-control" id="rol" name="rol" placeholder="Ingresa el nombre">
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <label for="permisos">Selecciona los permisos:</label><br>
+                                <?php foreach ($permiso as $datos): ?>
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" name="permisos[]" value="<?php echo $datos['cod_permiso']; ?>" id="categoria<?php echo $datos['cod_permiso']; ?>">
+                                        <label for="categoria<?php echo $datos['cod_permiso']; ?>">
+                                            <?php echo $datos['nombre'] ?>
+                                        </label>
+                                    </div>
+                                    <br>
+                                <?php endforeach; ?>
+                            </div>
+
+                    </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>

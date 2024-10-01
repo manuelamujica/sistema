@@ -30,7 +30,7 @@
             <div class="card-body">
 
             <!-- TABLA -->
-            <!-- <div class="table-responsive">-->
+            <div class="table-responsive">
             <table id="clientes" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                 <thead>
                         <tr>
@@ -85,7 +85,7 @@
                         <?php } ?>
                 </tbody>
             </table>
-            <!-- </div>-->
+            </div>
             <!-- /TABLA -->
         </div>
     </div>
@@ -109,22 +109,22 @@ MODAL REGISTRAR CLIENTES
                 <form id="formRegistrarClientes" method="post">
                     <div class="form-group">
                         <label for="cedula_rif">Cédula o Rif:</label>
-                        <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" required>
+                        <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" placeholder="Ingrese la cédula" required>
                         
                         <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" name="nombre" required>
+                        <input type="text" class="form-control" name="nombre" placeholder="Ingrese el nombre" required>
 
                         <label for="apellido">Apellido:</label>
-                        <input type="text" class="form-control" name="apellido" required>
+                        <input type="text" class="form-control" name="apellido" placeholder="Ingrese el apellido" required>
 
                         <label for="telefono">Teléfono:</label>
-                        <input type="tel" class="form-control" name="telefono">
+                        <input type="tel" class="form-control"  name="telefono" placeholder="Ingrese el teléfono">
 
                         <label for="email">Email:</label>
-                        <input type="email" class="form-control" name="email">
+                        <input type="email" class="form-control" name="email" placeholder="Ingrese el correo electrónico">
 
                         <label for="direccion">Direccion:</label>
-                        <textarea class="form-control" name="direccion"></textarea>
+                        <textarea class="form-control" name="direccion" placeholder="Ingrese la dirección de vivienda"></textarea>
                     </div>
                     </div>
                     <div class="modal-footer justify-content-between">

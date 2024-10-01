@@ -50,6 +50,9 @@ PLUGINGS DE CSS
 
 <!-- Custom JS -->
 <script src="vista/dist/js/custom.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="vista/plugins/sweetalert2/sweetalert2.all.js"></script>
 </head>
 
 <!-- =======================
@@ -69,7 +72,9 @@ PLUGINGS DE CSS
 
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
-    $_GET["ruta"] == "categorias" || 
+    $_GET["ruta"] == "categorias" ||
+    $_GET["ruta"] == "productos" ||
+    $_GET["ruta"] == "usuarios" ||
     $_GET["ruta"] == "tpago" || 
     $_GET["ruta"] == "divisa" || 
     $_GET["ruta"] == "proveedores" || 

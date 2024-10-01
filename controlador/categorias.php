@@ -6,7 +6,7 @@ $objCategoria= new Categoria();
 
 if(isset($_POST['buscar'])){
     $nombre = $_POST['buscar']; #Se asigna el valor de buscar a la variable nombre
-    $result = $objCategoria->buscar($nombre); #Se instancia al metodo buscar y le enviamos por parametro el nombre
+    $result = $objCategoria->getbuscar($nombre); #Se instancia al metodo buscar y le enviamos por parametro el nombre
     header('Content-Type: application/json'); #establece el encabezado de la respuesta http, indica que el JSON
     echo json_encode($result); #Se envia $result como JSON al cliente 
     exit;
@@ -15,24 +15,84 @@ if(isset($_POST['buscar'])){
 
     if(!empty($_POST["nombre"])){
 
-        if (!$objCategoria->buscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
+        if (!$objCategoria->getbuscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
 
             $objCategoria->setNombre($_POST["nombre"]);
             $result=$objCategoria->getregistrar();
             
             if($result == 1){
-                    echo "<script>alert('Registrado con exito');
-                    location = '?pagina=categorias' </script>";
+                #PRUEBA USANDO SWEETALERT2
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "La categoría ha sido registrada",
+                    "icon" => "success"
+                ];
+                
+            }else{
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar la categoría",
+                    "icon" => "error"
+                ];
             }
         }
-    }else{
-    echo "<script>alert('No se permiten campos vacios');
-        location = '?pagina=categorias' </script>";
+    }
+}else if (isset($_POST['actualizar'])){
+    if(!empty($_POST['nombre'])){
+        
+        $objCategoria->setNombre($_POST['nombre']);
+        $objCategoria->setStatus($_POST['status']);
+
+        $result=$objCategoria->geteditar($_POST['codigo']);
+
+        if($result == 1){
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "La categoría ha sido actualizada",
+                "icon" => "success"
+            ];
+        }else {
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar la categoría",
+                "icon" => "error"
+            ];
+    }
+}
+}else if(isset($_POST['borrar'])){
+    if(!empty($_POST['catcodigo'])){
+    $result = $objCategoria->geteliminar($_POST["catcodigo"]);
+    
+    if ($result == 'success') {
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "La categoría ha sido eliminada",
+            "icon" => "success"
+        ];
+    } elseif ($result == 'error_associated') {
+        $eliminar = [
+            "title" => "Error",
+            "message" => "La categoría no se puede eliminar porque tiene productos asociados",
+            "icon" => "error"
+        ];
+    } elseif ($result == 'error_delete') {
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la categoría",
+            "icon" => "error"
+        ];
+    } else {
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la categoría",
+            "icon" => "error"
+        ];
     }
 }
 
+}
 
-$registro = $objCategoria->mostrar();
+$registro = $objCategoria->getmostrar();
 
 $_GET['ruta'] = 'categorias';
 require_once 'plantilla.php';
