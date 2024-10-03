@@ -98,7 +98,7 @@ public function accesos($valor){
 
 
 /*==============================
-REGISTRAR CATEGORIA
+REGISTRAR USUARIO
 ================================*/
 private function registrar($rol){
 

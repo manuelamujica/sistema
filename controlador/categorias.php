@@ -76,13 +76,13 @@ if(isset($_POST['buscar'])){
             "icon" => "error"
         ];
     } elseif ($result == 'error_delete') {
-        $editar = [
+        $eliminar = [
             "title" => "Error",
             "message" => "Hubo un problema al eliminar la categoría",
             "icon" => "error"
         ];
     } else {
-        $editar = [
+        $eliminar = [
             "title" => "Error",
             "message" => "Hubo un problema al eliminar la categoría",
             "icon" => "error"
