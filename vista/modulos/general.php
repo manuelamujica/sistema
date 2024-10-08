@@ -116,7 +116,21 @@ MODAL REGISTRAR INFO GENERAL
         </div>
     </section>
 </div>
-
+<?php
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'general';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!--     VALIDACIÓN        -->
 <script src="assets/js/general.js"></script>

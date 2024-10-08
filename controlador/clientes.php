@@ -25,11 +25,17 @@ if(isset($_POST['buscar'])){
 
             $result = $objCliente->getRegistrar();
             if($result == 1){
-                echo "<script>alert('Registrado con exito');
-                window.location = 'clientes' </script>";
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "El cliente ha sido registrado",
+                    "icon" => "success"
+                ];
             }else{
-                echo "<script>alert('No se pudo registrar');
-                window.location = 'clientes' </script>";
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar el cliente",
+                    "icon" => "error"
+                ];
                 }
             }
     }
@@ -50,24 +56,36 @@ if(isset($_POST['buscar'])){
             $objCliente->setstatus($_POST["status"]);
             $result = $objCliente->getactualizar($_POST["codigo"]);
                 if($result == 1){
-                    echo "<script>alert('se ha modificado con exito');
-                    window.location = 'clientes' </script>";
+                    $editar = [
+                        "title" => "Editado con éxito",
+                        "message" => "Los datos del cliente han sido actualizados",
+                        "icon" => "success"
+                    ];
                 }else{
-                    echo "<script>alert('No se pudo modificar');
-                    window.location = 'clientes' </script>";
+                    $editar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al editar los datos del cliente",
+                        "icon" => "error"
+                    ];
                 }
         }
     }
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['clienteCodigo'])){
     $result = $objCliente->geteliminar($_POST["clienteCodigo"]);
-        if($result == 1){
-            echo "<script>alert('se ha eliminado con exito');
-            window.location = 'clientes' </script>";
-        }else{
-            echo "<script>alert('No se pudo eliminar');
-            window.location = 'clientes' </script>";
-        }
+    if ($result == 'success') {
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "El cliente ha sido eliminado",
+            "icon" => "success"
+        ];
+    } elseif ($result == 'error_delete') {
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar el cliente",
+            "icon" => "error"
+        ];
+    }
     }
 }
 

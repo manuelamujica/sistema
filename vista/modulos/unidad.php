@@ -34,8 +34,7 @@
                         <tr>
                             <th>Código</th>
                             <th>Tipo de medida</th>
-                            <th>Presentación</th>
-                            <th>Cantidad de la presentación</th>
+                            
                             <th>Status</th>
                             <th>Acciones</th>
                         </tr>
@@ -47,8 +46,6 @@
                     <tr>
                         <td><?php echo $dato['cod_unidad']?></td>
                         <td><?php echo $dato['tipo_medida']?></td>
-                        <td><?php echo $dato['presentacion']?></td>
-                        <td><?php echo $dato['cantidad_presentacion']?></td>
                         <td>
                             <?php if ($dato['status']==1): ?>
                                 <span class="badge bg-success">Activo</span>
@@ -89,17 +86,7 @@ MODAL REGISTRAR Unidades de medida
                             <!--   TIPO DE MEDIDA      -->
                             <div class="form-group">
                                 <label for="tipo_medida">Tipo de medida</label>
-                                <input type="text" class="form-control" name="tipo_medida" required>
-                            </div>
-                            <!--   PRESENTACIÓN      -->
-                            <div class="form-group">
-                                <label for="presentacion">Presentación</label>
-                                <input type="text" class="form-control" id="presentacion" name="presentacion" required>
-                            </div>
-                            <!--   CANTIDAD DE PRESENTACIÓN      -->
-                            <div class="form-group">
-                                <label for="cantidad_presentacion">Cantidad en la presentación</label>
-                                <input type="text" class="form-control"  name="cantidad_presentacion" required>
+                                <input type="text" class="form-control" name="tipo_medida" id="tipo_medida" required>
                             </div>
                         </div>
                         <div class="modal-footer justify-content-between">
@@ -112,12 +99,27 @@ MODAL REGISTRAR Unidades de medida
         </div>
     </section>
 </div>
+<?php
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'unidad';
+            }
+        });
+    </script>
+<?php endif; ?>
 <script>
-    $('#presentacion').blur(function (e){
-        var buscar=$('#presentacion').val();
+    $('#tipo_medida').blur(function (e){
+        var buscar=$('#tipo_medida').val();
         $.post('index.php?pagina=unidad', {buscar}, function(response){
         if(response != ''){
-            alert('La presentacion ya se encuentra registrada');
+            alert('La unidad ya se encuentra registrada');
         }
         },'json');
     });

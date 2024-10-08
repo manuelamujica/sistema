@@ -14,17 +14,19 @@ if(isset($_POST['buscar'])){
         $obj->setmetodo($_POST['tipo_pago']);
 
         $result=$obj->incluir();
-        if($result==1){
-            echo "<script>
-                    alert('registado con exito');
-                    window.location = 'tpago'
-                </script>";
-        }else {
-            echo "<script>
-                    alert('no se pudo registrar');
-                    window.location = 'tpago'
-                </script>";
-            }
+        if($result == 1){
+            $registrar = [
+                "title" => "Registrado con éxito",
+                "message" => "El tipo de pago ha sido registrado",
+                "icon" => "success"
+            ];
+        }else{
+            $registrar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al registrar el tipo de pago",
+                "icon" => "error"
+            ];
+        }
         }
     }
 }else if(isset($_POST['editar'])){
@@ -42,27 +44,35 @@ if(isset($_POST['buscar'])){
             $obj->setstatus($_POST['status']);
             $result=$obj->editar($_POST['codigo']);
             if($result==1){
-                echo "<script>
-                        alert('modificado con exito');
-                        window.location = 'tpago'
-                    </script>";
+                $editar = [
+                    "title" => "Editado con éxito",
+                    "message" => "El tipo de pago ha sido actualizado",
+                    "icon" => "success"
+                ];
             }else {
-                echo "<script>
-                        alert('no se pudo modificar');
-                        window.location = 'tpago'
-                    </script>";
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al editar el tipo de pago",
+                    "icon" => "error"
+                ];
             }
         }
     }
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['tpagoCodigo'])){
     $result = $obj->eliminar($_POST["tpagoCodigo"]);
-        if($result == 1){
-            echo "<script>alert('se ha eliminado con exito');
-            window.location = 'tpago' </script>";
-        }else{
-            echo "<script>alert('No se pudo eliminar');
-            window.location = 'tpago' </script>";
+    if ($result == 'success') {
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "El tipo de pago ha sido eliminado",
+            "icon" => "success"
+        ];
+        }elseif ($result == 'error_delete') {
+            $eliminar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al eliminar el tipo de pago",
+                "icon" => "error"
+            ];
         }
     }
 }

@@ -119,6 +119,22 @@ MODAL REGISTRAR ROLES
         </div>
     </section>
 </div>
+<?php
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'roles';
+            }
+        });
+    </script>
+<?php endif; ?>
+
 <script>
     $('#rol').blur(function (e){
         var buscar=$('#rol').val();

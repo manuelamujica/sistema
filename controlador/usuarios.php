@@ -40,13 +40,17 @@ if(isset($_POST['buscar'])){
             $result = $objuser->getregistrar($rol);
             
             if($result == 1){
-                    echo "<script>
-                    alert('Registrado con exito');
-                    location = 'usuarios' </script>";
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "El usuario ha sido registrado",
+                    "icon" => "success"
+                ];
             }else{
-                    echo "<script>
-                    alert('No se pudo completar el registro');
-                    location = 'usuarios' </script>";
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar el usuario",
+                    "icon" => "error"
+                ];
             }
         }
     }
@@ -64,15 +68,17 @@ if(isset($_POST['buscar'])){
         $result=$objuser->editar($_POST['codigo'], $_POST['roles']);
 
         if($result==1){
-            echo "<script>
-                    alert('modificado con exito');
-                    location = 'usuarios'
-                </script>";
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "El usuario ha sido actualizado",
+                "icon" => "success"
+            ];
         }else {
-            echo "<script>
-                    alert('no se pudo modificar');
-                    location = 'usuarios'
-                </script>";
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar el ususario",
+                "icon" => "error"
+            ];
         }
     }
 }else if(isset($_POST['borrar'])){
@@ -80,21 +86,24 @@ if(isset($_POST['buscar'])){
     $result = $objuser->eliminar($_POST["usercode"]);
     
     if ($result == 'success') {
-        echo "<script>
-                alert('Usuario eliminado exitosamente.');
-                location = 'usuarios';
-              </script>";
+            $eliminar = [
+                "title" => "Eliminado con éxito",
+                "message" => "El usuario ha sido eliminado",
+                "icon" => "success"
+            ];
     } elseif ($result == 'error_ultimo') {
-        echo "<script>
-                alert('No se puede eliminar porque es el último administrador.');
-                location = 'usuarios';
-              </script>";
+            $eliminar = [
+                "title" => "Error",
+                "message" => "El usuario no se puede eliminar porque es el ultimo administrador",
+                "icon" => "error"
+            ];
         }
     } elseif ($result == 'error_delete') {
-        echo "<script>
-                alert('Hubo un error al intentar eliminar el usuario.');
-                location = 'usuarios';
-              </script>";
+        $eliminar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar el usuario",
+            "icon" => "error"
+        ];
     }
 }
 

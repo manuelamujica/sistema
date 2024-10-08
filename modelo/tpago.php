@@ -86,9 +86,9 @@ class Tpago extends Conexion{
                 $strExec=$this->conex->prepare($fisico);
                 $strExec->execute();
             }
-            $r=1;
+            $r='success';
         }else {
-            $r=0;
+            $r='error_delete';
         }
         return $r;
     }

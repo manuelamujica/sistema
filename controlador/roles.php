@@ -19,15 +19,18 @@ if(isset($_POST['buscar'])){
         $resul=$objRol->getcrearRol($_POST['permisos']);
 
         if($resul == 1){
-            echo    "<script>
-                        alert('Registrado con éxito');
-                        window.location = 'roles';
-                    </script>";
-        } else {
-            echo    "<script>
-                        alert('¡Los roles no pueden ir vacios o llevar caracteres especiales!');
-                    </script>";
-            }
+            $registrar = [
+                "title" => "Registrado con éxito",
+                "message" => "El rol ha sido registrado",
+                "icon" => "success"
+            ];
+        }else{
+            $registrar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al registrar el rol",
+                "icon" => "error"
+            ];
+        }
         }
     }
 
