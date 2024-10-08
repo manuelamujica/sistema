@@ -148,6 +148,7 @@ if (isset($registrar)): ?>
     MODAL EDITAR USUARIO 
 ================================== -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -169,6 +170,7 @@ if (isset($registrar)): ?>
                     <div class="form-group">
                         <label for="codigo">User</label>
                         <input type="text" class="form-control" id="usuario" name="user">
+
                     </div>
                     <div class="form-group">
                         <label for="codigo">Contraseña</label>

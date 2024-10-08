@@ -60,15 +60,39 @@
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         <span class="dropdown-header"> <?php echo $_SESSION["nombre"]; ?></span>
         <div class="dropdown-divider"></div>
-        <a href="#" class="dropdown-item">
-            <i class="fas fa-user mr-2"></i> Ver perfil
-        </a>
+        <button class="dropdown-item" data-toggle="modal" data-target="#modalPerfil" >
+            <i class="fas fa-user mr-2"></i> 
+            Ver perfil
+        </button>
         <div class="dropdown-divider"></div>
         <a href="cerrarsesion" class="dropdown-item">
-            <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+            <i class="fas fa-sign-out-alt mr-2" ></i> Cerrar sesión 
         </a>
         </div>
     </li>
     </ul>
 </nav>
 <!-- /.navbar -->
+
+ <!-- Ver perfil Modal-->
+ <div class="modal fade" id="modalPerfil" tabindex="-1" role="dialog" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Perfil de usuario</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <?php echo $_SESSION['nombre']; ?>
+                    <?php echo $_SESSION['user']; ?>
+                    
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>

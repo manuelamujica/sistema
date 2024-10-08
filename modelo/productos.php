@@ -14,6 +14,9 @@ class Productos extends PDO{
     private $fecha;
     private $lote;
     private $status;
+    #presentacion
+    private $presentacion;
+    private $cant_presentacion;
 
     public function __construct(){
         $this -> conex = new Conexion();
@@ -75,29 +78,52 @@ class Productos extends PDO{
     public function setstatus($status){
         $this->status=$status;
     }
+#Presentacion
+    public function getPresentacion(){
+        return $this->presentacion;
+    }
+    public function setPresentacion($presentacion){
+        $this->presentacion = $presentacion;
+    }
+    public function getCantPresentacion(){
+        return $this->cant_presentacion;
+    }
+    public function setCantPresentacion($cant_presentacion){
+        $this->cant_presentacion = $cant_presentacion;
+    }
+
 #4) Metodos CRUD, etc
 
 /*==============================
-REGISTRAR PRODUCTO
+REGISTRAR PRODUCTO + categoria, unidad y su presentacion
 ================================*/
 private function registrar($unidad, $categoria){ 
 
-    $registro = "INSERT INTO productos(cod_unidad,cod_categoria,nombre,costo,excento,marca,porcen_venta) VALUES(:cod_unidad,:cod_categoria,:nombre, :costo, :excento, :marca,:porcen_venta)";
+    $registro = "INSERT INTO productos(cod_categoria,nombre,costo,excento,marca,porcen_venta) VALUES(:cod_categoria,:nombre, :costo, :excento, :marca,:porcen_venta)";
     
     #instanciar el metodo PREPARE no la ejecuta, sino que la inicializa
     $strExec = $this->conex->prepare($registro);
 
     #instanciar metodo bindparam
-    $strExec->bindParam(':nombre', $this->$unidad);
-    $strExec->bindParam(':apellido', $this->$categoria);
+    $strExec->bindParam(':cod_categoria',$categoria);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':costo', $this->costo);
     $strExec->bindParam(':excento', $this->excento);
     $strExec->bindParam(':marca', $this->marca);
-
+    $strExec->bindParam(':porcen_venta', $this->ganancia);
     $resul = $strExec->execute();
+
     if($resul){
-        $r = 1;
+        $nuevo_cod=$this->conex->lastInsertId();     #Obtiene el código del último producto creado
+            $sqlproducto = "INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion)";  
+            $strExec=$this->conex->prepare($sqlproducto);
+            $strExec->bindParam(':cod_unidad',$unidad);
+            $strExec->bindParam(':cod_producto',$nuevo_cod);
+            $strExec->bindParam(':presentacion',$this->presentacion);
+            $strExec->bindParam(':cantidad_presentacion',$this->cant_presentacion);
+
+            $execute=$strExec->execute();
+        $r=1;
     }else{
         $r = 0;
     }
@@ -106,6 +132,42 @@ private function registrar($unidad, $categoria){
 
 public function getRegistrar($unidad,$categoria){
     return $this->registrar($unidad,$categoria);
+}
+
+/*==============================
+MOSTRAR PRODUCTO + categoria, unidad y su presentación
+================================*/
+
+public function mostrar(){
+
+    $sql = "SELECT
+    p.cod_producto,
+    p.nombre,
+    p.costo,
+    p.marca,
+    p.excento,
+    p.porcen_venta,
+    c.nombre AS cat_nombre,
+    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion #Concatena
+    FROM productos AS p
+    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+    JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+    GROUP BY p.cod_producto;"; #Se agrupa por el código de producto para que no se duplique la consulta
+    $consulta = $this->conex->prepare($sql);
+    $resul = $consulta->execute();
+
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    if($resul){
+        return $datos;
+    }else{
+        return [];
+    }
+}
+
+public function getmostrar(){
+    return $this->mostrar();
 }
 
 

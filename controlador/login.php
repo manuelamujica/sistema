@@ -9,7 +9,7 @@ $objuser= new Usuario();
 if(isset($_POST["ingresar"])){
 
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
-	preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingPassword"])){ //REVISAR
+	preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingPassword"])){ //Pendiente validar caracteres especiales...
 
 		$item = "user";
 		$valor = $_POST["ingUsuario"];
@@ -37,8 +37,8 @@ if(isset($_POST["ingresar"])){
 			$_SESSION["reporte"]=0;
 			$_SESSION["configuracion"]=0;
 
-			//obtenemos los permisos asociados al usuario
-			$accesos=$objuser->accesos($respuesta["cod_usuario"]);
+			//Obtenemos los permisos asociados al usuario
+			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
 			foreach($accesos as $cod_permiso){
 				if ($cod_permiso["cod_permiso"] == 1) {
 					$_SESSION["producto"] = 1;
