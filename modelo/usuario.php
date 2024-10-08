@@ -84,8 +84,9 @@ public function accesos($valor){
         INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
         INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario
         INNER JOIN permisos p ON tp.cod_permiso = p.cod_permiso
-        WHERE u.cod_usuario = $valor;";
+        WHERE u.cod_usuario = :valor;";
     $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':valor', $valor, PDO::PARAM_INT); #sentencia preparada... ?
     $resul=$strExec->execute();
     $datos=$strExec->fetchAll(PDO::FETCH_ASSOC);
     if($resul){
@@ -98,7 +99,7 @@ public function accesos($valor){
 
 
 /*==============================
-REGISTRAR CATEGORIA
+REGISTRAR USUARIO
 ================================*/
 private function registrar($rol){
 
