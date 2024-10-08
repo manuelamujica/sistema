@@ -159,7 +159,6 @@ require_once "controlador/usuarios.php";
                                         </div>
                                         <label for="roles">Rol</label>
                                                 <select class="form-control" id="roles" name="roles" required>
-                        
                                                     <?php foreach($roles as $role): ?>
                                                         <option value="<?php echo $role['cod_tipo_usuario']; ?>">
                                                             <?php echo $role['rol']; ?>

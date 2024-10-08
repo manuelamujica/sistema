@@ -66,6 +66,12 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
     color: #ffffff;
 }
 
+/* MODAL-CARD HEADER*/
+.modal-header{
+    background-color: #db6a00;
+    color: #ffffff;
+}
+
 
 /* FOOTER*/
 .main-footer {
