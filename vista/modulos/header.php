@@ -23,7 +23,7 @@
     <!-- Navbar LINKS DERECHA -->
     <ul class="navbar-nav ml-auto">
 
-    <!-- Navbar BUSCADOR -->
+    <!-- Navbar BUSCADOR 
     <li class="nav-item">
         <a class="nav-link" data-widget="navbar-search" href="#" role="button">
         <i class="fas fa-search"></i>
@@ -43,7 +43,7 @@
             </div>
         </form>
         </div>
-    </li>
+    </li>-->
 
     <!-- Navbar FULLSCREEN -->
     <li class="nav-item">

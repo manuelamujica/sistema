@@ -119,7 +119,7 @@ require_once "controlador/productos.php";
                                             </div>
                                             <div class="col-6">
                                                 <label for="marca">Marca</label>
-                                                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca" required>
+                                                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -181,43 +181,73 @@ require_once "controlador/productos.php";
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
                                         </div>
-                                          <div class="modal-footer justify-content-between">
+                                        <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-                        </div>                
+                        </div>
+                    </div>
+<?php if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'productos';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+<!-- =============================
+    MODAL EDITAR PRODUCTO 
+================================== -->
+                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editForm" method="post">
+                                        <div class="form-group">
+                                            <label for="codigo">Código</label>
+                                            <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="codigo">Nombre</label>
+                                            <input type="text" class="form-control" id="name" name="nombre">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>  
             </div>      
         </section>
 </div>
 
-<!-- ====================
- AGREGANDO PRECIO DE VENTA
- ========================== -->
- <script>
-    $('#costo, #porcen').on('input', function() {
-        
-    // Capturar el valor del porcentaje
-        var valorPorcentaje = Number($('#porcen').val());
 
-    // Capturar el valor de costo
-        var costo = Number($('#costo').val());
 
-    // Verifica que ambos valores sean válidos (no NaN)
-        if (!isNaN(costo) && !isNaN(valorPorcentaje)) {
-        // Calcular el valor final
-        var precioVenta = (valorPorcentaje / 100 + 1) * costo;
-        
-        $('#precio').val(precioVenta.toFixed(2)); // Mostrar en el id precio el resultado obtenido con dos decimales
-        //$('#precio').prop('readonly',true); // Cambiar la propiedad del input precio venta a solo lectura
-
-    } else{
-        $('#precio').Number('0'); // Si NAN entonces precio es 0
-    }
-});
-
-</script>
+<script src="vista/dist/js/modulos-js/productos.js"></script>

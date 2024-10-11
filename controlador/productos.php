@@ -16,13 +16,13 @@ $unidad = $objUnidad->consultarUnidad();  // Obtener las unidades de medida para
 
 if (isset($_POST['guardar'])){
 
-    if(!empty($_POST["nombre"]) && !empty($_POST["marca"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"] && !empty($_POST["costo"]))){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"] && !empty($_POST["costo"]))){
 
         $objProducto->setNombre($_POST["nombre"]);
         $objProducto->setMarca($_POST["marca"]);
         $objProducto->setCosto($_POST["costo"]);
         $objProducto->setExcento($_POST["iva"]);
-        $objProducto->setGanancia($_POST["porcentaje"]);
+        $objProducto->setGanancia($_POST["porcen"]);
         $objProducto->setPresentacion($_POST["presentacion"]);
         $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
 
@@ -32,18 +32,24 @@ if (isset($_POST['guardar'])){
         $result=$objProducto->getregistrar($unidad, $categoria);
 
         if($result == 1){
-            echo "<script>
-            alert('Registrado con exito');
-            location = 'productos' </script>";
+            $registrar = [
+            "title" => "Registrado con éxito",
+            "message" => "El producto ha sido registrado",
+            "icon" => "success"
+            ];
     }else{
-            echo "<script>
-            alert('No se pudo completar el registro');
-            location = 'productos' </script>";
+            $registrar = [
+                "title" => "Error",
+                "message" => "Hubo un error al registrar el producto",
+                "icon" => "error"
+            ];
         }
     } else{
-        echo "<script>
-        alert('Completa todos los campos');
-        location = 'productos' </script>";
+        $registrar = [
+            "title" => "Error",
+            "message" => "Completa todos los campos",
+            "icon" => "error"
+        ];
     }
 }
 
