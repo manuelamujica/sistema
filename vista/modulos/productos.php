@@ -61,8 +61,9 @@ require_once "controlador/productos.php";
                                             <td> <?php echo $producto["cat_nombre"] ?></td>
                                             <td> <?php echo $producto["costo"] ?></td>
                                             <td> <?php echo $producto["excento"] ?></td>
-                                            <td> <?php echo $producto["porcen_venta"] ?></td>
-                                            <td> Stock total</td>
+                                            <td><?php $precioVenta = ($producto["porcen_venta"] / 100 + 1)*$producto["costo"]; echo $precioVenta?>
+                                            </td>
+                                            <td>Stock total</td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" style="position: center;">

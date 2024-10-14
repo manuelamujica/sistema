@@ -137,7 +137,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="deventas" class="nav-link">
+                            <a href="rep-inventario" class="nav-link">
                                 <i class="fas fa-pallet nav-icon"></i>                                        
                                     <p>
                                         De inventario

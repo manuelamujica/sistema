@@ -17,7 +17,7 @@
         //$('#precio').prop('readonly',true); // Cambiar la propiedad del input precio venta a solo lectura
 
     } else{
-        $('#precio').Number('0'); // Si NAN entonces precio es 0
+        $('#precio').val('0'); // Si NAN entonces precio es 0
     }
 });
 
