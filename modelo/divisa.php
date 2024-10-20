@@ -6,6 +6,8 @@ class Divisa extends Conexion{
     private $simbolo;
     private $conex;
     private $status;
+    private $tasa;
+    private $fecha;
 
 
     public function __construct(){
@@ -21,6 +23,13 @@ class Divisa extends Conexion{
         $strExec->bindParam(':abreviatura', $this->simbolo);
         $resul=$strExec->execute();
         if ($resul){
+            $ultimo_cod= $this->conex->lastInsertId();
+            $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha, status) VALUES (:cod_divisa, :tasa, :fecha, 1)";
+            $strExec=$this->conex->prepare($sqlCambio);
+            $strExec->bindParam(':cod_divisa', $ultimo_cod);
+            $strExec->bindParam(':tasa', $this->tasa);
+            $strExec->bindParam(':fecha', $this->fecha);
+            $strExec->execute();
             $res=1;
         }else{
             $res=0;
@@ -29,7 +38,8 @@ class Divisa extends Conexion{
     }
 
     public function consultar(){
-        $registro="select * from divisas";
+        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha, c.status AS cambio_status FROM divisas AS d 
+        JOIN cambio_divisa AS c ON d.cod_divisa = c.cod_divisa ORDER BY d.cod_divisa;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -65,6 +75,11 @@ class Divisa extends Conexion{
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
         if($resul){
+            $sql2 = "UPDATE cambio_divisa SET tasa = :tasa, fecha = :fecha WHERE cod_divisa = $valor";
+            $strExec = $this->conex->prepare($sql2);
+            $strExec->bindParam(':tasa', $this->tasa);
+            $strExec->bindParam(':fecha', $this->fecha);
+            $strExec->execute();
             $r = 1;
         }else{
             $r = 0;
@@ -73,7 +88,7 @@ class Divisa extends Conexion{
     }
 
     public function eliminar($valor){
-        $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN cambio_ventas cv ON cd.cod_cambio = cv.cod_cambio WHERE cd.cod_divisa = $valor";
+        $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN tipo_pago tp ON cd.cod_cambio = tp.cod_cambio WHERE cd.cod_divisa = $valor";
         $strExec = $this->conex->prepare($registro);
         $resul = $strExec->execute();
         if($resul){
@@ -103,6 +118,12 @@ class Divisa extends Conexion{
     public function setstatus($valor){
         $this->status = $valor;
     }
+    public function set_tasa($valor){
+        $this->tasa = $valor;
+    }
+    public function setfecha($valor){
+        $this->fecha = $valor;
+    }
 
     public function getnombre(){
         return $this->nombre;
@@ -112,5 +133,11 @@ class Divisa extends Conexion{
     }
     public function getStatus(){
         return $this->status;
+    }
+    public function get_tasa(){
+        return $this->tasa;
+    }
+    public function getfecha(){
+        return $this->fecha;
     }
 }

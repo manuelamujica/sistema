@@ -139,23 +139,25 @@
                 </button>
             </div>
             <div class="modal-body">
+                <form method="post">
                 <div class="container-fluid">
                     <div class="row">
                         <!-- Información del Cliente y Nro de Venta -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="cedula-rif">Cédula/RIF</label>
-                                <input type="text" class="form-control form-control-sm" id="cedula-rif" placeholder="Cédula o RIF">
+                                <input type="text" class="form-control form-control-sm" id="cedula-rif" name="cedula-rif" placeholder="Cédula o RIF">
+                                <input type="hidden" id="cod_cliente" name="cod_cliente">
                             </div>
                             <div class="form-group">
                                 <label for="nombre-cliente">Numero de telefono</label>
-                                <input type="text" class="form-control form-control-sm" id="numero-cliente" placeholder="Nombre del cliente">
+                                <input type="text" class="form-control form-control-sm" id="numero-cliente" name="numero-cliente" placeholder="Nombre del cliente" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nombre-cliente">Nombre del Cliente</label>
-                                <input type="text" class="form-control form-control-sm" id="nombre-cliente" placeholder="Nombre del cliente">
+                                <input type="text" class="form-control form-control-sm" id="nombre-cliente" name="nombre-cliente" placeholder="Nombre del cliente" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="numero">Nro Venta</label>
@@ -275,7 +277,7 @@
                     </div>
                     <!-- Botón para agregar más filas de productos -->
                     <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar Producto</button>
-                    <div class="card card-outline card-primary float-right" style="width: 300px;">
+                    <div class="card card-outline card-primary float-right" style="width: 500px;">
                         <div class="card-body">
                             <div class="total-venta text-right">
                                 <p>Subtotal: S/ <span id="subtotal" class="text-bold">0.00</span></p>
@@ -287,6 +289,7 @@
                         </div>
                     </div>
                 </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -459,6 +462,19 @@ function actualizarResumen() {
 }
 
 
+$('#cedula-rif').blur(function (e){
+        var buscar=$('#cedula-rif').val();
+        $.post('index.php?pagina=clientes', {buscar}, function(response){
+            var nombre=response['nombre']+" "+response['apellido'];
+            var telefono=response['telefono'];
+            var apellido=response['apellido'];
+            var codigo=response['cod_cliente'];
 
+            var modal = $('#ventaModal');
+            modal.find('.modal-body #numero-cliente').val(telefono);
+            modal.find('.modal-body #nombre-cliente').val(nombre);
+            modal.find('.modal-body #cod_cliente').val(codigo);
+        },'json');
+    });
 
 </script>

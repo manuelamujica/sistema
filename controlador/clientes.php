@@ -1,4 +1,5 @@
 <?php
+
 require_once 'modelo/clientes.php'; 
 
 $objCliente = new Clientes(); 
@@ -13,9 +14,9 @@ if(isset($_POST['buscar'])){
     exit;
 }else if (isset($_POST['guardar'])){ 
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
-            $cedula=$_POST["cedula_rif"];
-            $dato=$objCliente->buscar($cedula);
-            if(!$dato){
+        $cedula=$_POST["cedula_rif"];
+        $dato=$objCliente->buscar($cedula);
+        if(!$dato){
             $objCliente->setNombre($_POST["nombre"]);
             $objCliente->setApellido($_POST["apellido"]);
             $objCliente->setCedula($_POST["cedula_rif"]);
@@ -36,16 +37,13 @@ if(isset($_POST['buscar'])){
                     "message" => "Hubo un problema al registrar el cliente",
                     "icon" => "error"
                 ];
-                }
             }
+        }
     }
 }else if(isset($_POST['actualizar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
         if($_POST['cedula_rif'] !== $_POST['origin'] && $objCliente->buscar($_POST['cedula_rif'])){
-            echo "<script>
-                alert('la cedula ya esta registrada');
-                window.location = 'clientes'
-            </script>";
+
         }else {
             $objCliente->setNombre($_POST["nombre"]);
             $objCliente->setApellido($_POST["apellido"]);
@@ -91,5 +89,10 @@ if(isset($_POST['buscar'])){
 
 
 $registro = $objCliente->consultar();
-$_GET['ruta'] = 'clientes';
+if(isset($_POST["vista"])){
+    $_GET['ruta'] = 'venta';
+    //exit();
+}else{
+    $_GET['ruta'] = 'clientes';
+}
 require_once 'plantilla.php';

@@ -138,8 +138,8 @@ require_once "controlador/productos.php";
                                                 <label for="excento">¿Tiene IVA?</label>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
-                                                        <option value="si">Si</option>
-                                                        <option value="no">No</option>
+                                                        <option value="2">Si</option>
+                                                        <option value="1">No</option>
                                                     </select>
                                             </div>
                                         </div>
@@ -181,7 +181,7 @@ require_once "controlador/productos.php";
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
                                         </div>
-                                          <div class="modal-footer justify-content-between">
+                                        <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
                                         </div>

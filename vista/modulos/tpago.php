@@ -35,9 +35,9 @@
                         <table id="paymentTypesTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>id</th>
-                                    <th>Nombre</th>
-                                    <!--<th>Moneda</th>-->
+                                    <th>Codigo</th>
+                                    <th>Metodo de pago</th>
+                                    <th>Divisa</th>
                                     <th>Status</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -45,12 +45,13 @@
                             <tbody>
                                 <!-- Aquí se llenará la tabla dinámicamente con PHP -->
                                 <?php foreach ($registro as $dato) { ?>
-                                <?php if ($dato['status'] != 2): ?>
+                                <?php if ($dato['status_pago'] != 2): ?>
                                 <tr>
                                     <td><?php echo $dato['cod_tipo_pago']?></td>
                                     <td><?php echo $dato['medio_pago']?></td>
+                                    <td><?php echo $dato['abreviatura']?></td>
                                     <td>
-                                        <?php if ($dato['status']==1):?>
+                                        <?php if ($dato['status_pago']==1):?>
                                             <span class="badge bg-success">Activo</span>
                                         <?php else:?>
                                             <span class="badge bg-danger">Inactivo</span>
@@ -60,7 +61,9 @@
                                     <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
                                     data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
                                     data-medio="<?php echo $dato["medio_pago"]; ?>" 
-                                    data-status="<?php echo $dato["status"]; ?>" >
+                                    data-divisa="<?php echo $dato["abreviatura"]; ?>" 
+                                    data-nombre="<?php echo $dato["nombre"]; ?>"
+                                    data-status="<?php echo $dato["status_pago"]; ?>" >
                                     <i class="fas fa-pencil-alt"></i>
                                     </button>
                                     <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
@@ -103,6 +106,15 @@
                         <div class="form-group">
                             <label for="paymentTypeName">Nombre del Tipo de Pago</label>
                             <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="divisa">Seleccionar Divisa</label>
+                            <select class="form-control" id="divisa" name="divisa" required>
+                                <option value="" disabled selected>Seleccione una divisa</option>
+                                <?php foreach ($divisas as $divisa): ?>
+                                    <option value="<?= $divisa['cod_cambio']; ?>"><?= $divisa['nombre']." - ". $divisa['abreviatura']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -152,6 +164,10 @@ MODAL EDITAR TIPO DE PAGO
                         <label for="tpago">Tipo de Pago</label>
                         <input type="text" class="form-control" id="tpago" name="tpago" required>
                         <input type="hidden" id="origin" name="origin">
+                    </div>
+                    <div class="form-group">
+                        <label for="divisa">Divisa</label>
+                        <input type="text" class="form-control" id="divisa1" readonly>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -250,11 +266,13 @@ $('#editModal').on('show.bs.modal', function (event) {
     var tpago = button.data('medio');
     var status = button.data('status');
     var origin = button.data('medio');
+    var nombre = button.data('nombre')+" - "+button.data('divisa');
     // Modal
     var modal = $(this);
     modal.find('.modal-body #codigo').val(codigo);
     modal.find('.modal-body #tpago').val(tpago);
     modal.find('.modal-body #status').val(status);
+    modal.find('.modal-body #divisa1').val(nombre);
     modal.find('.modal-body #origin').val(origin);
 });
 
