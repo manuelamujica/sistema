@@ -22,7 +22,7 @@ if (isset($_POST['guardar'])){
         $objProducto->setMarca($_POST["marca"]);
         $objProducto->setCosto($_POST["costo"]);
         $objProducto->setExcento($_POST["iva"]);
-        $objProducto->setGanancia($_POST["porcentaje"]);
+        $objProducto->setGanancia($_POST["porcen"]);
         $objProducto->setPresentacion($_POST["presentacion"]);
         $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
 

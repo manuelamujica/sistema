@@ -12,12 +12,12 @@ class Tpago extends Conexion{
         $this->conex=$this->conex->conectar();
     }
 
-    public function incluir(){
-        $registro="INSERT INTO tipo_pago(medio_pago, status) VALUES(:medio_pago, 1)";
+    public function incluir($valor){
+        $registro="INSERT INTO tipo_pago(cod_cambio, medio_pago, status) VALUES(:cod_cambio, :medio_pago, 1)";
 
         $strExec=$this->conex->prepare($registro);
         $strExec->bindParam(':medio_pago', $this->metodo);
-        //$strExec->bindParam(':moneda', $this->moneda);
+        $strExec->bindParam(':cod_cambio', $valor);
         $resul=$strExec->execute();
         if ($resul){
             $res=1;
@@ -28,7 +28,9 @@ class Tpago extends Conexion{
     }
 
     public function consultar(){
-        $registro="select * from tipo_pago";
+        $registro="SELECT tp.cod_tipo_pago, tp.medio_pago, tp.status AS status_pago, d.cod_divisa, d.nombre, d.abreviatura, d.status AS status_divisa, cd.cod_cambio FROM tipo_pago tp 
+        JOIN cambio_divisa cd ON tp.cod_cambio = cd.cod_cambio 
+        JOIN divisas d ON cd.cod_divisa = d.cod_divisa ORDER BY tp.cod_tipo_pago;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
