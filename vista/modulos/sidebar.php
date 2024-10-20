@@ -19,6 +19,7 @@
 <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <?php if ($_SESSION["producto"]==1): ?>
                 <li class="nav-item">
                     <a href="productos" class="nav-link">
                         <i class="nav-icon fa fa-shopping-bag"></i>
@@ -27,6 +28,7 @@
                         </p>
                     </a>
                 </li>
+                <?php endif;?>
 
                 <?php if ($_SESSION["inventario"]==1): ?>
                 <li class="nav-item">
@@ -52,7 +54,8 @@
                         </ul>
                 </li>
                 <?php endif; ?>
-
+                
+                <?php if ($_SESSION["categoria"]==1): ?>
                 <li class="nav-item">
                     <a href="categorias" class="nav-link">
                         <i class="nav-icon fa fa-table"></i>
@@ -61,6 +64,7 @@
                             </p>
                     </a>
                 </li>
+                <?php endif;?>
 
                 <?php if ($_SESSION["compra"]==1): ?>
                 <li class="nav-item">
@@ -75,14 +79,16 @@
 
                 <?php if ($_SESSION["venta"]==1): ?>
                 <li class="nav-item">
-                    <a href="venta2" class="nav-link">
+                    <a href="venta" class="nav-link">
                         <i class="nav-icon fa fa-file"></i>
                             <p>
                                 Ventas 
                             </p>
                     </a>
                 </li>
+                <?php endif;?>
 
+                <?php if ($_SESSION["cliente"]==1): ?>
                 <li class="nav-item">
                     <a href="clientes" class="nav-link">
                         <i class="nav-icon fa fa-users"></i>
@@ -93,7 +99,7 @@
                 </li>
                 <?php endif; ?>
 
-                <?php if ($_SESSION["compra"]==1): ?>
+                <?php if ($_SESSION["proveedor"]==1): ?>
                 <li class="nav-item">
                     <a href="proveedores" class="nav-link">
                         <i class="nav-icon far fa fa-truck"></i>
@@ -104,6 +110,7 @@
                 </li>
                 <?php endif; ?>
 
+                <?php if ($_SESSION["usuario"]==1): ?>
                 <li class="nav-item">
                     <a href="usuarios" class="nav-link">
                         <i class="nav-icon fas fa-user"></i>
@@ -112,6 +119,9 @@
                             </p>
                     </a>
                 </li>
+                <?php endif;?>
+
+                <?php if ($_SESSION["reporte"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fas fa-chart-line nav-icon"></i>
@@ -162,6 +172,7 @@
                         </li>
                     </ul>
                 </li>
+                <?php endif;?>
 
                 <?php if ($_SESSION["configuracion"]==1): ?>
                 <li class="nav-item">

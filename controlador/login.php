@@ -26,22 +26,40 @@ if(isset($_POST["ingresar"])){
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
 
-			$_SESSION["configuracion"]=0;
+			$_SESSION["producto"]=0;
 			$_SESSION["inventario"]=0;
+			$_SESSION["categoria"]=0;
 			$_SESSION["venta"]=0;
 			$_SESSION["compra"]=0;
+			$_SESSION["cliente"]=0;
+			$_SESSION["proveedor"]=0;
+			$_SESSION["usuario"]=0;
+			$_SESSION["reporte"]=0;
+			$_SESSION["configuracion"]=0;
 
 			//Obtenemos los permisos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
 			foreach($accesos as $cod_permiso){
 				if ($cod_permiso["cod_permiso"] == 1) {
-					$_SESSION["configuracion"] = 1;
+					$_SESSION["producto"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 2) {
 					$_SESSION["inventario"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 3) {
-					$_SESSION["venta"] = 1;
+					$_SESSION["categoria"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 4) {
 					$_SESSION["compra"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 5) {
+					$_SESSION["venta"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 6) {
+					$_SESSION["cliente"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 7) {
+					$_SESSION["proveedor"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 8) {
+					$_SESSION["usuario"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 9) {
+					$_SESSION["reporte"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 10) {
+					$_SESSION["configuracion"] = 1;
 				}
 			}
 			

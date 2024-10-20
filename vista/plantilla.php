@@ -1,7 +1,6 @@
 <?php
 session_start();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -95,9 +94,9 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "general" ||
     $_GET["ruta"] == "clientes" ||
     $_GET["ruta"] == "roles" ||
-    $_GET["ruta"] == "venta2" ||
-    $_GET["ruta"] == "cerrarsesion" || 
-    $_GET["ruta"] == "rep-inventario"){
+    $_GET["ruta"] == "rep-inventario")
+    $_GET["ruta"] == "venta" ||
+    $_GET["ruta"] == "cerrarsesion"){
       
       include "modulos/". $_GET["ruta"] . ".php";
     } else {

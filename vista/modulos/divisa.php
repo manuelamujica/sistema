@@ -36,9 +36,11 @@
                         <table id="paymentTypesTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
+                                    <th>Codigo</th>
                                     <th>Nombre</th>
                                     <th>Símbolo/Abreviatura</th>
+                                    <th>Tasa</th>
+                                    <th>Utima actualizacion</th>
                                     <th>Status</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -46,13 +48,15 @@
                             <tbody>
                                 <!-- Aquí se llenará la tabla dinámicamente con PHP -->
                                 <?php foreach ($consulta as $divisa) { ?>
-                                <?php if ($divisa['status'] != 2): ?>
+                                <?php if ($divisa['divisa_status'] != 2): ?>
                                 <tr>
                                     <td><?php echo $divisa['cod_divisa']?></td>
                                     <td><?php echo $divisa['nombre']?></td>
                                     <td><?php echo $divisa['abreviatura'] ?></td>
+                                    <td><?php echo $divisa['tasa']."  Bs" ?></td>
+                                    <td><?php echo $divisa['fecha'] ?></td>
                                     <td>
-                                        <?php if ($divisa['status']==1):?>
+                                        <?php if ($divisa['divisa_status']==1):?>
                                             <span class="badge bg-success">Activo</span>
                                         <?php else:?>
                                             <span class="badge bg-danger">Inactivo</span>
@@ -63,7 +67,8 @@
                                     data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
                                     data-nombre="<?php echo $divisa["nombre"]; ?>" 
                                     data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
-                                    data-status="<?php echo $divisa["status"]; ?>" >
+                                    data-tasa="<?php echo $divisa["tasa"]; ?>"
+                                    data-status="<?php echo $divisa["divisa_status"]; ?>" >
                                     <i class="fas fa-pencil-alt"></i>
                                     </button>
                                     <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminardivisa"
@@ -104,12 +109,27 @@
         <form role="form" method="post">
         <div class="modal-body">
             <div class="form-group">
-            <label for="nombre">Nombre de la Divisa</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                <label for="nombre">Nombre de la Divisa</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
             </div>
             <div class="form-group">
-            <label for="simbolo">Símbolo o Abreviatura</label>
-            <input type="text" class="form-control" id="simbolo" name="simbolo" required>
+                <label for="simbolo">Símbolo o Abreviatura</label>
+                <input type="text" class="form-control" id="simbolo" name="simbolo" required>
+            </div>
+        </div>
+        <div class="form-group row justify-content-center">
+            <div class="col-md-6">
+                <label for="tasa">Tasa de la Divisa</label>
+                <div class="input-group">
+                    <input type="number" step="0.01" class="form-control" id="tasa" name="tasa" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text">Bs</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label for="fecha">Fecha</label>
+                <input type="date" class="form-control" id="fecha" name="fecha" required>
             </div>
         </div>
         <div class="modal-footer justify-content-between">
@@ -122,7 +142,21 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-
+<?php
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'divisa';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL EDITAR DIVISA
@@ -152,6 +186,21 @@ MODAL EDITAR DIVISA
                         <label for="abreviatura">Símbolo o Abreviatura</label>
                         <input type="text" class="form-control" id="abreviatura" name="abreviatura" required>
                     </div>
+                    <div class="form-group row justify-content-center">
+                        <div class="col-md-7">
+                            <label for="tasa">Tasa de la Divisa</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control" id="tasa1" name="tasa" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Bs</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" id="status" name="status">
@@ -168,6 +217,21 @@ MODAL EDITAR DIVISA
         </div>
     </div>
 </div>
+<?php 
+if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'divisa';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL CONFIRMAR ELIMINAR 
@@ -195,6 +259,20 @@ MODAL CONFIRMAR ELIMINAR
         </div>
     </div>
 </div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'divisa';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <script>
 $('#nombre').blur(function (e){
@@ -221,6 +299,7 @@ $('#editModal').on('show.bs.modal', function (event) {
     var nombre = button.data('nombre');
     var origi = button.data('nombre');
     var abreviatura = button.data('abreviatura');
+    var tasa = button.data('tasa');
     var status = button.data('status');
 
     // Modal
@@ -228,6 +307,7 @@ $('#editModal').on('show.bs.modal', function (event) {
     modal.find('.modal-body #codigo').val(codigo);
     modal.find('.modal-body #nombre1').val(nombre);
     modal.find('.modal-body #abreviatura').val(abreviatura);
+    modal.find('.modal-body #tasa1').val(tasa);
     modal.find('.modal-body #status').val(status);
     modal.find('.modal-body #origin').val(origi);
 });

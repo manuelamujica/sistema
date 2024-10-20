@@ -10,25 +10,25 @@ if(isset($_POST['buscar'])){
     echo json_encode($result);
     exit;
 }else if(isset($_POST["guardar"])){
-    if(!empty($_POST["tipo_medida"]) && !empty($_POST['presentacion']) && !empty($_POST['cantidad_presentacion'])){
-        if(!$objUnidad->buscar($_POST['presentacion'])){
+    if(!empty($_POST["tipo_medida"])){
+        if(!$objUnidad->buscar($_POST['tipo_medida'])){
         #Instanciar los setter
         $objUnidad->setTipo($_POST["tipo_medida"]);
-        $objUnidad->setPresentacion($_POST["presentacion"]);
-        $objUnidad->setCantidad($_POST["cantidad_presentacion"]);
-        
         $resul=$objUnidad->getcrearUnidad();
 
         if($resul == 1){
-            echo    "<script>
-                        alert('Registrado con éxito');
-                        window.location = 'unidad';
-                    </script>";
-        } else {
-            echo    "<script>
-                        alert('¡Las unidades de medida no pueden ir vacía o llevar caracteres especiales!');
-                    </script>";
-            }
+            $registrar = [
+                "title" => "Registrado con éxito",
+                "message" => "la unidad de medida ha sido registrada",
+                "icon" => "success"
+            ];
+        }else{
+            $registrar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al registrar la unidad de medida",
+                "icon" => "error"
+            ];
+        }
         } 
     }
 

@@ -8,22 +8,25 @@ if(isset($_POST['buscar'])){
     echo json_encode($result);
     exit;
 }else if(isset($_POST['registrar'])){
-    if(!empty($_POST['nombre']) && !empty($_POST['simbolo'])){
+    if(!empty($_POST['nombre']) && !empty($_POST['simbolo']) && !empty($_POST['tasa']) && !empty($_POST['fecha'])){
         if(!$obj->buscar($_POST['nombre'])){
             $obj->setnombre($_POST['nombre']);
             $obj->setsimbolo($_POST['simbolo']);
-            
+            $obj->set_tasa($_POST['tasa']);
+            $obj->setfecha($_POST['fecha']);
             $result=$obj->incluir();
             if($result==1){
-                echo "<script>
-                        alert('registado con exito');
-                        window.location = 'divisa'
-                    </script>";
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "La divisa ha sido registrada",
+                    "icon" => "success"
+                ];
             }else {
-                echo "<script>
-                        alert('no se pudo registrar');
-                        window.location = 'divisa'
-                    </script>";
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar la divisa",
+                    "icon" => "error"
+                ];
             }
         }
     }
@@ -38,17 +41,21 @@ if(isset($_POST['buscar'])){
             $obj->setnombre($_POST['nombre']);
             $obj->setsimbolo($_POST['abreviatura']);
             $obj->setstatus($_POST['status']);
+            $obj->set_tasa($_POST['tasa']);
+            $obj->setfecha($_POST['fecha']);
             $result=$obj->editar($_POST['codigo']);
             if($result==1){
-                echo "<script>
-                        alert('modificado con exito');
-                        window.location = 'divisa'
-                    </script>";
+                $editar = [
+                    "title" => "Editado con éxito",
+                    "message" => "La divisa ha sido actualizada",
+                    "icon" => "success"
+                ];
             }else {
-                echo "<script>
-                        alert('no se pudo modificar');
-                        window.location = 'divisa'
-                    </script>";
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al editar la divisa",
+                    "icon" => "error"
+                ];
             }
         }
     }
@@ -56,11 +63,17 @@ if(isset($_POST['buscar'])){
     if(!empty($_POST['divisaCodigo'])){
     $result = $obj->eliminar($_POST["divisaCodigo"]);
         if($result == 1){
-            echo "<script>alert('se ha eliminado con exito');
-            window.location = 'divisa' </script>";
+            $eliminar = [
+                "title" => "Eliminado con éxito",
+                "message" => "La divisa ha sido eliminada",
+                "icon" => "success"
+            ];
         }else{
-            echo "<script>alert('No se pudo eliminar');
-            window.location = 'divisa' </script>";
+            $eliminar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al eliminar la divisa",
+                "icon" => "error"
+            ];
         }
     }
 }

@@ -19,74 +19,77 @@
 </div>
 
         <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPaymentTypeModal">
-                                    Registrar Tipo de Pago
-                                </button>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="paymentTypesTable" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>id</th>
-                                            <th>Nombre</th>
-                                            <!--<th>Moneda</th>-->
-                                            <th>Status</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Aquí se llenará la tabla dinámicamente con PHP -->
-                                        <?php foreach ($registro as $dato) { ?>
-                                        <?php if ($dato['status'] != 2): ?>
-                                        <tr>
-                                            <td><?php echo $dato['cod_tipo_pago']?></td>
-                                            <td><?php echo $dato['medio_pago']?></td>
-                                            <td>
-                                                <?php if ($dato['status']==1):?>
-                                                    <span class="badge bg-success">Activo</span>
-                                                <?php else:?>
-                                                    <span class="badge bg-danger">Inactivo</span>
-                                                <?php endif;?>
-                                            </td>
-                                            <td>
-                                            <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
-                                            data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
-                                            data-medio="<?php echo $dato["medio_pago"]; ?>" 
-                                            data-status="<?php echo $dato["status"]; ?>" >
-                                            <i class="fas fa-pencil-alt"></i>
-                                            </button>
-                                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
-                                            data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
-                                            data-medio="<?php echo $dato["medio_pago"]; ?>" >
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                            </td>
-                                        </tr>
-                                        <?php endif; ?>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.reponsive -->
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPaymentTypeModal">
+                            Registrar Tipo de Pago
+                        </button>
                     </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="paymentTypesTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Metodo de pago</th>
+                                    <th>Divisa</th>
+                                    <th>Status</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Aquí se llenará la tabla dinámicamente con PHP -->
+                                <?php foreach ($registro as $dato) { ?>
+                                <?php if ($dato['status_pago'] != 2): ?>
+                                <tr>
+                                    <td><?php echo $dato['cod_tipo_pago']?></td>
+                                    <td><?php echo $dato['medio_pago']?></td>
+                                    <td><?php echo $dato['abreviatura']?></td>
+                                    <td>
+                                        <?php if ($dato['status_pago']==1):?>
+                                            <span class="badge bg-success">Activo</span>
+                                        <?php else:?>
+                                            <span class="badge bg-danger">Inactivo</span>
+                                        <?php endif;?>
+                                    </td>
+                                    <td>
+                                    <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
+                                    data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
+                                    data-medio="<?php echo $dato["medio_pago"]; ?>" 
+                                    data-divisa="<?php echo $dato["abreviatura"]; ?>" 
+                                    data-nombre="<?php echo $dato["nombre"]; ?>"
+                                    data-status="<?php echo $dato["status_pago"]; ?>" >
+                                    <i class="fas fa-pencil-alt"></i>
+                                    </button>
+                                    <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
+                                    data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
+                                    data-medio="<?php echo $dato["medio_pago"]; ?>" >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    </td>
+                                </tr>
+                                <?php endif; ?>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.reponsive -->
+                    </div>
+                    <!-- /.card-body -->
                 </div>
-            </div><!-- /.container-fluid -->
-        </section>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
         <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
+</div>
+<!-- /.content-wrapper -->
 
     <!-- Modal para registrar tipo de pago -->
     <div class="modal fade" id="addPaymentTypeModal" tabindex="-1" role="dialog" aria-labelledby="addPaymentTypeModalLabel" aria-hidden="true">
@@ -104,6 +107,15 @@
                             <label for="paymentTypeName">Nombre del Tipo de Pago</label>
                             <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" required>
                         </div>
+                        <div class="form-group">
+                            <label for="divisa">Seleccionar Divisa</label>
+                            <select class="form-control" id="divisa" name="divisa" required>
+                                <option value="" disabled selected>Seleccione una divisa</option>
+                                <?php foreach ($divisas as $divisa): ?>
+                                    <option value="<?= $divisa['cod_cambio']; ?>"><?= $divisa['nombre']." - ". $divisa['abreviatura']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -113,6 +125,21 @@
             </div>
         </div>
     </div>
+    <?php
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'tpago';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL EDITAR TIPO DE PAGO
@@ -139,6 +166,10 @@ MODAL EDITAR TIPO DE PAGO
                         <input type="hidden" id="origin" name="origin">
                     </div>
                     <div class="form-group">
+                        <label for="divisa">Divisa</label>
+                        <input type="text" class="form-control" id="divisa1" readonly>
+                    </div>
+                    <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" id="status" name="status">
                             <option value="1">Activo</option>
@@ -154,6 +185,21 @@ MODAL EDITAR TIPO DE PAGO
         </div>
     </div>
 </div>
+<?php 
+if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'tpago';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL CONFIRMAR ELIMINAR 
@@ -180,6 +226,20 @@ MODAL CONFIRMAR ELIMINAR
         </div>
     </div>
 </div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'tpago';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <script>
 $('#tipo_pago').blur(function (e){
@@ -206,11 +266,13 @@ $('#editModal').on('show.bs.modal', function (event) {
     var tpago = button.data('medio');
     var status = button.data('status');
     var origin = button.data('medio');
+    var nombre = button.data('nombre')+" - "+button.data('divisa');
     // Modal
     var modal = $(this);
     modal.find('.modal-body #codigo').val(codigo);
     modal.find('.modal-body #tpago').val(tpago);
     modal.find('.modal-body #status').val(status);
+    modal.find('.modal-body #divisa1').val(nombre);
     modal.find('.modal-body #origin').val(origin);
 });
 
