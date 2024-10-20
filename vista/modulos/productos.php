@@ -143,7 +143,7 @@ require_once "controlador/productos.php";
                                                                 <?php endforeach; ?>
                                                         </select>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-outline-secondary" type="button" onclick="nuevaCategoria()">+</button>
+                                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaCategoria">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -223,6 +223,35 @@ require_once "controlador/productos.php";
         });
     </script>
 <?php endif; ?>
+<!-- =============================
+    MODAL NUEVA CATEGORIA 
+================================== -->
+    <div class="modal fade" id="modalNuevaCategoria" tabindex="-1" aria-labelledby="modalNuevaCategoriaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrarModalLabel">Registrar categoría</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formNuevaCategoria" method="post">
+                        <div class="form-group">
+                            <label for="nombre">Nombre de la categoría</label>
+                            <input type="text" class="form-control" id="n_categoria" name="n_categoria" placeholder="Ingresa el nombre de la categoría" required>
+                        </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="guardar_categoria">Guardar</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
 <!-- =============================
     MODAL EDITAR PRODUCTO 

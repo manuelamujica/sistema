@@ -1,7 +1,41 @@
 
 function nuevaCategoria() {
-    alert('Mostrar modal');
-    }
+// Manejar el envío del formulario de nueva categoría
+$('#formNuevaCategoria').on('submit', function(e) {
+    e.preventDefault();
+
+    // Obtener el valor del input
+    var nombreCategoria = $('#n_categoria').val();
+
+    // Enviar la nueva categoría usando AJAX
+    $.ajax({
+        url: 'categorias',
+        type: 'POST',
+        data: { nombreCategoria: nombreCategoria },
+
+        success: function(response) {
+
+            // Suponiendo que la respuesta incluye el ID y nombre de la nueva categoría
+            var nuevaCategoria = JSON.parse(response);
+
+            // Agregar la nueva categoría al select de categorías
+            $('#categoria').append('<option value="' + nuevaCategoria.id + '">' + nuevaCategoria.nombre + '</option>');
+
+            // Seleccionar automáticamente la nueva categoría
+            $('#categoria').val(nuevaCategoria.id);
+
+            // Cerrar el modal
+            $('#modalAgregarCategoria').modal('hide');
+
+            // Limpiar el formulario
+            $('#formNuevaCategoria')[0].reset();
+        },
+        error: function() {
+            alert('Error al agregar la categoría. Inténtalo nuevamente.');
+        }
+    });
+});
+}    
 
 function nuevaUnidad() {
     alert('Mostrar modal');
