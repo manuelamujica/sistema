@@ -51,7 +51,7 @@ require_once "controlador/usuarios.php";
                                             <td> <?php echo $usuario["cod_usuario"] ?></td>
                                             <td> <?php echo $usuario["nombre"] ?></td>
                                             <td> <?php echo $usuario["user"] ?></td>
-                                            <td> <?php echo $usuario["cod_tipo_usuario"] ?></td>
+                                            <td> <?php echo $usuario["rol"] ?></td>
                                             <td>
                                                 <?php if ($usuario['status']==1):?>
                                                     <span class="badge bg-success">Activo</span>
@@ -152,6 +152,7 @@ require_once "controlador/usuarios.php";
                                         <div class="form-group">
                                             <label for="codigo">User</label>
                                             <input type="text" class="form-control" id="usuario" name="user">
+                                            <input type="hidden" class="form-control" id="origin" name="origin" > <!--Lo pasamos oculto-->
                                         </div>
                                         <div class="form-group">
                                             <label for="codigo">Contraseña</label>
@@ -213,59 +214,5 @@ require_once "controlador/usuarios.php";
         </div>      
     </section>
 </div>
-<script>
-    //Validar registro
-    $('#user').blur(function (e){
-        var buscar=$('#user').val();
-        $.post('index.php?pagina=usuarios', {buscar}, function(response){
-            if(response != ''){
-                alert('El usuario ya se encuentra registrado');
-            }
-        },'json');
-    });
 
-
-    //Validar editar
-    $('#usuario').blur(function (e){
-        var buscar=$('#usuario').val();
-        $.post('index.php?pagina=usuarios', {buscar}, function(response){
-            if(response != ''){
-                alert('El usuario ya se encuentra registrado');
-            }
-        },'json');
-    });
-
-    //Editar
-    $('#editModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var codigo = button.data('codigo');
-            var nombre = button.data('nombre');
-            var user = button.data('user');
-            var pass = button.data('password') //no muestra obviamente y falta que se actualice con HASH
-            var rol = button.data('cod'); 
-            var status = button.data('status');
-
-            // Modal
-            var modal = $(this); 
-            modal.find('.modal-body #codigo').val(codigo);
-            modal.find('.modal-body #name').val(nombre);
-            modal.find('.modal-body #usuario').val(user);
-            modal.find('.modal-body #password').val(pass);
-            modal.find('.modal-body #roles').val(rol);            
-            modal.find('.modal-body #status').val(status);
-        });
-
-    //Eliminar
-    $('#eliminarModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); 
-        var codigo = button.data('codigo');
-        var nombre = button.data('nombre');
-        //var user = button.data('user');
-        //var pass = button.data('password');
-        //var rol = button.data('cod');        
-
-        var modal = $(this);
-        modal.find('#username').text(nombre);
-        modal.find('.modal-body #usercode').val(codigo);
-    });
-</script>
+<script src="vista/dist/js/modulos-js/usuarios.js"></script>

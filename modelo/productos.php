@@ -3,7 +3,7 @@
 require_once 'conexion.php';
 
 #2) Class + inicializador
-class Productos extends PDO{
+class Productos extends Conexion{
     private $conex;
     private $nombre;
     private $marca;
@@ -135,7 +135,7 @@ public function getRegistrar($unidad,$categoria){
 }
 
 /*==============================
-MOSTRAR PRODUCTO + categoria, unidad y su presentación
+MOSTRAR PRODUCTO y asignar categoria, unidad y su presentación
 ================================*/
 
 public function mostrar(){
@@ -148,7 +148,12 @@ public function mostrar(){
     p.excento,
     p.porcen_venta,
     c.nombre AS cat_nombre,
-    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion #Concatena
+    c.cod_categoria AS cat_codigo,
+    present.presentacion,
+    present.cantidad_presentacion,
+    u.tipo_medida,
+    u.cod_unidad,
+    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat #Concatena
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
@@ -170,6 +175,70 @@ public function getmostrar(){
     return $this->mostrar();
 }
 
+/*======================================
+EDITAR PRODUCTO y categoria, unidad y su presentación
+========================================*/
 
+public  function editar($producto,$categoria,$unidad){
+    $sql="UPDATE productos SET 
+    cod_categoria=:cod_categoria,
+    nombre=:nombre,
+    costo=:costo,
+    excento=:excento,
+    marca=:marca,
+    porcen_venta=:porcen_venta
+    WHERE cod_producto=$producto";
+
+    $strExec=$this->conex->prepare($sql);
+
+    $strExec->bindParam(':cod_categoria', $categoria);
+    $strExec->bindParam(':nombre', $this->nombre);
+    $strExec->bindParam(':costo',$this->costo);
+    $strExec->bindParam(':excento',$this->excento);
+    $strExec->bindParam(':marca',$this->marca);
+    $strExec->bindParam(':porcen_venta',$this->ganancia);
+
+    $result=$strExec->execute();
+
+    if($result){
+        $sqlPresent = "UPDATE presentacion_producto SET
+        presentacion=:presentacion,
+        cantidad_presentacion=:cant_presentacion,
+        cod_unidad=:cod_unidad
+        WHERE cod_producto=$producto";
+        $strExec = $this->conex->prepare($sqlPresent);
+        $strExec->bindParam(':presentacion', $this->presentacion);
+        $strExec->bindParam(':cant_presentacion', $this->cant_presentacion);
+        $strExec->bindParam(':cod_unidad', $unidad);
+
+        return $strExec->execute() ? 1 : 0;
+    }
+    return 0;
+}
+
+/*======================================
+ELIMINAR PRODUCTO
+========================================*/
+
+public function eliminar($valor){
+    //Verificar si tiene detalle de producto
+    $sql = "SELECT cod_producto FROM detalle_productos WHERE cod_producto = :valor";
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
+    $strExec->execute();
+    $producto = $strExec->fetch(PDO::FETCH_ASSOC);
+
+    if($producto){
+        return 'error_detalle';
+    }else{
+        $sqlDelete = "DELETE FROM productos WHERE cod_producto=:valor";
+        $strExec = $this->conex->prepare($sqlDelete);
+        $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
+        $delete = $strExec->execute();
+
+        return $delete ? 'success' : 'error_delete'; 
+    }
+
+}
 }
 

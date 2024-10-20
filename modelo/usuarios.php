@@ -62,23 +62,6 @@ class Usuario extends Conexion{
             }
     }
 
-/*Lo quite para usar el metodo de consulta en la clase ROL
-
-public function roles(){
-    $registro = "select * from tipo_usuario";
-    $consulta = $this->conex->prepare($registro);
-    $resul = $consulta->execute();
-
-    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
-    if($resul){
-        return $datos;
-    }else{
-        return $r=[];
-    }
-
-}*/
-
 public function accesos($valor){
     $sql= "SELECT p.cod_permiso FROM usuarios u
         INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
@@ -96,7 +79,6 @@ public function accesos($valor){
     }
 
 }
-
 
 /*==============================
 REGISTRAR USUARIO
@@ -128,13 +110,14 @@ public function getregistrar($rol){
 }
 
 /*==============================
-VALIDAR USUARIO
+VALIDAR USUARIO (USER)
 ================================*/
 public function buscar($valor){
     $this->user=$valor;
-    $registro = "select * from usuarios where user='".$this->user."'";
+    $registro = "select * from usuarios where user=:user";  //".$this->user."'"
     $resultado= "";
         $dato=$this->conex->prepare($registro);
+        $dato->bindParam(':user',$this->user); //agregado
         $resul=$dato->execute();
         $resultado=$dato->fetch(PDO::FETCH_ASSOC);  
         if ($resul) {
@@ -148,7 +131,16 @@ public function buscar($valor){
 MOSTRAR USUARIOS
 ================================*/
 public function listar(){
-    $registro = "select * from usuarios";
+    $registro = "SELECT
+    u.cod_usuario,
+    u.nombre,
+    u.user,
+    u.password,
+    u.cod_tipo_usuario,
+    u.status,
+    tp.rol
+    FROM usuarios AS u JOIN tipo_usuario AS tp ON u.cod_tipo_usuario = tp.cod_tipo_usuario
+    GROUP BY u.cod_usuario";
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
 
@@ -160,6 +152,7 @@ public function listar(){
     }
 
 }
+
 /*==============================
 EDITAR USUARIO
 ================================*/

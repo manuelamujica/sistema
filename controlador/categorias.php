@@ -40,6 +40,7 @@ if(isset($_POST['buscar'])){
 }else if (isset($_POST['actualizar'])){
     if(!empty($_POST['nombre'])){
         
+        #validacion de que no haya esa categoria registrada
         $objCategoria->setNombre($_POST['nombre']);
         $objCategoria->setStatus($_POST['status']);
 

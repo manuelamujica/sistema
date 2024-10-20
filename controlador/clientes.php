@@ -13,6 +13,7 @@ if(isset($_POST['buscar'])){
     exit;
 }else if (isset($_POST['guardar'])){ 
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
+            
             $cedula=$_POST["cedula_rif"];
             $dato=$objCliente->buscar($cedula);
             if(!$dato){
@@ -35,6 +36,7 @@ if(isset($_POST['buscar'])){
     }
 }else if(isset($_POST['actualizar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
+        
         if($_POST['cedula_rif'] !== $_POST['origin'] && $objCliente->buscar($_POST['cedula_rif'])){
             echo "<script>
                 alert('la cedula ya esta registrada');

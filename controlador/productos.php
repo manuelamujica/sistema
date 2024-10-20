@@ -29,7 +29,7 @@ if (isset($_POST['guardar'])){
         $categoria = $_POST["categoria"];
         $unidad = $_POST['unidad'];
 
-        $result=$objProducto->getregistrar($unidad, $categoria);
+        $result=$objProducto->getregistrar($_POST["unidad"], $_POST["categoria"]);
 
         if($result == 1){
             $registrar = [
@@ -51,7 +51,66 @@ if (isset($_POST['guardar'])){
             "icon" => "error"
         ];
     }
-}
+} else if (isset($_POST['editar'])){
+    if(!empty($_POST['nombre']) && !empty($_POST['categoria']) && !empty($_POST['costo']) && !empty($_POST['unidad'])){
+        $objProducto->setNombre($_POST['nombre']);
+        $objProducto->setMarca($_POST['marca']);
+        $objProducto->setCosto($_POST['costo']);
+        $objProducto->setExcento($_POST['iva']);
+        $objProducto->setGanancia($_POST["porcen"]);
+        $objProducto->setPresentacion($_POST['presentacion']);
+        $objProducto->setCantPresentacion($_POST['cant_presentacion']);
+
+        //$categoria = $_POST["categoria"];
+        //$unidad = $_POST['unidad'];
+
+        $result=$objProducto->editar($_POST["codigo"],$_POST["categoria"],$_POST['unidad']);
+        
+        if($result == 1){
+            $editar = [
+            "title" => "Editado con éxito",
+            "message" => "El producto ha sido actualizado",
+            "icon" => "success"
+            ];
+    }else{
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un error al editar el producto",
+                "icon" => "error"
+            ];
+        }
+    } else{
+        $editar = [
+            "title" => "Error",
+            "message" => "Completa todos los campos",
+            "icon" => "error"
+        ];
+    }
+} else if(isset($_POST['borrar'])){
+    if(!empty($_POST['p_codigo'])){
+        $result = $objProducto->eliminar($_POST["p_codigo"]);
+        
+        if ($result == 'success') {
+            $eliminar = [
+                "title" => "Eliminado con éxito",
+                "message" => "El producto ha sido actualizado",
+                "icon" => "success"
+                ];
+        } elseif ($result == 'error_detalle') {
+            $eliminar = [
+                "title" => "Error",
+                "message" => "No se puede eliminar porque tiene detalles asociados",
+                "icon" => "error"
+            ];
+            }
+        } elseif ($result == 'error_delete') {
+            $eliminar = [
+                "title" => "Error",
+                "message" => "Hubo un error al intentar eliminar el producto",
+                "icon" => "error"
+                ];
+        }
+    }
 
 $registro = $objProducto->getmostrar();
 

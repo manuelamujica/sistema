@@ -43,7 +43,7 @@ PLUGINGS DE CSS
 
   <!-- Date Range Picker -->
   <script src="vista/plugins/moment/moment.min.js"></script>
-<script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
+  <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
 
 
   <!-- DataTables  & Plugins -->

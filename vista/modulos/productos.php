@@ -57,12 +57,16 @@ require_once "controlador/productos.php";
                                             <td> <?php echo $producto["cod_producto"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
                                             <td> <?php echo $producto["marca"] ?></td>
-                                            <td> <?php echo $producto["presentacion"] ?></td>
+                                            <td> <?php echo $producto["presentacion_concat"] ?></td>
                                             <td> <?php echo $producto["cat_nombre"] ?></td>
                                             <td> <?php echo $producto["costo"] ?></td>
                                             <td> <?php echo $producto["excento"] ?></td>
-                                            <td><?php $precioVenta = ($producto["porcen_venta"] / 100 + 1)*$producto["costo"]; echo $precioVenta?>
-                                            </td>
+                                            <td>
+                                            <?php 
+                                            $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"]; 
+                                            echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea
+                                            ?>
+                                        </td>
                                             <td>Stock total</td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
@@ -77,11 +81,13 @@ require_once "controlador/productos.php";
                                                 data-codigo="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
                                                 data-marca="<?php echo $producto["marca"]; ?>"
-                                                data-present="<?php echo $producto["presentacion"]; ?>"
-                                                data-categoria="<?php echo $producto["cat_nombre"]; ?>"
+                                                data-unidad="<?php echo $producto['cod_unidad']; ?>"
+                                                data-present="<?php echo $producto['presentacion']; ?>" 
+                                                data-cantpresent="<?php echo $producto['cantidad_presentacion'];?>"
+                                                data-categoria="<?php echo $producto["cat_codigo"]; ?>"
                                                 data-costo="<?php echo $producto["costo"]; ?>"
-                                                data-excento="<?php echo $producto["excento"]; ?>"
-                                                data-porcen="<?php echo $producto["porcen_venta"]; ?>">
+                                                data-iva="<?php echo $producto["excento"]; ?>"
+                                                data-porcen="<?php echo $producto["porcen_venta"];?>">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </button>
 
@@ -123,29 +129,37 @@ require_once "controlador/productos.php";
                                                 <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
                                             </div>
                                         </div>
+
                                         <div class="form-group row">
-                                            <div class="col-6">
-                                                <label for="categoria">Categoría</label>
-                                                    <select class="form-control" id="categoria" name="categoria" required>
-                                                        <option value="" selected disabled>Seleccione una opción</option>
-                                                            <?php foreach($categoria as $cate): ?>
-                                                                <option value="<?php echo $cate['cod_categoria']; ?>">
-                                                                    <?php echo $cate['nombre']; ?>
-                                                                </option>
-                                                            <?php endforeach; ?>
-                                                    </select>
-                                            </div>
+                                                <div class="col-6">
+                                                    <label for="categoria">Categoría</label>
+                                                    <div class="input-group">
+                                                        <select class="form-control" id="categoria" name="categoria" required>
+                                                            <option value="" selected disabled>Seleccione una opción</option>
+                                                                <?php foreach($categoria as $cate): ?>
+                                                                    <option value="<?php echo $cate['cod_categoria']; ?>">
+                                                                        <?php echo $cate['nombre']; ?>
+                                                                    </option>
+                                                                <?php endforeach; ?>
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button" onclick="nuevaCategoria()">+</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             <div class="col-6">
                                                 <label for="excento">¿Tiene IVA?</label>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
-                                                        <option value="si">Si</option>
-                                                        <option value="no">No</option>
+                                                        <option value="G">Si</option>
+                                                        <option value="E">No</option>
                                                     </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="unidad">Unidad de medida</label>
+                                            <div class="input-group">
                                                 <select class="form-control" id="unidad" name="unidad" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
                                                         <?php foreach($unidad as $u): ?>
@@ -154,6 +168,10 @@ require_once "controlador/productos.php";
                                                             </option>
                                                         <?php endforeach; ?>
                                                 </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="nuevaUnidad()">+</button>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-6">
@@ -169,7 +187,7 @@ require_once "controlador/productos.php";
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="costo">Costo</label>
-                                                <input type="number" class="form-control" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
+                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
                                             </div>
                                             <div class="col-6">
                                                 <label for="precio">Precio</label>
@@ -220,35 +238,145 @@ require_once "controlador/productos.php";
                                 </div>
                                 <div class="modal-body">
                                     <form id="editForm" method="post">
-                                        <div class="form-group">
+                                    <div class="form-group">
                                             <label for="codigo">Código</label>
                                             <input type="text" class="form-control" id="codigo" name="codigo" readonly>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="codigo">Nombre</label>
-                                            <input type="text" class="form-control" id="name" name="nombre">
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="nombre">Nombre del producto</label>
+                                            <input type="text" class="form-control" id="name" name="nombre" placeholder="Ingresa el nombre" required>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="status">Status</label>
-                                            <select class="form-control" id="status" name="status">
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
+                                        <div class="col-6">
+                                            <label for="marca">Marca</label>
+                                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="categoria">Categoría</label>
+                                                <select class="form-control" id="categoria1" name="categoria" required>
+                                                        <?php foreach($categoria as $cate): ?>
+                                                            <option value="<?php echo $cate['cod_categoria']; ?>">
+                                                                <?php echo $cate['nombre']; ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="excento">¿Tiene IVA?</label>
+                                                <select class="form-control" id="iva" name="iva" required>
+                                                    <option value="" selected disabled>Seleccione una opción</option>
+                                                    <option value="G">Si</option>
+                                                    <option value="E">No</option>
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="unidad">Unidad de medida</label>
+                                            <select class="form-control" id="unidad1" name="unidad" required>
+                                                    <?php foreach($unidad as $u): ?>
+                                                        <option value="<?php echo $u['cod_unidad']; ?>">
+                                                            <?php echo $u['tipo_medida']; ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
                                             </select>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="presentacion">Presentación</label>
+                                            <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ingresa la presentación">
                                         </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
-                                </div>
+                                        <div class="col-6">
+                                            <label for="cant_presentacion">Cantidad de presentación</label>
+                                            <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ingresa la cantidad">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="costo">Costo</label>
+                                            <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="precio">Precio</label>
+                                            <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                        <input type="number" class="form-control nuevoPorcentaje" min="0" step="0" placeholder="Porcentaje de ganancia" id="porcen" name="porcen" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fas fa-percent"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-primary" name="editar">Guardar</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </div>  
-            </div>      
-        </section>
+                </div>
+<?php if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'productos';
+            }
+        });
+    </script>
+<?php endif; ?>
+            
+<!-- =============================
+    MODAL ELIMINAR PRODUCTO 
+================================== -->
+                <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h5 class="modal-title" id="eliminarModalLabel">Eliminar producto</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="eliminarForm" method="post">
+                                    <div class="form-group">
+                                        <p>¿Estás seguro que deseas eliminar a <b><span id="p_nombre"></b></span>?</p>
+                                        <input type="hidden" id="p_codigo" name="p_codigo">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" form="eliminarForm" class="btn btn-danger" id="confimDelete" name="borrar">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>      
+    </section>
 </div>
-
-
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'productos';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <script src="vista/dist/js/modulos-js/productos.js"></script>
