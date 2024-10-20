@@ -94,7 +94,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "general" ||
     $_GET["ruta"] == "clientes" ||
     $_GET["ruta"] == "roles" ||
-    $_GET["ruta"] == "rep-inventario")
+    $_GET["ruta"] == "rep-inventario" ||
     $_GET["ruta"] == "venta" ||
     $_GET["ruta"] == "cerrarsesion"){
       
