@@ -135,7 +135,21 @@ MODAL REGISTRAR CLIENTES
             </div>
         </div>
     </div>
-
+    <?php 
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'clientes';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL EDITAR CLIENTES 
@@ -197,6 +211,21 @@ MODAL EDITAR CLIENTES
         </div>
     </div>
 </div>
+<?php 
+if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'clientes';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL CONFIRMAR ELIMINAR 
@@ -224,7 +253,20 @@ MODAL CONFIRMAR ELIMINAR
             </div>
         </div>
     </div>
-
+<?php if (isset($eliminar)): ?>
+<script>
+    Swal.fire({
+        title: '<?php echo $eliminar["title"]; ?>',
+        text: '<?php echo $eliminar["message"]; ?>',
+        icon: '<?php echo $eliminar["icon"]; ?>',
+        confirmButtonText: 'Ok'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location = 'clientes';
+        }
+    });
+</script>
+<?php endif; ?>
 </section>
 </div>
 <script>

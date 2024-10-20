@@ -56,19 +56,24 @@ if(isset($_POST['buscar'])){
             $resul=$objGeneral->getregistrar();
 
             if($resul == 1){
-                echo    "<script>
-                            alert('Registrado con éxito');
-                            window.location = 'general';
-                        </script>";
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "La informacion de la empresa ha sido registrada",
+                    "icon" => "success"
+                ];
             } else {
-                echo    "<script>
-                            alert('¡Los campos no pueden ir vacios o llevar caracteres especiales!');
-                        </script>";
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar la informacion de la empresa",
+                    "icon" => "error"
+                ];
             }
         }else{
-            echo    "<script>
-                        alert('¡ya existe un registro!');
-                    </script>";
+            $registrar = [
+                "title" => "Error",
+                "message" => "ya existe una informacion registrada",
+                "icon" => "error"
+            ];
         }
         
     }

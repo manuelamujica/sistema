@@ -45,13 +45,10 @@ REGISTRAR UNIDAD DE MEDIDA
 ================================*/
     private function crearUnidad(){
 
-        $sql = "INSERT INTO unidades_medida(tipo_medida,presentacion,cantidad_presentacion,status) VALUES(:tipo_medida,:presentacion,:cantidad_presentacion, 1)";
+        $sql = "INSERT INTO unidades_medida(tipo_medida,status) VALUES(:tipo_medida, 1)";
 
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(":tipo_medida", $this->tipo_medida);
-        $strExec->bindParam(":presentacion", $this->presentacion);
-        $strExec->bindParam(":cantidad_presentacion", $this->cantidad_presentacion);
-
         $resul = $strExec->execute();
 
         if($resul){
@@ -81,8 +78,7 @@ REGISTRAR UNIDAD DE MEDIDA
     }
 
     public function buscar($dato){
-        $this->presentacion = $dato;
-        $registro="select * from unidades_medida where presentacion='".$this->presentacion."'";
+        $registro="select * from unidades_medida where tipo_medida='".$dato."'";
         $resultado= "";
         $dato = $this->conex->prepare($registro);
         $resul = $dato->execute();
