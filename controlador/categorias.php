@@ -91,17 +91,6 @@ if(isset($_POST['buscar'])){
     }
 }
 
-} if (isset($_POST['n_categoria'])) {
-    $objCategoria->setNombre($_POST['n_categoria']);
-    $result = $objCategoria->getregistrar();
-
-    if ($result == 1) {
-        // Devuelve el ID y el nombre de la categoría para agregarla al select
-        echo json_encode(['success' => true, 'id' => $objCategoria->getLastInsertId(), 'nombre' => $_POST['n_categoria']]);
-    } else {
-        echo json_encode(['success' => false]);
-    }
-    exit;
 }
 
 $registro = $objCategoria->getmostrar();

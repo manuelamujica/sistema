@@ -1,4 +1,25 @@
 
+//Nueva categoria (vaidar el nombre)
+$('#nombre').blur(function (e){
+    var buscar=$('#nombre').val();
+    $.post('index.php?pagina=categorias', {buscar}, function(response){
+        if(response != ''){
+            alert('La categoria ya se encuentra registrada');
+        }
+    },'json');
+});
+
+$(document).ready(function() {
+    // Verifica si el valor 'abrirModal' está en localStorage
+    if (localStorage.getItem('abrirModal') === 'true') {
+        $('#modalRegistrarProducto').modal('show');
+        localStorage.removeItem('abrirModal');
+    }
+});
+
+
+
+
 function nuevaCategoria() {
 // Manejar el envío del formulario de nueva categoría
 $('#formNuevaCategoria').on('submit', function(e) {
@@ -40,6 +61,8 @@ $('#formNuevaCategoria').on('submit', function(e) {
 function nuevaUnidad() {
     alert('Mostrar modal');
     }
+
+
 
 
 // Función general para calcular el precio de venta

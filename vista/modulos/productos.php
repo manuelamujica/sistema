@@ -223,9 +223,17 @@ require_once "controlador/productos.php";
         });
     </script>
 <?php endif; ?>
+
 <!-- =============================
     MODAL NUEVA CATEGORIA 
 ================================== -->
+<script>
+    <?php if (isset($_GET['abrirModal']) && $_GET['abrirModal'] == 1): ?>
+        $(document).ready(function(){
+            $('#modalRegistrarProducto').modal('show');
+        });
+    <?php endif; ?>
+</script>
     <div class="modal fade" id="modalNuevaCategoria" tabindex="-1" aria-labelledby="modalNuevaCategoriaLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -237,10 +245,10 @@ require_once "controlador/productos.php";
                 </div>
 
                 <div class="modal-body">
-                    <form id="formNuevaCategoria" method="post">
+                    <form id="formNuevaCategoria" action="index.php?pagina=categorias" method="post">
                         <div class="form-group">
                             <label for="nombre">Nombre de la categoría</label>
-                            <input type="text" class="form-control" id="n_categoria" name="n_categoria" placeholder="Ingresa el nombre de la categoría" required>
+                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
                         </div>
                 </div>
                 <div class="modal-footer justify-content-between">
