@@ -44,7 +44,6 @@ PLUGINGS DE CSS
   <script src="vista/plugins/moment/moment.min.js"></script>
   <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
 
-
   <!-- DataTables  & Plugins -->
 <script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -94,7 +93,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "general" ||
     $_GET["ruta"] == "clientes" ||
     $_GET["ruta"] == "roles" ||
-    $_GET["ruta"] == "rep-inventario")
+    $_GET["ruta"] == "rep-inventario" ||
     $_GET["ruta"] == "venta" ||
     $_GET["ruta"] == "cerrarsesion"){
       

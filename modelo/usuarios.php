@@ -156,25 +156,41 @@ public function listar(){
 /*==============================
 EDITAR USUARIO
 ================================*/
-public function editar($valor,$rol){
-    $sql="UPDATE usuarios SET nombre=:nombre,user=:user,password=:password,cod_tipo_usuario=:cod_tipo_usuario, status=:status WHERE cod_usuario=$valor";
-    $strExec = $this->conex->prepare($sql);
+    public function editar($codigo, $rol){
+    $sql = "UPDATE usuarios 
+        SET nombre=:nombre, user=:user, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
+        WHERE cod_usuario=:codigo";
 
-    #Instanciar metodo BINDPARAM
-    $strExec->bindParam(':nombre', $this->nombre);
-    $strExec->bindParam(':user', $this->user);
-    $strExec->bindParam(':password', $this->password);
-    $strExec->bindParam(":cod_tipo_usuario", $rol);
-    $strExec->bindParam(':status', $this->status);
-    $resul = $strExec->execute();
-    if($resul){
-        $r = 1;
-    }else{
-        $r = 0;
+        $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':nombre', $this->nombre);
+        $strExec->bindParam(':user', $this->user);
+        $strExec->bindParam(':cod_tipo_usuario', $rol);
+        $strExec->bindParam(':status', $this->status);
+        $strExec->bindParam(':codigo', $codigo, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $resul = $strExec->execute();
+
+        return $resul ? 1 : 0;
     }
-    return $r;
-}
+    public function editar2($codigo, $rol){
+    $sql = "UPDATE usuarios 
+            SET nombre=:nombre, user=:user, password=:password, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
+            WHERE cod_usuario=:codigo";
 
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':nombre', $this->nombre);
+            $strExec->bindParam(':user', $this->user);
+            $strExec->bindParam(':password', $this->password);
+            $strExec->bindParam(':cod_tipo_usuario', $rol);
+            $strExec->bindParam(':status', $this->status);
+            $strExec->bindParam(':codigo', $codigo, PDO::PARAM_INT);
+
+            // Ejecutar la consulta
+            $resul = $strExec->execute();
+
+            return $resul ? 1 : 0;
+    }
 /*==============================
 ELIMINAR USUARIO
 ================================*/

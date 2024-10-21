@@ -26,21 +26,30 @@ $('#editModal').on('show.bs.modal', function (event) {
         var codigo = button.data('codigo');
         var nombre = button.data('nombre');
         var user = button.data('user');
-        var pass = button.data('password') 
+        //var pass = button.data('password') 
         var rol = button.data('cod'); 
         var status = button.data('status');
         var origin = button.data('user');
-
+        
         // Modal
         var modal = $(this); 
         modal.find('.modal-body #codigo').val(codigo);
         modal.find('.modal-body #name').val(nombre);
         modal.find('.modal-body #usuario').val(user);
-        modal.find('.modal-body #password').val(pass);
+        //modal.find('.modal-body #password').val(pass);
         modal.find('.modal-body #roles').val(rol);            
         modal.find('.modal-body #status').val(status);
         modal.find('.modal-body #origin').val(origin); // Campo oculto con el valor original del user
     });
+
+//Contrasena
+$(document).ready(function() {
+    // Al hacer clic en el botón "Cambiar contraseña"
+    $('#changePasswordBtn').on('click', function() {
+        // alterna la visibilidad del campo de la nueva contraseña.
+        $('#passwordField').toggle(); 
+    });
+});
 
 //Eliminar
 $('#eliminarModal').on('show.bs.modal', function (event) {

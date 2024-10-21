@@ -16,9 +16,7 @@ if(isset($_POST['buscar'])){
     exit;
 
 }else if (isset($_POST['guardar'])){
-
-    if(!empty($_POST["nombre"]) && (!empty($_POST["user"])) && (!empty($_POST["pass"]))){ #ping
-
+    if(!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['pass']) && !empty($_POST['rol'])){
         if (!$objuser->buscar($_POST["user"])){ #Que no sea el mismo user
 
             $objuser->setNombre($_POST["nombre"]);
@@ -34,6 +32,7 @@ if(isset($_POST['buscar'])){
                 echo "<script>
                 alert('La contraseña es demasiado corta. Debe tener más de 8 caracteres.');
                 location = 'usuarios' </script>";
+                exit;
             }
             
             $rol = $_POST["rol"];
@@ -54,10 +53,15 @@ if(isset($_POST['buscar'])){
             }
         }
     }
-}else if (isset($_POST['actualizar'])){
-    if(!empty($_POST['nombre']) && !empty($_POST['user'])){
+}
 
-            // Verificamos si el usuario ha sido cambiado
+
+else if (isset($_POST['actualizar'])) {
+    $passwordCambiada=0;
+
+    // Validamos que los campos requeridos no estén vacíos
+    if (!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['roles']) && !empty($_POST['status'])) {
+
         if ($_POST['user'] !== $_POST['origin']) {
             // Si el user cambió, verificamos si ya existe en la base de datos
             if ($objuser->buscar($_POST['user'])) {
@@ -68,32 +72,60 @@ if(isset($_POST['buscar'])){
                 exit;
             }
         }
-            // Si el usuario NO ha sido cambiado entonces se actualiza
-            $objuser->setNombre($_POST['nombre']);
-            $objuser->setUser($_POST['user']);
 
-             // Verificamos si hay contraseña nueva
-            if(!empty($_POST['pass'])){
-                $password = password_hash($_POST['pass'], PASSWORD_DEFAULT); // Cifrar con HASH
-                $objuser->setPassword($password);
-            }
+        
+            if (!empty($_POST['pass'])) {
+                $longitud = strlen($_POST['pass']);
+        
+                if ($longitud > 8) {
+                    $password = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+                    $passwordCambiada = 1;
+                } else {
+                    echo "<script>
+                        alert('La nueva contraseña es demasiado corta. Debe tener más de 8 caracteres.');
+                        window.location = 'usuarios';
+                    </script>";
+                    exit;
+                }
+            } 
+        
+        $objuser->setNombre($_POST['nombre']);
+        $objuser->setUser($_POST['user']);
+        $objuser->setStatus($_POST['status']);
 
-            $objuser->setStatus($_POST['status']);
-            $result=$objuser->editar($_POST['codigo'], $_POST['roles']);
-            if($result==1){
-                $editar = [
-                  "title" => "Editado con éxito",
-                  "message" => "El usuario ha sido actualizado",
-                  "icon" => "success"
-              ];
-            }else {
-               $editar = [
-                  "title" => "Error",
-                  "message" => "Hubo un problema al editar el ususario",
-                  "icon" => "error"
-              ];
-            }
+        var_dump($passwordCambiada);
+
+        if ($passwordCambiada == 1) {
+            // Si se cambió la contraseña, usamos el método que también actualiza la contraseña
+            $objuser->setPassword($password);
+            $result = $objuser->editar2($_POST['codigo'], $_POST['roles']);
+            var_dump($result);
+        } else {
+            // Si no se cambió la contraseña, usamos el método que no la modifica
+            $result = $objuser->editar($_POST['codigo'], $_POST['roles']);
         }
+
+        if ($result == 1) {
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "El usuario ha sido actualizado correctamente",
+                "icon" => "success"
+            ];
+        } else {
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar el usuario",
+                "icon" => "error"
+            ];
+        }
+    } else {
+        echo "<script>
+            alert('Debe completar todos los campos.');
+            window.location = 'usuarios';
+        </script>";
+        exit;
+    } 
+
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['usercode'])){
     $result = $objuser->eliminar($_POST["usercode"]);
