@@ -123,4 +123,24 @@ MOSTRAR INFO DE EMPRESA
         $this->logo = $ruta_logo; // Guardar la ruta del archivo
         //el archivo de imagen se guardará en la carpeta logos con move_uploaded_file
     }
+
+    /*================
+      ACTUALIZAR LOS DATOS DE LA EMPRESA
+      ================ */
+      public function editar(){
+        $registro = "UPDATE empresa SET nombre = :nombre, direccion = :direccion, descripcion = :descripcion WHERE rif = :rif";
+
+        $strExec = $this->conex->prepare($registro);
+        $strExec->bindParam(':rif',$this->rif);
+        $strExec->bindParam(':nombre',$this->nombre);
+        $strExec->bindParam(':direccion',$this->direccion);
+        $strExec->bindParam(':descripcion',$this->descripcion);
+        $resul = $strExec->execute();
+        if($resul == 1){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+      }
 }

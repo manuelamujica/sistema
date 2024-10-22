@@ -87,17 +87,17 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "categorias" ||
     $_GET["ruta"] == "productos" ||
     $_GET["ruta"] == "usuarios" ||
-    $_GET["ruta"] == "tpago" || 
+    $_GET["ruta"] == "tpago" ||
+    $_GET["ruta"] == "carga" || 
     $_GET["ruta"] == "divisa" || 
     $_GET["ruta"] == "proveedores" || 
     $_GET["ruta"] == "unidad" ||
     $_GET["ruta"] == "general" ||
     $_GET["ruta"] == "clientes" ||
     $_GET["ruta"] == "roles" ||
-    $_GET["ruta"] == "rep-inventario")
+    $_GET["ruta"] == "rep-inventario" ||
     $_GET["ruta"] == "venta" ||
-    $_GET["ruta"] == "cerrarsesion"){
-      
+    $_GET["ruta"] == "cerrarsesion"){      
       include "modulos/". $_GET["ruta"] . ".php";
     } else {
       include "modulos/construccion.php";

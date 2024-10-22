@@ -56,26 +56,42 @@ if(isset($_POST['buscar'])){
             $resul=$objGeneral->getregistrar();
 
             if($resul == 1){
-                $registrar = [
-                    "title" => "Registrado con éxito",
-                    "message" => "La informacion de la empresa ha sido registrada",
-                    "icon" => "success"
-                ];
+                echo    "<script>
+                            alert('Registrado con éxito');
+                            window.location = 'general';
+                        </script>";
             } else {
-                $registrar = [
-                    "title" => "Error",
-                    "message" => "Hubo un problema al registrar la informacion de la empresa",
-                    "icon" => "error"
-                ];
+                echo    "<script>
+                            alert('¡Los campos no pueden ir vacios o llevar caracteres especiales!');
+                        </script>";
             }
         }else{
-            $registrar = [
-                "title" => "Error",
-                "message" => "ya existe una informacion registrada",
-                "icon" => "error"
-            ];
+            echo    "<script>
+                        alert('¡ya existe un registro!');
+                    </script>";
         }
         
+    }
+
+}else if(isset($_POST['editar'])){
+    
+    $rif = $_POST['rif'];
+    $nombre = $_POST['nombre'];
+    $direccion = $_POST['direccion'];
+    $telefono = $_POST['telefono'];
+    $email = $_POST['email'];
+    $descripcion = $_POST['descripcion'];
+    $objGeneral->setRif($rif);
+    $objGeneral->setNom($nombre);
+    $objGeneral->setDir($direccion);
+    $objGeneral->settlf($telefono);
+    $objGeneral->setemail($email);
+    $objGeneral->setDescri($descripcion);
+    $res = $objGeneral->editar();
+    if($res == 1){
+        echo "<script>alert('Informacion actualizada con exito'); window.location = 'general'</script>";
+    }else{
+        echo "<script>alert('Error al actualizar'); window.location = 'general'</script>";
     }
 
 }
