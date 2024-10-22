@@ -227,13 +227,7 @@ require_once "controlador/productos.php";
 <!-- =============================
     MODAL NUEVA CATEGORIA 
 ================================== -->
-<script>
-    <?php if (isset($_GET['abrirModal']) && $_GET['abrirModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#modalRegistrarProducto').modal('show');
-        });
-    <?php endif; ?>
-</script>
+
     <div class="modal fade" id="modalNuevaCategoria" tabindex="-1" aria-labelledby="modalNuevaCategoriaLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -248,19 +242,50 @@ require_once "controlador/productos.php";
                     <form id="formNuevaCategoria" action="index.php?pagina=categorias" method="post">
                         <div class="form-group">
                             <label for="nombre">Nombre de la categoría</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
+                            <input type="text" class="form-control" id="nombrec" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
+                            <input type="hidden" name="vista" value="categorias">
                         </div>
+                    </form>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" name="guardar_categoria">Guardar</button>
+                    <button type="submit" form="formNuevaCategoria" class="btn btn-primary" name="registrarc">Guardar</button>
                 </div>
-                </form>
             </div>
         </div>
     </div>
+    <?php if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.setItem('categoriaModal', 'true');
+                window.location='productos';
+            }
+    });
+</script> 
+<?php endif; ?>
 
+<script>
+    $('#nombrec').blur(function (e){
+        var buscar=$('#nombrec').val();
+        $.post('index.php?pagina=categorias', {buscar}, function(response){
+            if(response != ''){
+                alert('La categoria ya se encuentra registrada');
+            }
+        },'json');
+    });
 
+    <?php if (isset($_GET['categoriaModal']) && $_GET['categoriaModal'] == 1): ?>
+        $(document).ready(function(){
+            $('#modalRegistrarProducto').modal('show');
+        });
+    <?php endif; ?>
+</script>
 <!-- =============================
     MODAL EDITAR PRODUCTO 
 ================================== -->

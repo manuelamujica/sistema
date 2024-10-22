@@ -114,5 +114,5 @@ if (isset($_POST['guardar'])){
 
 $registro = $objProducto->getmostrar();
 
-$_GET['ruta'] = 'categorias';
+$_GET['ruta'] = 'productos';
 require_once 'plantilla.php';

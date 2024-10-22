@@ -11,7 +11,7 @@ if(isset($_POST['buscar'])){
     echo json_encode($result); #Se envia $result como JSON al cliente 
     exit;
 
-}else if (isset($_POST['guardar'])){
+}else if (isset($_POST['guardar']) || isset($_POST['registrarc'])){ #Si viene de productos o de categoria
 
     if(!empty($_POST["nombre"])){
 
@@ -95,5 +95,10 @@ if(isset($_POST['buscar'])){
 
 $registro = $objCategoria->getmostrar();
 
-$_GET['ruta'] = 'categorias';
+if(isset($_POST["vista"])){
+    $_GET['ruta'] = 'productos';
+    //exit();
+}else{
+    $_GET['ruta'] = 'categorias';
+}
 require_once 'plantilla.php';

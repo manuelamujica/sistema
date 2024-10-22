@@ -1,4 +1,5 @@
 <?php
+
 require_once 'modelo/clientes.php'; 
 
 $objCliente = new Clientes(); 
@@ -13,9 +14,10 @@ if(isset($_POST['buscar'])){
     exit;
 }else if (isset($_POST['guardar'])){ 
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
-            $cedula=$_POST["cedula_rif"];
-            $dato=$objCliente->buscar($cedula);
-            if(!$dato){
+
+        $cedula=$_POST["cedula_rif"];
+        $dato=$objCliente->buscar($cedula);
+        if(!$dato){
             $objCliente->setNombre($_POST["nombre"]);
             $objCliente->setApellido($_POST["apellido"]);
             $objCliente->setCedula($_POST["cedula_rif"]);
@@ -25,21 +27,25 @@ if(isset($_POST['buscar'])){
 
             $result = $objCliente->getRegistrar();
             if($result == 1){
-                echo "<script>alert('Registrado con exito');
-                window.location = 'clientes' </script>";
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "El cliente ha sido registrado",
+                    "icon" => "success"
+                ];
             }else{
-                echo "<script>alert('No se pudo registrar');
-                window.location = 'clientes' </script>";
-                }
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al registrar el cliente",
+                    "icon" => "error"
+                ];
             }
+        }
     }
 }else if(isset($_POST['actualizar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
+        
         if($_POST['cedula_rif'] !== $_POST['origin'] && $objCliente->buscar($_POST['cedula_rif'])){
-            echo "<script>
-                alert('la cedula ya esta registrada');
-                window.location = 'clientes'
-            </script>";
+
         }else {
             $objCliente->setNombre($_POST["nombre"]);
             $objCliente->setApellido($_POST["apellido"]);
@@ -50,28 +56,47 @@ if(isset($_POST['buscar'])){
             $objCliente->setstatus($_POST["status"]);
             $result = $objCliente->getactualizar($_POST["codigo"]);
                 if($result == 1){
-                    echo "<script>alert('se ha modificado con exito');
-                    window.location = 'clientes' </script>";
+                    $editar = [
+                        "title" => "Editado con éxito",
+                        "message" => "Los datos del cliente han sido actualizados",
+                        "icon" => "success"
+                    ];
                 }else{
-                    echo "<script>alert('No se pudo modificar');
-                    window.location = 'clientes' </script>";
+                    $editar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al editar los datos del cliente",
+                        "icon" => "error"
+                    ];
                 }
         }
     }
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['clienteCodigo'])){
     $result = $objCliente->geteliminar($_POST["clienteCodigo"]);
-        if($result == 1){
-            echo "<script>alert('se ha eliminado con exito');
-            window.location = 'clientes' </script>";
-        }else{
-            echo "<script>alert('No se pudo eliminar');
-            window.location = 'clientes' </script>";
-        }
+    if ($result == 'success') {
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "El cliente ha sido eliminado",
+            "icon" => "success"
+        ];
+    } elseif ($result == 'error_delete') {
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar el cliente",
+            "icon" => "error"
+        ];
+    }
     }
 }
 
 
 $registro = $objCliente->consultar();
-$_GET['ruta'] = 'clientes';
+if(isset($_POST["vista"])){
+    $_GET['ruta'] = 'venta';
+    //exit();
+}else{
+    $_GET['ruta'] = 'clientes';
+}
 require_once 'plantilla.php';
+
+//Lo actualice en manuela branch, no tenia las alertas etc 
