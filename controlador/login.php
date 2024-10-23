@@ -2,9 +2,11 @@
 
 require_once "modelo/usuarios.php"; 
 require_once "modelo/general.php";
+require_once "modelo/roles.php";
 
 $obj = new General();
 $objuser= new Usuario();
+$objRol= new Rol();
 
 if(isset($_POST["ingresar"])){
 
@@ -25,6 +27,9 @@ if(isset($_POST["ingresar"])){
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
+		// Para acceder al nombre del rol y guardarlo en una variable SESSION
+			$rol = $objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
+			$_SESSION["rol"] = $rol["rol"];
 
 			$_SESSION["producto"]=0;
 			$_SESSION["inventario"]=0;

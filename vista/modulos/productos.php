@@ -169,7 +169,7 @@ require_once "controlador/productos.php";
                                                         <?php endforeach; ?>
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-outline-secondary" type="button" onclick="nuevaUnidad()">+</button>
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaUnidad">+</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -271,21 +271,66 @@ require_once "controlador/productos.php";
 <?php endif; ?>
 
 <script>
-    $('#nombrec').blur(function (e){
-        var buscar=$('#nombrec').val();
-        $.post('index.php?pagina=categorias', {buscar}, function(response){
-            if(response != ''){
-                alert('La categoria ya se encuentra registrada');
-            }
-        },'json');
-    });
-
-    <?php if (isset($_GET['categoriaModal']) && $_GET['categoriaModal'] == 1): ?>
+<?php if (isset($_GET['categoriaModal']) && $_GET['categoriaModal'] == 1): ?>
         $(document).ready(function(){
             $('#modalRegistrarProducto').modal('show');
         });
     <?php endif; ?>
 </script>
+
+<!-- =============================
+    MODAL NUEVA UNIDAD DE MEDIDA
+================================== -->
+        <div class="modal fade" id="modalNuevaUnidad" tabindex="-1" aria-labelledby="modalnuevaUnidadLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+                        <h5 class="modal-title" id="exampleModalLabel">Registrar Unidad de medida</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formregistrarUnidad" action="index.php?pagina=unidad" method="post">
+                            <div class="form-group">
+                                <label for="tipo_medida">Tipo de medida</label>
+                                <input type="text" class="form-control" name="tipo_medida" id="tipo_medidau" placeholder="Ingrese unidad de medida" required>
+                                <input type="hidden" name="vista" value="unidad">
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" name="guardaru">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+<?php if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.setItem('unidadModal', 'true');
+                window.location='productos';
+            }
+    });
+</script> 
+<?php endif; ?> 
+
+<script>
+    <?php if (isset($_GET['unidadModal']) && $_GET['unidadModal'] == 1): ?>
+        $(document).ready(function(){
+            $('#modalRegistrarProducto').modal('show');
+        });
+    <?php endif; ?>
+</script>
+
+
 <!-- =============================
     MODAL EDITAR PRODUCTO 
 ================================== -->

@@ -1,13 +1,13 @@
-
-//Nueva categoria (vaidar el nombre)
-$('#nombre').blur(function (e){
-    var buscar=$('#nombre').val();
-    $.post('index.php?pagina=categorias', {buscar}, function(response){
-        if(response != ''){
-            alert('La categoria ya se encuentra registrada');
-        }
-    },'json');
-});
+// NUEVA CATEGORIA DESDE PRODUCTO
+//(Validar nombre)
+    $('#nombrec').blur(function (e){
+        var buscar=$('#nombrec').val();
+        $.post('index.php?pagina=categorias', {buscar}, function(response){
+            if(response != ''){
+                alert('La categoria ya se encuentra registrada');
+            }
+        },'json');
+    });
 
 $(document).ready(function() {
     // Verifica si el valor 'categoriaModal' está en localStorage
@@ -17,11 +17,24 @@ $(document).ready(function() {
     }
 });
 
-function nuevaUnidad() {
-    alert('Mostrar modal');
+//NUEVA UNIDAD DESDE PRODUCTO
+//(Validar nombre)
+$('#tipo_medidau').blur(function (e){
+    var buscar=$('#tipo_medidau').val();
+    $.post('index.php?pagina=unidad', {buscar}, function(response){
+        if(response != ''){
+            alert('La unidad ya se encuentra registrada');
+        }
+    },'json');
+});
+
+$(document).ready(function() {
+    // Verifica si el valor 'unidadModal' está en localStorage
+    if (localStorage.getItem('unidadModal') === 'true') {
+        $('#modalRegistrarProducto').modal('show');
+        localStorage.removeItem('unidadModal');
     }
-
-
+});
 
 
 // Función general para calcular el precio de venta
