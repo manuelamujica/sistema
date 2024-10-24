@@ -209,12 +209,12 @@ require_once "controlador/productos.php";
                             </div>
                         </div>
                     </div>
-<?php if (isset($registrar)): ?>
+<?php if (isset($registrarp)): ?>
     <script>
         Swal.fire({
-            title: '<?php echo $registrar["title"]; ?>',
-            text: '<?php echo $registrar["message"]; ?>',
-            icon: '<?php echo $registrar["icon"]; ?>',
+            title: '<?php echo $registrarp["title"]; ?>',
+            text: '<?php echo $registrarp["message"]; ?>',
+            icon: '<?php echo $registrarp["icon"]; ?>',
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {

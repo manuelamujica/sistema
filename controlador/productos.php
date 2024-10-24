@@ -32,20 +32,20 @@ if (isset($_POST['guardar'])){
         $result=$objProducto->getregistrar($_POST["unidad"], $_POST["categoria"]);
 
         if($result == 1){
-            $registrar = [
+            $registrarp = [
             "title" => "Registrado con éxito",
             "message" => "El producto ha sido registrado",
             "icon" => "success"
             ];
     }else{
-            $registrar = [
+            $registrarp = [
                 "title" => "Error",
                 "message" => "Hubo un error al registrar el producto",
                 "icon" => "error"
             ];
         }
     } else{
-        $registrar = [
+        $registrarp = [
             "title" => "Error",
             "message" => "Completa todos los campos",
             "icon" => "error"
