@@ -54,7 +54,7 @@ require_once "controlador/productos.php";
                                     foreach ($registro as $producto){
                                         ?>
                                         <tr>
-                                            <td> <?php echo $producto["cod_producto"] ?></td>
+                                            <td> <?php echo $producto["cod_presentacion"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
                                             <td> <?php echo $producto["marca"] ?></td>
                                             <td> <?php echo $producto["presentacion_concat"] ?></td>
@@ -78,7 +78,8 @@ require_once "controlador/productos.php";
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
-                                                data-codigo="<?php echo $producto["cod_producto"];?>"
+                                                data-codigo="<?php echo $producto["cod_presentacion"];?>"
+                                                data-producto="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
                                                 data-marca="<?php echo $producto["marca"]; ?>"
                                                 data-unidad="<?php echo $producto['cod_unidad']; ?>"
@@ -92,7 +93,8 @@ require_once "controlador/productos.php";
                                             </button>
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
-                                                data-codigo="<?php echo $producto["cod_producto"];?>"
+                                                data-codigo="<?php echo $producto["cod_presentacion"];?>"
+                                                data-producto="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
                                                 >
                                                 <i class="fas fa-trash-alt"></i></button>
@@ -347,7 +349,9 @@ require_once "controlador/productos.php";
                                     <form id="editForm" method="post">
                                     <div class="form-group">
                                             <label for="codigo">Código</label>
-                                            <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                                            
+                                            <input type="text" class="form-control" id="cod_presentacion" name="cod_presentacion" readonly>
+                                            <input type="hidden" id="cod_producto" name="cod_producto">
                                         </div>
                                     <div class="form-group row">
                                         <div class="col-6">
@@ -456,6 +460,7 @@ require_once "controlador/productos.php";
                                 <form id="eliminarForm" method="post">
                                     <div class="form-group">
                                         <p>¿Estás seguro que deseas eliminar a <b><span id="p_nombre"></b></span>?</p>
+                                        <input type="hidden" id="present_codigo" name="present_codigo">
                                         <input type="hidden" id="p_codigo" name="p_codigo">
                                     </div>
                                 </form>

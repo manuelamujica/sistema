@@ -1,5 +1,5 @@
 /*------------------------
-DATA TABLE
+DATA TABLE ORDER ASC
 ------------------------*/
 $(document).ready(function() {
     $(".datatable").DataTable({

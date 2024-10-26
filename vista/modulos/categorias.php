@@ -93,7 +93,7 @@ require_once "controlador/categorias.php";
                                     <form id="formRegistrarCategoria" method="post">
                                         <div class="form-group">
                                             <label for="nombre">Nombre de la categoría</label>
-                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" value="Manuela" required>
                                         </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">

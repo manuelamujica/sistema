@@ -1,3 +1,23 @@
+let prueba1 = document.getElementById('nombre').value;
+console.log(prueba1);
+
+let nombre='Manuela Mujica'; console.log(typeof nombre);
+
+let longitud = 5; 
+if (nombre.length >= longitud){
+console.log('El nombre: ' +nombre+ ' tiene la longitud requerida')}
+else {
+    console.log('El nombre:' +nombre+ ' NO tiene la longitud requerida')
+        }
+
+function sumar(a,b){
+    if(typeof a !== 'number' || typeof b !== 'number'){
+        return 'Los argumentos son validos';
+    }
+    return a + b;
+}
+console.log(sumar(8,4));
+console.log(sumar(2,9));
 
     //Validar registrar
     $('#nombre').blur(function (e){
@@ -40,3 +60,4 @@
         modal.find('#catnombre').text(nombre);
         modal.find('.modal-body #catcodigo').val(codigo);
     });
+

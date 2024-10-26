@@ -1,3 +1,5 @@
+console.log("Archivo JS cargado correctamente");
+
 // NUEVA CATEGORIA DESDE PRODUCTO
 //(Validar nombre)
     $('#nombrec').blur(function (e){
@@ -73,7 +75,7 @@ $('#editModal').on('show.bs.modal', function (event) {
 
     // Modal
     var modal = $(this); 
-    modal.find('.modal-body #codigo').val(codigo);
+    modal.find('.modal-body #cod_presentacion').val(codigo);
     modal.find('.modal-body #name').val(nombre);
     modal.find('.modal-body #marca').val(marca);
     modal.find('.modal-body #unidad1').val(unidad);
@@ -83,7 +85,12 @@ $('#editModal').on('show.bs.modal', function (event) {
     modal.find('.modal-body #costo').val(costo);
     modal.find('.modal-body #iva').val(iva);
     modal.find('.modal-body #porcen').val(porcen);
-    
+
+    modal.find('.modal-body #cod_producto').val(button.data('producto'));
+
+    console.log('Código presentacion:', codigo);
+    console.log('Codigo producto:', button.data('producto'));
+
     calcularPrecioVenta(modal); // Llama a la función para calcular el precio de venta cuando se abre el modal de edición
 });
 
@@ -95,5 +102,9 @@ $('#eliminarModal').on('show.bs.modal', function (event) {
 
     var modal = $(this);
     modal.find('#p_nombre').text(nombre);
-    modal.find('.modal-body #p_codigo').val(codigo);
+    modal.find('.modal-body #present_codigo').val(codigo);
+    modal.find('.modal-body #p_codigo').val(button.data('producto'));
+
+    console.log('Código presentacion:', codigo);
+    console.log('Codigo producto:', button.data('producto'));
 });
