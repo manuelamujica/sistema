@@ -52,7 +52,7 @@
                             <br>
             <!-- Tabla de productos -->
             <div class="table-responsive">
-            <table id="producto" class="table table-bordered table-striped datatable">
+            <table id="producto" class="table table-bordered table-striped datatable1">
                 <thead>
                         <tr>
                             <th>Nro. de Venta</th>
@@ -66,22 +66,48 @@
                 <tbody>
                 <?php foreach ($consulta as $venta) { ?>
                     <tr>
-                        <td><?php echo $venta['cod_venta']?></td>
+                        <td><?php echo $venta['codigov']?></td>
                         <td><?php echo $venta['nombre']." ".$venta['apellido']?></td>
                         <td><?php echo $venta['descuento'] ?></td>
                         <td><?php echo $venta['total'] ?></td>
                         <td>
                             <?php if ($venta['status_venta']==1):?>
                                 <span class="badge bg-default">Pendiente</span>
+                                <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
+                                    data-codventa="<?php echo $venta["codigov"]; ?>" 
+                                    data-totalv="<?php echo $venta["total"]; ?>" 
+                                    data-fecha="<?php echo $venta["fecha"]; ?>"
+                                    data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    </button>
                             <?php elseif ($venta['status_venta']==2):?>
                                 <span class="badge bg-warning">Pago parcial</span>
+                                <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
+                                    data-codventa="<?php echo $venta["cod_venta"]; ?>" 
+                                    data-codpago="<?php echo $venta["cod_pago"]; ?>" 
+                                    data-totalv="<?php echo $venta["total"]; ?>" 
+                                    data-montop="<?php echo $venta["monto_total"]; ?>"
+                                    data-fecha="<?php echo $venta["fecha"]; ?>"
+                                    data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    </button>
                             <?php elseif ($venta['status_venta']==3):?>
                                 <span class="badge bg-success">Completada</span>
                             <?php else: ?>
                                 <span class="badge bg-danger">Anulada</span>
                             <?php endif;?>
                         </td>
-                        <td>anular..</td>
+                        <td>
+                        <?php if ($venta['status_venta']!=0):?>
+                            <button name="anular" title="anular" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#anularventa" 
+                            data-codventa="<?php echo $venta["codigov"]; ?>" 
+                            data-status="<?php echo $venta["status_venta"]; ?>">
+                            <i class="fas fa-trash-alt"></i>
+                            </button>
+                        <?php else: ?>
+                            <span class="badge bg-default">Ya anulada</span>
+                        <?php endif; ?>
+                        </td>
                     </tr>
                 <?php }?>
                 </tbody>
@@ -136,7 +162,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
 
-                                    <?php $ultimo=end($consulta); $nueva=$ultimo['cod_venta']+1; ?>
+                                    <?php $ultimo=end($consulta); $nueva=$ultimo['codigov']+1; ?>
                                         <label for="numero">Nro Venta</label>
                                         <input type="text" class="form-control form-control-sm" id="nro_venta" value="<?=$nueva?>" readonly>
                                     </div>
@@ -161,6 +187,7 @@
                                     <th>Cantidad</th>
                                     <th>Precio</th>
                                     <th>Total</th>
+                                    <th> </th>
                                 </tr>
                             </thead>
                             <tbody id="ventaProductosBody">
@@ -182,76 +209,317 @@
                     </div>
                     </div>
                 </div>
+                <input type="hidden" name="registrarv" value="1">
             </div>
                 </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     <button type="submit" form="ventamodal" class="btn btn-primary" id="realizarVentaBtn">Realizar Venta</button>
-                    <input type="hidden" name="registrarv">
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-        <!-- Modal de Resumen de Venta (este modal se abre desde el modal de "Ver Venta") -->
+<!-- =======================
+MODAL REGISTRAR PAGO
+============================= -->
         <div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header" style="background: #db6a00; color: #ffffff;">
-                        <h5 class="modal-title" id="pagoLabel">Resumen de Venta</h5>
+                        <h5 class="modal-title" id="pagoLabel">Registrar Pago</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="pagoForm">
-                            <div class="form-group">
-                                <label for="efectivo">Cliente</label>
-                                <input type="text" class="form-control form-control-sm" id="clientenom">
-                            </div>
-                            <div class="form-group">
-                                <label for="tipo-pago">Tipo de Pago</label>
-                                <select class="form-control form-control-sm" id="tipo-pago">
-                                    <option>Efectivo</option>
-                                    <option>Tarjeta</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="efectivo">Efectivo recibido</label>
-                                <input type="text" class="form-control form-control-sm" id="efectivo">
-                            </div>
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="efectivo-exacto">
-                                    <label class="form-check-label" for="efectivo-exacto">Efectivo Exacto</label>
+                        <form id="pagoForm" method="post">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="nro_venta">Nro de Venta</label>
+                                    <input type="text" class="form-control" id="nro-venta" name="nro_venta" readonly>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="monto-efectivo">Monto Efectivo</label>
-                                <input type="text" class="form-control form-control-sm" id="monto-efectivo" value="S/ 8.73" readonly>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="nombre_cliente">Nombre del Cliente</label>
+                                    <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" readonly>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="vuelto">Vuelto</label>
-                                <input type="text" class="form-control form-control-sm" id="vuelto" value="S/ 0.00" readonly>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="fecha_venta">Fecha de la Venta</label>
+                                    <input type="text" class="form-control" id="fecha_venta" name="fecha_venta" readonly>
+                                </div>
                             </div>
-                        </form>
-                        <div class="total-venta">
-                            <p>Subtotal: S/ 7.84</p>
-                            <p>Exento: S/ 2.25</p>
-                            <p>Base imponible: S/ 5.59</p>
-                            <p>IVA (16%): S/ 0.89</p>
-                            <p><strong>TOTAL: S/ 8.73</strong></p>
                         </div>
+                        <div class="text-center my-3">
+                            <h4>Total a Pagar:   <span id="total-pago" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <h4>Tipos de Pago</h4>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <h4>Monto</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <?php foreach ($opciones as $index => $opcion): ?>
+                                <?php if ($opcion['cod_divisa'] == 3): ?>
+                                    <!-- Si es bolívares (sin conversión de divisas) -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                            <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Bs</span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control monto-bs" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <!-- Si es otra divisa (con conversión) -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                            <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
+                                                <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Bs</span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control monto-bs monto-con" id="monto-bs-con-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="form-row justify-content-end">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Monto a pagar</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagar"  name="monto_pagar">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="">Monto pagado</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagado" name="monto_pagado" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-end">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="">Diferencia</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.001" class="form-control" id="diferencia" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-success" id="finalizarPagoBtn">Finalizar Pago</button>
+                        <button type="submit" class="btn btn-success" form="pagoForm" id="finalizarPagoBtn" name="finalizarp">Finalizar Pago</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+<!-- =======================
+MODAL ABONAR PAGO 
+============================= -->
+
+        <div class="modal fade" id="abonoModal" tabindex="-1" aria-labelledby="abonoLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #db6a00; color: #ffffff;">
+                        <h5 class="modal-title" id="pagoLabel">Registrar Pago</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="abonoForm" method="post">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="nro_venta">Nro de Venta</label>
+                                    <input type="text" class="form-control" id="nro-venta1" name="nro_venta" readonly>
+                                    <input type="hidden" class="form-control" id="codigop" name="codigop">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="nombre_cliente">Nombre del Cliente</label>
+                                    <input type="text" class="form-control" id="nombre_cliente1" name="nombre_cliente" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="fecha_venta">Fecha de la Venta</label>
+                                    <input type="text" class="form-control" id="fecha_venta1" name="fecha_venta" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center my-3">
+                            <h4>Monto de la venta:   <span id="total-venta1" class="font-weight-bold" style="font-size: 2rem;">0.00</span></h4>
+                            <input type="hidden" class="form-control" id="t-parcial" name="total_parcial">
+                        </div>
+                        <div class="text-center my-3">
+                            <h4>Monto a Pagar:   <span id="total-pago1" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-5">
+                                <h4>Tipos de Pago</h4>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <h4>Monto</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <?php foreach ($opciones as $index => $opcion): ?>
+                                <?php if ($opcion['cod_divisa'] == 3): ?>
+                                    <!-- Si es bolívares (sin conversión de divisas) -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                            <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Bs</span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control monto-bs1" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago1()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <!-- Si es otra divisa (con conversión) -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                            <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago1(<?= $index; ?>)">
+                                                <input type="hidden" class="form-control tasa-conversion1" id="tasa-conversion1-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Bs</span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control monto-bs1 monto-con1" id="monto-bs-con-1<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="form-row justify-content-end">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Monto a pagar</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagar1"  name="monto_pagar">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="">Monto pagado</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagado1" name="monto_pagado" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-end">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="">Diferencia</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.001" class="form-control" id="diferencia1" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success" form="abonoForm" id="finalizarPagoBtn" name="parcialp">Finalizar Pago</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 <!-- =======================
@@ -345,6 +613,47 @@ MODAL REGISTRAR CLIENTES
 FIN REGISTRAR CLIENTES
 ============================= -->
 
+<!-- =======================
+MODAL CONFIRMAR ELIMINAR 
+============================= -->
+<div class="modal fade" id="anularventa" tabindex="-1" aria-labelledby="anularventaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="anularventaLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form id="anumodal" method="post"> 
+                <p>¿Está seguro que desea eliminar la venta nro: <span id="codv"></span>?</p>
+                <input type="text" id="cventa" name="cventa"> 
+                <input type="text" id="statusv" name="statusv">
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" form="anumodal" class="btn btn-danger" id="confirmDelete" name="anular">Eliminar</button>
+        </div>
+        </div>
+    </div>
+</div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'tpago';
+            }
+        });
+    </script>
+<?php endif; ?>
+
 
 
 
@@ -365,13 +674,13 @@ SCRIPT DE VENTA
         });
 
         
-        $('#finalizarPagoBtn').click(function() {
+        /*$('#finalizarPagoBtn').click(function() {
             
             alert('Pago Finalizado');
             
             $('#resumenVentaModal').modal('hide');
             $('#ventaModal').modal('hide'); 
-        });
+        });*/
 
 
 
@@ -403,6 +712,9 @@ function crearfila(index) {
             <td>
                 <input type="text" class="form-control" id="total${index}" name="productos[${index}][total]" placeholder="Total" readonly>
             </td>
+            <td>
+                <button type="button" class="btn-sm btn-danger" onclick="eliminarFila(${index})">&times;</button>
+            </td>
         </tr>
     `;
     
@@ -415,7 +727,7 @@ function agregarFila() {
 }
 
 function inicializarFilas() {
-    for (let i = 1; i <= 2; i++) {
+    for (let i = 1; i <= 1; i++) {
         agregarFila();
     }
 }
@@ -423,6 +735,15 @@ function inicializarFilas() {
 $(document).ready(function() {
     inicializarFilas(); 
 });
+
+function eliminarFila(index) {
+    // Eliminar la fila del DOM usando el identificador de fila
+    var fila = document.getElementById(`fila${index}`);
+    if (fila) {
+        fila.remove();
+    }
+    calcularTotal();
+}
 
 
 // Calcular el total de cada fila
@@ -530,12 +851,12 @@ $('#cedula-rif').blur(function (e){
                             var precioVenta = costo + (costo * producto.porcen_venta / 100);
                             listaProductos.append(
                                 '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
-                                'data-nombre="'+producto.nombre+'" ' +
+                                'data-nombre="'+producto.producto_nombre+'" ' +
                                 'data-tipo="'+producto.excento+'" ' +
-                                'data-codigo="'+producto.cod_producto+'" ' +
+                                'data-codigo="'+producto.cod_presentacion+'" ' +
                                 'data-marca="'+producto.marca+'" ' +
                                 'data-precio="'+precioVenta+'">' +
-                                producto.nombre + ' - ' + producto.marca + ' - ' + precioVenta + '</a>'
+                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion+' - '+precioVenta + '</a>'
                             );
                         });
                         listaProductos.fadeIn();
@@ -562,7 +883,6 @@ $('#cedula-rif').blur(function (e){
         var index = inputId.replace('nombreProducto', ''); // Extrae el índice del campo
         $('#' + inputId).val(selectedProduct); 
 
-        // Completar otros campos automáticamente
         $('#codigoProducto' + index).val(codigo); 
         $('#tipoProducto' + index).val(tipo);
         $('#precioProducto' + index).val(precio); 
@@ -583,36 +903,37 @@ var hora=String(now.getHours()).padStart(2, '0') + ':' +
         String(now.getMinutes()).padStart(2, '0') + ':' +
         String(now.getSeconds()).padStart(2, '0');
     
-    // Concatenar fecha y hora
     var fechaHora = fecha + ' ' + hora;
-    
-    // Asignar el valor al input de fecha-hora
     $('#fecha-hora').val(fechaHora);
 });
 
 
 
 $(document).ready(function() {
-    $('#ventaModal').on('submit', function(event) {
+    $('#ventamodal').on('submit', function(event) {
         event.preventDefault(); // Evita que el formulario se envíe de forma estándar y recargue la página
         
         // Serializa los datos del formulario
         var datosVenta = $(this).serialize();
+        console.log('form:', datosVenta);
 
         // Enviar la solicitud AJAX
         $.ajax({
             type: 'POST',
-            url: 'index.php?pagina=venta', // Cambia esto por la URL de tu controlador
+            url: 'index.php?pagina=venta',
             data: datosVenta,
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    // Cierra el modal de venta
                     $('#ventaModal').modal('hide');
-                    
-                    // Rellena el modal de pago con los datos de la venta registrada
-                    $('#clientenom').val(response.cliente);
-                    
+                    $('#nro-venta').val(response.cod_venta);
+                    $('#nombre_cliente').val(response.cliente); 
+                    $('#fecha_venta').val(response.fecha);
+                    $('#total-pago').text(response.total+ ' Bs');
+                    $('#monto_pagar').val(response.total);
+
+                    console.log('cod:', response.cod_venta);
+                    console.log('total:', response.total);
 
                     // Abre el modal de pago
                     $('#pagoModal').modal('show');
@@ -620,14 +941,141 @@ $(document).ready(function() {
                     alert('Error al registrar la venta: ' + response.message);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function(jqXHR, xhr, status, error) {
                 console.error('Estado:', status);
                 console.error('Error:', error);
                 console.error('Respuesta del servidor:', xhr.responseText);
+                console.log('Response Text:', jqXHR.responseText);
                 alert('Hubo un problema al registrar la venta. Inténtalo de nuevo.');
             }
         });
     });
+});
+
+function calcularTotalpago() {
+    let totalBs = 0;
+
+    // 1. Procesar las entradas que ya están en bolívares (sin conversión)
+    document.querySelectorAll('.monto-bs:not(.monto-con)').forEach(function(input) {
+        let montoBs = parseFloat(input.value) || 0;
+        totalBs += montoBs;  // Sumar cada monto en bolívares directo
+    });
+
+    // 2. Procesar las entradas en divisas (convertirlas a bolívares)
+    document.querySelectorAll('.monto-divisa').forEach(function(inputDivisa) {
+        let index = inputDivisa.id.split('-').pop();  // Obtener el índice de la fila actual
+
+        // Obtener el monto en divisa de la fila
+        let montoDivisa = parseFloat(inputDivisa.value) || 0;
+
+        // Obtener la tasa de conversión de la misma fila
+        let tasaConversion = parseFloat(document.getElementById('tasa-conversion-' + index).value) || 1;
+
+        // Calcular el monto en bolívares
+        let montoConvertidoBs = montoDivisa * tasaConversion;
+
+        // Actualizar el campo de bolívares convertido en esa fila
+        document.getElementById('monto-bs-con-' + index).value = montoConvertidoBs.toFixed(2);
+
+        // Sumar al total de bolívares
+        totalBs += montoConvertidoBs;
+    });
+
+    // 3. Mostrar el total en el campo "Monto Pagado"
+    document.getElementById('monto_pagado').value = totalBs.toFixed(2);
+
+    // 4. Calcular y mostrar la diferencia con el monto a pagar
+    let montoPagar = parseFloat(document.getElementById('monto_pagar').value) || 0;
+    let diferencia = montoPagar - totalBs;
+    document.getElementById('diferencia').value = diferencia.toFixed(2);
+}
+
+$('#pagoModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codventa');
+    var total = button.data('totalv');
+    var fecha = button.data('fecha');
+    var nombre = button.data('nombre');
+    // Modal
+    var modal = $(this);
+    modal.find('.modal-body #nro-venta').val(codigo);
+    modal.find('.modal-body #monto_pagar').val(total);
+    modal.find('.modal-body #total-pago').text(total+ 'Bs');
+    modal.find('.modal-body #fecha_venta').val(fecha);
+    modal.find('.modal-body #nombre_cliente').val(nombre);
+});
+
+$('#abonoModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codventa');
+    var codp=button.data('codpago');
+    var total = button.data('totalv');
+    var monto=button.data('montop');
+    var fecha = button.data('fecha');
+    var nombre = button.data('nombre');
+    var mpagar=total-monto;
+    // Modal
+    var modal = $(this);
+    modal.find('.modal-body #nro-venta1').val(codigo);
+    modal.find('.modal-body #monto_pagar1').val(mpagar.toFixed(2));
+    modal.find('.modal-body #total-venta1').text(total+ 'Bs');
+    modal.find('.modal-body #t-parcial').val(mpagar);
+    modal.find('.modal-body #total-pago1').text(mpagar.toFixed(2)+ 'Bs');
+    modal.find('.modal-body #fecha_venta1').val(fecha);
+    modal.find('.modal-body #nombre_cliente1').val(nombre);
+    modal.find('.modal-body #codigop').val(codp);
+
+});
+
+function calcularTotalpago1() {
+    let totalBs = 0;
+
+    // 1. Procesar las entradas que ya están en bolívares (sin conversión)
+    document.querySelectorAll('.monto-bs1:not(.monto-con1)').forEach(function(input) {
+        let montoBs = parseFloat(input.value) || 0;
+        totalBs += montoBs;  // Sumar cada monto en bolívares directo
+    });
+
+    // 2. Procesar las entradas en divisas (convertirlas a bolívares)
+    document.querySelectorAll('.monto-divisa1').forEach(function(inputDivisa) {
+        let index = inputDivisa.id.split('-').pop();  // Obtener el índice de la fila actual
+
+        // Obtener el monto en divisa de la fila
+        let montoDivisa = parseFloat(inputDivisa.value) || 0;
+
+        // Obtener la tasa de conversión de la misma fila
+        let tasaConversion = parseFloat(document.getElementById('tasa-conversion1-' + index).value) || 1;
+
+        // Calcular el monto en bolívares
+        let montoConvertidoBs = montoDivisa * tasaConversion;
+
+        // Actualizar el campo de bolívares convertido en esa fila
+        document.getElementById('monto-bs-con-1' + index).value = parseFloat(montoConvertidoBs.toFixed(2));
+
+        // Sumar al total de bolívares
+        totalBs += montoConvertidoBs;
+    });
+
+    // 3. Mostrar el total en el campo "Monto Pagado"
+    document.getElementById('monto_pagado1').value = totalBs.toFixed(2);
+
+    // 4. Calcular y mostrar la diferencia con el monto a pagar
+    let montoPagar = parseFloat(document.getElementById('monto_pagar1').value) || 0;
+    let diferencia = montoPagar - totalBs;
+    document.getElementById('diferencia1').value = diferencia.toFixed(2);
+}
+
+
+$('#anularventa').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codventa');
+    var status=button.data('status');
+    // Modal
+    var modal = $(this);
+    modal.find('.modal-body #cventa').val(codigo);
+    modal.find('.modal-body #statusv').val(status);
+    modal.find('.modal-body #codv').text(codigo);
+
 });
 
 </script>

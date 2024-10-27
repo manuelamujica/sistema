@@ -1,4 +1,3 @@
-
 <!-- MAIN SIDEBAR CONTAINER-->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 <!-- Logo -->
@@ -11,8 +10,6 @@
         <?php endif; ?>
         <span class="brand-text font-weight-bold">SAVYC</span>
     </a>
-    
-    
 <!--=================
     MENU / sidebar
 =====================-->
@@ -29,7 +26,6 @@
                     </a>
                 </li>
                 <?php endif;?>
-
                 <?php if ($_SESSION["inventario"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -54,7 +50,6 @@
                         </ul>
                 </li>
                 <?php endif; ?>
-                
                 <?php if ($_SESSION["categoria"]==1): ?>
                 <li class="nav-item">
                     <a href="categorias" class="nav-link">
@@ -65,7 +60,6 @@
                     </a>
                 </li>
                 <?php endif;?>
-
                 <?php if ($_SESSION["compra"]==1): ?>
                 <li class="nav-item">
                     <a href="compras" class="nav-link">
@@ -76,7 +70,6 @@
                     </a>
                 </li>
                 <?php endif; ?>
-
                 <?php if ($_SESSION["venta"]==1): ?>
                 <li class="nav-item">
                     <a href="venta" class="nav-link">
@@ -87,7 +80,6 @@
                     </a>
                 </li>
                 <?php endif;?>
-
                 <?php if ($_SESSION["cliente"]==1): ?>
                 <li class="nav-item">
                     <a href="clientes" class="nav-link">
@@ -98,7 +90,6 @@
                     </a>
                 </li>
                 <?php endif; ?>
-
                 <?php if ($_SESSION["proveedor"]==1): ?>
                 <li class="nav-item">
                     <a href="proveedores" class="nav-link">
@@ -109,7 +100,6 @@
                     </a>
                 </li>
                 <?php endif; ?>
-
                 <?php if ($_SESSION["usuario"]==1): ?>
                 <li class="nav-item">
                     <a href="usuarios" class="nav-link">
@@ -120,7 +110,6 @@
                     </a>
                 </li>
                 <?php endif;?>
-
                 <?php if ($_SESSION["reporte"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -173,7 +162,6 @@
                     </ul>
                 </li>
                 <?php endif;?>
-
                 <?php if ($_SESSION["configuracion"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -226,7 +214,6 @@
                     </ul>
                 </li>
                 <?php endif;?>
-
             </ul>
         </nav>
     </div>

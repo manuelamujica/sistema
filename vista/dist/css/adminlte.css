@@ -6018,6 +6018,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   height: 100%;
   overflow: hidden;
   outline: 0;
+  overflow-y: auto
 }
 
 .modal-dialog {
