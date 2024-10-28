@@ -11,7 +11,7 @@ $objRol= new Rol();
 if(isset($_POST["ingresar"])){
 
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
-	preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingPassword"])){ //Pendiente validar caracteres especiales...
+	preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])){ 
 
 		$item = "user";
 		$valor = $_POST["ingUsuario"];
@@ -73,26 +73,25 @@ if(isset($_POST["ingresar"])){
 			if(!empty($logo)){
 			$_SESSION["logo"] = $logo[0]["logo"];
 			}
+
 			echo '<script>
 			window.location="inicio";
 			</script>';
 
 		} else {
-			echo "<script>
-			alert('Error al ingresar, vuelve a intentarlo');
-			location = 'login';
-			</script>";
-			#echo '<div class="alert alert-danger">Error al ingresar, vuelve a intentarlo</div>';
-		}
+			$login = [
+                "title" => "Error",
+                "message" => "Intenta de nuevo",
+                "icon" => "error"
+            ];
+		} 
 	} else {
-		echo "<script>
-		alert('Usuario no encontrado');
-		location = 'login';
-		</script>";
+		$login = [
+			"title" => "Error",
+			"message" => "Usuario no encontrado",
+			"icon" => "error"
+		];
 	}
-		#echo: Lo muestra bonito pero no agarra las clases de adminLTE
-		#'<div class="alert alert-danger">Usuario no encontrado</div>';
-	
 	
 }
 

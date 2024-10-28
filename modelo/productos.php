@@ -278,4 +278,9 @@ public function eliminar($p, $pp) {
 
     return 'error_delete'; // No se pudo eliminar la presentación
 }
+
+/*======================================================================
+BUSCAR PRODUCTO (si ya existe asignarle una nueva presentacion)
+========================================================================*/
+
 }

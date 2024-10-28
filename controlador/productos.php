@@ -14,7 +14,13 @@ $categoria = $objCategoria->getmostrar(); // Obtener los categorias para pasarlo
 $unidad = $objUnidad->consultarUnidad();  // Obtener las unidades de medida para pasarlos a la vista
 
 //REGISTRAR
-if (isset($_POST['guardar'])){
+if(isset($_POST['buscar'])){
+    $result=$obj->buscar($_POST['buscar']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
+    
+}elseif (isset($_POST['guardar'])){
 
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"] && !empty($_POST["costo"]))){
 

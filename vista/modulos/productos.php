@@ -123,6 +123,9 @@ require_once "controlador/productos.php";
                                     <form id="formRegistrarProducto" method="post">
                                         <div class="form-group row">
                                             <div class="col-6">
+                                                <!-- Campo oculto para el código del producto -->
+                                                <input type="hidden" id="cod_productoR" name="cod_productoR">
+
                                                 <label for="nombre">Nombre del producto</label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
                                             </div>

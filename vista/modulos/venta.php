@@ -1,5 +1,5 @@
 <?php require_once 'controlador/venta.php'; ?>
-<!-- MÓDULO TRANSACCIONAL, SOLO VISTA-->
+<!-- MÓDULO TRANSACCIONAL-->
 <div class="content-wrapper">
     <section class="content-header">
     <div class="container-fluid">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                             <br>
-            <!-- Tabla de productos -->
+            <!-- Tabla de productos                                         ?????-->
             <div class="table-responsive">
             <table id="producto" class="table table-bordered table-striped datatable">
                 <thead>

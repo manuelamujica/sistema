@@ -1,5 +1,3 @@
-console.log("Archivo JS cargado correctamente");
-
 // NUEVA CATEGORIA DESDE PRODUCTO
 //(Validar nombre)
     $('#nombrec').blur(function (e){
@@ -108,3 +106,32 @@ $('#eliminarModal').on('show.bs.modal', function (event) {
     console.log('Código presentacion:', codigo);
     console.log('Codigo producto:', button.data('producto'));
 });
+
+/*$(document).ready(function() {
+    $('#nombre').blur(function() {
+        var buscar = $('#nombre').val();
+
+        $.post('index.php?pagina=productos', { buscar: buscar }, function(response) {
+            if (response.length > 0) { // Si se encontró al menos un producto
+                var producto = response[0]; // Selecciona el primer producto de la lista
+
+                // Rellena el modal con los datos del producto
+                $('#modalRegistrarProducto').find('#cod_producto').val(producto.cod_producto); // Guardar el código oculto
+                $('#modalRegistrarProducto').find('#nombre').val(producto.nombre);
+                $('#modalRegistrarProducto').find('#marca').val(producto.marca);
+                $('#modalRegistrarProducto').find('#categoria').val(producto.cat_nombre);
+                $('#modalRegistrarProducto').find('#iva').val(producto.excento);
+
+                // Deshabilitar campos
+                $('#modalRegistrarProducto').find('#marca').prop('readonly', true);
+                $('#modalRegistrarProducto').find('#categoria').prop('readonly', true);
+                $('#modalRegistrarProducto').find('#iva').prop('readonly', true);
+            } else {
+                console.log("No se encontraron productos con ese nombre.");
+            }
+        }, 'json').fail(function() {
+            console.log("Error en la solicitud AJAX.");
+        });
+    });
+});*/
+
