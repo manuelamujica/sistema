@@ -113,10 +113,9 @@ REGISTRAR UNIDAD DE MEDIDA
       }
 
     
-    //NO ENTIENDO !?
 
       private function eliminar($valor){ //NO FUNCIONA PORQUE FALTA LA TABLA DE PRESENTACION
-        $registro = "SELECT COUNT(*) AS n_p FROM productos WHERE cod_unidad = $valor";
+        $registro = "SELECT COUNT(*) AS n_p FROM presentacion_producto WHERE cod_unidad = $valor";
         $strExec = $this->conex->prepare($registro);
         $result = $strExec->execute();
         if($result){

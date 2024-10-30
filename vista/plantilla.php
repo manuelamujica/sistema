@@ -28,7 +28,11 @@ PLUGINGS DE CSS
   <link rel="stylesheet" href="vista/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="vista/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="vista/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
- 
+
+  <!-- ???? --> 
+<!-- Incluye Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <!-- =======================
     PLUGINGS DE JAVASACRIPT  
@@ -43,8 +47,7 @@ PLUGINGS DE CSS
   <!-- Date Range Picker -->
   <script src="vista/plugins/moment/moment.min.js"></script>
   <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
-
-
+  
   <!-- DataTables  & Plugins -->
 <script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -65,7 +68,15 @@ PLUGINGS DE CSS
 <!-- SweetAlert2 -->
 <script src="vista/plugins/sweetalert2/sweetalert2.all.js"></script>
 
+<!-- ???? --> 
+<!-- Incluye Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 </head>
+
+
+
+
 
 <!-- =======================
     BODY

@@ -41,6 +41,7 @@
                 <tbody>
                     <?php
                         foreach($datos as $dato){
+                            if ($dato['status']!=2){
                     ?>
                     <tr>
                         <td><?php echo $dato['cod_unidad']?></td>
@@ -62,7 +63,8 @@
                             <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_unidad'];?>"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
-                    <?php } ?>
+                    <?php
+                } } ?>
                 </tbody>
             </div>
             </table>
@@ -99,7 +101,6 @@ MODAL REGISTRAR Unidades de medida
                 </div>
             </div>
         </div>
-
         <!-- MODAL EDITAR -->
         <div class="modal fade" id="modalmodificarunidad">
                         <div class="modal-dialog">
@@ -111,6 +112,9 @@ MODAL REGISTRAR Unidades de medida
                                     </button>
                                 </div>
                                 <form role="form" method="post" id="form-editar-unidad">
+                                   
+                            <!--   CODIGO DE LA UNIDAD    -->
+                        
                                     <div class="modal-body">
                                         <input type="hidden" name="cod_unidad" id="cod_unidad_oculto" value="<?php echo $dato['cod_unidad'] ?>">
                                         <div class="form-group">
@@ -122,7 +126,7 @@ MODAL REGISTRAR Unidades de medida
                                             <input type="text" class="form-control" name="tipo_medida" id="tipo_medida" value="<?php echo $dato['tipo_medida'] ?>">
                                         </div>
                                         <div class="form-group">
-                                            <label for="status">Status</label>
+                                            <label for="status">Estatus</label>
                                             <select name="status" id="status">
                                                 <option value="1">Activo</option>
                                                 <option value="0">Inactivo</option>
@@ -143,7 +147,8 @@ MODAL REGISTRAR Unidades de medida
     </section>
 </div>
 
-<!-- Confirmar Eliminar Modal -->
+<!--    MODAL DE ADVERTENCIA    -->
+        <!-- Confirmar Eliminar Modal -->
         <div class="modal fade" id="modaleliminar">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -159,14 +164,19 @@ MODAL REGISTRAR Unidades de medida
                     <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         <form method="post">
+                            
+                        <!--   YA ELIMINA!!!!! BUAJAJAJA  -->
                         <input type="hidden" name="eliminar" id="cod_eliminar" value="">
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                         </form>
                         
                     </div>
                 </div>
+        <!-- /.modal-content -->
             </div>
+    <!-- /.modal-dialog -->
         </div>
+
     </section>
 </div>
 <script src="vista/dist/js/modulos-js/unidad.js"></script>

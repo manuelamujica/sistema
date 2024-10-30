@@ -7,6 +7,7 @@
         private $cod_carga;
         private $cod_detallep;
         private $cantidad;
+        private $codpro;
         private $status;
 
         public function __construct(){
@@ -15,17 +16,16 @@
         }
 
         private function crear(){
-            //$cantidad = [];
-            //$producto = [];
-            $producto = $this->cod_detallep;
-            //var_dump($producto);
+
+            $producto = $this->getproductod();
+            $this->setcodp($producto);;
             $cantidad = $this->cantidad;
             $cod_carga = $this->carga(); // Obtener el último código de carga insertado
             $this->setcodcarga($cod_carga); // Asignar el código de carga a la propiedad
             $sql = "INSERT INTO detalle_carga(cod_detallep,cod_carga, cantidad, status) VALUES(:cod_detallep, :cod_carga, :cantidad, 1)";
 
             $strExec = $this->conex->prepare($sql);
-            $strExec->bindParam(':cod_detallep', $producto);
+            $strExec->bindParam(':cod_detallep', $this->cod_detallep);
             $strExec->bindParam(':cod_carga',$this->cod_carga);
             $strExec->bindParam(':cantidad',$cantidad);
 
@@ -40,10 +40,12 @@
         }
         
         private function actualizarStock() {
+            $cod_detallep = $this->getproductod();
+
             $aumentar = "UPDATE detalle_productos SET stock = stock + :cantidad WHERE cod_detallep = :cod_detallep";
             $strExec = $this->conex->prepare($aumentar);
             $strExec->bindParam(':cod_detallep', $this->cod_detallep);
-            $strExec->bindParam(':cantidad', $this->cantidad);
+            $strExec->bindParam(':cantidad', $this->cantidad); 
             $strExec->execute();
         }
 
@@ -68,35 +70,36 @@
                  
         }
 
-        /*
-        
-        #######    AL NO TENER LA NECESIDAD DE IMPLANTAR EL METODO LO DEJE EN COMENTARIO      ##########
+        //OBTENER EL CODIGO ULTIMO DE PRODUCTO
+        private function getproductod(){ 
 
-        private function buscar($dato){
-            $this->codigo = $dato;
-            $registro="select * from detalle_carga where codigo='".$this->codigo."'";
-            $resultado= "";
-            $dato = $this->conex->prepare($registro);
-            $resul = $dato->execute();
-            $resultado=$dato->fetch(PDO::FETCH_ASSOC);
-            if($resul){
-                return $resultado;
+            $sql = "SELECT MAX(cod_detallep) as ultimo FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':cod_presentacion',$this->codpro);
+            $resul = $strExec->execute();
+            if($resul == 1){
+                //var_dump($this->codpro);
+                $r = $strExec->fetch(PDO::FETCH_ASSOC);
+                return $r['ultimo'];
             }else{
-                return false;
+                //var_dump($this->codpro);
+                return $r = 0;
             }
-        }
+    }
 
-        public function getbuscar($valor){
-            return $this->buscar($valor);
-        }*/
+    public function productod(){
+        return $this->getproductod();
+    }
+
 
         private function mostrartodo(){
             //OBTENGO DATOS DE LA TABLA CARGA
-            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
+            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
             FROM detalle_carga dc
             JOIN carga c ON dc.cod_carga = c.cod_carga
             JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
-            JOIN productos p ON dp.cod_producto = p.cod_producto";
+            JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
+            JOIN productos p ON pre.cod_producto = p.cod_producto";
 
             $strExec = $this->conex->prepare($sql);
             $resul = $strExec->execute();
@@ -113,24 +116,11 @@
             return $this->mostrartodo();
         }
 
-        //   OBTENER DATOS DE LA TABLA PRODUCTO
-        /*private function obtenerP(){
-            $sql = "SELECT dp.cod_detallep,p.nombre, p.cod_producto, p.costo, dp.stock, dp.fecha_vencimiento FROM productos p 
-                    JOIN detalle_productos dp ON p.cod_producto = dp.cod_producto";
-            $strExec = $this->conex->prepare($sql);
-            $resul = $strExec->execute();
-            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-            if($resul){
-                return $result;;
-            }else{
-                return $r = 0;
-            }
-
-        }*/
 
         private function obtenerP(){
-            $sql = "SELECT * from productos";
+            $sql = "SELECT pre.cod_presentacion, pre.cod_producto, pre.presentacion, p.cod_producto, p.nombre, p.marca
+            FROM presentacion_producto pre
+            JOIN productos p ON pre.cod_producto = p.cod_producto";
             $strExec = $this->conex->prepare($sql);
             $resul = $strExec->execute();
             $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
@@ -144,9 +134,9 @@
         }
 
         public function verificarDetalleProducto($valor) {
-            $sql = "SELECT cod_detallep FROM detalle_productos WHERE cod_producto = :cod_producto";
+            $sql = "SELECT cod_detallep FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
             $strExec = $this->conex->prepare($sql);
-            $strExec->bindParam(':cod_producto', $valor);
+            $strExec->bindParam(':cod_presentacion', $valor);
             $rr=$strExec->execute();
             $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
             
@@ -161,19 +151,6 @@
             return $this->obtenerP();
         }
 
-        /*public function porcarga($valor){
-            $sql = "SELECT * FROM detalle_carga WHERE cod_carga = $valor AND status != 2";
-            $strExec = $this->conex->prepare($sql);
-            //$strExec->bindParam('cod_carga', $valor);
-            $resul = $strExec->execute();
-            $dato = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-            if($resul){
-                return $dato;
-            }else{
-                return $r = 0;
-            }
-        }*/
 
         private function mostrar(){
             $sql = "select * from detalle_carga";
@@ -281,6 +258,13 @@
         }
         public function setstatus($status){
             $this->status = $status;
+        }
+
+        public function getcodpro(){
+            return $this->codpro;
+        }
+        public function setcodpro($codpro){
+            $this->codpro = $codpro;
         }
 
     }

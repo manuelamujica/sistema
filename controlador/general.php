@@ -89,7 +89,7 @@ if(isset($_POST['buscar'])){
     $objGeneral->setDescri($descripcion);
     $res = $objGeneral->editar();
     if($res == 1){
-        echo "<script>alert('Informacion actualizada con exito'); window.location = 'general'</script>";
+        echo "<script>alert('Información actualizada con éxito'); window.location = 'general'</script>";
     }else{
         echo "<script>alert('Error al actualizar'); window.location = 'general'</script>";
     }
