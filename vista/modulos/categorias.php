@@ -65,7 +65,8 @@ require_once "controlador/categorias.php";
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
                                                 data-codigo="<?php echo $categoria["cod_categoria"]; ?>"
-                                                data-nombre="<?php echo $categoria["nombre"]; ?>">
+                                                data-nombre="<?php echo $categoria["nombre"]; ?>"
+                                                data-status="<?php echo $categoria["status"]; ?>">
                                                 <i class="fas fa-trash-alt"></i></button>
                                                 
                                             </td>
@@ -93,7 +94,8 @@ require_once "controlador/categorias.php";
                                     <form id="formRegistrarCategoria" method="post">
                                         <div class="form-group">
                                             <label for="nombre">Nombre de la categoría</label>
-                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" value="Manuela" required>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">
@@ -140,6 +142,7 @@ if (isset($registrar)): ?>
                                         <div class="form-group">
                                             <label for="codigo">Nombre</label>
                                             <input type="text" class="form-control" id="name" name="nombre">
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="status">Status</label>
@@ -190,6 +193,7 @@ if (isset($editar)): ?>
                                         <div class="form-group">
                                             <p>¿Estás seguro que deseas eliminar a <b><span id="catnombre"></b></span>?</p>
                                             <input type="hidden" id="catcodigo" name="catcodigo">
+                                            <input type="hidden" id="statusDelete" name="statusDelete">
                                         </div>
                                     </form>
                                 </div>
@@ -220,6 +224,20 @@ if (isset($editar)): ?>
         });
     </script>
 <?php endif; ?>
-
+<?php
+if (isset($advertencia)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $advertencia["title"]; ?>',
+            text: '<?php echo $advertencia["message"]; ?>',
+            icon: '<?php echo $advertencia["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categorias';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <script src="vista/dist/js/modulos-js/categorias.js"> </script>

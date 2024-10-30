@@ -13,7 +13,7 @@ if(isset($_POST['buscar'])){
 
 }else if (isset($_POST['guardar']) || isset($_POST['registrarc'])){ #Si viene de productos o de categoria
 
-    if(!empty($_POST["nombre"])){
+    if(!empty($_POST["nombre"]) && preg_match('/^[a-zA-Z]+$/',$_POST['nombre'])){
 
         if (!$objCategoria->getbuscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
 
@@ -21,7 +21,6 @@ if(isset($_POST['buscar'])){
             $result=$objCategoria->getregistrar();
             
             if($result == 1){
-                #PRUEBA USANDO SWEETALERT2
                 $registrar = [
                     "title" => "Registrado con éxito",
                     "message" => "La categoría ha sido registrada",
@@ -36,9 +35,15 @@ if(isset($_POST['buscar'])){
                 ];
             }
         }
+    }else {
+        $registrar = [
+        "title" => "Error",
+        "message" => "Hubo un problema al registrar la categoría. Intenta nuevamente",
+        "icon" => "error"
+        ];
     }
 }else if (isset($_POST['actualizar'])){
-    if(!empty($_POST['nombre'])){
+    if(!empty($_POST['nombre']) && preg_match('/^[a-zA-Z]+$/',$_POST['nombre'])){
         
         #validacion de que no haya esa categoria registrada
         $objCategoria->setNombre($_POST['nombre']);
@@ -59,9 +64,16 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
     }
+} else{
+    $editar = [
+        "title" => "Error",
+        "message" => "Hubo un problema al editar la categoría. Intenta de nuevo",
+        "icon" => "error"
+    ];
 }
+
 }else if(isset($_POST['borrar'])){
-    if(!empty($_POST['catcodigo'])){
+    if(!empty($_POST['catcodigo']) && $_POST['statusDelete'] !== '1'){
     $result = $objCategoria->geteliminar($_POST["catcodigo"]);
     
     if ($result == 'success') {
@@ -89,6 +101,11 @@ if(isset($_POST['buscar'])){
             "icon" => "error"
         ];
     }
+} else {$eliminar = [
+    "title" => "Error",
+    "message" => "No se puede eliminar una categoría activa",
+    "icon" => "error"
+];
 }
 
 }

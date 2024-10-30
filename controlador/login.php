@@ -20,7 +20,8 @@ if(isset($_POST["ingresar"])){
 
 	}
 
-	if (!empty($respuesta) && isset($respuesta["user"])) {
+	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
+		
 		// Verificamos la contraseña utilizando password_verify()
 		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
 			
@@ -81,14 +82,14 @@ if(isset($_POST["ingresar"])){
 		} else {
 			$login = [
                 "title" => "Error",
-                "message" => "Intenta de nuevo",
+                "message" => "Usuario o contraseña incorrecta.",
                 "icon" => "error"
             ];
 		} 
 	} else {
 		$login = [
 			"title" => "Error",
-			"message" => "Usuario no encontrado",
+			"message" => "Intenta de nuevo. ",
 			"icon" => "error"
 		];
 	}
