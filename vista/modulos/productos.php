@@ -60,7 +60,13 @@ require_once "controlador/productos.php";
                                             <td> <?php echo $producto["presentacion_concat"] ?></td>
                                             <td> <?php echo $producto["cat_nombre"] ?></td>
                                             <td> <?php echo $producto["costo"] ?></td>
-                                            <td> <?php echo $producto["excento"] ?></td>
+                                            <td> <?php if($producto["excento"] == 1){
+                                                echo 'E';
+                                            }  else{
+                                                echo 'G';
+                                            }
+                                            ?>
+                                            </td>
                                             <td>
                                             <?php 
                                             $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"]; 
@@ -154,11 +160,11 @@ require_once "controlador/productos.php";
                                                 </div>
 
                                             <div class="col-6">
-                                                <label for="excento">¿Tiene IVA?</label>
+                                                <label for="excento">Impuesto IVA</label>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
-                                                        <option value="G">Si</option>
-                                                        <option value="E">No</option>
+                                                        <option value="1">Excento</option>
+                                                        <option value="2">Gravable</option>
                                                     </select>
                                             </div>
                                         </div>
@@ -381,8 +387,8 @@ require_once "controlador/productos.php";
                                             <label for="excento">¿Tiene IVA?</label>
                                                 <select class="form-control" id="iva" name="iva" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
-                                                    <option value="G">Si</option>
-                                                    <option value="E">No</option>
+                                                    <option value="1">Excento</option>
+                                                    <option value="2">Gravable</option>
                                                 </select>
                                         </div>
                                     </div>

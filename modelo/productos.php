@@ -7,7 +7,6 @@ class Productos extends Conexion{
     private $conex;
     #producto
     private $nombre;
-    private $excento;
     private $marca;
 
 
@@ -16,8 +15,9 @@ class Productos extends Conexion{
     private $cant_presentacion;
     private $costo;
     private $ganancia;
+    private $excento;
 
-    #Detalle producto?
+    #Detalle producto
     private $stock;
     private $fecha;
     private $lote;
@@ -42,12 +42,6 @@ class Productos extends Conexion{
     }
     public function setMarca($marca){
         $this->marca = $marca;
-    }
-    public function getExcento(){
-        return $this->excento;
-    }
-    public function setExcento($excento){
-        $this->excento = $excento;
     }
 
 #Presentacion
@@ -74,6 +68,12 @@ class Productos extends Conexion{
     }
     public function setGanancia($ganancia){
         $this->ganancia = $ganancia;
+    }
+    public function getExcento(){
+        return $this->excento;
+    }
+    public function setExcento($excento){
+        $this->excento = $excento;
     }
 
 #Detalle producto?
@@ -110,7 +110,7 @@ REGISTRAR PRODUCTO con CATEGORIA + REGISTRAR PRESENTACION con UNIDAD
 ========================================================================*/
 private function registrar($unidad, $categoria){ 
 
-    $registro = "INSERT INTO productos(cod_categoria,nombre,excento,marca) VALUES(:cod_categoria,:nombre, :excento, :marca)";
+    $registro = "INSERT INTO productos(cod_categoria,nombre,marca) VALUES(:cod_categoria,:nombre, :marca)";
     
     #instanciar el metodo PREPARE no la ejecuta, sino que la inicializa
     $strExec = $this->conex->prepare($registro);
@@ -118,13 +118,12 @@ private function registrar($unidad, $categoria){
     #instanciar metodo bindparam
     $strExec->bindParam(':cod_categoria',$categoria);
     $strExec->bindParam(':nombre', $this->nombre);
-    $strExec->bindParam(':excento', $this->excento);
     $strExec->bindParam(':marca', $this->marca);
     $resul = $strExec->execute();
 
     if($resul){
-        $nuevo_cod=$this->conex->lastInsertId();     #Obtiene el código del último producto creado para registrar presentacion + unidad
-            $sqlproducto = "INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion,costo,porcen_venta) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion,:costo,:porcen_venta)";  
+        $nuevo_cod=$this->conex->lastInsertId(); #Obtiene el código del último producto creado para registrar presentacion + unidad
+            $sqlproducto = "INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion,costo,porcen_venta,excento) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion,:costo,:porcen_venta,:excento)";  
             $strExec=$this->conex->prepare($sqlproducto);
             $strExec->bindParam(':cod_unidad',$unidad);
             $strExec->bindParam(':cod_producto',$nuevo_cod);
@@ -132,6 +131,7 @@ private function registrar($unidad, $categoria){
             $strExec->bindParam(':cantidad_presentacion',$this->cant_presentacion);
             $strExec->bindParam(':costo',$this->costo);
             $strExec->bindParam(':porcen_venta',$this->ganancia);
+            $strExec->bindParam(':excento',$this->excento);
 
             $execute=$strExec->execute();
         $r=1;
@@ -155,7 +155,6 @@ public function mostrar(){
     p.cod_producto,
     p.nombre,
     p.marca,
-    p.excento,
     c.nombre AS cat_nombre,
     c.cod_categoria AS cat_codigo,
     present.cod_presentacion,
@@ -163,6 +162,7 @@ public function mostrar(){
     present.cantidad_presentacion,
     present.costo,
     present.porcen_venta,
+    present.excento,
     u.tipo_medida,
     u.cod_unidad,
     (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat #Concatena
@@ -196,7 +196,6 @@ public  function editar($present,$product,$categoria,$unidad){
     $sql="UPDATE productos SET 
     cod_categoria=:cod_categoria,
     nombre=:nombre,
-    excento=:excento,
     marca=:marca
     WHERE cod_producto=:cod_producto";
 
@@ -204,7 +203,6 @@ public  function editar($present,$product,$categoria,$unidad){
 
     $strExec->bindParam(':cod_categoria', $categoria);
     $strExec->bindParam(':nombre', $this->nombre);
-    $strExec->bindParam(':excento',$this->excento);
     $strExec->bindParam(':marca',$this->marca);
     $strExec->bindParam(':cod_producto',$product);
     
@@ -215,6 +213,7 @@ public  function editar($present,$product,$categoria,$unidad){
         presentacion=:presentacion,
         cantidad_presentacion=:cant_presentacion,
         costo=:costo,
+        excento=:excento,
         porcen_venta=:porcen_venta,
         cod_unidad=:cod_unidad
         WHERE cod_presentacion=:cod_presentacion";
@@ -222,6 +221,7 @@ public  function editar($present,$product,$categoria,$unidad){
         $strExec->bindParam(':presentacion', $this->presentacion);
         $strExec->bindParam(':cant_presentacion', $this->cant_presentacion);
         $strExec->bindParam(':costo',$this->costo);
+        $strExec->bindParam(':excento',$this->excento);
         $strExec->bindParam(':porcen_venta',$this->ganancia);
         $strExec->bindParam(':cod_unidad', $unidad);
         $strExec->bindParam(':cod_presentacion',$present);
@@ -282,5 +282,8 @@ public function eliminar($p, $pp) {
 /*======================================================================
 BUSCAR PRODUCTO (si ya existe asignarle una nueva presentacion)
 ========================================================================*/
+
+
+
 
 }

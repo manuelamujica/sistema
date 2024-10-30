@@ -1,6 +1,4 @@
 
-
-
 // NUEVA CATEGORIA DESDE PRODUCTO
 //(Validar nombre)
     $('#nombrec').blur(function (e){
