@@ -9,7 +9,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                    <li class="breadcrumb-item active">Productos</li>
+                    <li class="breadcrumb-item active">Venta</li>
                 </ol>
             </div>
         </div>
@@ -25,7 +25,8 @@
                         <div class="card-header">
                             <!-- Botón para abrir el modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ventaModal"> Ver Ventas </button>
-                            <!-- Botones PDF y Excel -->
+                             
+                            <!-- Botones PDF y Excel 
                             <div class="card-tools">
                                 <div class="float-right">
                                     <button type="button" class="btn btn-success btn-sm">
@@ -35,98 +36,87 @@
                                         <i class="fas fa-file-pdf"></i> PDF
                                     </button>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
-                        <!-- /.card-header -->
-            <div class="card-body">
-                <!-- Barra de búsqueda -->
-                <div class="input-group input-group-sm">
-                                <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <br>
-            
-            <!-- Tabla de productos -->
-            <div class="table-responsive">
-            <table id="producto" class="table table-bordered table-striped">
-                <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nombre</th>
-                            <th>Marca</th>
-                            <th>Categoría</th>
-                            <th>Stock</th>
-                            <th>Costo</th>
-                            <th>Precio de venta</th>
-                            <th>Fecha de creación</th>
-                            <th>IVA</th>
-                            <th>Acciones</th>
-                        </tr> 
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Jamón de espalda</td>
-                            <td>Purolomo</td>
-                            <td>Charcutería</td>
-                            <td>20</td>
-                            <td>$ 8.00</td>
-                            <td>$ 10.00</td>
-                            <td>2024-09-06 12:05:32</td>
-                            <td>E</td>
-                            <td>
-                                <form method="post">
-                                    <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
-                                    <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Anular" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Queso blanco de res</td>
-                            <td></td>
-                            <td>Lácteos</td>
-                            <td>12</td>
-                            <td>$ 5.00</td>
-                            <td>$ 10.00</td>
-                            <td>2024-09-06 12:05:32</td>
-                            <td>G</td>
-                            <td>
-                                <form method="post">
-                                    <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
-                                    <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Anular" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Harina de maíz</td>
-                            <td>PAN</td>
-                            <td>Víveres</td>
-                            <td>3</td>
-                            <td>$ 6.00</td>
-                            <td>$ 10.00</td>
-                            <td>2024-09-06 12:05:32</td>
-                            <td>E</td>
-                            <td>
-                                <form method="post">
-                                    <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
-                                    <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Anular" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                    </div>  
-                </tbody>
-            </table>
+                    <div class="card-body">
+                    <div class="row mb-2 ">
+                    
+                    <!-- Tabla de productos -->
+                    <div class="table-responsive">
+                    <table id="producto" class="table table-bordered table-striped datatable" style="width: 100%;">
+                        <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Marca</th>
+                                    <th>Categoría</th>
+                                    <th>Stock</th>
+                                    <th>Costo</th>
+                                    <th>Precio de venta</th>
+                                    <th>Fecha de creación</th>
+                                    <th>IVA</th>
+                                    <th>Acciones</th>
+                                </tr> 
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Jamón de espalda</td>
+                                    <td>Purolomo</td>
+                                    <td>Charcutería</td>
+                                    <td>20</td>
+                                    <td>$ 8.00</td>
+                                    <td>$ 10.00</td>
+                                    <td>2024-09-06 12:05:32</td>
+                                    <td>E</td>
+                                    <td>
+                                        <form method="post">
+                                            <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
+                                            <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Anular" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Queso blanco de res</td>
+                                    <td></td>
+                                    <td>Lácteos</td>
+                                    <td>12</td>
+                                    <td>$ 5.00</td>
+                                    <td>$ 10.00</td>
+                                    <td>2024-04-6 12:05:32</td>
+                                    <td>G</td>
+                                    <td>
+                                        <form method="post">
+                                            <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
+                                            <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Anular" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Harina de maíz</td>
+                                    <td>PAN</td>
+                                    <td>Víveres</td>
+                                    <td>3</td>
+                                    <td>$ 6.00</td>
+                                    <td>$ 10.00</td>
+                                    <td>2023-12-18 12:05:32</td>
+                                    <td>E</td>
+                                    <td>
+                                        <form method="post">
+                                            <button name="editar" class="btn btn-primary btn-sm editar" title="Editar" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-pencil-alt"></i></button>
+                                            <button name="eliminar" class="btn btn-danger btn-sm eliminar" title="Anular" value="<?php echo $dato["nombre"] ?>"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </div>  
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</section>
-</div>
+        
 
 <!-- Modal de Venta con búsqueda interactiva -->
 <div class="modal fade" id="ventaModal" tabindex="-1" aria-labelledby="ventaModalLabel" aria-hidden="true">
@@ -166,98 +156,99 @@
                         </div>
                     </div>
 
-                    <!-- Tabla para agregar productos -->
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ventaProductosBody">
-                                <!-- Se generan dinámicamente filas de productos -->
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control" id="codigo1" placeholder="Código del producto">
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="producto1" placeholder="Nombre del producto">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                        <!-- Tabla para agregar productos -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ventaProductosBody">
+                                    <!-- Se generan dinámicamente filas de productos -->
+                                    <tr>
+                                        <td>
+                                            <input type="text" class="form-control" id="codigo1" placeholder="Código del producto">
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="producto1" placeholder="Nombre del producto">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control" id="cantidad1" value="1" min="1" onchange="calcularTotal(1)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" id="precio1" placeholder="Precio" >
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" id="total1" placeholder="Total" readonly>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" id="cantidad1" value="1" min="1" onchange="calcularTotal(1)">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" id="precio1" placeholder="Precio" >
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" id="total1" placeholder="Total" readonly>
+                                        </td>
+                                    </tr>
 
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control" id="codigo2" placeholder="Código del producto">
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="producto2" placeholder="Nombre del producto">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                    <tr>
+                                        <td>
+                                            <input type="text" class="form-control" id="codigo2" placeholder="Código del producto">
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="producto2" placeholder="Nombre del producto">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control" id="cantidad2" value="1" min="1" onchange="calcularTotal(2)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" id="precio2" placeholder="Precio" >
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" id="total2" placeholder="Total" readonly>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" id="cantidad2" value="1" min="1" onchange="calcularTotal(2)">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" id="precio2" placeholder="Precio" >
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" id="total2" placeholder="Total" readonly>
+                                        </td>
+                                    </tr>
 
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control" id="codigo3" placeholder="Código del producto">
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="producto3" placeholder="Nombre del producto">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                    <tr>
+                                        <td>
+                                            <input type="text" class="form-control" id="codigo3" placeholder="Código del producto">
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="producto3" placeholder="Nombre del producto">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control" id="cantidad3" value="1" min="1" onchange="calcularTotal(3)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" id="precio3" placeholder="Precio" readonly>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" id="total3" placeholder="Total" readonly>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" id="cantidad3" value="1" min="1" onchange="calcularTotal(3)">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" id="precio3" placeholder="Precio" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" id="total3" placeholder="Total" readonly>
+                                        </td>
+                                    </tr>
 
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control" id="codigo4" placeholder="Código del producto">
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="producto4" placeholder="Nombre del producto">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                    <tr>
+                                        <td>
+                                            <input type="text" class="form-control" id="codigo4" placeholder="Código del producto">
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="producto4" placeholder="Nombre del producto">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -285,6 +276,7 @@
                                 <p>Base imponible: S/ <span id="base-imponible" class="text-bold">0.00</span></p>
                                 <p>IVA (16%): S/ <span id="iva" class="text-bold">0.00</span></p>
                                 <p class="text-bold">TOTAL: S/ <span id="total-general" class="text-bold">0.00</span></p>
+
                             </div>
                         </div>
                     </div>
@@ -294,10 +286,10 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" id="realizarVentaBtn">Realizar Venta</button>
+
             </div>
         </div>
     </div>
-</div>
 
         <!-- Modal de Resumen de Venta (este modal se abre desde el modal de "Ver Venta") -->
         <div class="modal fade" id="resumenVentaModal" tabindex="-1" aria-labelledby="resumenVentaLabel" aria-hidden="true">
@@ -353,6 +345,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    </section>
     </div>
 
     <script>
@@ -478,3 +472,4 @@ $('#cedula-rif').blur(function (e){
     });
 
 </script>
+

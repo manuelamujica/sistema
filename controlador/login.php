@@ -1,6 +1,6 @@
 <?php
 
-require_once "modelo/usuario.php"; 
+require_once "modelo/usuarios.php"; 
 require_once "modelo/general.php";
 
 $obj = new General();

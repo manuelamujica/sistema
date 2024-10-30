@@ -18,10 +18,16 @@ PLUGINGS DE CSS
   <!-- Theme style -->
   <link rel="stylesheet" href="vista/dist/css/adminlte.css">
   <link rel="stylesheet" href="vista/dist/css/custom.css">
+
+   <!-- Date Range Picker -->
+   <link rel="stylesheet" href="vista/plugins/daterangepicker/daterangepicker.css">
+
   <!-- DataTables -->
   <link rel="stylesheet" href="vista/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="vista/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="vista/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+ 
+
 <!-- =======================
     PLUGINGS DE JAVASACRIPT  
 =============================-->
@@ -31,6 +37,12 @@ PLUGINGS DE CSS
   <script src="vista/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- AdminLTE App -->
   <script src="vista/dist/js/adminlte.min.js"></script>
+
+  <!-- Date Range Picker -->
+  <script src="vista/plugins/moment/moment.min.js"></script>
+  <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
+
+
   <!-- DataTables  & Plugins -->
 <script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -48,6 +60,7 @@ PLUGINGS DE CSS
 <script src="vista/dist/js/custom.js"></script>
 <!-- SweetAlert2 -->
 <script src="vista/plugins/sweetalert2/sweetalert2.all.js"></script>
+
 </head>
 <!-- =======================
     BODY
