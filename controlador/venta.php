@@ -51,10 +51,12 @@ if(isset($_POST['buscar'])){
 
 }else if(isset($_POST['finalizarp'])){
     if(!empty($_POST['nro_venta']) && !empty($_POST['monto_pagado'])){
-        if(isset($_POST['pago'])){
-            $objp->set_cod_venta($_POST['nro_venta']);
-            $objp->set_montototal($_POST['monto_pagado']);
-            $objp->registrar($_POST['pago'], $_POST['monto_pagar']);
+        if($_POST['monto_pagado']!=$_POST['monto_pagar']){
+            if(isset($_POST['pago'])){
+                $objp->set_cod_venta($_POST['nro_venta']);
+                $objp->set_montototal($_POST['monto_pagado']);
+                $objp->registrar($_POST['pago'], $_POST['monto_pagar']);
+            }
         }
     }
 }else if(isset($_POST['parcialp'])){

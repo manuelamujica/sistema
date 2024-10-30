@@ -199,11 +199,11 @@
                     <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar Producto</button>
                     <div class="card card-outline card-primary float-right" style="width: 300px;">
                         <div class="card-body">
-                            <p>Subtotal: S/ <span id="subtotal" class="text-bold">0.00</span></p>
-                            <p>Exento: S/ <span id="exento" class="text-bold">0.00</span></p>
-                            <p>Base imponible: S/ <span id="base-imponible" class="text-bold">0.00</span></p>
-                            <p>IVA (16%): S/ <span id="iva" class="text-bold">0.00</span></p>
-                            <p class="text-bold">TOTAL: S/ <span id="total-span" class="text-bold">0.00</span></p>
+                            <p>Subtotal: Bs <span id="subtotal" class="text-bold">0.00</span></p>
+                            <p>Exento: Bs <span id="exento" class="text-bold">0.00</span></p>
+                            <p>Base imponible: Bs <span id="base-imponible" class="text-bold">0.00</span></p>
+                            <p>IVA (16%): Bs <span id="iva" class="text-bold">0.00</span></p>
+                            <p class="text-bold">TOTAL: Bs <span id="total-span" class="text-bold">0.00</span></p>
                             <input type="hidden" id="total-general" name="total_general">
                         </div>
                     </div>

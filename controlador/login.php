@@ -67,6 +67,7 @@ if(isset($_POST["ingresar"])){
 			$logo = $obj->mostrar();
 			if(!empty($logo)){
 			$_SESSION["logo"] = $logo[0]["logo"];
+			$_SESSION["n_empresa"] = $logo[0]["nombre"];
 			}
 			echo '<script>
 			window.location="inicio";
