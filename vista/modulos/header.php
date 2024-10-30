@@ -1,4 +1,3 @@
-
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Navbar links IZQUIERDA-->
@@ -9,7 +8,6 @@
     <li class="nav-item d-none d-sm-inline-block">
         <a href="inicio" class="nav-link">Inicio</a> 
     </li>
-    
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Ayuda
@@ -19,10 +17,8 @@
     </div>
     </li>
     </ul>
-
     <!-- Navbar LINKS DERECHA -->
     <ul class="navbar-nav ml-auto">
-
     <!-- Navbar FULLSCREEN -->
     <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -51,9 +47,14 @@
     </ul>
 </nav>
 <!-- /.navbar -->
+<<<<<<< HEAD
 
  <!-- Ver perfil Modal-->
     <div class="modal fade" id="modalPerfil" tabindex="-1" role="dialog" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+=======
+<!-- Ver perfil Modal-->
+<div class="modal fade" id="modalPerfil" tabindex="-1" role="dialog" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+>>>>>>> main
         <div class="modal-dialog" >
             <div class="modal-content">
                 <div class="modal-header">
@@ -63,12 +64,17 @@
                     </button>
                 </div>
                 <div class="modal-body">
+<<<<<<< HEAD
                     <!-- Información del perfil -->
                         <div class="col-md-12">
                             <p><b>Nombre: </b><?php echo $_SESSION['nombre']; ?></p>
                             <p><b>Usuario: </b> <?php echo $_SESSION['user']; ?> </p>
                             <p><b>Rol: </b> <?php echo $_SESSION['rol']; ?></p>
                         </div>
+=======
+                    <?php echo $_SESSION['nombre']; ?>
+                    <?php echo $_SESSION['user']; ?>
+>>>>>>> main
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

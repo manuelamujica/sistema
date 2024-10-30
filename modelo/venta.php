@@ -1,6 +1,5 @@
 <?php
 require_once 'conexion.php';
-
 class Venta extends Conexion{
     
     private $conex;
@@ -35,7 +34,10 @@ class Venta extends Conexion{
     }
 
     public function consultar(){
-    $registro="SELECT v.*, c.*, v.status AS status_venta,c.status AS status_cliente FROM ventas v INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente;";
+    $registro="SELECT v.*, c.*, p.*, v.status AS status_venta, c.status AS status_cliente, v.cod_venta AS codigov
+        FROM ventas v
+        INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente
+        LEFT JOIN pagos p ON v.cod_venta = p.cod_venta;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -49,19 +51,20 @@ class Venta extends Conexion{
     public function b_productos($valor){
 
         $sql="SELECT
-            p.cod_producto,
-            p.nombre,
-            p.costo,
-            p.marca,
-            p.excento,
-            p.porcen_venta,
-            c.nombre AS cat_nombre,
-            (CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion
-        FROM productos AS p
-        JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
-        JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
-        JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
-        WHERE p.nombre LIKE ? GROUP BY p.cod_producto LIMIT 5";
+    present.cod_presentacion,                        
+    p.cod_producto,                                  
+    p.nombre AS producto_nombre,                     
+    present.costo,                                   
+    p.marca,                                         
+    p.excento,                                       
+    p.porcen_venta,                                  
+    c.nombre AS cat_nombre,                          
+    CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion  
+    FROM presentacion_producto AS present                 
+    JOIN productos AS p ON present.cod_producto = p.cod_producto  
+    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
+    WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
 
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $valor . '%';
@@ -113,16 +116,16 @@ class Venta extends Conexion{
 
             $nuevo_cod = $this->conex->lastInsertId();
             foreach ($productos as $producto) {
-                $cod_producto = $producto['codigo'];
+                $cod_presentacion = $producto['codigo'];
                 $cantidad_a_vender = $producto['cantidad'];
                 $precio = $producto['precio'];
     
                 // Obtener los detalles de producto con stock disponible para este producto
                 $loteQuery = "SELECT cod_detallep, stock FROM detalle_productos 
-                            WHERE cod_producto = :cod_producto AND stock > 0 
+                            WHERE cod_presentacion = :cod_presentacion AND stock > 0 
                             ORDER BY cod_detallep ASC";
                 $loteStmt = $this->conex->prepare($loteQuery);
-                $loteStmt->bindParam(':cod_producto', $cod_producto);
+                $loteStmt->bindParam(':cod_presentacion', $cod_presentacion);
                 $loteStmt->execute();
                 $lotes = $loteStmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -200,7 +203,7 @@ class Venta extends Conexion{
     
                 // Si después de recorrer todos los lotes no hay suficiente stock, lanzar una excepción
                 if ($cantidad_restante > 0) {
-                    throw new Exception("No hay suficiente stock disponible para el producto con código $cod_producto");
+                    throw new Exception("No hay suficiente stock disponible para el producto con código $cod_presentacion");
                 }
             }
     
@@ -215,7 +218,37 @@ class Venta extends Conexion{
         }
     }
     
-    
+    public function anular($cod_v){
+        try{
+            $this->conex->beginTransaction();
+
+            $sql="UPDATE ventas SET status=0 WHERE cod_venta=:cod_venta;";
+            $anu=$this->conex->prepare($sql);
+            $anu->bindParam(':cod_venta', $cod_v);
+            $resul=$anu->execute();
+            if($resul){
+                /*$dventa="SELECT dv.cod_detallev, dv.cod_venta, dv.cod_detallep, dv.cantidad, dp.stock, dp.status          
+                FROM detalle_ventas dv
+                JOIN detalle_productos dp ON dv.cod_detallep = dp.cod_detallep WHERE dv.cod_venta = :cod_venta;";
+                $detalles=$this->conex->prepare($dventa);
+                $detalles->bindParam(':cod_venta', $cod_v);
+                $detalles->execute();
+                $dt=$detalles->fetchAll(PDO::FETCH_ASSOC);*/
+
+                $revertir="UPDATE detalle_productos AS dp
+                JOIN detalle_ventas AS dv ON dp.cod_detallep = dv.cod_detallep
+                SET dp.stock = dp.stock + dv.cantidad
+                WHERE dv.cod_venta = :cod_venta;";
+                $stock=$this->conex->prepare($revertir);
+                $stock->bindParam(':cod_venta', $cod_v);
+                $r=$stock->execute();
+            }
+            $this->conex->commit();
+
+        } catch(Exception $e){
+            $this->conex->rollBack();
+        }
+    }
 
 
 }
