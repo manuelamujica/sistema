@@ -134,6 +134,7 @@ require_once "controlador/productos.php";
 
                                                 <label for="nombre">Nombre del producto</label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
+                                                <div id="lista-productos" class="list-group" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
                                                 <label for="marca">Marca</label>

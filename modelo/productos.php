@@ -280,10 +280,30 @@ public function eliminar($p, $pp) {
 }
 
 /*======================================================================
-BUSCAR PRODUCTO (si ya existe asignarle una nueva presentacion)
+BUSCAR PRODUCTO (para que si ya existe asignarle una nueva presentacion)
 ========================================================================*/
 
+public function buscar($nombrep){
 
+    $sql="SELECT                
+    p.cod_producto,                                  
+    p.nombre AS producto_nombre,                                   
+    p.marca,                                                                        
+    c.nombre AS cat_nombre                          
+    FROM productos AS p JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
+    WHERE p.nombre LIKE ? GROUP BY p.cod_producto, p.nombre, p.marca LIMIT 5;";
 
+    $consulta = $this->conex->prepare($sql);
+    $buscar = '%' . $nombrep. '%';
+    $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
+    $resul = $consulta->execute();
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    if($resul){
+        return $datos;
+    }else{
+        return [];
+    }
+}
 
 }

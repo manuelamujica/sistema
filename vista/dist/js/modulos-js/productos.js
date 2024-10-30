@@ -1,4 +1,68 @@
 
+
+$(document).ready(function() {
+    $(document).on('input', '#nombre', function() {
+        var query = $(this).val(); // Valor ingresado por el usuario
+
+        if (query.length > 2) { // Realiza la búsqueda si hay más de 2 caracteres
+            $.ajax({
+                url: 'index.php?pagina=productos',
+                method: 'POST',
+                data: { buscar: query }, // Envía la consulta de búsqueda
+                dataType: 'json',
+                success: function(data) {
+                    var listaProductos = $('#lista-productos'); // Elemento donde mostrar resultados
+                    listaProductos.empty(); // Limpiar resultados anteriores
+
+                    if (data.length > 0) {
+                        $.each(data, function(key, producto) {
+                            // Crea un nuevo elemento de lista para cada producto
+                            listaProductos.append(
+                                '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
+                                'data-codigo="'+ producto.codigo +'" '+
+                                'data-nombre="'+ producto.producto_nombre +'" ' +
+                                'data-marca="'+ producto.marca +'" ' +
+                                'data-categoria="'+ producto.cod_categoria +'" ' + // Cambiado a cod_categoria
+                                'data-cat-nombre="'+ producto.cat_nombre +'">' + // Agregar cat_nombre para mostrar
+                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.cat_nombre + '</a>'
+                            );
+                        });
+                        listaProductos.fadeIn(); // Muestra la lista de productos
+                    } else {
+                        listaProductos.append('<p class="list-group-item">No se encontraron productos</p>');
+                        listaProductos.fadeIn(); // Asegúrate de que la lista se muestre incluso si no hay resultados
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error en la solicitud AJAX: ", textStatus, errorThrown); // Log de error
+                }
+            });
+        } else {
+            $('#lista-productos').fadeOut(); // Ocultar la lista si no hay suficientes caracteres
+        }
+    });
+
+    // Cuando el usuario selecciona un producto
+    $(document).on('click', '.producto-item', function(event) {
+        event.preventDefault(); // Previene la acción por defecto del enlace
+        var codigo = $(this).data('codigo'); 
+        var selectedProduct = $(this).data('nombre'); 
+        var marca = $(this).data('marca');
+        var categoriaCod = $(this).data('categoria'); // Obtener el cod_categoria
+        var categoriaNombre = $(this).data('cat-nombre'); // Obtener el nombre de la categoría
+
+        console.log("Producto seleccionado: ", codigo, selectedProduct, marca, categoriaCod, categoriaNombre); // Log de producto seleccionado
+
+        // Asigna los valores seleccionados a los inputs
+        $('#nombre').val(selectedProduct).prop('readonly', true); // Campo de nombre bloqueado
+        $('#marca').val(marca).prop('readonly', true); // Campo de marca bloqueado
+        $('#categoria').val(categoriaCod).prop('readonly', true); // Asigna el cod_categoria y bloquea el campo
+
+        $('#lista-productos').fadeOut(); // Oculta la lista después de seleccionar
+    });
+});
+
+
 // NUEVA CATEGORIA DESDE PRODUCTO
 //(Validar nombre)
     $('#nombrec').blur(function (e){
@@ -107,32 +171,4 @@ $('#eliminarModal').on('show.bs.modal', function (event) {
     console.log('Código presentacion:', codigo);
     console.log('Codigo producto:', button.data('producto'));
 });
-
-/*$(document).ready(function() {
-    $('#nombre').blur(function() {
-        var buscar = $('#nombre').val();
-
-        $.post('index.php?pagina=productos', { buscar: buscar }, function(response) {
-            if (response.length > 0) { // Si se encontró al menos un producto
-                var producto = response[0]; // Selecciona el primer producto de la lista
-
-                // Rellena el modal con los datos del producto
-                $('#modalRegistrarProducto').find('#cod_producto').val(producto.cod_producto); // Guardar el código oculto
-                $('#modalRegistrarProducto').find('#nombre').val(producto.nombre);
-                $('#modalRegistrarProducto').find('#marca').val(producto.marca);
-                $('#modalRegistrarProducto').find('#categoria').val(producto.cat_nombre);
-                $('#modalRegistrarProducto').find('#iva').val(producto.excento);
-
-                // Deshabilitar campos
-                $('#modalRegistrarProducto').find('#marca').prop('readonly', true);
-                $('#modalRegistrarProducto').find('#categoria').prop('readonly', true);
-                $('#modalRegistrarProducto').find('#iva').prop('readonly', true);
-            } else {
-                console.log("No se encontraron productos con ese nombre.");
-            }
-        }, 'json').fail(function() {
-            console.log("Error en la solicitud AJAX.");
-        });
-    });
-});*/
 

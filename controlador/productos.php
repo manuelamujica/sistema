@@ -13,9 +13,9 @@ $objUnidad = new Unidad();
 $categoria = $objCategoria->getmostrar(); // Obtener los categorias para pasarlos a la vista
 $unidad = $objUnidad->consultarUnidad();  // Obtener las unidades de medida para pasarlos a la vista
 
-//REGISTRAR
+//BUSCAR REGISTRAR
 if(isset($_POST['buscar'])){
-    $result=$obj->buscar($_POST['buscar']);
+    $result=$objProducto->buscar($_POST['buscar']);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
@@ -138,6 +138,8 @@ if(isset($_POST['buscar'])){
         }
         } 
     }
+
+
 
 $registro = $objProducto->getmostrar();
 
