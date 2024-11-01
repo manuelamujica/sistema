@@ -1,5 +1,5 @@
 
-
+//Si ya existe un producto, tener la opcion de asignarle una presentacion
 $(document).ready(function() {
     $(document).on('input', '#nombre', function() {
         var query = $(this).val(); // Valor ingresado por el usuario
@@ -19,10 +19,10 @@ $(document).ready(function() {
                             // Crea un nuevo elemento de lista para cada producto
                             listaProductos.append(
                                 '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
-                                'data-codigo="'+ producto.codigo +'" '+
+                                'data-codigo="'+ producto.cod_producto +'" '+
                                 'data-nombre="'+ producto.producto_nombre +'" ' +
                                 'data-marca="'+ producto.marca +'" ' +
-                                'data-categoria="'+ producto.cod_categoria +'" ' + // Cambiado a cod_categoria
+                                'data-categoria="'+ producto.cod_categoria +'" ' + // Cambiado a cod_categoriav
                                 'data-cat-nombre="'+ producto.cat_nombre +'">' + // Agregar cat_nombre para mostrar
                                 producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.cat_nombre + '</a>'
                             );
@@ -46,19 +46,33 @@ $(document).ready(function() {
     $(document).on('click', '.producto-item', function(event) {
         event.preventDefault(); // Previene la acción por defecto del enlace
         var codigo = $(this).data('codigo'); 
-        var selectedProduct = $(this).data('nombre'); 
+        var nombre = $(this).data('nombre'); 
         var marca = $(this).data('marca');
         var categoriaCod = $(this).data('categoria'); // Obtener el cod_categoria
         var categoriaNombre = $(this).data('cat-nombre'); // Obtener el nombre de la categoría
 
-        console.log("Producto seleccionado: ", codigo, selectedProduct, marca, categoriaCod, categoriaNombre); // Log de producto seleccionado
+        // Muestra los valores en la consola
+        console.log("Producto seleccionado: ");
+        console.log("Código: ", codigo);
+        console.log("Nombre: ", nombre);
+        console.log("Marca: ", marca);
+        console.log("Código de Categoría: ", categoriaCod);
 
         // Asigna los valores seleccionados a los inputs
-        $('#nombre').val(selectedProduct).prop('readonly', true); // Campo de nombre bloqueado
+        
+        $('#cod_productoR').val(codigo).prop('readonly', true); // Campo de nombre bloqueado
+        $('#nombre').val(nombre).prop('readonly', true); // Campo de nombre bloqueado
         $('#marca').val(marca).prop('readonly', true); // Campo de marca bloqueado
         $('#categoria').val(categoriaCod).prop('readonly', true); // Asigna el cod_categoria y bloquea el campo
+        //$('#categoria').attr('disabled', true); // Deshabilita el campo para evitar cambios de usuario
 
+        
+        console.log("Valor del campo 'nombre': ", $('#nombre').val());
+        console.log("Valor del campo 'marca': ", $('#marca').val());
+        console.log("Valor del campo 'categoria': ", $('#categoria').val());
+        
         $('#lista-productos').fadeOut(); // Oculta la lista después de seleccionar
+
     });
 });
 

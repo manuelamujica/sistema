@@ -21,7 +21,6 @@ if(isset($_POST['buscar'])){
     exit;
     
 }elseif (isset($_POST['guardar'])){
-
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"] && !empty($_POST["costo"]))){
 
         $objProducto->setNombre($_POST["nombre"]);
@@ -64,7 +63,7 @@ if(isset($_POST['buscar'])){
         $cod_producto = $_POST['cod_producto'];
         $cod_presentacion = $_POST['cod_presentacion'];
         
-        var_dump($cod_producto, $cod_presentacion);
+        //var_dump($cod_producto, $cod_presentacion);
 
         $objProducto->setNombre($_POST['nombre']);
         $objProducto->setMarca($_POST['marca']);

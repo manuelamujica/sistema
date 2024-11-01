@@ -17,12 +17,6 @@ class Productos extends Conexion{
     private $ganancia;
     private $excento;
 
-    #Detalle producto
-    private $stock;
-    private $fecha;
-    private $lote;
-    private $status;
-
     public function __construct(){
         $this -> conex = new Conexion();
         $this -> conex = $this->conex->conectar();
@@ -74,32 +68,6 @@ class Productos extends Conexion{
     }
     public function setExcento($excento){
         $this->excento = $excento;
-    }
-
-#Detalle producto?
-    public function getStock(){
-        return $this->stock;
-    }
-    public function setStock($stock){
-        $this->stock = $stock;
-    }
-    public function getFecha(){
-        return $this->fecha;
-    }
-    public function setFecha($fecha){
-        $this->fecha = $fecha;
-    }
-    public function getLote(){
-        return $this->lote;
-    }
-    public function setLote($lote){
-        $this->lote = $lote;
-    }
-    public function getstatus(){
-        return $this->status;
-    }
-    public function setstatus($status){
-        $this->status=$status;
     }
 
 
@@ -286,7 +254,8 @@ BUSCAR PRODUCTO (para que si ya existe asignarle una nueva presentacion)
 public function buscar($nombrep){
 
     $sql="SELECT                
-    p.cod_producto,                                  
+    p.cod_producto,
+    c.cod_categoria,                                 
     p.nombre AS producto_nombre,                                   
     p.marca,                                                                        
     c.nombre AS cat_nombre                          
