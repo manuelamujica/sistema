@@ -69,8 +69,8 @@ require_once "controlador/categorias.php";
                                 </tbody>
                             </table>
                         </div>
-                        </div>
                     </div>
+                </div>
 <!-- =============================
     MODAL REGISTRAR CATEGORÍA 
 ================================== -->

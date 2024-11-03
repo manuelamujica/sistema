@@ -100,17 +100,54 @@ private function registrar($unidad, $categoria){
             $strExec->bindParam(':costo',$this->costo);
             $strExec->bindParam(':porcen_venta',$this->ganancia);
             $strExec->bindParam(':excento',$this->excento);
+            $execute = $strExec->execute();
 
-            $execute=$strExec->execute();
-        $r=1;
-    }else{
-        $r = 0;
-    }
-    return $r;
-}
+            if($execute){
+            $r=1;
+            }else{
+                $r = 0;
+            }
+            return $r;
+
+        } else{
+            return $resul=0;
+        }
+} 
 
 public function getRegistrar($unidad,$categoria){
     return $this->registrar($unidad,$categoria);
+}
+
+/*==============================
+REGISTRAR PRESENTACION A UN PRODUCTO EXISTENTE
+================================*/
+
+public function registrar2($unidad, $cod_producto){
+    $sql='SELECT * FROM productos WHERE cod_producto=:cod_producto';
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':cod_producto',$cod_producto);
+    $strExec->execute();
+    $datos=$strExec->fetchAll(PDO::FETCH_ASSOC);
+
+    if($datos){
+        $sql2='INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion,costo,porcen_venta,excento) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion,:costo,:porcen_venta,:excento)';
+        $strExec=$this->conex->prepare($sql2);
+        $strExec->bindParam(':cod_unidad',$unidad);
+        $strExec->bindParam(':cod_producto',$cod_producto);
+        $strExec->bindParam(':presentacion',$this->presentacion);
+        $strExec->bindParam(':cantidad_presentacion',$this->cant_presentacion);
+        $strExec->bindParam(':costo',$this->costo);
+        $strExec->bindParam(':porcen_venta',$this->ganancia);
+        $strExec->bindParam(':excento',$this->excento);
+        $r = $strExec->execute();
+
+        if($r){
+            $res=1;
+            }else{
+                $res = 0;
+            }
+            return $res;
+    }
 }
 
 /*==============================
@@ -260,7 +297,7 @@ public function buscar($nombrep){
     p.marca,                                                                        
     c.nombre AS cat_nombre                          
     FROM productos AS p JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
-    WHERE p.nombre LIKE ? GROUP BY p.cod_producto, p.nombre, p.marca LIMIT 5;";
+    WHERE p.nombre LIKE ? GROUP BY p.nombre, p.marca LIMIT 5;";
 
     $consulta = $this->conex->prepare($sql);
     $buscar = '%' . $nombrep. '%';

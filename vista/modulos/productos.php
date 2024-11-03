@@ -70,7 +70,7 @@ require_once "controlador/productos.php";
                                             <td>Stock total</td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
-                                                <button class="btn btn-primary btn-sm" style="position: center;">
+                                                <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver más">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                                 
@@ -110,7 +110,7 @@ require_once "controlador/productos.php";
     MODAL REGISTRAR PRODUCTO 
 ================================== -->
                     <div class="modal fade" id="modalRegistrarProducto" tabindex="-1" aria-labelledby="modalRegistrarProductoLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="registrarModalLabel">Registrar producto</h5>
@@ -128,11 +128,13 @@ require_once "controlador/productos.php";
 
                                                 <label for="nombre">Nombre del producto</label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                                 <div id="lista-productos" class="list-group" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
                                                 <label for="marca">Marca</label>
                                                 <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
 
@@ -183,10 +185,12 @@ require_once "controlador/productos.php";
                                             <div class="col-6">
                                                 <label for="presentacion">Presentación</label>
                                                 <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ingresa la presentación">
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
                                                 <label for="cant_presentacion">Cantidad de presentación</label>
-                                                <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ingresa la cantidad">
+                                                <input type="number" class="form-control" id="cant_presentacion" name="cant_presentacion" step="0.001" placeholder="Ingresa la cantidad">
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
                                         <hr>
@@ -194,20 +198,24 @@ require_once "controlador/productos.php";
                                             <div class="col-6">
                                                 <label for="costo">Costo</label>
                                                 <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
-                                            </div>
+                                                <div class="invalid-feedback" style="display: none;"></div>
+                                            <div class="invalid-feedback" style="display: none;"></div></div>
                                             <div class="col-6">
                                                 <label for="precio">Precio</label>
                                                 <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
                                         <div class="input-group mb-2">
-                                            <input type="number" class="form-control nuevoPorcentaje" min="0" placeholder="Porcentaje de ganancia" id="porcen" name="porcen" required>
+                                            <input type="number" class="form-control nuevoPorcentaje" min="0" step="1" placeholder="Porcentaje de ganancia" id="porcen" name="porcen" required>
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
                                         </div>
-                                        <div class="modal-footer justify-content-between">
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="btn btn-secondary" name="deshacer" id="deshacer">Deshacer</button>
                                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
                                         </div>
                                     </form>
@@ -341,7 +349,7 @@ require_once "controlador/productos.php";
     MODAL EDITAR PRODUCTO 
 ================================== -->
                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
@@ -476,11 +484,7 @@ require_once "controlador/productos.php";
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>      
-    </section>
-</div>
-<?php if (isset($eliminar)): ?>
+                <?php if (isset($eliminar)): ?>
     <script>
         Swal.fire({
             title: '<?php echo $eliminar["title"]; ?>',
@@ -494,5 +498,75 @@ require_once "controlador/productos.php";
         });
     </script>
 <?php endif; ?>
+<!-- =============================
+    MODAL DETALLE DE PRODUCTO 
+================================== -->
+                <div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Detalle de productos</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Código</th>
+                                                            <th>Nombre</th>
+                                                            <th>Status</th>
+                                                            <th>Stock</th>
+                                                            <th>Acciones</th>
+                                                        </tr>         
+                                                    </thead>
+                                                    <tbody>
+                                                    <!-- Tabla con los datos que se muestren dinamicamente -->
+                                                        <?php
+                                                        foreach ($registro as $producto){
+                                                            ?>
+                                                            <tr>
+                                                                <td> <?php echo $producto["cod_presentacion"] ?></td>
+                                                                <td> <?php echo $producto["nombre"] ?></td>
+                                                                <td> STATUS </td>
+                                                                <td> STOCK </td>
+                                                                <!-- Boton -->
+                                                                <td>
+                                                                    <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#detalleeditar"
+                                                                    data-codigo="<?php echo $producto["cod_presentacion"];?>"
+                                                                    data-nombre="<?php echo $producto["nombre"]; ?>"
+                                                                    data-marca="<?php echo $producto["marca"]; ?>"
+                                                                    data-present="<?php echo $producto['presentacion']; ?>" 
+                                                                    data-cantpresent="<?php echo $producto['cantidad_presentacion'];?>"
+                                                                    data-categoria="<?php echo $producto["cat_codigo"]; ?>"
+                                                                    data-costo="<?php echo $producto["costo"]; ?>"
+                                                                    data-iva="<?php echo $producto["excento"]; ?>"
+                                                                    data-porcen="<?php echo $producto["porcen_venta"];?>">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                </button>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>      
+    </section>
+</div>
+
 
 <script src="vista/dist/js/modulos-js/productos.js"></script>

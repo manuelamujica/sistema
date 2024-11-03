@@ -20,8 +20,13 @@ if(isset($_POST['buscar'])){
     echo json_encode($result);
     exit;
     
+
+//REGISTRAR
 }elseif (isset($_POST['guardar'])){
-    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"] && !empty($_POST["costo"]))){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"]) && !empty($_POST["costo"]) && !empty($_POST["marca"])){
+
+        $categoria = $_POST["categoria"];
+        $unidad = $_POST['unidad'];
 
         $objProducto->setNombre($_POST["nombre"]);
         $objProducto->setMarca($_POST["marca"]);
@@ -31,10 +36,14 @@ if(isset($_POST['buscar'])){
         $objProducto->setPresentacion($_POST["presentacion"]);
         $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
 
-        $categoria = $_POST["categoria"];
-        $unidad = $_POST['unidad'];
-
-        $result=$objProducto->getregistrar($_POST["unidad"], $_POST["categoria"]);
+        if (!empty($_POST["cod_productoR"])) {
+            // Si existe el ID del producto, registrar solo la presentación
+            $cod_producto = $_POST["cod_productoR"];
+            $result = $objProducto->registrar2($unidad, $cod_producto);
+        } else {
+            // Si no existe, registrar un nuevo producto con su presentación
+            $result = $objProducto->getRegistrar($unidad, $categoria);
+        }
 
         if($result == 1){
             $registrarp = [
@@ -56,6 +65,7 @@ if(isset($_POST['buscar'])){
             "icon" => "error"
         ];
     }
+    
 //EDITAR
 } else if (isset($_POST['editar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['categoria']) && !empty($_POST['costo']) && !empty($_POST['unidad'])){
@@ -63,8 +73,6 @@ if(isset($_POST['buscar'])){
         $cod_producto = $_POST['cod_producto'];
         $cod_presentacion = $_POST['cod_presentacion'];
         
-        //var_dump($cod_producto, $cod_presentacion);
-
         $objProducto->setNombre($_POST['nombre']);
         $objProducto->setMarca($_POST['marca']);
         $objProducto->setCosto($_POST['costo']);
@@ -72,10 +80,6 @@ if(isset($_POST['buscar'])){
         $objProducto->setGanancia($_POST["porcen"]);
         $objProducto->setPresentacion($_POST['presentacion']);
         $objProducto->setCantPresentacion($_POST['cant_presentacion']);
-
-        
-        //$categoria = $_POST["categoria"];
-        //$unidad = $_POST['unidad'];
 
         $result=$objProducto->editar($cod_presentacion, $cod_producto, $_POST["categoria"],$_POST['unidad']);
         
@@ -105,8 +109,6 @@ if(isset($_POST['buscar'])){
 
         $codigop = $_POST['p_codigo'];
         $codigopresent = $_POST["present_codigo"];
-
-        var_dump($codigop,$codigopresent);
 
         $result = $objProducto->eliminar($codigop,$codigopresent);
 

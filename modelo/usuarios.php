@@ -44,9 +44,6 @@ class Usuario extends Conexion{
 
 //Login
     public function mostrar($item, $valor){
-
-            // Preparamos la consulta SQL usando un parámetro de tipo dinámico
-
             $resultado = [];
 
             $sql = "SELECT * FROM usuarios WHERE $item = :$item";
@@ -173,6 +170,7 @@ EDITAR USUARIO
 
         return $resul ? 1 : 0;
     }
+    
     public function editar2($codigo, $rol){
     $sql = "UPDATE usuarios 
             SET nombre=:nombre, user=:user, password=:password, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
