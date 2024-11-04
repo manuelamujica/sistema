@@ -45,10 +45,9 @@ if(isset($_POST['buscar'])){
 }else if (isset($_POST['actualizar'])) {
 
         $nombre = $_POST['nombre']; 
-        // Validar que el nombre no esté vacío y cumpla con la expresión regular
         if (!empty($nombre) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $nombre) && strlen($nombre) <= 40) {
             
-            // Si el nombre no ha cambiado, se permite editar el estado
+            // Si el nombre no ha cambiado, se puede editar el status
             if ($nombre === $_POST['origin']) {
                 $objCategoria->setNombre($nombre);
                 $objCategoria->setStatus($_POST['status']);
@@ -90,7 +89,6 @@ if(isset($_POST['buscar'])){
                         ];
                     }
                 } else {
-                    // El nombre ya está registrado y no se puede cambiar a uno existente
                     $editar = [
                         "title" => "Advertencia",
                         "message" => "La categoría ya está registrada. No se puede cambiar el nombre a uno existente.",
