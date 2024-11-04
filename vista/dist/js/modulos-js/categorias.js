@@ -78,7 +78,7 @@ $(document).ready(function(){
             var codigo = button.data('codigo');
             var nombre = button.data('nombre');
             var status = button.data('status');
-            var origin=button.data('nombre');
+            var origin = button.data('nombre');
 
             // Modal
             var modal = $(this); 

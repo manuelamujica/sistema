@@ -215,7 +215,8 @@ $(document).ready(function() {
             hideError('#presentacionE');
         }
     });
-    ('#cant_presentacionE').on('input', function() {
+    
+    $('#cant_presentacionE').on('input', function() {
         var cant_presentacionE = $(this).val();
         if (cant_presentacionE.trim() === '') {
             hideError('#cant_presentacionE'); 
