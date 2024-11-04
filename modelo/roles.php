@@ -150,7 +150,7 @@ REGISTRAR TIPOS DE USUARIO
         
             $resul = $strExec->fetch(PDO::FETCH_ASSOC);
             if($resul){
-            if($resul['n_usuario'] > 0){
+            if($resul['n_usuario'] == 0){
                 $f = "DELETE FROM tipo_usuario WHERE cod_tipo_usuario = $valor";
                 $strExec = $this->conex->prepare($f);
                 $result = $strExec->execute();

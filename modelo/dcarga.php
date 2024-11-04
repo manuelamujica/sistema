@@ -133,6 +133,31 @@
 
         }
 
+        public function b_productos($valor){
+
+            $sql="SELECT
+        present.cod_presentacion,                        
+        p.cod_producto,                                  
+        p.nombre AS producto_nombre,                                                       
+        p.marca,                                                                                                  
+        CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion  
+        FROM presentacion_producto AS present                 
+        JOIN productos AS p ON present.cod_producto = p.cod_producto      
+        JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
+        WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
+    
+            $consulta = $this->conex->prepare($sql);
+            $buscar = '%' . $valor . '%';
+            $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
+            $resul = $consulta->execute();
+            $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            if($resul){
+                return $datos;
+            }else{
+                return [];
+            }
+        }
+
         public function verificarDetalleProducto($valor) {
             $sql = "SELECT cod_detallep FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
             $strExec = $this->conex->prepare($sql);
@@ -221,6 +246,23 @@
 
             }
             return $res;
+        }
+
+        public function getmostrarPorFechas($fechaInicio, $fechaFin) {
+            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
+            FROM detalle_carga dc
+            JOIN carga c ON dc.cod_carga = c.cod_carga
+            JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
+            JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
+            JOIN productos p ON pre.cod_producto = p.cod_producto
+            WHERE c.fecha BETWEEN :fechaInicio AND :fechaFin
+            GROUP BY pre.cod_presentacion";
+        
+            $stmt = $this->conex->prepare($sql);
+            $stmt->bindParam(':fechaInicio', $fechaInicio);
+            $stmt->bindParam(':fechaFin', $fechaFin);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         public function geteliminar($valor){

@@ -28,7 +28,7 @@ class Tpago extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT tp.cod_tipo_pago, tp.medio_pago, tp.status AS status_pago, d.cod_divisa, d.nombre, d.abreviatura, d.status AS status_divisa, cd.cod_cambio FROM tipo_pago tp 
+        $registro="SELECT tp.cod_tipo_pago, tp.medio_pago, tp.status AS status_pago, d.cod_divisa, d.nombre, d.abreviatura, d.status AS status_divisa, cd.cod_cambio, cd.tasa  FROM tipo_pago tp 
         JOIN cambio_divisa cd ON tp.cod_cambio = cd.cod_cambio 
         JOIN divisas d ON cd.cod_divisa = d.cod_divisa ORDER BY tp.cod_tipo_pago;";
         $consulta=$this->conex->prepare($registro);

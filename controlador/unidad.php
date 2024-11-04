@@ -1,67 +1,124 @@
 <?php
 
 require_once "modelo/unidad.php"; //requiero al modelo
-$objUnidad= new Unidad;
+$objUnidad = new Unidad;
 
-if(isset($_POST['buscar'])){
-    $tipo_medida=$_POST['buscar'];
-    $result=$objUnidad->getbuscar($tipo_medida);
+if (isset($_POST['buscar'])) {
+    $tipo_medida = $_POST['buscar'];
+    $result = $objUnidad->getbuscar($tipo_medida);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-}else if(isset($_POST["guardar"])){
-    if(preg_match("/^[a-zA-Z]+$/",$_POST["tipo_medida"])){
-    if(!empty($_POST["tipo_medida"])){
-        if(!$objUnidad->getbuscar($_POST['tipo_medida'])){
-        #Instanciar los setter
-        $objUnidad->setTipo($_POST["tipo_medida"]);
-        
-        $resul=$objUnidad->getcrearUnidad();
+} else if (isset($_POST["guardar"])) {
+    if (preg_match("/^[a-zA-Z]+$/", $_POST["tipo_medida"])) {
+        if (!empty($_POST["tipo_medida"])) {
+            if (!$objUnidad->getbuscar($_POST['tipo_medida'])) {
+                #Instanciar los setter
+                $objUnidad->setTipo($_POST["tipo_medida"]);
 
-        if($resul == 1){
-            echo    "<script>
-                        alert('Registrado con éxito');
-                        window.location = 'unidad';
-                    </script>";
-        } else {
-            echo    "<script>
-                        alert('¡Las unidades de medida no pueden ir vacía o llevar caracteres especiales!');
-                    </script>";
+                $resul = $objUnidad->getcrearUnidad();
+
+                if ($resul == 1) {
+                    $registrar = [
+                        "title" => "Exito",
+                        "message" => "¡Registro exitoso!",
+                        "icon" => "success"
+                    ];
+                } else {
+                    $registrar = [
+                        "title" => "Error",
+                        "message" => "¡Las unidades de medida no pueden ir vacía o llevar caracteres especiales!",
+                        "icon" => "error"
+                    ];
+                }
             }
-        } 
+        }
     }
-}
+} else if (isset($_POST['editar'])) {
 
-}else if(isset($_POST['editar'])){
-    
     $cod_unidad = $_POST['cod_unidad'];
     $tipo_medida = $_POST['tipo_medida'];
     $status = $_POST['status'];
-    
-    $objUnidad->setCod($_POST["cod_unidad"]);
-    $objUnidad->setTipo($_POST["tipo_medida"]);
-    $objUnidad->setStatus($status);
-    $res = $objUnidad->geteditar();
-    if($res == 1){
-        echo "<script>alert('Información actualizada con éxito'); window.location.href='?pagina=unidad';</script>";
-    }else{
-        echo "<script>alert('Error al actualizar'); window.location.href='?pagina=unidad';</script>";
-    }
 
-}else if(isset($_POST['eliminar'])){
+
+    $unidad_existente = $objUnidad->getbuscar($tipo_medida); // Verificar si el nuevo rol ya existe
+    // Validaciones
+    if (!($tipo_medida) || preg_match("/^\s*$/", $tipo_medida)) {
+        $editar = [
+            "title" => "No puede estar el campo vacío",
+            "message" => "La unidad de medida no se pudo actualizar",
+            "icon" => "error"
+        ];
+    } else if (preg_match("/\d/", $tipo_medida)) {
+        $editar = [
+            "title" => "No puede contener números",
+            "message" => "La unidad de medida no se pudo actualizar",
+            "icon" => "error"
+        ];
+    } else if (preg_match("/[^a-zA-Z\s]/", $tipo_medida)) {
+        $editar = [
+            "title" => "No puede contener caracteres especiales",
+            "message" => "La unidad de medida no se pudo actualizar",
+            "icon" => "error"
+        ];
+    } else if ($tipo_medida !== $_POST['origin'] && $objUnidad->getbuscar($tipo_medida)) {
+        $editar = [
+            "title" => "Error",
+            "message" => "Unidad ya existente",
+            "icon" => "error"
+        ];
+    } else {
+        $objUnidad->setCod($_POST["cod_unidad"]);
+        $objUnidad->setTipo($_POST["tipo_medida"]);
+        $objUnidad->setStatus($status);
+        $res = $objUnidad->geteditar();
+        if ($res == 1) {
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "La unidad ha sido actualizada",
+                "icon" => "success"
+            ];
+        } else {
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar la unidad de medida",
+                "icon" => "error"
+            ];
+        }
+    }
+} else if (isset($_POST['eliminar'])) {
     $cod_unidad = $_POST['eliminar'];
     //$objUnidad->setCod($cod_unidad);
     $resul = $objUnidad->geteliminar($cod_unidad);
-    if($resul == 1){
-        echo "<script>alert('Eliminado con Ã©xito'); window.location.href='?pagina=unidad';</script>";
-    }else{
-        echo "<script>alert('No se pudo eliminar'); window.location.href='?pagina=unidad';</script>";
+
+    if ($resul == 'success') {
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "La unidad de medida ha sido eliminada",
+            "icon" => "success"
+        ];
+    } else if ($resul == 'error_associated') {
+        $eliminar = [
+            "title" => "Error",
+            "message" => "La unidad de medida no se puede eliminar porque tiene productos asociados",
+            "icon" => "error"
+        ];
+    } else if ($resul == 'error_delete') {
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la unidad de medida",
+            "icon" => "error"
+        ];
+    } else {
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al eliminar la unidad de medida",
+            "icon" => "error"
+        ];
     }
 }
 
 //AQUI LLAMO PARA MOSTRAR LOS REGISTROS
 $datos = $objUnidad->consultarUnidad();
-$_GET['ruta']='unidad';
+$_GET['ruta'] = 'unidad';
 require_once 'plantilla.php';
-
-

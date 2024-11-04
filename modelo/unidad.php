@@ -92,6 +92,25 @@ REGISTRAR UNIDAD DE MEDIDA
         return $this->buscar($dato);
     }
 
+    private function buscarcod($valor){
+        $this->tipo_medida=$valor;
+        $registro = "select * from tipo_usuario where rol='".$this->tipo_medida."'";
+        $resutado= "";
+            $dato=$this->conex->prepare($registro);
+            $resul=$dato->execute();
+            $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+            if ($resul) {
+                return $resultado;
+            }else{
+                return false;
+            }
+    
+    }
+
+    public function getcodU($valor){
+        return $this->buscarcod($valor);
+    }
+
     private function editar(){
         $registro = "UPDATE unidades_medida SET tipo_medida = :tipo_medida, status = :status WHERE cod_unidad = :cod_unidad";
 
@@ -114,26 +133,31 @@ REGISTRAR UNIDAD DE MEDIDA
 
     
 
-      private function eliminar($valor){ //NO FUNCIONA PORQUE FALTA LA TABLA DE PRESENTACION
+      private function eliminar($valor){ 
         $registro = "SELECT COUNT(*) AS n_p FROM presentacion_producto WHERE cod_unidad = $valor";
         $strExec = $this->conex->prepare($registro);
-        $result = $strExec->execute();
-        if($result){
-            $resul = $strExec->fetch(PDO::FETCH_ASSOC);
-            if($resul['n_p'] > 0){
-                $l = "UPDATE unidades_medida SET status = 2 WHERE cod_unidad = $valor";
-                $strExec = $this->conex->prepare($l);
-                $strExec->execute();
-            }else{
+        $strExec->execute();
+        $resul = $strExec->fetch(PDO::FETCH_ASSOC);
+        if($resul){
+            if($resul['n_p'] == 0){
                 $f = "DELETE FROM unidades_medida WHERE cod_unidad = $valor";
                 $strExec = $this->conex->prepare($f);
-                $strExec->execute();
+                $ress=$strExec->execute();
+                if($ress){
+                    $r='success';
+                    return $r;
+                }else{
+                    $r='error_delete';
+                    return $r;
+                }
+            }else{
+                $r='error_associated';
+                return $r;
             }
-            $res = 1;
-        }else{
-            $res = 0;
+        } else{
+            $r='error_query';
+            return $r;
         }
-        return $res;
     }
 
     public function geteliminar($valor){

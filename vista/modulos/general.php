@@ -23,8 +23,10 @@
         <div class="col-12">
             <div class="card">
             <div class="card-header">
+            <?php if(empty($datos['rif'])):?>
             <!-- Botón para ventana modal -->
             <button class="btn btn-primary" data-toggle="modal" id="registrar" data-target="#modalregistrarempresa">Registrar Información</button>
+            <?php endif;?>
             </div>
             <div class="card-body">
                     <?php foreach($datos as $dato): ?>
@@ -42,7 +44,8 @@
                                 <p><b>Logo: </b><img src="<?php echo $dato['logo']; ?>" alt="quesera don pedro"></p>
                             </div>
                             <div class="card-footer">
-                            <button name="ajustar" class="btn btn-primary btn-sm editar" data-toggle="modal" id="modificar" data-target="#modalmodificarempresa" value="<?php echo $dato['rif']; ?>">
+                                <form method="POST">
+                                    <button name="ajustar" class="btn btn-primary btn-sm editar" value="<?php echo $dato['rif']; ?>">
                                         <i class="fas fa-pencil-alt" title="Editar"></i>
                                     </button>
 
@@ -115,68 +118,31 @@ MODAL REGISTRAR INFO GENERAL
         </div>
     </section>
 </div>
-
-<!--      MODAL DE MODIFICACIÓN             --->
-<div class="modal fade" id="modalmodificarempresa" tabindex="-1" aria-labelledby="modalmodificarempresaLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Editar informacion</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <!--    QUE PROBLEMAS TIENEN CONMIGO!!!! VARIABLE INDEFINIDA!!!!!!!!!!!!!!!!         -->
-                        <form id="Generaleditar" method="post">
-                            <input type="hidden" name="rif" value="<?php echo $dato['rif'] ?>">
-                            <!--   RIF DE LA empresa     -->
-                            <div class="form-group">
-                                <label for="rif">Rif de la empresa</label>
-                                <input type="text" class="form-control" name="rif" value="<?php echo $dato['rif'] ?>" readonly>
-                            </div>
-                            <!--   NOMBRE DE LA empresa     -->
-                            <div class="form-group">
-                                <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control" name="nombre" value="<?php echo $dato['nombre'] ?>">
-                            </div>
-                            <!--   DIRECCION     -->
-                            <div class="form-group">
-                                <label for="direccion">Direccion</label>
-                                <input type="text" class="form-control" name="direccion" value="<?php echo $dato['direccion'] ?>">
-                            </div>
-                            <!--   TELEFONO     -->
-                            <div class="form-group">
-                                <label for="telefono">Telefono</label>
-                                <input type="tel" class="form-control" name="telefono" value="<?php echo $dato['telefono'] ?>">
-                            </div>
-                            <!--   EMAIL     -->
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" name="email" value="<?php echo $dato['email'] ?>">
-                            </div>
-                            <!--   DESCRIPCION    -->
-                            <div class="form-group">
-                                <label for="descripcion">Descripción</label>
-                                <input type="text" class="form-control" name="descripcion" value="<?php echo $dato['descripcion'] ?>">
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <!--<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" name="editar">Editar</button>
-                            <div class="modal-footer justify-content-between">-->
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" name="editar" value="<?php echo $dato['rif']; ?>">Editar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<!--    FIN DEL MODAL DE MODIFICAR         -->
+<?php
+if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'general';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!--     VALIDACIÓN        -->
-<script src="vista/dist/js/modulos-js/general.js"></script>
+<script src="assets/js/general.js"></script>
+        <script>
+                $('#registrar').click(function(e){
+                    var buscar = 'true';
+                    $.post('index.php?pagina=general', {buscar}, function(response){
+                    if(response.total > 0){
+                        alert('Los datos de la empresa ya estan registrados');
+                    }
+                },'json');
+            });
+        </script>

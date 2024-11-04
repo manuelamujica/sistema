@@ -1,33 +1,31 @@
 <?php
 
 require_once "modelo/roles.php"; //requiero al modelo
-$objRol= new Rol();
+$objRol = new Rol();
 
-if(isset($_POST['buscar'])){
-    $rol=$_POST['buscar'];
-    $result=$objRol->buscar($rol);
+if (isset($_POST['buscar'])) {
+    $rol = $_POST['buscar'];
+    $result = $objRol->buscar($rol);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+} else if (isset($_POST["guardar"])) {
+    if (preg_match("/^[a-zA-Z0-9\s]+$/", $_POST["rol"])) {
+        if (!empty($_POST["rol"])) {
 
-}else if(isset($_POST["guardar"])){
-    if(preg_match("/^[a-zA-Z0-9\s]+$/",$_POST["rol"])){
-        if(!empty($_POST["rol"])){
-            
-            if(!$objRol->buscar($_POST['rol'])){
+            if (!$objRol->buscar($_POST['rol'])) {
                 #Instanciar los setter
                 $objRol->setRol($_POST["rol"]);
-                $resul=$objRol->getcrearRol($_POST['permisos']);
+                $resul = $objRol->getcrearRol($_POST['permisos']);
 
-                if($resul == 1){
-                    
+                if ($resul == 1) {
+
                     $registrar = [
                         "title" => "Registrado con éxito",
                         "message" => "El rol ha sido registrado",
                         "icon" => "success"
                     ];
-                    
-                }else{
+                } else {
                     $registrar = [
                         "title" => "Error",
                         "message" => "Hubo un problema al registrar el rol",
@@ -36,23 +34,24 @@ if(isset($_POST['buscar'])){
                 }
             }
         }
-    }else {
-        echo    "<script>
-            alert('¡Los roles no pueden ir vacios o llevar caracteres especiales!');
-        </script>";
+    } else {
+        $registrar = [
+            "title" => "Error",
+            "message" => "¡Los roles no pueden ir vacios o llevar caracteres especiales!",
+            "icon" => "error"
+        ];
     }
-
-}else if(isset($_POST['editar'])){
+} else if (isset($_POST['editar'])) {
     $codigo = $_POST['cod_tipo_usuario'];
     $rol = $_POST['rol'];
     $status = $_POST['status'];
-    
+
     // Obtener el rol original
     $rol_original = $objRol->buscarcod($codigo); // Buca por
     $rol_existente = $objRol->buscar($rol); // Verificar si el nuevo rol ya existe
 
     // Validaciones
-    if (!($rol) || preg_match("/^\s*$/",$rol)) {
+    if (!($rol) || preg_match("/^\s*$/", $rol)) {
         $editar = [
             "title" => "No puede estar el campo vacío",
             "message" => "El rol no se pudo actualizar",
@@ -64,17 +63,19 @@ if(isset($_POST['buscar'])){
             "message" => "El rol no se pudo actualizar",
             "icon" => "error"
         ];
-    } else if (preg_match("/^[^a-zA-Z\s]+$/", $rol)) {
+    } else if (preg_match("/[^a-zA-Z\s]/", $rol)) {
         $editar = [
             "title" => "No puede contener caracteres especiales",
             "message" => "El rol no se pudo actualizar",
             "icon" => "error"
         ];
-    }else if($rol !== $_POST['origin'] && $objRol->buscar($rol)){
-
-    }
-        else{
-        // NO FUNCIONA :(
+    } else if ($rol !== $_POST['origin'] && $objRol->buscar($rol)) {
+        $editar = [
+            "title" => "Error",
+            "message" => "Rol ya existente", 
+            "icon" => "error"
+        ];
+    } else {
         $objRol->setcodigo($codigo);
         $objRol->setRol($rol);
         $objRol->setStatus($status);
@@ -88,12 +89,12 @@ if(isset($_POST['buscar'])){
         } else {
             $editar = [
                 "title" => "Error",
-                "message" => "Hubo un problema al editar el rol", //SI USTEDES LOGRARON VALIDAR BIEN ME AVISAN PARA ACOMODAR EL ERROR POR FAVOR
+                "message" => "Hubo un problema al editar el rol", 
                 "icon" => "error"
             ];
         }
     }
-}else if(isset($_POST['eliminar'])){
+} else if (isset($_POST['eliminar'])) {
     $codigo = $_POST['eliminar'];
     $objRol->setcodigo($codigo);
     $resul = $objRol->geteliminar($codigo);
@@ -103,13 +104,13 @@ if(isset($_POST['buscar'])){
             "message" => "El rol ha sido eliminada",
             "icon" => "success"
         ];
-    } elseif ($result == 'error_associated') {
+    } else if ($resul == 'error_associated') {
         $eliminar = [
             "title" => "Error",
             "message" => "El rol no se puede eliminar porque tiene usuarios asociados",
             "icon" => "error"
         ];
-    } elseif ($result == 'error_delete') {
+    } else if ($resul == 'error_delete') {
         $editar = [
             "title" => "Error",
             "message" => "Hubo un problema al eliminar el rol",
@@ -124,9 +125,8 @@ if(isset($_POST['buscar'])){
     }
 }
 
-$permiso=$objRol->permisos();
+$permiso = $objRol->permisos();
 
-$registro=$objRol->consultar();
-$_GET['ruta']='roles';
+$registro = $objRol->consultar();
+$_GET['ruta'] = 'roles';
 require_once 'plantilla.php';
-

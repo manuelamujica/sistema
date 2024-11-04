@@ -9,7 +9,7 @@ $objprod = new Detallep();
 
 // Manejo de búsqueda de carga
 if (isset($_POST['buscar'])) {
-    $resul = $objcarga->getbuscar($_POST['buscar']);
+    $resul = $objcargad->b_productos($_POST['buscar']);
     header('Content-type: application/json');
     echo json_encode($resul);
     exit;
@@ -42,7 +42,7 @@ if (isset($_POST['buscar'])) {
     //header('Content-Type: application/json');
     echo json_encode($response);
     exit();
-}else if (isset($_POST['verificarDetalle'])) {
+} else if (isset($_POST['verificarDetalle'])) {
     $producto = $_POST['id'];
     $detalle = $objcargad->verificarDetalleProducto($producto);
     header('Content-type: application/json');
@@ -57,8 +57,7 @@ if (isset($_POST['buscar'])) {
 }
 // Manejo de guardar carga
 else if (isset($_POST['guardar'])) {
-    // Inicializar el array de respuesta
-    $response = [];
+
     // Verificar que la fecha y descripción no estén vacías
     if (!empty($_POST['fecha']) && !empty($_POST['descripcion'])) {
         if (preg_match("/^[a-zA-Z0-9\.,\s]+$/", $_POST['descripcion'])) {
@@ -67,95 +66,81 @@ else if (isset($_POST['guardar'])) {
             $resul = $objcarga->getcrear(); // Registrar carga
 
             if ($resul == 1) {
-                $producto = $_POST['cod_detallep']; // Cambiar a cod_detallep
-                $cantidad = $_POST['cantidad'];
-                $cont = count($producto);
+                // Cambiar a la forma correcta de acceder a los productos
+                $productos = $_POST['productos'];
                 $cargaExitosa = true; // Para verificar si la carga fue exitosa
 
-                for ($i = 0; $i < $cont; $i++) {
-                    $detalle = $objcargad->verificarDetalleProducto($producto[$i]);
-                    $objcargad->setcodpro($producto[$i]);
-                    
-
-                    if ($detalle && isset($detalle['cod_detallep'])) {
+                foreach ($productos as $producto) {
+                    $codigo1 = $producto['codigo1'];
+                    $cantidad = $producto['cantidad'];
 
 
-                        // Si el detalle existe, registrar el producto
-                        $detallep = $detalle['cod_detallep'];
+                    // Verifica que el código y la cantidad no estén vacíos
+                    if (!empty($codigo1) && !empty($cantidad)) {
+                        $detalle = $objcargad->verificarDetalleProducto($codigo1);
+                        $objcargad->setcodpro($codigo1);
 
+                        if ($detalle && isset($detalle['cod_detallep'])) {
+                            // Si el detalle existe, registrar el producto
+                            $detallep = $detalle['cod_detallep'];
+                            $objcargad->setcodp($detallep);
+                            $objcargad->setcantidad($cantidad);
+                            $regis = $objcargad->getcrear();
 
-                        $objcargad->setcodp($detallep);
-                        $objcargad->setcantidad($cantidad[$i]);
-                        $regis = $objcargad->getcrear();
-
-                        if ($regis != 1) {
-                            $response['status'] = 'error';
-                            $cargaExitosa = false; // Marcar como no exitosa
-                            $response['error'];
-                            $response['data'] = [
+                            if ($regis != 1) {
+                                $cargaExitosa = false;
+                                $registrar = [
+                                    "title" => "Error",
+                                    "message" => "El error al registrar el producto: " . $codigo,
+                                    "icon" => "error"
+                                ];
+                            }
+                        } else {
+                            $cargaExitosa = false;
+                            $registrar = [
                                 "title" => "Error",
-                                "message" => "El error al registrar el producto: " . $producto[$i],
+                                "message" => "El producto manuela no tiene detalle",
                                 "icon" => "error"
                             ];
                         }
                     } else {
-                        $cargaExitosa = false; // Marcar como no exitosa
-                        // Si no hay detalle, mostrar mensaje
-                        $response['status'] = 'error';
-                        $response['data'] = [
+                        $cargaExitosa = false;
+                        $registrar = [
                             "title" => "Error",
-                            "message" => "El producto " . $producto[$i] . " no tiene detalle",
+                            "message" => "Código o cantidad vacía para el producto.",
                             "icon" => "error"
                         ];
                     }
                 }
 
                 if ($cargaExitosa) {
-                    $response['status'] = 'success';
-                    $response['data'] = [
+                    $registrar = [
                         "title" => "Registrado con éxito",
                         "message" => "La carga ha sido registrada",
                         "icon" => "success"
                     ];
-                } else {
-                    $response['status'] = 'error';
-                    $response['data'] = [
-                        "title" => "Error",
-                        "message" => "Se cayo la pagina",
-                        "icon" => "error"
-                    ];
+                    var_dump("paso aqui");
                 }
-            } else if ($resul != 1) {
-                $cargaExitosa = false; // Marcar como no exitosa
-                $response['status'] = 'error';
-                $response['data'] = [
-                    "title" => "Error",
-                    "message" => "No se pudo registrar la carga",
-                    "icon" => "error"
-                ];
             }
-        }else {
-            $response['status'] = 'error';
-            $response['data'] = [
+        } else {
+            $registrar = [
                 "title" => "Error",
-                "message" => "La descripción no puede contener caracteres especiales",
+                "message" => "La carga ha sido registrada",
                 "icon" => "error"
             ];
         }
     } else {
-        $response['status'] = 'error';
-        $response['data'] = [
+        $registrar = [
             "title" => "Error",
             "message" => "Los campos obligatorios no pueden estar vacíos",
             "icon" => "error"
         ];
     }
 
-    // Enviar la respuesta como JSON
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit();
 }
+
+
+
 // Manejo de edición de carga
 else if (isset($_POST['editar'])) {
     $cod_carga = $_POST['cod_carga'];
