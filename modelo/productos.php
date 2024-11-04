@@ -151,11 +151,10 @@ public function registrar2($unidad, $cod_producto){
 }
 
 /*==============================
-MOSTRAR PRODUCTO y asignar categoria, unidad y su presentación
+MOSTRAR PRODUCTO y asignar categoria, unidad y su presentación (tabla)
 ================================*/
 
 public function mostrar(){
-
     $sql = "SELECT
     p.cod_producto,
     p.nombre,
@@ -309,6 +308,67 @@ public function buscar($nombrep){
         return $datos;
     }else{
         return [];
+    }
+}
+/*======================================================================
+BUSCAR DETALLE DE PRODUCTO 
+========================================================================*/
+public function consultardetalleproducto($cod_presentacion){
+    $sql = 'SELECT
+    detp.lote,
+    detp.cod_detallep,
+    detp.fecha_vencimiento,
+    detp.stock,
+    detp.status
+    FROM detalle_productos AS detp JOIN presentacion_producto AS present ON detp.cod_presentacion=:cod_presentacion
+    GROUP BY detp.cod_detallep';
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':cod_presentacion',$cod_presentacion);
+    $resul=$strExec->execute();
+    $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
+
+    if($resul){
+        return $array;
+    }else{
+        return $r=[];
+    }
+}
+/*======================================================================
+ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
+========================================================================*/
+
+public function eliminardetalle($detallep) {
+    
+    // Obtener el detalle específico que se desea eliminar
+    $sql = 'SELECT
+    stock, 
+    status 
+    FROM detalle_productos WHERE cod_detallep = :cod_detallep';
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
+    $strExec->execute();
+    $detalle = $strExec->fetch(PDO::FETCH_ASSOC);
+
+    // Verificar si el detalle existe
+    if (!$detalle) {
+        return ['status' => 'error', 'message' => 'Detalle no encontrado.'];
+    }
+
+    // Validar si el detalle tiene stock > 0 o status != 2 (inactivo)
+    if ($detalle['stock'] > 0 || $detalle['status'] != 2) {
+        return ['status' => 'error', 'message' => 'No se puede eliminar el detalle porque debe estar inactivo y tener stock en 0.'];
+    }
+
+    // Proceder a eliminar
+    $sqld = "DELETE FROM detalle_productos WHERE cod_detallep = :cod_detallep";
+    $strExec = $this->conex->prepare($sqld);
+    $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
+    $delete = $strExec->execute();
+
+    if ($delete) {
+        return ['status' => 'success', 'message' => 'Detalle eliminado correctamente.'];
+    } else {
+        return ['status' => 'error', 'message' => 'Error al eliminar el detalle.'];
     }
 }
 

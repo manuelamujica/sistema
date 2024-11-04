@@ -28,11 +28,10 @@ require_once "controlador/descarga.php";
                                     <thead>
                                         <tr>
                                             <th>Código</th>
-                                            <th>Producto</th>
                                             <th>Descripcion</th>
+                                            <th>Producto</th>
                                             <th>Fecha</th>
                                             <th>Cantidad descargada</th>
-                                            <th>Stock actual</th>
                                             <th>Status</th>
                                         </tr>         
                                     </thead>
@@ -43,10 +42,10 @@ require_once "controlador/descarga.php";
                                             ?>
                                             <tr>
                                                 <td> <?php echo $d["cod_descarga"] ?></td>
-                                                <td> Producto </td>
                                                 <td> <?php echo $d["descripcion"] ?></td>
-                                                <td> Cantidad </td>
-                                                <td> Stock </td>
+                                                <td> <?php echo $d["nombre_producto"] ?> </td>
+                                                <td> <?php echo $d["fecha"] ?></td>
+                                                <td> <?php echo $d["cantidad"] ?></td>
                                                 <td>
                                                     <?php if ($d['status'] == 1):?>
                                                         <span class="badge bg-success">Activo</span>
@@ -66,7 +65,7 @@ require_once "controlador/descarga.php";
     MODAL REGISTRAR DESCARGA 
 ================================== -->
                 <div class="modal fade" id="modalRegistrarDescarga" tabindex="-1" aria-labelledby="modalRegistrarDescargaLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="registrarModalLabel">Registrar descarga</h5>
@@ -86,7 +85,28 @@ require_once "controlador/descarga.php";
                                             <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
-                                        <button type="button" class="btn btn-secondary" id="add-product">Agregar otro producto</button>
+                                        <!--SELECCIONAR PRODUCTOS (+ agregar productos)-->
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Codigo</th>
+                                                        <th>Producto</th>
+                                                        <th>Presentacion</th>
+                                                        <th>Lote</th>
+                                                        <th>Stock disponible</th>
+                                                        <th>Cantidad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="detdescargabody">
+                                                <!--Se generan dinamicamente las filas de productos-->
+                                                </tbody>
+                                            </table>
+
+                                            <!--Agregar otro producto-->
+                                            <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar otro producto</button>
+                                        </div>
+
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -96,6 +116,9 @@ require_once "controlador/descarga.php";
                             </div>
                         </div>
                     </div>
+
+
+
 <?php 
 if (isset($registrar)): ?>
     <script>
@@ -112,27 +135,12 @@ if (isset($registrar)): ?>
     </script>
 <?php endif; ?>
 
-<?php
-if (isset($advertencia)): ?>
-    <script>
-        Swal.fire({
-            title: '<?php echo $advertencia["title"]; ?>',
-            text: '<?php echo $advertencia["message"]; ?>',
-            icon: '<?php echo $advertencia["icon"]; ?>',
-            confirmButtonText: 'Ok'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location = 'categorias';
-            }
-        });
-    </script>
-<?php endif; ?>
-
-
             </div>
         </div>
     </section>
 </div>
+
+<script src='vista/dist/js/modulos-js/descarga.js'></script>
 
 
 

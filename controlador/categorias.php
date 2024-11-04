@@ -13,7 +13,7 @@ if(isset($_POST['buscar'])){
 
 }else if (isset($_POST['guardar']) || isset($_POST['registrarc'])){ #Si viene de productos o de categoria
 
-    if(!empty($_POST["nombre"]) && preg_match('/^[a-zA-Z]+$/',$_POST['nombre'])){
+    if(!empty($_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && strlen($_POST['nombre']) <= 40) {
 
         if (!$objCategoria->getbuscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
 
@@ -43,37 +43,48 @@ if(isset($_POST['buscar'])){
         ];
     }
 }else if (isset($_POST['actualizar'])){
-    if(!empty($_POST['nombre']) && preg_match('/^[a-zA-Z]+$/',$_POST['nombre'])){
+    if(!empty($_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && strlen($_POST['nombre']) <= 40) {
         
-        #validacion de que no haya esa categoria registrada
-        $objCategoria->setNombre($_POST['nombre']);
-        $objCategoria->setStatus($_POST['status']);
+        if($_POST['nombre'] !== $_POST['origin']){
+            // Si la categoria cambió, verificamos si ya existe en la base de datos
+            if ($objCategoria->buscar($_POST['nombre'])) {
+                $editar = [
+                    "title" => "Advertencia",
+                    "message" => "La categoria ya está registrada.",
+                    "icon" => "warning"
+                ];
+            }
+        } else {
 
-        $result=$objCategoria->geteditar($_POST['codigo']);
+            $objCategoria->setNombre($_POST['nombre']);
+            $objCategoria->setStatus($_POST['status']);
 
-        if($result == 1){
-            $editar = [
-                "title" => "Editado con éxito",
-                "message" => "La categoría ha sido actualizada",
-                "icon" => "success"
-            ];
-        }else {
-            $editar = [
-                "title" => "Error",
-                "message" => "Hubo un problema al editar la categoría",
-                "icon" => "error"
-            ];
-    }
-} else{
+            $result=$objCategoria->geteditar($_POST['codigo']);
+
+            if($result == 1){
+                $editar = [
+                    "title" => "Editado con éxito",
+                    "message" => "La categoría ha sido actualizada",
+                    "icon" => "success"
+                ];
+            }else {
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al editar la categoría",
+                    "icon" => "error"
+                ];
+            }
+        }
+}else{
     $editar = [
         "title" => "Error",
-        "message" => "Hubo un problema al editar la categoría. Intenta de nuevo",
+        "message" => "Algunos caracteres ingresados no son permitidos.",
         "icon" => "error"
     ];
 }
 
 }else if(isset($_POST['borrar'])){
-    if(!empty($_POST['catcodigo']) && $_POST['statusDelete'] !== '1'){
+    if(!empty($_POST['catcodigo']) && $_POST['statusDelete'] !== '1'){ //Eliminar solo si el status es inactivo
     $result = $objCategoria->geteliminar($_POST["catcodigo"]);
     
     if ($result == 'success') {

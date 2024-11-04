@@ -70,7 +70,8 @@ require_once "controlador/productos.php";
                                             <td>Stock total</td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
-                                                <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver más">
+                                                <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
+                                                data-codigo="<?php echo $producto["cod_presentacion"];?>">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                                 
@@ -130,6 +131,7 @@ require_once "controlador/productos.php";
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                                 <div id="lista-productos" class="list-group" style="display: none;"></div>
+                                                
                                             </div>
                                             <div class="col-6">
                                                 <label for="marca">Marca</label>
@@ -184,11 +186,29 @@ require_once "controlador/productos.php";
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="presentacion">Presentación</label>
+                                                <!-- TOOLTIPS-->
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Como usar presentacion? no sabemos">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
                                                 <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ingresa la presentación">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
-                                                <label for="cant_presentacion">Cantidad de presentación</label>
+                                                <label for="cant_presentacion">Cantidad de presentación</label><!-- Botón de información pequeño con estilos personalizados -->
+                                                <!-- TOOLTIPS-->
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Como usar cantidad de presentacion? no sabemos">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
                                                 <input type="number" class="form-control" id="cant_presentacion" name="cant_presentacion" step="0.001" placeholder="Ingresa la cantidad">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
@@ -369,16 +389,18 @@ require_once "controlador/productos.php";
                                         <div class="col-6">
                                             <label for="nombre">Nombre del producto</label>
                                             <input type="text" class="form-control" id="name" name="nombre" placeholder="Ingresa el nombre" required>
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
                                             <label for="marca">Marca</label>
-                                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
+                                            <input type="text" class="form-control" id="marcaE" name="marca" placeholder="Ingresa la marca">
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-6">
                                             <label for="categoria">Categoría</label>
-                                                <select class="form-control" id="categoria1" name="categoria" required>
+                                                <select class="form-control" id="categoriaE" name="categoria" required>
                                                         <?php foreach($categoria as $cate): ?>
                                                             <option value="<?php echo $cate['cod_categoria']; ?>">
                                                                 <?php echo $cate['nombre']; ?>
@@ -388,7 +410,7 @@ require_once "controlador/productos.php";
                                         </div>
                                         <div class="col-6">
                                             <label for="excento">¿Tiene IVA?</label>
-                                                <select class="form-control" id="iva" name="iva" required>
+                                                <select class="form-control" id="ivaE" name="iva" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
                                                     <option value="1">Excento</option>
                                                     <option value="2">Gravable</option>
@@ -397,7 +419,7 @@ require_once "controlador/productos.php";
                                     </div>
                                     <div class="form-group">
                                         <label for="unidad">Unidad de medida</label>
-                                            <select class="form-control" id="unidad1" name="unidad" required>
+                                            <select class="form-control" id="unidadE" name="unidad" required>
                                                     <?php foreach($unidad as $u): ?>
                                                         <option value="<?php echo $u['cod_unidad']; ?>">
                                                             <?php echo $u['tipo_medida']; ?>
@@ -408,29 +430,34 @@ require_once "controlador/productos.php";
                                     <div class="form-group row">
                                         <div class="col-6">
                                             <label for="presentacion">Presentación</label>
-                                            <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ingresa la presentación">
+                                            <input type="text" class="form-control" id="presentacionE" name="presentacion" placeholder="Ingresa la presentación">
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
                                             <label for="cant_presentacion">Cantidad de presentación</label>
-                                            <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ingresa la cantidad">
+                                            <input type="text" class="form-control" id="cant_presentacionE" name="cant_presentacion" placeholder="Ingresa la cantidad">
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     </div>
                                     <hr>
                                     <div class="form-group row">
                                         <div class="col-6">
                                             <label for="costo">Costo</label>
-                                            <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
+                                            <input type="number" class="form-control" step="0.01" min="0" id="costoE" name="costo" placeholder="Precio de compra" required>
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
                                             <label for="precio">Precio</label>
-                                            <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >
+                                            <input type="number" class="form-control" min="0" id="precioE" placeholder="Precio de venta" readonly >
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     </div>
                                     <div class="input-group mb-2">
-                                        <input type="number" class="form-control nuevoPorcentaje" min="0" step="0" placeholder="Porcentaje de ganancia" id="porcen" name="porcen" required>
+                                        <input type="number" class="form-control nuevoPorcentaje" min="0" step="0" placeholder="Porcentaje de ganancia" id="porcenE" name="porcen" required>
                                         <div class="input-group-append">
                                             <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                         </div>
+                                        <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                     <div class="modal-footer justify-content-between">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -514,51 +541,53 @@ require_once "controlador/productos.php";
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="table-responsive">
-                                                <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                                <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>Código</th>
-                                                            <th>Nombre</th>
+                                                            <th>Lote</th>
+                                                            <th>Fecha de vencimiento</th>
                                                             <th>Status</th>
                                                             <th>Stock</th>
                                                             <th>Acciones</th>
                                                         </tr>         
                                                     </thead>
-                                                    <tbody>
-                                                    <!-- Tabla con los datos que se muestren dinamicamente -->
-                                                        <?php
-                                                        foreach ($registro as $producto){
-                                                            ?>
-                                                            <tr>
-                                                                <td> <?php echo $producto["cod_presentacion"] ?></td>
-                                                                <td> <?php echo $producto["nombre"] ?></td>
-                                                                <td> STATUS </td>
-                                                                <td> STOCK </td>
-                                                                <!-- Boton -->
-                                                                <td>
-                                                                    <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#detalleeditar"
-                                                                    data-codigo="<?php echo $producto["cod_presentacion"];?>"
-                                                                    data-nombre="<?php echo $producto["nombre"]; ?>"
-                                                                    data-marca="<?php echo $producto["marca"]; ?>"
-                                                                    data-present="<?php echo $producto['presentacion']; ?>" 
-                                                                    data-cantpresent="<?php echo $producto['cantidad_presentacion'];?>"
-                                                                    data-categoria="<?php echo $producto["cat_codigo"]; ?>"
-                                                                    data-costo="<?php echo $producto["costo"]; ?>"
-                                                                    data-iva="<?php echo $producto["excento"]; ?>"
-                                                                    data-porcen="<?php echo $producto["porcen_venta"];?>">
-                                                                    <i class="fas fa-pencil-alt"></i>
-                                                                </button>
-                                                                </td>
-                                                            </tr>
-                                                        <?php } ?>
+                                                    <tbody id="detalleBody">
+                                                        <!-- Los detalles se cargarán aquí -->
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                        </div>
+                    </div>
+                </div>
 
-
+<!-- ====================================
+    MODAL CONFIRMAR ELIMINAR DETALLE 
+========================================= -->
+                <div class="modal fade" id="eliminarDetalleModal" tabindex="-1" aria-labelledby="eliminarDetalleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirmar Eliminación</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            <form id="eliminarForm" method="post">
+                                <div class="form-group">
+                                    <p>¿Estás seguro que deseas eliminar a este detalle?</p>
+                                </div>
+                            </form>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-danger" name="eliminardetalle" id="confirmarEliminarDetalle">Eliminar</button>
+                            </div>
                         </div>
                     </div>
                 </div>

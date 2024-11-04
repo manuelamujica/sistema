@@ -137,6 +137,7 @@ if (isset($registrar)): ?>
                                             <label for="codigo">Nombre</label>
                                             <input type="text" class="form-control" id="name" name="nombre">
                                             <div class="invalid-feedback" style="display: none;"></div>
+                                            <input type="hidden" class="form-control" id="origin" name="origin" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="status">Status</label>

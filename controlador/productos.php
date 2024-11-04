@@ -19,11 +19,19 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-    
+
+//CONSULTAR DETALLE DEPENDIENDO DEL PRODUCTO(PRESENTACION)
+}else if(isset($_POST['detallep'])){
+    $result=$objProducto->consultardetalleproducto($_POST['detallep']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
 
 //REGISTRAR
 }elseif (isset($_POST['guardar'])){
-    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"]) && !empty($_POST["costo"]) && !empty($_POST["marca"])){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"]) && !empty($_POST["costo"]) && !empty($_POST["presentacion"]) && !empty($_POST["cant_presentacion"]) && !empty($_POST["costo"]) && !empty($_POST["porcen"])){
+
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
 
         $categoria = $_POST["categoria"];
         $unidad = $_POST['unidad'];
@@ -60,49 +68,64 @@ if(isset($_POST['buscar'])){
         }
     } else{
         $registrarp = [
-            "title" => "Error",
-            "message" => "Completa todos los campos",
+            "title" => "Error al registrar",
+            "message" => "Algunos caracteres ingresados no son permitidos.",
             "icon" => "error"
         ];
-    }
-    
+    } 
+    } else {
+        $registrarp = [
+        "title" => "Error",
+        "message" => "Completa todos los campos obligatorios",
+        "icon" => "error"
+    ];
+}
 //EDITAR
 } else if (isset($_POST['editar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['categoria']) && !empty($_POST['costo']) && !empty($_POST['unidad'])){
         
-        $cod_producto = $_POST['cod_producto'];
-        $cod_presentacion = $_POST['cod_presentacion'];
-        
-        $objProducto->setNombre($_POST['nombre']);
-        $objProducto->setMarca($_POST['marca']);
-        $objProducto->setCosto($_POST['costo']);
-        $objProducto->setExcento($_POST['iva']);
-        $objProducto->setGanancia($_POST["porcen"]);
-        $objProducto->setPresentacion($_POST['presentacion']);
-        $objProducto->setCantPresentacion($_POST['cant_presentacion']);
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
 
-        $result=$objProducto->editar($cod_presentacion, $cod_producto, $_POST["categoria"],$_POST['unidad']);
-        
-        if($result == 1){
+            $cod_producto = $_POST['cod_producto'];
+            $cod_presentacion = $_POST['cod_presentacion'];
+            
+            $objProducto->setNombre($_POST['nombre']);
+            $objProducto->setMarca($_POST['marca']);
+            $objProducto->setCosto($_POST['costo']);
+            $objProducto->setExcento($_POST['iva']);
+            $objProducto->setGanancia($_POST["porcen"]);
+            $objProducto->setPresentacion($_POST['presentacion']);
+            $objProducto->setCantPresentacion($_POST['cant_presentacion']);
+
+            $result=$objProducto->editar($cod_presentacion, $cod_producto, $_POST["categoria"],$_POST['unidad']);
+            
+            if($result == 1){
+                $editar = [
+                "title" => "Editado con éxito",
+                "message" => "El producto ha sido actualizado",
+                "icon" => "success"
+                ];
+            }else{
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Hubo un error al editar el producto",
+                    "icon" => "error"
+                    ];
+                }
+        }else { 
             $editar = [
-            "title" => "Editado con éxito",
-            "message" => "El producto ha sido actualizado",
-            "icon" => "success"
-            ];
-    }else{
-            $editar = [
-                "title" => "Error",
-                "message" => "Hubo un error al editar el producto",
+                "title" => "Error al editar",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
                 "icon" => "error"
-            ];
-        }
-    } else{
-        $editar = [
-            "title" => "Error",
-            "message" => "Completa todos los campos",
-            "icon" => "error"
+                ];
+            }
+    } else {$editar = [
+        "title" => "Error al editar",
+        "message" => "Completa todos los campos obligatorios",
+        "icon" => "error"
         ];
     }
+
 //ELIMINAR
 } else if(isset($_POST['borrar'])){
     if(!empty($_POST['present_codigo'])){
@@ -138,11 +161,20 @@ if(isset($_POST['buscar'])){
                 ];
         }
         } 
-    }
+
+//BUSCAR ELIMINAR DETALLE (AJAX/JSON)
+}  else if(isset($_POST['codigo'])){
+    $result=$objProducto->eliminardetalle($_POST['codigo']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
+}
+
+
+
 
 
 
 $registro = $objProducto->getmostrar();
-
 $_GET['ruta'] = 'productos';
 require_once 'plantilla.php';
