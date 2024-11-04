@@ -1,6 +1,6 @@
 <?php
 
-require_once "modelo/unidad.php"; //requiero al modelo
+require_once "modelo/unidad.php";
 $objUnidad= new Unidad;
 
 if(isset($_POST['buscar'])){
@@ -9,10 +9,10 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-}else if(isset($_POST["guardar"])){
+}else if(isset($_POST["guardar"]) || isset($_POST['guardaru'])){
     if(!empty($_POST["tipo_medida"])){
         if(!$objUnidad->buscar($_POST['tipo_medida'])){
-        #Instanciar los setter
+
         $objUnidad->setTipo($_POST["tipo_medida"]);
         $resul=$objUnidad->getcrearUnidad();
 
@@ -34,9 +34,14 @@ if(isset($_POST['buscar'])){
 
 }
 
-//AQUI LLAMO PARA MOSTRAR LOS REGISTROS
+
 $datos = $objUnidad->consultarUnidad();
-$_GET['ruta']='unidad';
+if(isset($_POST["vista"])){
+    $_GET['ruta'] = 'productos';
+    //exit();
+}else{
+    $_GET['ruta'] = 'unidad';
+}
 require_once 'plantilla.php';
 
 

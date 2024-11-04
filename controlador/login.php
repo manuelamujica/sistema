@@ -2,14 +2,16 @@
 
 require_once "modelo/usuarios.php"; 
 require_once "modelo/general.php";
+require_once "modelo/roles.php";
 
 $obj = new General();
 $objuser= new Usuario();
+$objRol= new Rol();
 
 if(isset($_POST["ingresar"])){
 
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
-	preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingPassword"])){ //Pendiente validar caracteres especiales...
+	preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])){ 
 
 		$item = "user";
 		$valor = $_POST["ingUsuario"];
@@ -18,13 +20,17 @@ if(isset($_POST["ingresar"])){
 
 	}
 
-	if (!empty($respuesta) && isset($respuesta["user"])) {
+	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
+		
 		// Verificamos la contraseña utilizando password_verify()
 		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
 			
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
+		// Para acceder al nombre del rol y guardarlo en una variable SESSION
+			$rol = $objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
+			$_SESSION["rol"] = $rol["rol"];
 
 			$_SESSION["producto"]=0;
 			$_SESSION["inventario"]=0;
@@ -69,26 +75,25 @@ if(isset($_POST["ingresar"])){
 			$_SESSION["logo"] = $logo[0]["logo"];
 			$_SESSION["n_empresa"] = $logo[0]["nombre"];
 			}
+
 			echo '<script>
 			window.location="inicio";
 			</script>';
 
 		} else {
-			echo "<script>
-			alert('Error al ingresar, vuelve a intentarlo');
-			location = 'login';
-			</script>";
-			#echo '<div class="alert alert-danger">Error al ingresar, vuelve a intentarlo</div>';
-		}
+			$login = [
+                "title" => "Error",
+                "message" => "Usuario o contraseña incorrecta.",
+                "icon" => "error"
+            ];
+		} 
 	} else {
-		echo "<script>
-		alert('Usuario no encontrado');
-		location = 'login';
-		</script>";
+		$login = [
+			"title" => "Error",
+			"message" => "Intenta de nuevo. ",
+			"icon" => "error"
+		];
 	}
-		#echo: Lo muestra bonito pero no agarra las clases de adminLTE
-		#'<div class="alert alert-danger">Usuario no encontrado</div>';
-	
 	
 }
 

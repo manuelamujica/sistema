@@ -42,7 +42,6 @@ PLUGINGS DE CSS
   <script src="vista/plugins/moment/moment.min.js"></script>
   <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
 
-
   <!-- DataTables  & Plugins -->
 <script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -74,9 +73,11 @@ PLUGINGS DE CSS
   <?php
   include "modulos/header.php";
   include "modulos/sidebar.php";
+
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
     $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
+    $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
