@@ -8,11 +8,9 @@ session_start();
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SAVYC</title>
   <link rel="icon" href="vista/dist/img/logo-icono.png"> <!--Logo del navegador -->
-
 <!-- ==================
 PLUGINGS DE CSS
 ======================= -->
-
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -47,7 +45,6 @@ PLUGINGS DE CSS
   <!-- Date Range Picker -->
   <script src="vista/plugins/moment/moment.min.js"></script>
   <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
-  
   <!-- DataTables  & Plugins -->
 <script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -61,10 +58,8 @@ PLUGINGS DE CSS
 <script src="vista/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="vista/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="vista/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-
 <!-- Custom JS -->
 <script src="vista/dist/js/custom.js"></script>
-
 <!-- SweetAlert2 -->
 <script src="vista/plugins/sweetalert2/sweetalert2.all.js"></script>
 
@@ -73,18 +68,11 @@ PLUGINGS DE CSS
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 </head>
-
-
-
-
-
 <!-- =======================
     BODY
 =============================-->
-
 <body class="hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
-
   <?php 
   if(isset($_SESSION["iniciarsesion"]) && $_SESSION["iniciarsesion"] == 'ok'){
   ?>
@@ -95,23 +83,23 @@ PLUGINGS DE CSS
 
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
-    $_GET["ruta"] == "categorias" ||
-    $_GET["ruta"] == "productos" ||
-    $_GET["ruta"] == "usuarios" ||
-    $_GET["ruta"] == "tpago" ||
-    $_GET["ruta"] == "carga" || 
-    $_GET["ruta"] == "divisa" || 
-    $_GET["ruta"] == "proveedores" || 
-    $_GET["ruta"] == "unidad" ||
-    $_GET["ruta"] == "general" ||
-    $_GET["ruta"] == "clientes" ||
-    $_GET["ruta"] == "roles" ||
-    $_GET["ruta"] == "rep-inventario" ||
-    $_GET["ruta"] == "venta" ||
-    $_GET["ruta"] == "cerrarsesion"){      
+    $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
+    $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
+    $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
+    $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
+    $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
+    $_GET["ruta"] == "tpago" && $_SESSION["configuracion"]==1 || 
+    $_GET["ruta"] == "divisa" && $_SESSION["configuracion"]==1 || 
+    $_GET["ruta"] == "proveedores" && $_SESSION["proveedor"]==1 || 
+    $_GET["ruta"] == "unidad" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "general" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "clientes" && $_SESSION["cliente"]==1 ||
+    $_GET["ruta"] == "roles" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "venta" && $_SESSION["venta"]==1 ||
+    $_GET["ruta"] == "cerrarsesion"){
       include "modulos/". $_GET["ruta"] . ".php";
     } else {
-      include "modulos/construccion.php";
+      include "modulos/inicio.php";
     }
 
   }else{
@@ -125,7 +113,6 @@ PLUGINGS DE CSS
 }else{
   include "modulos/login.php";
 }
-
 ?>
 
 </body>

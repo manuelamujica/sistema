@@ -1,17 +1,10 @@
 <?php require_once 'controlador/unidad.php' ?>
 <div class="content-wrapper">
     <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Unidades de medida</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                        <li class="breadcrumb-item active">Unidades de medida</li>
-                    </ol>
-                </div>
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Unidades de medida</h1>
             </div>
         </div>
     </section>

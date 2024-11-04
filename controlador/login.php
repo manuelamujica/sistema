@@ -5,15 +5,13 @@ require_once "modelo/general.php";
 require_once "modelo/roles.php";
 
 $obj = new General();
-$objuser = new Usuario();
-$objRol = new Rol();
+$objuser= new Usuario();
+$objRol= new Rol();
 
 if (isset($_POST["ingresar"])) {
 
-	if (
-		preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
-		preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])
-	) {
+	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
+	preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])){ 
 
 		$item = "user";
 		$valor = $_POST["ingUsuario"];
@@ -22,14 +20,14 @@ if (isset($_POST["ingresar"])) {
 	}
 
 	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
-
+		
 		// Verificamos la contraseña utilizando password_verify()
 		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
 
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
-			// Para acceder al nombre del rol y guardarlo en una variable SESSION
+		// Para acceder al nombre del rol y guardarlo en una variable SESSION
 			$rol = $objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
 			$_SESSION["rol"] = $rol["rol"];
 
@@ -72,13 +70,9 @@ if (isset($_POST["ingresar"])) {
 
 			//obtenemos el logo de la empresa
 			$logo = $obj->mostrar();
-			if (!empty($logo)) {
-				$_SESSION["logo"] = $logo[0]["logo"];
-				$_SESSION["n_empresa"] = $logo[0]["nombre"];
-				$_SESSION["rif"] = $logo[0]["rif"];
-				$_SESSION["telefono"] = $logo[0]["telefono"];
-				$_SESSION["email"] = $logo[0]["email"];
-				$_SESSION["direccion"] = $logo[0]["direccion"];
+			if(!empty($logo)){
+			$_SESSION["logo"] = $logo[0]["logo"];
+			$_SESSION["n_empresa"] = $logo[0]["nombre"];
 			}
 
 			echo '<script>
@@ -86,11 +80,11 @@ if (isset($_POST["ingresar"])) {
 			</script>';
 		} else {
 			$login = [
-				"title" => "Error",
-				"message" => "Usuario o contraseña incorrecta.",
-				"icon" => "error"
-			];
-		}
+                "title" => "Error",
+                "message" => "Usuario o contraseña incorrecta.",
+                "icon" => "error"
+            ];
+		} 
 	} else {
 		$login = [
 			"title" => "Error",
@@ -98,4 +92,5 @@ if (isset($_POST["ingresar"])) {
 			"icon" => "error"
 		];
 	}
+	
 }

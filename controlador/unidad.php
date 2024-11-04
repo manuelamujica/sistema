@@ -1,7 +1,7 @@
 <?php
 
-require_once "modelo/unidad.php"; //requiero al modelo
-$objUnidad = new Unidad;
+require_once "modelo/unidad.php";
+$objUnidad= new Unidad;
 
 if (isset($_POST['buscar'])) {
     $tipo_medida = $_POST['buscar'];
@@ -9,12 +9,12 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-} else if (isset($_POST["guardar"])) {
-    if (preg_match("/^[a-zA-Z]+$/", $_POST["tipo_medida"])) {
-        if (!empty($_POST["tipo_medida"])) {
-            if (!$objUnidad->getbuscar($_POST['tipo_medida'])) {
-                #Instanciar los setter
-                $objUnidad->setTipo($_POST["tipo_medida"]);
+}else if(isset($_POST["guardar"]) || isset($_POST['guardaru'])){
+    if(!empty($_POST["tipo_medida"])){
+        if(!$objUnidad->getbuscar($_POST['tipo_medida'])){
+
+        $objUnidad->setTipo($_POST["tipo_medida"]);
+        $resul=$objUnidad->getcrearUnidad();
 
                 $resul = $objUnidad->getcrearUnidad();
 
@@ -34,7 +34,7 @@ if (isset($_POST['buscar'])) {
             }
         }
     }
-} else if (isset($_POST['editar'])) {
+else if (isset($_POST['editar'])) {
 
     $cod_unidad = $_POST['cod_unidad'];
     $tipo_medida = $_POST['tipo_medida'];
@@ -118,7 +118,12 @@ if (isset($_POST['buscar'])) {
     }
 }
 
-//AQUI LLAMO PARA MOSTRAR LOS REGISTROS
+
 $datos = $objUnidad->consultarUnidad();
-$_GET['ruta'] = 'unidad';
+if(isset($_POST["vista"])){
+    $_GET['ruta'] = 'productos';
+    //exit();
+}else{
+    $_GET['ruta'] = 'unidad';
+}
 require_once 'plantilla.php';

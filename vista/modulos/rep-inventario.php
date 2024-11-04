@@ -9,12 +9,6 @@ require_once 'controlador/reporte.php';
                 <div class="col-sm-6">
                     <h1>Reporte Inventario</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                        <li class="breadcrumb-item active">Reporte Inventario</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
