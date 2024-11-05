@@ -128,7 +128,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="deproveedores" class="nav-link">
+                            <a href="rep-proveedores" class="nav-link">
                                 <i class="fas fa-store nav-icon"></i>                                        
                                     <p>
                                         De proveedores
