@@ -84,9 +84,9 @@ PLUGINGS DE CSS
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
     $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
-    $_GET["ruta"] == "carga" && $_SESSION["carga"]==1 ||
-    $_GET["ruta"] == "descarga" && $_SESSION["descarga"]==1 ||
-    $_GET["ruta"] == "rep-inventario" && $_SESSION["rep-inventario"]==1 ||
+    $_GET["ruta"] == "carga" && $_SESSION["inventario"]==1 ||
+    $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
+    $_GET["ruta"] == "rep-inventario" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||

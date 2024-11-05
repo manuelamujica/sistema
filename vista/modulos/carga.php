@@ -9,12 +9,6 @@
                     <!-- MODULO TRANSACIONAL DE CARGA DE PRODUCTOS EN AJUSTE DE INVENTARIO  -->
                     <h1>Carga de productos</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                        <li class="breadcrumb-item active">Carga de productos</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
