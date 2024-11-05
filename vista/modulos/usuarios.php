@@ -44,9 +44,8 @@ require_once "controlador/usuarios.php";
                                 </thead>
                                 <tbody>
                                 <!-- Tabla con los datos que se muestren dinamicamente -->
-                                    <?php
-                                    foreach ($registro as $usuario){
-                                        ?>
+                                    <?php foreach ($registro as $usuario){
+                                            if($usuario["cod_usuario"]!=1):?>
                                         <tr>
                                             <td> <?php echo $usuario["cod_usuario"] ?></td>
                                             <td> <?php echo $usuario["nombre"] ?></td>
@@ -74,7 +73,8 @@ require_once "controlador/usuarios.php";
                                                 <i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php endif;
+                                        } ?>
                                 </tbody>
                             </table>
                             </div>
@@ -148,56 +148,28 @@ if (isset($registrar)): ?>
     MODAL EDITAR USUARIO 
 ================================== -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="editForm" method="post">
-                                        <div class="form-group">
-                                            <label for="codigo">Código</label>
-                                            <input type="text" class="form-control" id="codigo" name="codigo" readonly>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="codigo">Nombre</label>
-                                            <input type="text" class="form-control" id="name" name="nombre">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="codigo">User</label>
-                                            <input type="text" class="form-control" id="usuario" name="user">
-                                            <input type="hidden" class="form-control" id="origin" name="origin" > <!--Lo pasamos oculto-->
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="codigo">Contraseña</label>
-                                            <input type="password" class="form-control" id="password" name="pass" placeholder="Ingrese la nueva contraseña">
-                                        </div>
-                                        <label for="roles">Rol</label>
-                                                <select class="form-control" id="roles" name="roles" required>
-                                                    <?php foreach($roles as $role): ?>
-                                                        <option value="<?php echo $role['cod_tipo_usuario']; ?>">
-                                                            <?php echo $role['rol']; ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                        <div class="form-group">
-                                            <label for="status">Status</label>
-                                            <select class="form-control" id="status" name="status">
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
-                                </div>
-                            </div>
-                        </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" method="post">
+                    <div class="form-group">
+                        <label for="codigo">Código</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="codigo">Nombre</label>
+                        <input type="text" class="form-control" id="name" name="nombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="codigo">User</label>
+                        <input type="text" class="form-control" id="usuario" name="user">
+                        <input type="hidden" class="form-control" id="origin" name="origin" > <!--Lo pasamos oculto-->
                     </div>
                     <div class="form-group">
                         <label for="codigo">Contraseña</label>
@@ -205,7 +177,6 @@ if (isset($registrar)): ?>
                     </div>
                     <label for="roles">Rol</label>
                             <select class="form-control" id="roles" name="roles" required>
-    
                                 <?php foreach($roles as $role): ?>
                                     <option value="<?php echo $role['cod_tipo_usuario']; ?>">
                                         <?php echo $role['rol']; ?>

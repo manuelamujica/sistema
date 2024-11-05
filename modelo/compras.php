@@ -225,13 +225,40 @@ class Compra extends Conexion
       return $this->registrar($productos);
    }
 
+   public function anular($cod){
+      try{
+         $this->conex->beginTransaction();
+
+         $sql="UPDATE compras SET status=0 WHERE cod_compra=:cod_compra;";
+         $anu=$this->conex->prepare($sql);
+         $anu->bindParam(':cod_compra', $cod);
+         $resul=$anu->execute();
+         if($resul){
+            $revertir="UPDATE detalle_productos AS dp
+            JOIN detalle_compras AS dc ON dp.cod_detallep = dc.cod_detallep
+            SET dp.stock = dp.stock - dc.cantidad
+            WHERE dc.cod_compra = :cod_compra;";
+            $stock=$this->conex->prepare($revertir);
+            $stock->bindParam(':cod_compra', $cod);
+            $r=$stock->execute();
+         }
+         if($r){
+            $res=1;
+         }else{
+            $res=0;
+         }
+         $this->conex->commit();
+         return $res;
+      } catch(Exception $e){
+         $this->conex->rollBack();
+      }
+   }
 
    // -------------------------fin de registtrar
 
 
    // --------------------------A  eliminar esta funcional
-   private function eliminar($valor)
-   {
+   /*private function eliminar($valor){
       // Usar una declaración preparada para evitar inyecciones SQL  
       $registro = "SELECT COUNT(*) AS n_dcompra FROM detalle_compras WHERE cod_compra = :valor";
       $strExec = $this->conex->prepare($registro);
@@ -277,7 +304,7 @@ class Compra extends Conexion
    public function geteliminar($valor)
    {
       return $this->eliminar($valor);
-   }
+   }*/
 
    // --------------------------eliminar
 
@@ -304,6 +331,19 @@ class Compra extends Conexion
    //fin de consultar//
 
 
+   public function divisas(){
+      $sql="SELECT d.cod_divisa, d.nombre, d.abreviatura, c.tasa, c.fecha 
+      FROM divisas d 
+      JOIN cambio_divisa c ON d.cod_divisa=c.cod_divisa ORDER BY d.cod_divisa;";
+      $consulta = $this->conex->prepare($sql);
+      $resul = $consulta->execute();
+      $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+      if ($resul) {
+         return $datos;
+      } else {
+         return [];
+      }
+   }
    
    //metodo buscar
    private function buscar_p($valor){
@@ -313,8 +353,10 @@ class Compra extends Conexion
       p.nombre AS producto_nombre,                     
       present.costo,                                   
       p.marca,                                         
-      p.excento,                                       
-      p.porcen_venta,                                  
+      present.excento,                                       
+      present.porcen_venta,
+      u.cod_unidad,
+      u.tipo_medida,                                  
       c.nombre AS cat_nombre,                          
       CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion  
       FROM presentacion_producto AS present                 

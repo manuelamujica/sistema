@@ -95,7 +95,7 @@ MOSTRAR INFO DE EMPRESA
         if($resul){
             return $datos;
         }else{
-            return $res=0;
+            return [];
         }
     }
 

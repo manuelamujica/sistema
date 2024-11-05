@@ -2,22 +2,22 @@
 <!-- MÓDULO TRANSACCIONAL, SOLO VISTA-->
 <div class="content-wrapper">
     <section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1>Ventas</h1>
-        </div>
+        <div class="container-fluid">
+            <div class="row mb-2">
             <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                    <li class="breadcrumb-item active">ventas</li>
-                </ol>
+                <h1>Ventas</h1>
+            </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
+                        <li class="breadcrumb-item active">ventas</li>
+                    </ol>
+                </div>
             </div>
         </div>
-    </div>
     </section>
 
-<!-- Main content -->
+    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -26,98 +26,101 @@
                         <div class="card-header">
                             <!-- Botón para abrir el modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ventaModal"> Registrar venta </button>
-                            <!-- Botones PDF y Excel -->
-                            <div class="card-tools">
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-success btn-sm">
-                                        <i class="fas fa-file-excel"></i> Excel
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-file-pdf"></i> PDF
-                                    </button>
-                                </div>
+                        </div>
+                    
+                        <div class="card-body">
+                            <!-- Tabla de productos -->
+                            <div class="table-responsive">
+                                    <table id="producto" class="table table-bordered table-striped datatable1" style="width: 100%;">
+                                        <thead>
+                                                <tr>
+                                                    <th>Nro. de Venta</th>
+                                                    <th>Cliente</th>
+                                                    <!--<th>Descuento</th>-->
+                                                    <th>Monto</th>
+                                                    <th>Status</th>
+                                                    <th>Acciones</th>
+                                                </tr> 
+                                        </thead>
+                                        <tbody>
+                                        <?php foreach ($consulta as $venta) { ?>
+                                            <tr>
+                                                <td><?php echo $venta['codigov']?></td>
+                                                <td><?php echo $venta['nombre']." ".$venta['apellido']?></td>
+                                                <!--<td><?php echo $venta['descuento'] ?></td>-->
+                                                <td><?php echo $venta['total'] ?></td>
+                                                <td>
+                                                    <?php if ($venta['status_venta']==1):?>
+                                                        <span class="badge bg-default">Pendiente</span>
+                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
+                                                            data-codventa="<?php echo $venta["codigov"]; ?>" 
+                                                            data-totalv="<?php echo $venta["total"]; ?>" 
+                                                            data-fecha="<?php echo $venta["fecha"]; ?>"
+                                                            data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
+                                                            <i class="fas fa-money-bill-wave"></i>
+                                                            </button>
+                                                    <?php elseif ($venta['status_venta']==2):?>
+                                                        <span class="badge bg-warning">Pago parcial</span>
+                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
+                                                            data-codventa="<?php echo $venta["cod_venta"]; ?>" 
+                                                            data-codpago="<?php echo $venta["cod_pago"]; ?>" 
+                                                            data-totalv="<?php echo $venta["total"]; ?>" 
+                                                            data-montop="<?php echo $venta["monto_total"]; ?>"
+                                                            data-fecha="<?php echo $venta["fecha"]; ?>"
+                                                            data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
+                                                            <i class="fas fa-money-bill-wave"></i>
+                                                        </button>
+                                                    <?php elseif ($venta['status_venta']==3):?>
+                                                        <span class="badge bg-success">Completada</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger">Anulada</span>
+                                                    <?php endif;?>
+                                                </td>
+                                                <td>
+                                                <?php if ($venta['status_venta']!=0):?>
+                                                    <button name="anular" title="Anular" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#anularventa" 
+                                                    data-codventa="<?php echo $venta["codigov"]; ?>" 
+                                                    data-status="<?php echo $venta["status_venta"]; ?>">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                    <button name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#" 
+                                                    data-codventa="<?php echo $venta["cod_venta"]; ?>" 
+                                                    data-codpago="<?php echo $venta["cod_pago"]; ?>" 
+                                                    data-totalv="<?php echo $venta["total"]; ?>" 
+                                                    data-montop="<?php echo $venta["monto_total"]; ?>"
+                                                    data-fecha="<?php echo $venta["fecha"]; ?>"
+                                                    data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
+                                                    <i class="fas fa-file"></i>
+                                                    </button>
+                                                <?php else:?>
+                                                    <button title="Anular" class="btn btn-danger btn-sm disabled">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                    <button title="Ver factura" class="btn btn-primary btn-sm disabled">
+                                                    <i class="fas fa-file"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                        </tbody>
+                                    </table>
                             </div>
                         </div>
-                        <!-- /.card-header -->
-            <div class="card-body">
-                <!-- Barra de búsqueda -->
-                <div class="input-group input-group-sm">
-                                <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <br>
-            <!-- Tabla de productos -->
-            <div class="table-responsive">
-            <table id="producto" class="table table-bordered table-striped datatable1">
-                <thead>
-                        <tr>
-                            <th>Nro. de Venta</th>
-                            <th>Cliente</th>
-                            <th>Descuento</th>
-                            <th>Monto</th>
-                            <th>Status</th>
-                            <th>Acciones</th>
-                        </tr> 
-                </thead>
-                <tbody>
-                <?php foreach ($consulta as $venta) { ?>
-                    <tr>
-                        <td><?php echo $venta['codigov']?></td>
-                        <td><?php echo $venta['nombre']." ".$venta['apellido']?></td>
-                        <td><?php echo $venta['descuento'] ?></td>
-                        <td><?php echo $venta['total'] ?></td>
-                        <td>
-                            <?php if ($venta['status_venta']==1):?>
-                                <span class="badge bg-default">Pendiente</span>
-                                <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
-                                    data-codventa="<?php echo $venta["codigov"]; ?>" 
-                                    data-totalv="<?php echo $venta["total"]; ?>" 
-                                    data-fecha="<?php echo $venta["fecha"]; ?>"
-                                    data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    </button>
-                            <?php elseif ($venta['status_venta']==2):?>
-                                <span class="badge bg-warning">Pago parcial</span>
-                                <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
-                                    data-codventa="<?php echo $venta["cod_venta"]; ?>" 
-                                    data-codpago="<?php echo $venta["cod_pago"]; ?>" 
-                                    data-totalv="<?php echo $venta["total"]; ?>" 
-                                    data-montop="<?php echo $venta["monto_total"]; ?>"
-                                    data-fecha="<?php echo $venta["fecha"]; ?>"
-                                    data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    </button>
-                            <?php elseif ($venta['status_venta']==3):?>
-                                <span class="badge bg-success">Completada</span>
-                            <?php else: ?>
-                                <span class="badge bg-danger">Anulada</span>
-                            <?php endif;?>
-                        </td>
-                        <td>
-                        <?php if ($venta['status_venta']!=0):?>
-                            <button name="anular" title="anular" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#anularventa" 
-                            data-codventa="<?php echo $venta["codigov"]; ?>" 
-                            data-status="<?php echo $venta["status_venta"]; ?>">
-                            <i class="fas fa-trash-alt"></i>
-                            </button>
-                        <?php else: ?>
-                            <span class="badge bg-default">Ya anulada</span>
-                        <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php }?>
-                </tbody>
-            </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 </div>
 
+<script>
+    <?php if (isset($_GET['abrirModal']) && $_GET['abrirModal'] == 1): ?>
+        $(document).ready(function(){
+            $('#ventaModal').modal('show');
+        });
+    <?php endif; ?>
+</script>
 <!-- Modal de Venta con búsqueda interactiva -->
 <div class="modal fade" id="ventaModal" tabindex="-1" aria-labelledby="ventaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -270,7 +273,7 @@ MODAL REGISTRAR PAGO
                         </div>
                         <div class="form-row">
                             <?php foreach ($opciones as $index => $opcion): ?>
-                                <?php if ($opcion['cod_divisa'] == 3): ?>
+                                <?php if ($opcion['cod_divisa'] == 1): ?>
                                     <!-- Si es bolívares (sin conversión de divisas) -->
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -367,6 +370,20 @@ MODAL REGISTRAR PAGO
                 </div>
             </div>
         </div>
+<?php if (isset($registrarp)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrarp["title"]; ?>',
+            text: '<?php echo $registrarp["message"]; ?>',
+            icon: '<?php echo $registrarp["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'venta';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <!-- =======================
 MODAL ABONAR PAGO 
@@ -423,7 +440,7 @@ MODAL ABONAR PAGO
                         </div>
                         <div class="form-row">
                             <?php foreach ($opciones as $index => $opcion): ?>
-                                <?php if ($opcion['cod_divisa'] == 3): ?>
+                                <?php if ($opcion['cod_divisa'] == 1): ?>
                                     <!-- Si es bolívares (sin conversión de divisas) -->
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -520,18 +537,27 @@ MODAL ABONAR PAGO
                 </div>
             </div>
         </div>
+<?php if (isset($registrarpp)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrarpp["title"]; ?>',
+            text: '<?php echo $registrarpp["message"]; ?>',
+            icon: '<?php echo $registrarpp["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'venta';
+            }
+        });
+    </script>
+<?php endif; ?>
+
 
 
 <!-- =======================
 MODAL REGISTRAR CLIENTES 
 ============================= -->
-<script>
-    <?php if (isset($_GET['abrirModal']) && $_GET['abrirModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#ventaModal').modal('show');
-        });
-    <?php endif; ?>
-</script>
+
 
 <div class="modal fade" id="modalRegistrarClientes" tabindex="-1" aria-labelledby="modalRegistrarClientesLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -628,8 +654,8 @@ MODAL CONFIRMAR ELIMINAR
             <div class="modal-body">
             <form id="anumodal" method="post"> 
                 <p>¿Está seguro que desea eliminar la venta nro: <span id="codv"></span>?</p>
-                <input type="text" id="cventa" name="cventa"> 
-                <input type="text" id="statusv" name="statusv">
+                <input type="hidden" id="cventa" name="cventa"> 
+                <input type="hidden" id="statusv" name="statusv">
             </form>
         </div>
         <div class="modal-footer">
@@ -639,16 +665,16 @@ MODAL CONFIRMAR ELIMINAR
         </div>
     </div>
 </div>
-<?php if (isset($eliminar)): ?>
+<?php if (isset($anular)): ?>
     <script>
         Swal.fire({
-            title: '<?php echo $eliminar["title"]; ?>',
-            text: '<?php echo $eliminar["message"]; ?>',
-            icon: '<?php echo $eliminar["icon"]; ?>',
+            title: '<?php echo $anular["title"]; ?>',
+            text: '<?php echo $anular["message"]; ?>',
+            icon: '<?php echo $anular["icon"]; ?>',
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'tpago';
+                window.location = 'venta';
             }
         });
     </script>
@@ -704,13 +730,30 @@ function crearfila(index) {
                 </div>
             </td>
             <td>
-                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidadProducto${index}" step="0.001" onchange="calcularTotal(${index})">
+                <input type="hidden" class="form-control" id="stockproducto${index}" step="0.001">
+                <div class="input-group">
+                    <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidadProducto${index}" step="0.001" onchange="calcularTotal(${index})">
+                    <div class="invalid-feedback" style="display: none;"></div>
+                    <div class="input-group-append">
+                        <span id="unidadm${index}" class="input-group-text" value=" "></span>
+                    </div>
+                </div>
             </td>
             <td>
-                <input type="text" class="form-control" id="precioProducto${index}" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularTotal(${index})">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="precioProducto${index}" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularTotal(${index})">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Bs</span>
+                    </div>
+                </div>
             </td>
             <td>
-                <input type="text" class="form-control" id="total${index}" name="productos[${index}][total]" placeholder="Total" readonly>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="total${index}" name="productos[${index}][total]" placeholder="Total" readonly>
+                    <div class="input-group-append">
+                        <span class="input-group-text">Bs</span>
+                    </div>
+                </div>
             </td>
             <td>
                 <button type="button" class="btn-sm btn-danger" onclick="eliminarFila(${index})">&times;</button>
@@ -744,6 +787,36 @@ function eliminarFila(index) {
     }
     calcularTotal();
 }
+
+$(document).ready(function() {
+
+    function showError(selector, message) {
+        $(selector).addClass('is-invalid');
+        $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
+            'display': 'block',
+            'color': 'red',
+        });
+    }
+    function hideError(selector) {
+        $(selector).removeClass('is-invalid');
+        $(selector).next('.invalid-feedback').css('display', 'none');
+    }
+
+    $('[id^=cantidadProducto]').on('input', function() {
+        var inputId = $(this).attr('id');
+        var index = inputId.replace('cantidadProducto', ''); // Extrae el índice de la cantidad
+        var cantidad = parseFloat($(this).val()) || 0;
+        var stock = parseFloat($('#stockproducto' + index).val()) || 0;
+
+        if (cantidad > stock) {
+            showError('#' + inputId, 'stock insuficiente');
+        } else {
+            hideError('#' + inputId);
+        }
+    });
+
+
+});
 
 
 // Calcular el total de cada fila
@@ -855,8 +928,10 @@ $('#cedula-rif').blur(function (e){
                                 'data-tipo="'+producto.excento+'" ' +
                                 'data-codigo="'+producto.cod_presentacion+'" ' +
                                 'data-marca="'+producto.marca+'" ' +
+                                'data-stock="'+producto.total_stock+'" ' +
+                                'data-unidad="'+producto.tipo_medida+'" ' +
                                 'data-precio="'+precioVenta+'">' +
-                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion+' - '+precioVenta + '</a>'
+                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion+' - '+precioVenta +' - '+producto.total_stock+ '</a>'
                             );
                         });
                         listaProductos.fadeIn();
@@ -876,6 +951,8 @@ $('#cedula-rif').blur(function (e){
         var codigo = $(this).data('codigo'); 
         var precio = $(this).data('precio'); 
         var tipo = $(this).data('tipo');
+        var unidad = $(this).data('unidad');
+        var stock=$(this).data('stock');
         var cant=1;
 
 
@@ -885,7 +962,9 @@ $('#cedula-rif').blur(function (e){
 
         $('#codigoProducto' + index).val(codigo); 
         $('#tipoProducto' + index).val(tipo);
-        $('#precioProducto' + index).val(precio); 
+        $('#precioProducto' + index).val(precio);
+        $('#stockproducto'+index).val(stock);
+        $('#unidadm'+index).text(unidad);
         $('#cantidadProducto' + index).val(cant).trigger('change');
         $(this).closest('.list-group').fadeOut(); 
     });
@@ -907,11 +986,17 @@ var hora=String(now.getHours()).padStart(2, '0') + ':' +
     $('#fecha-hora').val(fechaHora);
 });
 
-
+$(function() {//inicio de los alertas peque;os
+    var Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+    });
 
 $(document).ready(function() {
     $('#ventamodal').on('submit', function(event) {
-        event.preventDefault(); // Evita que el formulario se envíe de forma estándar y recargue la página
+        event.preventDefault();
         
         // Serializa los datos del formulario
         var datosVenta = $(this).serialize();
@@ -932,6 +1017,11 @@ $(document).ready(function() {
                     $('#total-pago').text(response.total+ ' Bs');
                     $('#monto_pagar').val(response.total);
 
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message
+                    })
+
                     console.log('cod:', response.cod_venta);
                     console.log('total:', response.total);
 
@@ -951,6 +1041,8 @@ $(document).ready(function() {
         });
     });
 });
+
+});//fin de los alertas peque;os
 
 function calcularTotalpago() {
     let totalBs = 0;

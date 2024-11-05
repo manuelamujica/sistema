@@ -51,13 +51,26 @@ if(isset($_POST['buscar'])){
 
 }else if(isset($_POST['finalizarp'])){
     if(!empty($_POST['nro_venta']) && !empty($_POST['monto_pagado'])){
-        if($_POST['monto_pagado']!=$_POST['monto_pagar']){
+        //if($_POST['monto_pagado']!=$_POST['monto_pagar']){
             if(isset($_POST['pago'])){
                 $objp->set_cod_venta($_POST['nro_venta']);
                 $objp->set_montototal($_POST['monto_pagado']);
-                $objp->registrar($_POST['pago'], $_POST['monto_pagar']);
+                $resul=$objp->registrar($_POST['pago'], $_POST['monto_pagar']);
+                if($resul==0){
+                    $registrarp = [
+                        "title" => "El pago de la venta ha sido registrado exitosamente.",
+                        "message" => "La venta se ha completado en su totalidad.",
+                        "icon" => "success"
+                    ];
+                }else if($resul>0){
+                    $registrarp = [
+                        "title" => "Se ha registrado un pago parcial.",
+                        "message" => "El monto pendiente es de ".$resul."Bs.",
+                        "icon" => "success"
+                    ];
+                }
             }
-        }
+        //}
     }
 }else if(isset($_POST['parcialp'])){
     if(!empty($_POST['codigop'])){
@@ -67,11 +80,37 @@ if(isset($_POST['buscar'])){
             $objp->set_montodpago($_POST['monto_pagado']);
             $objp->set_cod_venta($_POST['nro_venta']);
             $resul=$objp->parcialp($_POST['pago']);
+            if($resul==0){
+                $registrarpp = [
+                    "title" => "El pago de la venta ha sido registrado exitosamente.",
+                    "message" => "La venta se ha completado en su totalidad.",
+                    "icon" => "success"
+                ];
+            }else if($resul>0){
+                $registrarpp = [
+                    "title" => "Se ha registrado un pago parcial.",
+                    "message" => "El monto pendiente es de ".$resul."Bs.",
+                    "icon" => "success"
+                ];
+            }
         }
     }
 } else if(isset($_POST['anular'])){
     if(!empty($_POST['cventa'])){
-        $obj->anular($_POST['cventa']);
+        $resul=$obj->anular($_POST['cventa']);
+        if($resul==1){
+            $anular = [
+                "title" => "La venta ha sido anulada exitosamente.",
+                "message" => "Todos los registros asociados han sido actualizados.",
+                "icon" => "success"
+            ];
+        }else{
+            $anular = [
+                "title" => "Ocurrió un error al intentar anular la venta.",
+                "message" => "Inténtelo de nuevo o contacte a soporte.",
+                "icon" => "error"
+            ];
+        }
     }
 }
 

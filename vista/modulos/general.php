@@ -23,7 +23,7 @@
         <div class="col-12">
             <div class="card">
             <div class="card-header">
-            <?php if(empty($datos['rif'])):?>
+            <?php if(empty($datos)):?>
             <!-- Botón para ventana modal -->
             <button class="btn btn-primary" data-toggle="modal" id="registrar" data-target="#modalregistrarempresa">Registrar Información</button>
             <?php endif;?>

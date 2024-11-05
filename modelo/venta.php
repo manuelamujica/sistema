@@ -49,23 +49,25 @@ class Venta extends Conexion{
     }
 
     public function b_productos($valor){
-
         $sql="SELECT
-    present.cod_presentacion,                        
-    p.cod_producto,                                  
-    p.nombre AS producto_nombre,                     
-    present.costo,                                   
-    p.marca,                                         
-    p.excento,                                       
-    p.porcen_venta,                                  
-    c.nombre AS cat_nombre,                          
-    CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion  
-    FROM presentacion_producto AS present                 
-    JOIN productos AS p ON present.cod_producto = p.cod_producto  
-    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
-    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
+    present.cod_presentacion,
+    p.cod_producto,
+    p.nombre AS producto_nombre,
+    present.costo,
+    p.marca,
+    present.excento,
+    present.porcen_venta,
+    u.cod_unidad,
+    u.tipo_medida, 
+    c.nombre AS cat_nombre,
+    CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion,
+    COALESCE(ROUND(SUM(dp.stock), 2), 0) AS total_stock 
+    FROM presentacion_producto AS present
+    JOIN productos AS p ON present.cod_producto = p.cod_producto
+    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+    LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
     WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
-
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $valor . '%';
         $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
@@ -78,29 +80,8 @@ class Venta extends Conexion{
         }
     }
 
-
-    /*public function registrar($cliente, $productos){
-        $registro = "INSERT INTO ventas(cod_cliente, total, fecha, status) VALUES(:cod_cliente, :total, :fecha, 1)";
-        $strExec = $this->conex->prepare($registro);
-        $strExec->bindParam(':cod_cliente',$cliente);
-        $strExec->bindParam(':total', $this->total);
-        $strExec->bindParam(':fecha', $this->fecha);
-        $resul = $strExec->execute();
-
-        if($resul){
-            $nuevo_cod=$this->conex->lastInsertId();
-            //aqui es donde pretendo hacer la logica para manejar el stock
-
-            $r=1;
-        }else{
-            $r=2;
-        }
-        return $r;
-    }*/
-
     public function registrar($cliente, $productos) {
         try {
-            // Iniciar la transacción
             $this->conex->beginTransaction();
             
             $registro = "INSERT INTO ventas(cod_cliente, total, fecha, status) VALUES(:cod_cliente, :total, :fecha, 1)";
@@ -227,14 +208,6 @@ class Venta extends Conexion{
             $anu->bindParam(':cod_venta', $cod_v);
             $resul=$anu->execute();
             if($resul){
-                /*$dventa="SELECT dv.cod_detallev, dv.cod_venta, dv.cod_detallep, dv.cantidad, dp.stock, dp.status          
-                FROM detalle_ventas dv
-                JOIN detalle_productos dp ON dv.cod_detallep = dp.cod_detallep WHERE dv.cod_venta = :cod_venta;";
-                $detalles=$this->conex->prepare($dventa);
-                $detalles->bindParam(':cod_venta', $cod_v);
-                $detalles->execute();
-                $dt=$detalles->fetchAll(PDO::FETCH_ASSOC);*/
-
                 $revertir="UPDATE detalle_productos AS dp
                 JOIN detalle_ventas AS dv ON dp.cod_detallep = dv.cod_detallep
                 SET dp.stock = dp.stock + dv.cantidad
@@ -242,13 +215,44 @@ class Venta extends Conexion{
                 $stock=$this->conex->prepare($revertir);
                 $stock->bindParam(':cod_venta', $cod_v);
                 $r=$stock->execute();
+                if($r){
+                    $res=1;
+                }
             }
             $this->conex->commit();
-
+            return $res;
         } catch(Exception $e){
             $this->conex->rollBack();
         }
     }
 
-
+    public function factura($valor){
+        $sql="SELECT 
+        dv.cod_detallev,
+        dv.cod_venta,
+        dv.cantidad,
+        dv.importe,
+        p.cod_producto,
+        p.nombre AS producto_nombre,
+        p.marca,
+        present.cod_presentacion,
+        present.presentacion,
+        present.cantidad_presentacion,
+        present.costo,
+        present.porcen_venta
+    FROM detalle_ventas AS dv
+    JOIN detalle_productos AS dp ON dv.cod_detallep = dp.cod_detallep
+    JOIN presentacion_producto AS present ON dp.cod_presentacion = present.cod_presentacion
+    JOIN productos AS p ON present.cod_producto = p.cod_producto
+    WHERE dv.cod_venta =:cod_venta;";
+    $consulta=$this->conex->prepare($sql);
+    $consulta->bindParam(':cod_venta', $valor);
+    $resul = $consulta->execute();
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return [];
+        }
+    }
 }
