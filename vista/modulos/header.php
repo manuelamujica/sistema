@@ -3,7 +3,7 @@
     <!-- Navbar links IZQUIERDA-->
     <ul class="navbar-nav">
     <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars" title="Menú"></i></a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
         <a href="inicio" class="nav-link">Inicio</a> 
@@ -21,7 +21,7 @@
     <ul class="navbar-nav ml-auto">
     <!-- Navbar FULLSCREEN -->
     <li class="nav-item">
-        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button" title="Pantalla completa">
             <i class="fas fa-expand-arrows-alt"></i>
         </a>
     </li>
@@ -29,7 +29,7 @@
     <!-- Navbar USUARIO -->
     <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#" title="usuario">
-            <i class="fa fa-user"></i>
+            <i class="fa fa-user" title="Usuario"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         <span class="dropdown-header"> <?php echo $_SESSION["nombre"]; ?></span>
@@ -47,8 +47,9 @@
     </ul>
 </nav>
 <!-- /.navbar -->
-<!-- Ver perfil Modal-->
-<div class="modal fade" id="modalPerfil" tabindex="-1" role="dialog" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+
+ <!-- Ver perfil Modal-->
+    <div class="modal fade" id="modalPerfil" tabindex="-1" role="dialog" aria-labelledby="modalPerfilLabel" aria-hidden="true">
         <div class="modal-dialog" >
             <div class="modal-content">
                 <div class="modal-header">
@@ -58,8 +59,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <?php echo $_SESSION['nombre']; ?>
-                    <?php echo $_SESSION['user']; ?>
+                    <!-- Información del perfil -->
+                        <div class="col-md-12">
+                            <p><b>Nombre: </b><?php echo $_SESSION['nombre']; ?></p>
+                            <p><b>Usuario: </b> <?php echo $_SESSION['user']; ?> </p>
+                            <p><b>Rol: </b> <?php echo $_SESSION['rol']; ?></p>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

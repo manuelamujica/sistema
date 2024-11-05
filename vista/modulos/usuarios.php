@@ -10,12 +10,6 @@ require_once "controlador/usuarios.php";
                 <div class="col-sm-6">
                     <h1>Usuarios</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                        <li class="breadcrumb-item active">Usuarios</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
@@ -61,11 +55,11 @@ require_once "controlador/usuarios.php";
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
-                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>"
-                                                data-nombre="<?php echo $usuario["nombre"]; ?>"
-                                                data-user="<?php echo $usuario["user"]; ?>"
-                                                data-cod="<?php echo $usuario["cod_tipo_usuario"]; ?>"
-                                                data-status="<?php echo $usuario["status"]; ?>">
+                                                data-codigo="<?php echo $usuario["cod_usuario"];?>"
+                                                data-nombre="<?php echo $usuario["nombre"];?>"
+                                                data-user="<?php echo $usuario["user"];?>"
+                                                data-cod="<?php echo $usuario["cod_tipo_usuario"];?>"
+                                                data-status="<?php echo $usuario["status"];?>">
                                                 <i class="fas fa-pencil-alt"></i></button>
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
@@ -81,9 +75,6 @@ require_once "controlador/usuarios.php";
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
 <!-- =============================
     MODAL REGISTRAR USUARIO 
@@ -101,25 +92,34 @@ require_once "controlador/usuarios.php";
                 <form id="formregistrarusuario" method="post">
                     <div class="form-group">
                         <label for="nombre">Nombre y apellido</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido"  required>
-
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido" required>
+                        <div class="invalid-feedback" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="user">Usuario</label>
                         <input type="text" class="form-control" id="user" name="user" placeholder="Ingresa el nombre de usuario"  required>
-
-                        <label for="pass">Contraseña</label>
-                        <input type="password" class="form-control" id="pass" name="pass" placeholder="Ingresa la contraseña"   required>
-                    
-                            <label for="rol">Rol</label>
-                            <select class="form-control" id="rol" name="rol" required>
-                            <option value="" selected disabled>Seleccione un rol</option>
-                                <?php foreach($roles as $role): ?>
-                                    <option value="<?php echo $role['cod_tipo_usuario']; ?>">
-                                        <?php echo $role['rol']; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        
+                        <div class="invalid-feedback" style="display: none;"></div>
                     </div>
+                    <div class="form-group">
+                        <label for="pass">Contraseña</label>
+                            <div class="input-group ">
+                                <input type="password" class="form-control" id="passU" placeholder="Contraseña" name="pass" required>
+                                <div class="invalid-feedback" style="display: none; margin: botton 4px;"></div>
+                                <span class="fas fa-eye icon-password" data-target="passU"></span>
+                            </div>
+                    </div>
+                    
+                        <div class="form-group">
+                        <label for="rol">Rol</label>
+                        <select class="form-control" id="rol" name="rol" required>
+                        <option value="" selected disabled>Seleccione un rol</option>
+                            <?php foreach($roles as $role): ?>
+                                <option value="<?php echo $role['cod_tipo_usuario']; ?>">
+                                    <?php echo $role['rol']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>    
                 </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -142,63 +142,77 @@ if (isset($registrar)): ?>
                 window.location = 'usuarios';
             }
         });
-    </script>
+    </script>  
 <?php endif; ?>
 <!-- =============================
     MODAL EDITAR USUARIO 
 ================================== -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+
+            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Editar Información</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editForm" method="post">
+                                <div class="form-group">
+                                    <label for="codigo">Código</label>
+                                    <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="codigo">Nombre</label>
+                                    <input type="text" class="form-control" id="nombreE" name="nombre">
+                                    <div class="invalid-feedback" style="display: none;"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="codigo">User</label>
+                                    <input type="text" class="form-control" id="userE" name="user">
+                                    <div class="invalid-feedback" style="display: none;"></div>
+                                    <input type="hidden" class="form-control" id="origin" name="origin" > <!--Lo pasamos oculto-->
+                                    
+                                </div>
+                                <label for="roles">Rol</label>
+                                        <select class="form-control" id="rolesE" name="roles" required>
+                                            <?php foreach($roles as $role): ?>
+                                                <option value="<?php echo $role['cod_tipo_usuario']; ?>">
+                                                    <?php echo $role['rol']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select class="form-control" id="statusE" name="status">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                </div>
+                            <!-- Botón "Cambiar contraseña" -->
+                            <div class="form-group">
+                                <button type="button" name="changePasswordBtn" class="btn btn-dark" id="changePasswordBtn">Cambiar contraseña</button>
+                            </div>
+                            <!-- Input de nueva contraseña (oculto por defecto)-->
+
+                            <div class="form-group" id="passwordField" style="display: none;">
+                                <label for="password">Nueva Contraseña</label>
+                                    <div class="input-group ">
+                                    <input type="password" class="form-control" id="passE" name="pass" placeholder="Ingrese la nueva contraseña">
+                                        <div class="invalid-feedback" style="display: none;"></div>
+                                        <span class="fas fa-eye icon-password" data-target="passE"></span>
+                                    </div>
+                            </div>
+                        </div>
+                        </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="editForm" method="post">
-                    <div class="form-group">
-                        <label for="codigo">Código</label>
-                        <input type="text" class="form-control" id="codigo" name="codigo" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="codigo">Nombre</label>
-                        <input type="text" class="form-control" id="name" name="nombre">
-                    </div>
-                    <div class="form-group">
-                        <label for="codigo">User</label>
-                        <input type="text" class="form-control" id="usuario" name="user">
-                        <input type="hidden" class="form-control" id="origin" name="origin" > <!--Lo pasamos oculto-->
-                    </div>
-                    <div class="form-group">
-                        <label for="codigo">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="pass" placeholder="Ingrese la nueva contraseña">
-                    </div>
-                    <label for="roles">Rol</label>
-                            <select class="form-control" id="roles" name="roles" required>
-                                <?php foreach($roles as $role): ?>
-                                    <option value="<?php echo $role['cod_tipo_usuario']; ?>">
-                                        <?php echo $role['rol']; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select class="form-control" id="status" name="status">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
 <?php 
 if (isset($editar)): ?>
     <script>
@@ -217,38 +231,57 @@ if (isset($editar)): ?>
 <!-- ====================================
     MODAL CONFIRMAR ELIMINAR USUARIO 
 ========================================= -->
-<div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title" id="eliminarModalLabel">Eliminar Usuario</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="eliminarForm" method="post">
-                    <div class="form-group">
-                        <p>¿Estás seguro que deseas eliminar a <b><span id="username"></b></span>?</p>
-                        <input type="hidden" id="usercode" name="usercode">
+            <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                            <h5 class="modal-title" id="eliminarModalLabel">Eliminar Usuario</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="eliminarForm" method="post">
+                                <div class="form-group">
+                                    <p>¿Estás seguro que deseas eliminar a <b><span id="username"></b></span>?</p>
+                                    <input type="hidden" id="usercode" name="usercode">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" form="eliminarForm" class="btn btn-danger" id="confimDelete" name="borrar">Eliminar</button>
+                        </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" form="eliminarForm" class="btn btn-danger" id="confimDelete" name="borrar">Eliminar</button>
+                </div>
             </div>
         </div>
     </div>
+    </div>      
+    </section>
 </div>
-</div>
-
 <?php if (isset($eliminar)): ?>
     <script>
         Swal.fire({
             title: '<?php echo $eliminar["title"]; ?>',
             text: '<?php echo $eliminar["message"]; ?>',
             icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'usuarios';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+<?php
+if (isset($advertencia)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $advertencia["title"]; ?>',
+            text: '<?php echo $advertencia["message"]; ?>',
+            icon: '<?php echo $advertencia["icon"]; ?>',
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
