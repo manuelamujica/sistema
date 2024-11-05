@@ -43,7 +43,6 @@ class Pago extends Conexion{
         $strExec->bindParam(':cod_venta', $this->cod_venta);
         $strExec->bindParam(':monto_total', $this->monto_total);
         $resul = $strExec->execute();
-
         if($resul){
             $nuevo_cod = $this->conex->lastInsertId();
             foreach ($pago as $pagos){
@@ -60,20 +59,20 @@ class Pago extends Conexion{
                 $strExec=$this->conex->prepare($estado);
                 $strExec->bindParam(':cod_venta', $this->cod_venta);
                 $strExec->execute();
+                $r=$monto_venta-$this->monto_total;
             } else if($monto_venta <= $this->monto_total){
                 $estado="UPDATE ventas SET status= 3 WHERE cod_venta=:cod_venta";
                 $strExec=$this->conex->prepare($estado);
                 $strExec->bindParam(':cod_venta', $this->cod_venta);
                 $strExec->execute();
+                $r=0;
             }
         }
+    return $r;
     }
 
     public function parcialp($pago){
         foreach ($pago as $pagos){
-            echo'<script>
-            console.log('.json_encode($pago).');
-            </script>';
             if(!empty($pagos['monto']) && $pagos['monto']>0){
                 $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto, status) VALUES(:cod_pago, :cod_tipo_pago, :monto, 1)";
                 $sentencia=$this->conex->prepare($registro);
@@ -92,18 +91,20 @@ class Pago extends Conexion{
                         $strExec=$this->conex->prepare($estado);
                         $strExec->bindParam(':cod_venta', $this->cod_venta);
                         $strExec->execute();
+                        $r=$this->monto_total-$this->monto_dpago;
                     } else if($this->monto_total <= $this->monto_dpago){
                         $estado="UPDATE ventas SET status= 3 WHERE cod_venta=:cod_venta";
                         $strExec=$this->conex->prepare($estado);
                         $strExec->bindParam(':cod_venta', $this->cod_venta);
                         $strExec->execute();
+                        $r=0;
                     }
                     
                 }
                 
             }
         }
-        return 3;
+        return $r;
     }
 
     

@@ -37,7 +37,7 @@
                         <div class="card-body">
                             <!-- Tabla de compra-->
                             <div class="table-responsive">
-                                <table id="compras" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                <table id="compras" class="table table-bordered table-striped table-hover datatable1" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Código</th>
@@ -62,17 +62,24 @@
                                                     <td><?php echo $compras["total"] ?></td>
                                                     <td>
                                                         <?php if ($compras['compra_status'] == 1): ?>
-                                                            <span class="badge bg-success">Activo</span>
+                                                            <span class="badge bg-success">Registrada</span>
                                                         <?php else: ?>
-                                                            <span class="badge bg-danger">Inactivo</span>
+                                                            <span class="badge bg-danger">Anulada</span>
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
-                                                        <!-- anular cambia los estatus de compra-->
-                                                        <button name="Eliminar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" data-target="#modaleliminar"
+                                                        <?php if ($compras['compra_status'] == 1): ?>
+                                                            <button name="anular" class="btn btn-danger btn-sm eliminar" title="anular" data-toggle="modal" data-target="#anularcompra"
                                                             data-cod="<?php echo $compras['cod_compra']; ?>">
                                                             <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        <?php else: ?>
+                                                            <button class="btn btn-danger btn-sm disabled" title="anular">
+                                                            <i class="fas fa-trash-alt"></i>
                                                         </button>
+                                                        <?php endif; ?>
+                                                        <!-- anular cambia los estatus de compra-->
+                                                        
                                                     </td>
                                                 </tr>
                                             <?php endif; ?>
@@ -138,6 +145,20 @@
                                             <input type="text" class="form-control form-control-sm" id="fecha-hora" name="fecha" readonly>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="selectDivisa">Selecciona la divisa:</label>
+                                            <select id="selectDivisa" class="form-control form-control-sm">
+                                                <?php foreach($opciones as $divisa){ ?>
+                                                <option data-cod="<?= $divisa['cod_divisa'] ?>"
+                                                data-tasa="<?= $divisa['tasa'] ?>"
+                                                data-abreviatura="<?= $divisa['abreviatura'] ?>" <?= $divisa['cod_divisa']==1 ? 'selected' : '' ?>>
+                                                <?= $divisa['nombre'].' - '.$divisa['abreviatura'] ?></option>
+                                                <?php }?>
+                                                <!-- Agrega más divisas si es necesario -->
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +173,8 @@
                                         <th>Fecha de vencimiento</th>
                                         <th>Lote</th>
                                         <th>Cantidad</th>
-                                        <th>Precio de compra</th>
+                                        <th class="col-divisa" style="display: none;">Precio de compra (<span id="labelDivisa"></span>)</th>
+                                        <th>Precio de compra-Bs</th>
                                         <th>Iva</th>
                                         <th>Total</th>
                                     </tr>
@@ -170,9 +192,9 @@
                         <!-- Resumen de la compra -->
                         <div class="card card-outline card-primary float-right" style="width: 300px;">
                             <div class="card-body">
-                                <p>Subtotal: S/ <input type="number" class="form-control" name="subtotal" placeholder="Subtotal" style="width: 120px;" readonly></p>
-                                <p>IVA (16%): S/ <input type="number" class="form-control" name="impuesto_total" placeholder="IVA" style="width: 120px;" readonly></p>
-                                <p class="text-bold">TOTAL: S/ <span id="total-span" class="text-bold">0.00</span></p>
+                                <p>Subtotal: Bs. <input type="number" class="form-control" name="subtotal" placeholder="Subtotal" style="width: 120px;" readonly></p>
+                                <p>IVA (16%): Bs. <input type="number" class="form-control" name="impuesto_total" placeholder="IVA" style="width: 120px;" readonly></p>
+                                <p class="text-bold">TOTAL: Bs. <span id="total-span" class="text-bold">0.00</span></p>
                                 <input type="hidden" id="total-general" name="total_general">
                             </div>
                         </div>
@@ -193,7 +215,6 @@ if (isset($registrar)): ?>
     <script>
         Swal.fire({
             title: '<?php echo $registrar["title"]; ?>',
-            text: '<?php echo $registrar["message"]; ?>',
             icon: '<?php echo $registrar["icon"]; ?>',
             confirmButtonText: 'Ok'
         }).then((resul) => {
@@ -205,7 +226,60 @@ if (isset($registrar)): ?>
 <?php endif; ?>
 <!-- registrar compra-->
 
+<!-- =======================
+MODAL CONFIRMAR ELIMINAR 
+============================= -->
+<div class="modal fade" id="anularcompra" tabindex="-1" aria-labelledby="anularcompraLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="anularcompraLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form id="anumodal" method="post"> 
+                <p>¿Está seguro que desea eliminar la venta nro: <span id="codc"></span>?</p>
+                <input type="hidden" id="codcom" name="codcom"> 
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" form="anumodal" class="btn btn-danger" id="confirmDelete" name="anular">Eliminar</button>
+        </div>
+        </div>
+    </div>
+</div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'compras';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+
+
 <script>
+    $('#anularcompra').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('cod');
+    // Modal
+    var modal = $(this);
+    modal.find('.modal-body #codc').text(codigo);
+    modal.find('.modal-body #codcom').val(codigo);
+});
+
+
+
     $('#rif-r').blur(function(e) {
             console.log("Evento blur activado"); // Depuración
             var buscar = $('#rif-r').val();
@@ -256,8 +330,18 @@ function crearfila(index) {
                     <div id="lista-lotes${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
                 </div>
             </td>
-            <td><input type="number" class="form-control" name="productos[${index}][cantidad]" value="1" min="1" onchange="calcularMontos(${index})"></td>
-            <td><input type="number" class="form-control" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularMontos(${index})"></td>
+            <td>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="productos[${index}][cantidad]" value="1" step="0.001" onchange="calcularMontos(${index})">
+                    <div class="input-group-append">
+                        <span id="unidadm${index}" class="input-group-text" value=" "></span>
+                    </div>
+                </div>
+            </td>
+            <td class="col-divisa" style="display: none;">
+                <input type="number" step="0.001" class="form-control precio-divisa" placeholder="Precio en divisa" onchange="calcularMontos(${index})">
+            </td>
+            <td><input type="number" class="form-control" step="0.001" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularMontos(${index})"></td>
             <td><select class="form-control" id="tipoProducto${index}" name="productos[${index}][iva]" required>
                 <option value="1">E</option>
                 <option value="2">G</option>
@@ -270,10 +354,21 @@ function crearfila(index) {
 
 // Función para agregar una nueva fila
 function agregarFila() {
-    var nuevaFila = crearfila(productoIndex);
-    $('#ProductosBody').append(nuevaFila);
-    productoIndex++; 
-}
+    var abreviatura = $('#selectDivisa').find('option:selected').data('abreviatura');
+        var tasa = $('#selectDivisa').find('option:selected').data('tasa');
+        var cod=$('#selectDivisa').find('option:selected').data('cod');
+        var nuevaFila = crearfila(productoIndex);
+
+        $('#ProductosBody').append(nuevaFila);
+        if (cod != 1) {
+            $('#fila' + productoIndex + ' .col-divisa').show();
+            $('#fila' + productoIndex + ' .precio-divisa').show().attr('data-tasa', tasa);
+        } else {
+            $('#fila' + productoIndex + ' .col-divisa').hide();
+            $('#fila' + productoIndex + ' .precio-divisa').hide();
+        }
+        productoIndex++;
+    }
 
 // Función de inicialización de filas
 function inicializarFilas() {
@@ -283,6 +378,38 @@ function inicializarFilas() {
 $(document).ready(function() {
     inicializarFilas(); 
 });
+
+$(document).ready(function() {
+    // Manejar el cambio de la divisa seleccionada
+    $('#selectDivisa').on('change', function() {
+        var selectedOption = $(this).find('option:selected');
+        var tasa = parseFloat(selectedOption.data('tasa'));
+        var abreviatura = selectedOption.data('abreviatura');
+        var cod=selectedOption.data('cod')||1;
+        console.log(cod);
+
+        if (cod != 1) {
+            // Mostrar la columna de precio en divisa
+            $('.col-divisa').show();
+            $('#labelDivisa').text(abreviatura);
+            $('#ProductosBody .precio-divisa').show().attr('data-tasa', tasa);
+        } else {
+            // Ocultar la columna de precio en divisa
+            $('.col-divisa').hide();
+            $('#ProductosBody .precio-divisa').hide();
+        }
+    });
+
+    // Calcular el precio en Bs al cambiar el valor en la columna de divisa
+    $(document).on('input', '.precio-divisa', function() {
+        var tasa = parseFloat($(this).attr('data-tasa'));
+        var precioDivisa = parseFloat($(this).val()) || 0;
+        var precioBs = (precioDivisa * tasa).toFixed(2);
+        $(this).closest('tr').find('[name$="[precio]"]').val(precioBs);
+        calcularMontos($(this).closest('tr').index()); // Llamar a la función de cálculo
+    });
+});
+
 
 function calcularMontos(index) {
     var cantidad = parseFloat($(`[name="productos[${index}][cantidad]"]`).val()) || 0;
@@ -302,7 +429,7 @@ function actualizarResumen(index) {
 
     var tipoProducto = $('#tipoProducto' + index).val();
     var iva=0;
-    if (tipoProducto === 2) {
+    if (tipoProducto == 2) {
             iva = subtotal * 0.16;
         }
     // Calcular el IVA y el total general
@@ -364,6 +491,7 @@ $(document).ready(function() {
                                 'data-nombre="'+producto.producto_nombre+'" ' +
                                 'data-tipo="'+producto.excento+'" ' +
                                 'data-codigo="'+producto.cod_presentacion+'" ' +
+                                'data-unidad="'+producto.tipo_medida+'" ' +
                                 'data-marca="'+producto.marca+'">' +
                                 producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion+' </a>'
                             );
@@ -384,6 +512,7 @@ $(document).ready(function() {
         var selectedProduct = $(this).data('nombre'); 
         var codigo = $(this).data('codigo'); 
         var tipo = $(this).data('tipo');
+        var unidad=$(this).data('unidad');
         var cant=1;
 
 
@@ -392,7 +521,8 @@ $(document).ready(function() {
         $('#' + inputId).val(selectedProduct); 
 
         $('#codigoProducto' + index).val(codigo); 
-        $('#tipoProducto' + index).val(tipo); 
+        $('#tipoProducto' + index).val(tipo);
+        $('#unidadm'+index).text(unidad);
         $(this).closest('.list-group').fadeOut(); 
     });
 });

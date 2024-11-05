@@ -97,12 +97,17 @@ class Divisa extends Conexion{
                 $logico="UPDATE divisas SET status=2 WHERE cod_divisa=$valor";
                 $strExec=$this->conex->prepare($logico);
                 $strExec->execute();
+                $r=1;
             }else{
+                if($valor==1){
+                    $r=0;
+                }else{
                 $fisico="DELETE FROM divisas WHERE cod_divisa=$valor";
                 $strExec=$this->conex->prepare($fisico);
                 $strExec->execute();
+                $r=1;
+                }
             }
-            $r=1;
         }else {
             $r=0;
         }

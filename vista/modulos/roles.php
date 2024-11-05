@@ -32,10 +32,7 @@
                         </tr>
                 </thead>
                 <tbody>
-                <?php 
-                    
-                    foreach ($registro as $dato) {
-                ?>
+                <?php foreach ($registro as $dato) {?>
                     <tr>
                         <td>
                             <?php echo $dato['cod_tipo_usuario']?>
@@ -51,17 +48,17 @@
                             <?php endif; ?>
                         </td>
                         <td>
-                        <form method="POST">
-                        <button name="modificar" title="Editar" class="btn btn-primary btn-sm editar" value="<?php echo $dato['rol']; ?>">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" value="<?php echo $dato['rol']; ?>">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                        </form>
+                        <?php if($dato['cod_tipo_usuario']!=1): ?>
+                            <button name="modificar" title="Editar" class="btn btn-primary btn-sm editar" value="<?php echo $dato['rol']; ?>">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" value="<?php echo $dato['rol']; ?>">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        <?php endif;
+                    } ?>
                         </td>
                     </tr>
-                    <?php } ?>                    
                 </tbody>
             </table>
             </div>

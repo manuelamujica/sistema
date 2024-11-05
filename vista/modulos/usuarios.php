@@ -38,9 +38,8 @@ require_once "controlador/usuarios.php";
                                 </thead>
                                 <tbody>
                                 <!-- Tabla con los datos que se muestren dinamicamente -->
-                                    <?php
-                                    foreach ($registro as $usuario){
-                                        ?>
+                                    <?php foreach ($registro as $usuario){
+                                            if($usuario["cod_usuario"]!=1):?>
                                         <tr>
                                             <td> <?php echo $usuario["cod_usuario"] ?></td>
                                             <td> <?php echo $usuario["nombre"] ?></td>
@@ -68,7 +67,8 @@ require_once "controlador/usuarios.php";
                                                 <i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php endif;
+                                        } ?>
                                 </tbody>
                             </table>
                             </div>
@@ -147,6 +147,7 @@ if (isset($registrar)): ?>
 <!-- =============================
     MODAL EDITAR USUARIO 
 ================================== -->
+
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
