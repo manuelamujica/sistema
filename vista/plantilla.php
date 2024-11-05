@@ -7,7 +7,8 @@ session_start();
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SAVYC</title>
-  <link rel="icon" href="vista/dist/img/logo-icono.png"> <!--Logo del navegador -->
+  <link rel="icon" href="vista/dist/img/logo_generico.png">
+
 <!-- ==================
 PLUGINGS DE CSS
 ======================= -->
@@ -19,18 +20,13 @@ PLUGINGS DE CSS
   <link rel="stylesheet" href="vista/dist/css/adminlte.css">
   <link rel="stylesheet" href="vista/dist/css/custom.css">
 
-   <!-- Date Range Picker -->
-   <link rel="stylesheet" href="vista/plugins/daterangepicker/daterangepicker.css">
+  <!-- Date Range Picker -->
+  <link rel="stylesheet" href="vista/plugins/daterangepicker/daterangepicker.css">
 
   <!-- DataTables -->
   <link rel="stylesheet" href="vista/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="vista/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="vista/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-
-  <!-- ???? --> 
-<!-- Incluye Select2 CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <!-- =======================
     PLUGINGS DE JAVASACRIPT  
@@ -62,11 +58,9 @@ PLUGINGS DE CSS
 <script src="vista/dist/js/custom.js"></script>
 <!-- SweetAlert2 -->
 <script src="vista/plugins/sweetalert2/sweetalert2.all.js"></script>
-
-<!-- ???? --> 
-<!-- Incluye Select2 JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
+<!-- Toastr -->
+<link rel="stylesheet" href="vista/plugins/toastr/toastr.min.css">
+<script src="vista/plugins/toastr/toastr.min.js"></script>
 </head>
 <!-- =======================
     BODY

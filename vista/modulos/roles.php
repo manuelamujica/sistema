@@ -31,39 +31,60 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-
-                                        foreach ($registro as $dato) {
-                                        ?>
-                                            <?php if ($dato['status'] != 2): ?>
-                                                <tr>
-                                                    <td><?php echo $dato['cod_tipo_usuario'] ?></td>
-                                                    <td><?php echo $dato['rol'] ?></td>
-                                                    <td>
-                                                        <?php if ($dato['status'] == 1): ?>
-                                                            <span class="badge bg-success">Activo</span>
-                                                        <?php else: ?>
-                                                            <span class="badge bg-danger">Inactivo</span>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td>
-                                                        <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarol"
-                                                            data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"
-                                                            data-rol="<?php echo $dato['rol']; ?>"
-                                                            data-status="<?php echo $dato['status']; ?>">
-                                                            <i class="fas fa-pencil-alt"></i>
-                                                        </button>
-                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"><i class="fas fa-trash-alt"></i></button>
-                                                    </td>
-                                                </tr>
-                                            <?php endif; ?>
-                                        <?php } ?>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+        <div class="col-12">
+            <div class="card">
+            <div class="card-header">
+            <!-- Botón para ventana modal -->
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarroles">Registrar Rol</button>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive">
+            <table id="categorias" class="table table-bordered table-striped datatable">
+                <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Rol</th>
+                            <th>Status</th>
+                            <th>Acciones</th>
+                        </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($registro as $dato) {?>
+                    <tr>
+                        <td>
+                            <?php echo $dato['cod_tipo_usuario']?>
+                        </td>
+                        <td>
+                            <?php echo $dato['rol']?>
+                        </td>
+                        <td>
+                            <?php if ($dato['status']==1): ?>
+                                <span class="badge bg-success">Activo</span>
+                            <?php else: ?>
+                                <span class="badge bg-danger">Inactivo</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                        <?php if($dato['cod_tipo_usuario']!=1): ?>
+                            <button name="modificar" title="Editar" class="btn btn-primary btn-sm editar" value="<?php echo $dato['rol']; ?>">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" value="<?php echo $dato['rol']; ?>">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        <?php endif;
+                    } ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
 
 <!-- =======================
 MODAL REGISTRAR ROLES

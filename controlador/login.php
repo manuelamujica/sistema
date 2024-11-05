@@ -73,6 +73,10 @@ if (isset($_POST["ingresar"])) {
 			if(!empty($logo)){
 			$_SESSION["logo"] = $logo[0]["logo"];
 			$_SESSION["n_empresa"] = $logo[0]["nombre"];
+			$_SESSION["rif"] = $logo[0]["rif"];
+			$_SESSION["telefono"] = $logo[0]["telefono"];
+			$_SESSION["email"] = $logo[0]["email"];
+			$_SESSION["direccion"] = $logo[0]["direccion"];
 			}
 
 			echo '<script>

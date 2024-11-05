@@ -57,20 +57,23 @@
                                         <?php endif;?>
                                     </td>
                                     <td>
-                                    <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
-                                    data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
-                                    data-nombre="<?php echo $divisa["nombre"]; ?>" 
-                                    data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
-                                    data-tasa="<?php echo $divisa["tasa"]; ?>"
-                                    data-status="<?php echo $divisa["divisa_status"]; ?>" >
-                                    <i class="fas fa-pencil-alt"></i>
-                                    </button>
-                                    <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminardivisa"
-                                    data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
-                                    data-nombre="<?php echo $divisa["nombre"]; ?>" >
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                    </form>
+                                    <?php if($divisa['cod_divisa']==1): ?>
+
+                                    <?php else:?>
+                                        <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
+                                        data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
+                                        data-nombre="<?php echo $divisa["nombre"]; ?>" 
+                                        data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
+                                        data-tasa="<?php echo $divisa["tasa"]; ?>"
+                                        data-status="<?php echo $divisa["divisa_status"]; ?>" >
+                                        <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminardivisa"
+                                        data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
+                                        data-nombre="<?php echo $divisa["nombre"]; ?>" >
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    <?php endif;?>
                                     </td>
                                 </tr>
                                 <?php endif; ?>
