@@ -3,14 +3,8 @@
     <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1>Ajustar información de la empresa</h1>
-        </div>
             <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                    <li class="breadcrumb-item active">Información</li>
-                </ol>
+                <h1>Ajustar información de la empresa</h1>
             </div>
         </div>
     </div>
@@ -23,8 +17,10 @@
         <div class="col-12">
             <div class="card">
             <div class="card-header">
+            <?php if(empty($datos['rif'])):?>
             <!-- Botón para ventana modal -->
             <button class="btn btn-primary" data-toggle="modal" id="registrar" data-target="#modalregistrarempresa">Registrar Información</button>
+            <?php endif;?>
             </div>
             <div class="card-body">
                     <?php foreach($datos as $dato): ?>

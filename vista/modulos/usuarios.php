@@ -10,12 +10,6 @@ require_once "controlador/usuarios.php";
                 <div class="col-sm-6">
                     <h1>Usuarios</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                        <li class="breadcrumb-item active">Usuarios</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
@@ -98,14 +92,24 @@ require_once "controlador/usuarios.php";
                 <form id="formregistrarusuario" method="post">
                     <div class="form-group">
                         <label for="nombre">Nombre y apellido</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido"  required>
-
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido" required>
+                        <div class="invalid-feedback" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="user">Usuario</label>
                         <input type="text" class="form-control" id="user" name="user" placeholder="Ingresa el nombre de usuario"  required>
-
+                        <div class="invalid-feedback" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="pass">Contraseña</label>
-                        <input type="password" class="form-control" id="pass" name="pass" placeholder="Ingresa la contraseña"   required>
+                            <div class="input-group ">
+                                <input type="password" class="form-control" id="passU" placeholder="Contraseña" name="pass" required>
+                                <div class="invalid-feedback" style="display: none; margin: botton 4px;"></div>
+                                <span class="fas fa-eye icon-password" data-target="passU"></span>
+                            </div>
+                    </div>
                     
+                        <div class="form-group">
                         <label for="rol">Rol</label>
                         <select class="form-control" id="rol" name="rol" required>
                         <option value="" selected disabled>Seleccione un rol</option>
@@ -115,8 +119,7 @@ require_once "controlador/usuarios.php";
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        
-                    </div>
+                    </div>    
                 </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -139,7 +142,7 @@ if (isset($registrar)): ?>
                 window.location = 'usuarios';
             }
         });
-    </script>
+    </script>  
 <?php endif; ?>
 <!-- =============================
     MODAL EDITAR USUARIO 
@@ -161,15 +164,18 @@ if (isset($registrar)): ?>
                                 </div>
                                 <div class="form-group">
                                     <label for="codigo">Nombre</label>
-                                    <input type="text" class="form-control" id="name" name="nombre">
+                                    <input type="text" class="form-control" id="nombreE" name="nombre">
+                                    <div class="invalid-feedback" style="display: none;"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="codigo">User</label>
-                                    <input type="text" class="form-control" id="usuario" name="user">
+                                    <input type="text" class="form-control" id="userE" name="user">
+                                    <div class="invalid-feedback" style="display: none;"></div>
                                     <input type="hidden" class="form-control" id="origin" name="origin" > <!--Lo pasamos oculto-->
+                                    
                                 </div>
                                 <label for="roles">Rol</label>
-                                        <select class="form-control" id="roles" name="roles" required>
+                                        <select class="form-control" id="rolesE" name="roles" required>
                                             <?php foreach($roles as $role): ?>
                                                 <option value="<?php echo $role['cod_tipo_usuario']; ?>">
                                                     <?php echo $role['rol']; ?>
@@ -178,7 +184,7 @@ if (isset($registrar)): ?>
                                         </select>
                                 <div class="form-group">
                                     <label for="status">Status</label>
-                                    <select class="form-control" id="status" name="status">
+                                    <select class="form-control" id="statusE" name="status">
                                         <option value="1">Activo</option>
                                         <option value="0">Inactivo</option>
                                     </select>
@@ -187,10 +193,15 @@ if (isset($registrar)): ?>
                             <div class="form-group">
                                 <button type="button" name="changePasswordBtn" class="btn btn-dark" id="changePasswordBtn">Cambiar contraseña</button>
                             </div>
-                            <!-- Input de nueva contraseña (oculto por defecto) -->
+                            <!-- Input de nueva contraseña (oculto por defecto)-->
+
                             <div class="form-group" id="passwordField" style="display: none;">
                                 <label for="password">Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="pass" placeholder="Ingrese la nueva contraseña">
+                                    <div class="input-group ">
+                                    <input type="password" class="form-control" id="passE" name="pass" placeholder="Ingrese la nueva contraseña">
+                                        <div class="invalid-feedback" style="display: none;"></div>
+                                        <span class="fas fa-eye icon-password" data-target="passE"></span>
+                                    </div>
                             </div>
                         </div>
                         </form>
@@ -254,6 +265,22 @@ if (isset($editar)): ?>
             title: '<?php echo $eliminar["title"]; ?>',
             text: '<?php echo $eliminar["message"]; ?>',
             icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'usuarios';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+<?php
+if (isset($advertencia)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $advertencia["title"]; ?>',
+            text: '<?php echo $advertencia["message"]; ?>',
+            icon: '<?php echo $advertencia["icon"]; ?>',
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {

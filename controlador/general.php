@@ -84,6 +84,7 @@ $datos=$objGeneral->mostrar();
 if(!empty($datos)){
     if(!isset($_SESSION["logo"])){
         $_SESSION["logo"]=$datos[0]["logo"];
+        $_SESSION["n_empresa"]=$datos[0]["nombre"];
     }
 }
 $_GET['ruta']='general';
