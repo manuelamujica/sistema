@@ -18,12 +18,7 @@ class Tproveedor extends Conexion
         $this->conex = $this->conex->conectar();
     }
 
-
-
-
-
-
-
+ // getter y setter
 
     public function setcod_tlf($cod_tlf)
     {
@@ -70,7 +65,7 @@ class Tproveedor extends Conexion
 
 
 
-    // TODO FUNCIONA 
+     // registrar
     private function registra() {
         $sql = "INSERT INTO tlf_proveedores (cod_prov, cod_tlf, telefono, status) VALUES (:cod_prov, :cod_tlf, :telefono, 1)";
         
@@ -95,6 +90,81 @@ class Tproveedor extends Conexion
     public function getregistra() {
         return $this->registra();
     }
+    
+
+  
+
+
+    //inicio de actualizar//
+    private function editar()
+    {
+        $sql = "UPDATE tlf_proveedores SET cod_tlf = :cod_tlf,telefono = :telefono, status = :status   
+              WHERE cod_tlf = :cod_tlf";
+
+        $strExec = $this->conex->prepare($sql);
+
+        $strExec->bindParam(':cod_tlf', $this->cod_tlf);
+        $strExec->bindParam(':telefono', $this->telefono);
+
+        $strExec->bindParam(':status', $this->status);
+
+        // Ejecuta la consulta  
+        $resul = $strExec->execute();
+
+        if ($resul == 1) {
+            return 1; // Éxito  
+        } else {
+            return 0; // Fallo  
+        }
+    }
+
+    public function geteditar()
+    {
+        return $this->editar();
+    }
+    //actualizar//
+
+
+ // eliminar
+    private function eliminar($valor)
+    {
+        $sql = "DELETE FROM tlf_proveedores WHERE cod_tlf = $valor";
+        $strExec = $this->conex->prepare($sql);
+        $resul = $strExec->execute();
+        if ($resul) {
+            $res = 1;
+        } else {
+            $res = 0;
+        }
+        return $res;
+    }
+
+    public function geteliminar($valor)
+    {
+        return $this->eliminar($valor);
+    }
+
+    //inicio de consultar  //
+    private function consultar()
+    {
+
+        $registro = "select * from tlf_proveedores";
+        $consulta = $this->conex->prepare($registro);
+        $resul = $consulta->execute();
+        $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        if ($resul) {
+            return $datos;
+        } else {
+            return $res = 0;
+        }
+    }
+    public function getconsulta()
+    {
+        return $this->consultar();
+    }
+    //fin de consultar//
+
+
     
 
   //metodo buscar

@@ -12,30 +12,38 @@ if (isset($_POST['buscar'])) {
     if (!empty($_POST["telefono"]) && !empty($_POST["cod_prov"])) {
         $telefono = $_POST["telefono"];
 
-        $dato = $objTlfroveedores->getbusca($telefono);
-        if (!$dato) {
-            $objTlfroveedores->settelefono($_POST['telefono']);
-            $objTlfroveedores->setCod1($_POST['cod_prov']); // Asegúrate de que esto no sea nulo
+        // Validación del teléfono: debe tener entre 10 y 15 caracteres
+        if (preg_match("/^[0-9]{10,15}$/", $telefono)) {
+            $dato = $objTlfroveedores->getbusca($telefono);
+            if (!$dato) {
+                $objTlfroveedores->settelefono($telefono);
+                $objTlfroveedores->setCod1($_POST['cod_prov']); 
+                $resul = $objTlfroveedores->getregistra();
 
-            $resul = $objTlfroveedores->getregistra();
-
-         
-            if ($resul == 1) {
-                $registrar = [
-                    "title" => "Registrado con éxito",
-                    "message" => "El telefono ha sido registrado",
-                    "icon" => "success"
-                ];
-            } else {
-                $registrar = [
-                    "title" => "Error",
-                    "message" => "Hubo un problema al registrar el telefono",
-                    "icon" => "error"
-                ];
+                if ($resul == 1) {
+                    $registrar = [
+                        "title" => "Registrado con éxito",
+                        "message" => "El teléfono ha sido registrado.",
+                        "icon" => "success"
+                    ];
+                } else {
+                    $registrar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al registrar el teléfono.",
+                        "icon" => "error"
+                    ];
+                }
             }
+        } else {
+            $registrar = [
+                "title" => "Error",
+                "message" => "El teléfono debe tener entre 10 y 15 caracteres numéricos.",
+                "icon" => "error"
+            ];
         }
     } 
 }
+
 
 $registro = $objTlfroveedores->getconsulta();
 $_GET['ruta'] = 'proveedores';

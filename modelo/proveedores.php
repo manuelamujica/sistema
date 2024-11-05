@@ -119,6 +119,7 @@ class Proveedor extends Conexion
 
   //inicio de actualizar//
   private function editar() {
+    
     $sql = "UPDATE proveedores SET rif = :rif, razon_social = :razon_social, email = :email, direccion = :direccion, status = :status WHERE cod_prov = :cod_prov";
 
     $strExec = $this->conex->prepare($sql);
@@ -145,47 +146,74 @@ public function getedita() {
   //actualizar//
 
 
-  private function eliminar($valor)
-  {
-      $sql = "SELECT COUNT(*) AS n_representantes FROM prov_representantes WHERE cod_prov = :cod_prov";
-      $strExec = $this->conex->prepare($sql);
-      $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
-      $resul = $strExec->execute();
-  
-      if ($resul) {
-          $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
-          if ($resultado['n_representantes'] > 0) {
-              $logico = "UPDATE proveedores SET status = 2 WHERE cod_prov = :cod_prov";
-              $strExec = $this->conex->prepare($logico);
-              $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
-              $strExec->execute();
-              $r = 'success';
-          } else {
-              $fisico = "DELETE FROM proveedores WHERE cod_prov = :cod_prov";
-              $strExec = $this->conex->prepare($fisico);
-              $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
-              $strExec->execute();
-              $r = 'success';
-          }
-      } else {
-          $r = 'error_delete';
-      }
-      return $r;
-  }
+
+    //acomodar ti tiene compra o//
+    private function eliminar($valor)
+    {
+        // Verificar si hay compras asociadas
+        $sql = "SELECT COUNT(*) AS n_compras FROM compras WHERE cod_prov = :cod_prov";
+        $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+        $strExec->execute();
+        $resultadoCompras = $strExec->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultadoCompras['n_compras'] > 0) {
+            // No se puede eliminar, tiene compras asociadas
+            return 'error_compra_asociada';
+        }
+    
+        // Verificar si hay representantes asociados
+        $sql = "SELECT COUNT(*) AS n_representantes FROM prov_representantes WHERE cod_prov = :cod_prov";
+        $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+        $strExec->execute();
+        $resultadoRepresentantes = $strExec->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultadoRepresentantes['n_representantes'] > 0) {
+            // Actualizar el estado a 2
+            $logico = "UPDATE proveedores SET status = 2 WHERE cod_prov = :cod_prov";
+            $strExec = $this->conex->prepare($logico);
+            $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+            $strExec->execute();
+            return 'success';
+        } else {
+            // Eliminar proveedor
+            $fisico = "DELETE FROM proveedores WHERE cod_prov = :cod_prov";
+            $strExec = $this->conex->prepare($fisico);
+            $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+            $strExec->execute();
+            return 'success';
+        }
+    }
   
   public function geteliminar($valor)
   {
       return $this->eliminar($valor);
   }
 
-  //inicio de consultar//
+  //inicio de consultar todo//
   private  function consultar()
   {
-    $registro = "SELECT p.cod_prov, p.*, pr.nombre, t.telefono  
-FROM proveedores p  
-LEFT JOIN prov_representantes pr ON p.cod_prov = pr.cod_prov AND pr.status = 1  
-LEFT JOIN tlf_proveedores t ON p.cod_prov = t.cod_prov  
-ORDER BY p.cod_prov ASC";
+    $registro = "SELECT 
+    p.cod_prov, 
+    p.*, 
+    pr.cod_representante,  
+    pr.nombre, 
+    pr.cedula, 
+    pr.apellido, 
+    pr.telefono AS rep_tel, 
+    p.status, 
+    pr.status AS statusr,
+    t.telefono,
+    t.cod_tlf  -- Agregar cod_tlf del teléfono
+FROM 
+    proveedores p  
+LEFT JOIN 
+    prov_representantes pr ON p.cod_prov = pr.cod_prov AND pr.status = 1  
+LEFT JOIN 
+    tlf_proveedores t ON p.cod_prov = t.cod_prov  
+ORDER BY 
+    p.cod_prov ASC";
 
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
