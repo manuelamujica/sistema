@@ -1,0 +1,20 @@
+{
+    "name": "liliani/savyc",
+    "description": "reporte",
+    "type": "proyect",
+    "require": {
+        "spipu/html2pdf": "5.2.8",
+        "phpoffice/phpspreadsheet": "^2.1"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Liliani\\Savyc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "quesera"
+        }
+    ]
+}
