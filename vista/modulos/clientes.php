@@ -87,7 +87,6 @@
 <!-- =======================
 MODAL REGISTRAR CLIENTES 
 ============================= -->
-
 <div class="modal fade" id="modalRegistrarClientes" tabindex="-1" aria-labelledby="modalRegistrarClientesLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -104,31 +103,35 @@ MODAL REGISTRAR CLIENTES
                     <div class="form-group">
                         <label for="cedula_rif">Cédula o Rif:</label>
                         <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" placeholder="Ingrese la cédula" required>
-                        
+                        <div class="invalid-feedback"></div>
+
                         <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" name="nombre" placeholder="Ingrese el nombre" required>
+                        <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
+                        <div class="invalid-feedback"></div>
 
                         <label for="apellido">Apellido:</label>
-                        <input type="text" class="form-control" name="apellido" placeholder="Ingrese el apellido" required>
+                        <input type="text" class="form-control" name="apellido" id="apellido" placeholder="Ingrese el apellido" required>
+                        <div class="invalid-feedback"></div>
 
                         <label for="telefono">Teléfono:</label>
-                        <input type="tel" class="form-control"  name="telefono" placeholder="Ingrese el teléfono">
+                        <input type="tel" class="form-control" name="telefono" id="telefono" placeholder="Ingrese el teléfono">
+                        <div class="invalid-feedback"></div>
 
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" name="email" placeholder="Ingrese el correo electrónico">
 
-                        <label for="direccion">Direccion:</label>
+                        <label for="direccion">Dirección:</label>
                         <textarea class="form-control" name="direccion" placeholder="Ingrese la dirección de vivienda"></textarea>
-                    </div>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
                     </div>
                 </form>
             </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="guardar" form="formRegistrarClientes">Guardar</button>
+            </div>
         </div>
     </div>
+</div>
     <?php 
 if (isset($registrar)): ?>
     <script>
@@ -166,28 +169,32 @@ MODAL EDITAR CLIENTES
                     </div>
                     <div class="form-group">
                         <label for="nombre">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        <input type="text" class="form-control" id="nombre1" name="nombre" required>
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label for="apellido">Apellido</label>
-                        <input type="text" class="form-control" id="apellido" name="apellido" required>
+                        <input type="text" class="form-control" id="apellido1" name="apellido" required>
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label for="cedula_rif">Cédula-Rif</label>
-                        <input type="text" class="form-control" id="cedularif" name="cedula_rif" required>
-                        <input type="hidden" class="form-control" id="origin" name="origin" >
+                        <input type="text" class="form-control" id="cedularif1" name="cedula_rif" required>
+                        <div class="invalid-feedback"></div>
+                        <input type="hidden" class="form-control" id="origin" name="origin">
                     </div>
                     <div class="form-group">
                         <label for="telefono">Teléfono</label>
-                        <input type="text" class="form-control" id="telefono" name="telefono">
+                        <input type="text" class="form-control" id="telefono1" name="telefono">
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email">
+                        <input type="email" class="form-control" id="email1" name="email">
                     </div>
                     <div class="form-group">
                         <label for="direccion">Dirección</label>
-                        <textarea class="form-control" id="direccion" name="direccion"></textarea>
+                        <textarea class="form-control" id="direccion1" name="direccion"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -200,7 +207,7 @@ MODAL EDITAR CLIENTES
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" form="editForm" class="btn btn-primary" name="actualizar">Guardar cambios</button>
+                <button type="submit" class="btn btn-primary" name="actualizar" form="editForm">Guardar cambios</button>
             </div>
         </div>
     </div>
@@ -263,58 +270,5 @@ MODAL CONFIRMAR ELIMINAR
 <?php endif; ?>
 </section>
 </div>
-<script>
-    $('#cedula_rif').blur(function (e){
-        var buscar=$('#cedula_rif').val();
-        $.post('index.php?pagina=clientes', {buscar}, function(response){
-            if(response != ''){
-                alert('El cliente ya se encuentra registrado');
-            }
-        },'json');
-    });
 
-    $('#cedularif').blur(function (e){
-        var buscar=$('#cedularif').val();
-        $.post('index.php?pagina=clientes', {buscar}, function(response){
-            if(response != ''){
-                alert('La cedula ya existe');
-            }
-        },'json');
-    });
-
-
-    $('#editModal').on('show.bs.modal', function (event) {
-            var button=$(event.relatedTarget);
-            var codigo=button.data('codigo');
-            var nombre=button.data('nombre');
-            var apellido=button.data('apellido');
-            var cedula_rif=button.data('cedula_rif');
-            var telefono=button.data('telefono');
-            var email=button.data('email');
-            var direccion=button.data('direccion');
-            var status=button.data('status');
-            var origin=button.data('cedula_rif');
-
-            // Modal
-            var modal = $(this);
-            modal.find('.modal-body #codigo').val(codigo);
-            modal.find('.modal-body #nombre').val(nombre);
-            modal.find('.modal-body #apellido').val(apellido);
-            modal.find('.modal-body #cedularif').val(cedula_rif);
-            modal.find('.modal-body #telefono').val(telefono);
-            modal.find('.modal-body #email').val(email);
-            modal.find('.modal-body #direccion').val(direccion);
-            modal.find('.modal-body #status').val(status);
-            modal.find('.modal-body #origin').val(origin);
-        });
-
-    $('#eliminarcliente').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); 
-        var nombre = button.data('nombre');
-        var codigo = button.data('codigo');
-
-        var modal = $(this);
-        modal.find('#clienteNombre').text(nombre);
-        modal.find('.modal-body #clienteCodigo').val(codigo);
-    });
-</script>
+<script src="vista/dist/js/modulos-js/clientes.js"> </script>

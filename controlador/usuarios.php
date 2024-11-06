@@ -66,7 +66,7 @@ if(isset($_POST['buscar'])){
 else if (isset($_POST['actualizar'])) {
     
     $passwordCambiada=0;
-    var_dump($_POST['nombre'], $_POST['user'], $_POST['roles'], $_POST['status']);
+    //var_dump($_POST['nombre'], $_POST['user'], $_POST['roles'], $_POST['status']);
 
     if (!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['roles']) && isset($_POST['status'])) {
 

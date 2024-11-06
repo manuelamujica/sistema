@@ -1,6 +1,6 @@
 <?php
 
-require_once "modelo/usuarios.php"; 
+require_once "modelo/usuarios.php";
 require_once "modelo/general.php";
 require_once "modelo/roles.php";
 
@@ -8,7 +8,7 @@ $obj = new General();
 $objuser= new Usuario();
 $objRol= new Rol();
 
-if(isset($_POST["ingresar"])){
+if (isset($_POST["ingresar"])) {
 
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
 	preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])){ 
@@ -16,15 +16,14 @@ if(isset($_POST["ingresar"])){
 		$item = "user";
 		$valor = $_POST["ingUsuario"];
 
-        $respuesta = $objuser->mostrar($item, $valor);
-
+		$respuesta = $objuser->mostrar($item, $valor);
 	}
 
 	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
 		
 		// Verificamos la contraseña utilizando password_verify()
 		if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
-			
+
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
@@ -32,20 +31,20 @@ if(isset($_POST["ingresar"])){
 			$rol = $objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
 			$_SESSION["rol"] = $rol["rol"];
 
-			$_SESSION["producto"]=0;
-			$_SESSION["inventario"]=0;
-			$_SESSION["categoria"]=0;
-			$_SESSION["venta"]=0;
-			$_SESSION["compra"]=0;
-			$_SESSION["cliente"]=0;
-			$_SESSION["proveedor"]=0;
-			$_SESSION["usuario"]=0;
-			$_SESSION["reporte"]=0;
-			$_SESSION["configuracion"]=0;
+			$_SESSION["producto"] = 0;
+			$_SESSION["inventario"] = 0;
+			$_SESSION["categoria"] = 0;
+			$_SESSION["venta"] = 0;
+			$_SESSION["compra"] = 0;
+			$_SESSION["cliente"] = 0;
+			$_SESSION["proveedor"] = 0;
+			$_SESSION["usuario"] = 0;
+			$_SESSION["reporte"] = 0;
+			$_SESSION["configuracion"] = 0;
 
 			//Obtenemos los permisos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
-			foreach($accesos as $cod_permiso){
+			foreach ($accesos as $cod_permiso) {
 				if ($cod_permiso["cod_permiso"] == 1) {
 					$_SESSION["producto"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 2) {
@@ -68,7 +67,7 @@ if(isset($_POST["ingresar"])){
 					$_SESSION["configuracion"] = 1;
 				}
 			}
-			
+
 			//obtenemos el logo de la empresa
 			$logo = $obj->mostrar();
 			if(!empty($logo)){
@@ -83,7 +82,6 @@ if(isset($_POST["ingresar"])){
 			echo '<script>
 			window.location="inicio";
 			</script>';
-
 		} else {
 			$login = [
                 "title" => "Error",
@@ -100,4 +98,3 @@ if(isset($_POST["ingresar"])){
 	}
 	
 }
-

@@ -4,9 +4,9 @@ class Unidad extends Conexion{
 
     private $conex;
     private $tipo_medida;
-    private $presentacion;
-    private $cantidad_presentacion;
     private $status;
+
+    private $cod_unidad;
 
 
     public function __construct(){
@@ -21,23 +21,19 @@ class Unidad extends Conexion{
     public function setTipo($tipo_medida){
         $this->tipo_medida = $tipo_medida;
     }
-    public function getPresentacion(){
-        return $this->presentacion;
-    }
-    public function setPresentacion($presentacion){
-        $this->presentacion = $presentacion;
-    }
-    public function getCantidad(){
-        return $this->cantidad_presentacion;
-    }
-    public function setCantidad($cantidad_presentacion){
-        $this->cantidad_presentacion = $cantidad_presentacion;
-    }
     public function getStatus(){
         return $this->status;
     }
     public function setStatus($status){
         $this->status = $status;
+    }
+
+    public function setCod($cod_unidad){
+        $this->cod_unidad = $cod_unidad;
+    }
+
+    public function getCod(){
+        return $this->cod_unidad;
     }
 
 /*==============================
@@ -49,6 +45,7 @@ REGISTRAR UNIDAD DE MEDIDA
 
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(":tipo_medida", $this->tipo_medida);
+
         $resul = $strExec->execute();
 
         if($resul){
@@ -77,8 +74,9 @@ REGISTRAR UNIDAD DE MEDIDA
         }return $r = 0;
     }
 
-    public function buscar($dato){
-        $registro="select * from unidades_medida where tipo_medida='".$dato."'";
+    private function buscar($dato){
+        $this->tipo_medida = $dato;
+        $registro="select * from unidades_medida where tipo_medida='".$this->tipo_medida."'";
         $resultado= "";
         $dato = $this->conex->prepare($registro);
         $resul = $dato->execute();
@@ -90,4 +88,80 @@ REGISTRAR UNIDAD DE MEDIDA
         }
     }
 
+    public function getbuscar($dato){
+        return $this->buscar($dato);
+    }
+
+    private function buscarcod($valor){
+        $this->tipo_medida=$valor;
+        $registro = "select * from tipo_usuario where rol='".$this->tipo_medida."'";
+        $resutado= "";
+            $dato=$this->conex->prepare($registro);
+            $resul=$dato->execute();
+            $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+            if ($resul) {
+                return $resultado;
+            }else{
+                return false;
+            }
+    
+    }
+
+    public function getcodU($valor){
+        return $this->buscarcod($valor);
+    }
+
+    private function editar(){
+        $registro = "UPDATE unidades_medida SET tipo_medida = :tipo_medida, status = :status WHERE cod_unidad = :cod_unidad";
+
+        $strExec = $this->conex->prepare($registro);
+        $strExec->bindParam(':cod_unidad',$this->cod_unidad);
+        $strExec->bindParam(':tipo_medida',$this->tipo_medida);
+        $strExec->bindParam(':status', $this->status);
+        $resul = $strExec->execute();
+        if($resul == 1){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+      }
+
+      public function geteditar(){
+        return $this->editar();
+      }
+
+    
+
+      private function eliminar($valor){ 
+        $registro = "SELECT COUNT(*) AS n_p FROM presentacion_producto WHERE cod_unidad = $valor";
+        $strExec = $this->conex->prepare($registro);
+        $strExec->execute();
+        $resul = $strExec->fetch(PDO::FETCH_ASSOC);
+        if($resul){
+            if($resul['n_p'] == 0){
+                $f = "DELETE FROM unidades_medida WHERE cod_unidad = $valor";
+                $strExec = $this->conex->prepare($f);
+                $ress=$strExec->execute();
+                if($ress){
+                    $r='success';
+                    return $r;
+                }else{
+                    $r='error_delete';
+                    return $r;
+                }
+            }else{
+                $r='error_associated';
+                return $r;
+            }
+        } else{
+            $r='error_query';
+            return $r;
+        }
+    }
+
+    public function geteliminar($valor){
+        return $this->eliminar($valor);
+    }
 }
+

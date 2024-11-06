@@ -4,6 +4,8 @@ class Rol extends Conexion{
 
     private $conex;
     private $rol;
+    private $codigo;
+
     private $status;
 
     public function __construct(){
@@ -23,6 +25,12 @@ class Rol extends Conexion{
     }
     public function setStatus($status){
         $this->status = $status;
+    }
+    public function getcodigo(){
+        return $this->codigo;
+    }
+    public function setcodigo($codigo){
+        $this->codigo = $codigo;
     }
 
 /*==============================
@@ -100,6 +108,21 @@ REGISTRAR TIPOS DE USUARIO
     
     }
 
+    public function buscarcod($valor){
+        $this->rol=$valor;
+        $registro = "select * from tipo_usuario where rol='".$this->rol."'";
+        $resutado= "";
+            $dato=$this->conex->prepare($registro);
+            $resul=$dato->execute();
+            $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+            if ($resul) {
+                return $resultado;
+            }else{
+                return false;
+            }
+    
+    }
+
     public function permisos(){
         $registro = "select * from permisos";
         $accesos= "";
@@ -111,6 +134,62 @@ REGISTRAR TIPOS DE USUARIO
             }else{
                 return false;
             }
+    }
+
+    private function editar(){
+        $registro = "UPDATE tipo_usuario SET rol = :rol, status = :status WHERE cod_tipo_usuario = :cod_tipo_usuario";
+
+        $strExec = $this->conex->prepare($registro);
+        $strExec->bindParam(':cod_tipo_usuario',$this->codigo);
+        $strExec->bindParam(':rol',$this->rol);
+        $strExec->bindParam(':status', $this->status);
+        $resul = $strExec->execute();
+        if($resul == 1){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+    }
+
+    public function geteditar(){
+        return $this->editar();
+    }
+
+    private function eliminar($valor){
+        $registro = "SELECT COUNT(*) AS n_usuario FROM tpu_permisos WHERE cod_tipo_usuario = $valor";
+        $strExec = $this->conex->prepare($registro);
+        $strExec->execute();
+        
+            $resul = $strExec->fetch(PDO::FETCH_ASSOC);
+            if($resul){
+            if($resul['n_usuario'] == 0){
+                $f = "DELETE FROM tipo_usuario WHERE cod_tipo_usuario = $valor";
+                $strExec = $this->conex->prepare($f);
+                $result = $strExec->execute();
+
+                if($result){
+                    $r='success';
+                    return $r;
+                }else{
+                    $r='error_delete';
+                    return $r;
+                }
+            }else{
+                $r='error_associated';
+                return $r;
+            }
+            
+            
+        } else{
+            $r='error_query';
+            return $r;
+        }
+        
+    }
+
+    public function geteliminar($valor){
+        return $this->eliminar($valor);
     }
 
 }
