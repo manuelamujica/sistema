@@ -98,3 +98,5 @@ if(isset($_POST["vista"])){
     $_GET['ruta'] = 'clientes';
 }
 require_once 'plantilla.php';
+
+//Lo actualice en manuela branch, no tenia las alertas etc 

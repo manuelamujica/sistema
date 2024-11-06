@@ -101,6 +101,10 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
 }
 
 /* LOGIN*/
+.input-group {
+    position: relative; /* Para que los iconos se posicionen correctamente */
+}
+
 .input-group .icon-password {
     position: absolute;
     right: 45px;
@@ -111,8 +115,39 @@ CSS PARA CUSTOMIZAR LA PLANTILLA
     z-index: 10;
 }
 
-.input-group{/* No estoy segura, probar!!!*/
-    position: relative;
+
+#passU + .icon-password {
+    position: absolute;
+    right: 70px; /* Ajusta la posición a la derecha solo para #passU */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+
+#passU + .invalid-feedback {
+    position: absolute;
+    top: 100%; /*Coloca el mensaje justo debajo del campo*/
+    left: 0; /*Alinea el mensaje con el campo*/
+    width: 100%; /*Asegura que el mensaje ocupe el ancho del campo*/
+}
+
+#passE + .icon-password {
+    position: absolute;
+    right: 70px; /* Ajusta la posición a la derecha solo para #passU */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+
+#passE + .invalid-feedback {
+    position: absolute;
+    top: 100%; /*Coloca el mensaje justo debajo del campo*/
+    left: 0; /*Alinea el mensaje con el campo*/
+    width: 100%; /*Asegura que el mensaje ocupe el ancho del campo*/
 }
 
 .login-box-msg{

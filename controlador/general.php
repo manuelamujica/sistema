@@ -89,3 +89,17 @@ if(!empty($datos)){
 }
 $_GET['ruta']='general';
 require_once 'plantilla.php';
+/*if(!empty($datos)){
+
+    $_SESSION["logo"] = $datos[0]["logo"];
+
+    //agregado por mi
+    $_SESSION["nombre-empresa"] = $datos[0]["nombre"];
+    $_SESSION["rif"] = $datos[0]["rif"];
+
+
+    $_SESSION["dir-empresa"]=$datos[0]["direccion"];
+    $_SESSION["tlf-empresa"]=$datos[0]["telefono"];
+    $_SESSION["email-empresa"]=$datos[0]["email"];
+
+}*/
