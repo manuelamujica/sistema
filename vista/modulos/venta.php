@@ -29,7 +29,7 @@
                                                 <tr>
                                                     <th>Nro. de Venta</th>
                                                     <th>Cliente</th>
-                                                    <!--<th>Descuento</th>-->
+                                                    <th>Fecha de emision</th>
                                                     <th>Monto</th>
                                                     <th>Status</th>
                                                     <th>Acciones</th>
@@ -40,7 +40,7 @@
                                             <tr>
                                                 <td><?php echo $venta['codigov']?></td>
                                                 <td><?php echo $venta['nombre']." ".$venta['apellido']?></td>
-                                                <!--<td><?php echo $venta['descuento'] ?></td>-->
+                                                <td><?php echo $venta['fecha'] ?></td>
                                                 <td><?php echo $venta['total'] ?></td>
                                                 <td>
                                                     <?php if ($venta['status_venta']==1):?>
@@ -76,15 +76,18 @@
                                                     data-status="<?php echo $venta["status_venta"]; ?>">
                                                     <i class="fas fa-trash-alt"></i>
                                                     </button>
-                                                    <button name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#" 
-                                                    data-codventa="<?php echo $venta["cod_venta"]; ?>" 
-                                                    data-codpago="<?php echo $venta["cod_pago"]; ?>" 
-                                                    data-totalv="<?php echo $venta["total"]; ?>" 
-                                                    data-montop="<?php echo $venta["monto_total"]; ?>"
-                                                    data-fecha="<?php echo $venta["fecha"]; ?>"
-                                                    data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
+                                                    <button form="facturaform_<?= $venta['codigov']; ?>" type="submit" name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar">
                                                     <i class="fas fa-file"></i>
                                                     </button>
+                                                    <form id="facturaform_<?= $venta['codigov']; ?>" action="index.php?pagina=factura" method="post" target="_blank">
+                                                        <input type="hidden" name="cod_venta" value="<?= $venta['codigov']; ?>">
+                                                        <input type="hidden" name="total" value="<?= $venta['total']; ?>">
+                                                        <input type="hidden" name="fecha" value="<?= $venta['fecha']; ?>">
+                                                        <input type="hidden" name="cliente" value="<?= $venta['nombre']." ".$venta['apellido']; ?>">
+                                                        <input type="hidden" name="cedula" value="<?= $venta['cedula_rif']; ?>">
+                                                        <input type="hidden" name="direccion" value="<?= $venta['direccion']; ?>">
+                                                        <input type="hidden" name="telefono" value="<?= $venta['telefono']; ?>">    
+                                                    </form>        
                                                 <?php else:?>
                                                     <button title="Anular" class="btn btn-danger btn-sm disabled">
                                                     <i class="fas fa-trash-alt"></i>
@@ -182,7 +185,7 @@
                                     <th>Código</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
-                                    <th>Precio</th>
+                                    <th>Precio Unitario</th>
                                     <th>Total</th>
                                     <th> </th>
                                 </tr>
@@ -1100,6 +1103,7 @@ $('#abonoModal').on('show.bs.modal', function (event) {
     var fecha = button.data('fecha');
     var nombre = button.data('nombre');
     var mpagar=total-monto;
+    console.log(button.data('codventa'));
     // Modal
     var modal = $(this);
     modal.find('.modal-body #nro-venta1').val(codigo);

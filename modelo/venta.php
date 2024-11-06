@@ -235,15 +235,19 @@ class Venta extends Conexion{
         p.cod_producto,
         p.nombre AS producto_nombre,
         p.marca,
+        present.excento,
         present.cod_presentacion,
         present.presentacion,
         present.cantidad_presentacion,
         present.costo,
-        present.porcen_venta
+        present.porcen_venta,
+        u.tipo_medida,
+        CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion 
     FROM detalle_ventas AS dv
     JOIN detalle_productos AS dp ON dv.cod_detallep = dp.cod_detallep
     JOIN presentacion_producto AS present ON dp.cod_presentacion = present.cod_presentacion
     JOIN productos AS p ON present.cod_producto = p.cod_producto
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
     WHERE dv.cod_venta =:cod_venta;";
     $consulta=$this->conex->prepare($sql);
     $consulta->bindParam(':cod_venta', $valor);

@@ -326,7 +326,7 @@ function crearfila(index) {
             <input type="hidden" id="cod-dp${index}" class="form-control" name="productos[${index}][cod-dp]"></td>
             <td>
                 <div class="input-group">
-                    <input type="number" id="lotes${index}" class="form-control" name="productos[${index}][lote]" placeholder="Lote">
+                    <input type="text" id="lotes${index}" class="form-control" name="productos[${index}][lote]" placeholder="Lote">
                     <div id="lista-lotes${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
                 </div>
             </td>
@@ -342,7 +342,7 @@ function crearfila(index) {
                 <input type="number" step="0.001" class="form-control precio-divisa" placeholder="Precio en divisa" onchange="calcularMontos(${index})">
             </td>
             <td><input type="number" class="form-control" step="0.001" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularMontos(${index})"></td>
-            <td><select class="form-control" id="tipoProducto${index}" name="productos[${index}][iva]" required>
+            <td><select class="form-control" id="tipoProducto${index}" name="productos[${index}][iva]" onchange="calcularMontos(${index})" required>
                 <option value="1">E</option>
                 <option value="2">G</option>
                 </select></td>
