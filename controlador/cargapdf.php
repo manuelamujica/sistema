@@ -62,7 +62,7 @@ if (isset($datos)) {
     //$nombreEmpresa = isset($_SESSION["nombre-empresa"]) ? $_SESSION["nombre-empresa"] : 'Nombre no disponible';
     //$rifEmpresa = isset($_SESSION["rif"]) ? $_SESSION["rif"] : 'RIF no disponible';
     $html .= '  
-                <h3 style="margin-bottom: 5px;">' . $_SESSION["nombre"] . '</h3>
+                <h3 style="margin-bottom: 5px;">' . $_SESSION["n_empresa"] . '</h3>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["rif"] . '</p>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["telefono"] . '</p>
                 <p style="margin-top: 0;">' . $_SESSION["email"] . '</p>
