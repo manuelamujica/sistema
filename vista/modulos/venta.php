@@ -29,7 +29,7 @@
                                                 <tr>
                                                     <th>Nro. de Venta</th>
                                                     <th>Cliente</th>
-                                                    <!--<th>Descuento</th>-->
+                                                    <th>Fecha de emision</th>
                                                     <th>Monto</th>
                                                     <th>Status</th>
                                                     <th>Acciones</th>
@@ -40,7 +40,7 @@
                                             <tr>
                                                 <td><?php echo $venta['codigov']?></td>
                                                 <td><?php echo $venta['nombre']." ".$venta['apellido']?></td>
-                                                <!--<td><?php echo $venta['descuento'] ?></td>-->
+                                                <td><?php echo $venta['fecha'] ?></td>
                                                 <td><?php echo $venta['total'] ?></td>
                                                 <td>
                                                     <?php if ($venta['status_venta']==1):?>
