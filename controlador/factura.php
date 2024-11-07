@@ -44,7 +44,7 @@ $html = '
 
     <table style="width: 95%; font-size:10px; margin-top: 10px; border-collapse: collapse;">
         <tr>
-        	<th style="border: 1px solid #666; text-align:center; padding: 5px; background-color: #dedede; width: 10%;">Codigo</th>
+            <th style="border: 1px solid #666; text-align:center; padding: 5px; background-color: #dedede; width: 10%;">Codigo</th>
             <th style="border: 1px solid #666; text-align:center; padding: 5px; background-color: #dedede; width: 34%;">Producto</th>
             <th style="border: 1px solid #666; text-align:center; padding: 5px; background-color: #dedede; width: 10%;">Cantidad</th>
             <th style="border: 1px solid #666; text-align:center; padding: 5px; background-color: #dedede; width: 7%;">Unidad</th>
@@ -59,7 +59,7 @@ $base=0;
 foreach ($dventa as $detalle) {
     $html .= '
         <tr>
-        	<td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['cod_presentacion'] . '</td>
+            <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['cod_presentacion'] . '</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:left;">' . $detalle['producto_nombre']." ".$detalle["presentacion"] . '</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['cantidad'] . '</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['tipo_medida'] . '</td>
