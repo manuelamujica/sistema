@@ -889,10 +889,12 @@ $('#cedula-rif').blur(function (e){
             var apellido=response['apellido'];
             var codigo=response['cod_cliente'];
 
+            if(response['status']!=0){
             var modal = $('#ventaModal');
             modal.find('.modal-body #numero-cliente').val(telefono);
             modal.find('.modal-body #nombre-cliente').val(nombre);
             modal.find('.modal-body #cod_cliente').val(codigo);
+            }
         },'json');
     });
 

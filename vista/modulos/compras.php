@@ -46,7 +46,7 @@
                                             <th>Fecha</th>
                                             <th>total</th>
                                             <th>status</th>
-                                            <th>Accion</th>
+                                            <!--<th>Accion</th>-->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,10 +67,10 @@
                                                             <span class="badge bg-danger">Anulada</span>
                                                         <?php endif; ?>
                                                     </td>
-                                                    <td>
+                                                    <!--<td>
                                                         <?php if ($compras['compra_status'] == 1): ?>
                                                             <button name="anular" class="btn btn-danger btn-sm eliminar" title="anular" data-toggle="modal" data-target="#anularcompra"
-                                                            data-cod="<?php echo $compras['cod_compra']; ?>">
+                                                            data-cod="<?php //echo $compras['cod_compra']; ?>">
                                                             <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         <?php else: ?>
@@ -78,9 +78,9 @@
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                         <?php endif; ?>
-                                                        <!-- anular cambia los estatus de compra-->
+                                                        anular cambia los estatus de compra
                                                         
-                                                    </td>
+                                                    </td>-->
                                                 </tr>
                                             <?php endif; ?>
                                         <?php } ?>
@@ -498,7 +498,7 @@ $(document).ready(function() {
                         });
                         listaProductos.fadeIn();
                     } else {
-                        listaProductos.append('<p class="list-group-item">No se encontraron productos</p>');
+                        listaProductos.fadeOut();
                     }
                 }
             });

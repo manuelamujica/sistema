@@ -56,12 +56,12 @@
 
 
                                                     <!-- regidtro de telefono del proveeed --------------
-                                                     ---------------------------------------------->
+                                                    ---------------------------------------------->
                                                     <td>
                                                         <button name="telef" class="btn btn-outline-primary telef" title="telef" data-toggle="modal" data-target="#myModalt"
                                                             data-cod1="<?php echo $datos['cod_prov']; ?>" data-rif="<?php echo $datos['rif']; ?>">
                                                             <i class="fa fa-phone"></i>
-                                                            <?php echo $datos["telefono"]; ?>
+                                                            <?php echo $datos["telefonos"]; ?>
                                                         </button>
 
 
@@ -88,8 +88,8 @@
 
 
                                                         <!------------------------------------------
-                                                         mostrar representante del proveeedo
-                                                         ----------------------------------------------->
+                                                        mostrar representante del proveeedo
+                                                        ---------------------------------------------->
                                                         <button name="mostrar" class="btn btn-outline-info btn-sm  mostrar" title="consultar" data-toggle="modal" data-target="#myModalr"
                                                             data-cod="<?php echo $datos["cod_representante"]; ?>"
 
@@ -112,13 +112,11 @@
 
                                                         <button name="editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modalProvedit" title="editar"
                                                             data-cod="<?php echo $datos["cod_prov"]; ?>"
-                                                            data-cod_tlf="<?php echo $datos["cod_tlf"]; ?>"
                                                             data-rif="<?php echo $datos['rif']; ?>"
                                                             data-razon="<?php echo $datos["razon_social"]; ?>"
                                                             data-email="<?php echo $datos['email']; ?>"
                                                             data-dire="<?php echo $datos['direccion']; ?>"
-                                                            data-status="<?php echo $datos['status']; ?>"
-                                                            data-telefono="<?php echo $datos['telefono']; ?>">
+                                                            data-status="<?php echo $datos['status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
 
@@ -714,14 +712,7 @@ EDITAR  PROVEEDOR
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="telefono">Teléfono:</label>
-                                        <input type="text" class="form-control" id="telefono3" name="telefono">
-                                        <input type="hidden" name="cod_tlf" id="cod_tlf">
-                                        <div class="invalid-feedback" style="display: none;"></div>
-                                    </div>
-                                </div>
+                             
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -1107,10 +1098,10 @@ ELIMINAR PROVEEDOR
             var isRIFValid = $('#rif1').val().length > 0 && $('#rif1').val().length <= 15;
             var isRazonValid = $('#razon1').val().length > 0 && $('#razon1').val().length <= 30;
             var isEmailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test($('#email1').val());
-            var isTelefonoValid = $('#telefono3').val().length === 0 || /^[0-9]+$/.test($('#telefono3').val());
+        
 
             // Habilitar el botón solo si todas las validaciones son verdaderas
-            if (isRIFValid && isRazonValid && isEmailValid && isTelefonoValid) {
+            if (isRIFValid && isRazonValid && isEmailValid) {
                 $('#editButtonn').prop('disabled', false);
             } else {
                 $('#editButtonn').prop('disabled', true);
@@ -1129,9 +1120,7 @@ ELIMINAR PROVEEDOR
             validarField($(this), /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'El campo email debe ser un email válido', 1, 100);
         });
 
-        $('#telefono3').on('blur', function() {
-            validarField($(this), /^[0-9]*$/, 'El teléfono solo debe contener números', 0, 15);
-        });
+      
 
         $('#dire1').on('blur', function() {
             validarField($(this), /^[a-zA-Z0-9\s\.,]*$/, 'La dirección solo debe contener letras, números y signos permitidos', 0, 100);

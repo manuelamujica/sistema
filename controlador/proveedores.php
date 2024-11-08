@@ -83,13 +83,6 @@ if (isset($_POST['buscar'])) {
             $resul = $objProveedores->getedita();
             if ($resul == 1) {
 
-                $cod_tlf = $_POST['cod_tlf'];
-
-                $telefono = $_POST['telefono'];
-                $objtProveedor->settelefono($telefono);
-                $objtProveedor->setcod_tlf($cod_tlf);
-                $registra = $objtProveedor->geteditar();
-                if ($registra == 1) {
                     $editar = [
                         "title" => "Editado con éxito",
                         "message" => "Los datos del proveedor han sido actualizados.",
@@ -102,15 +95,8 @@ if (isset($_POST['buscar'])) {
                         "icon" => "error"
                     ];
                 }
-            } else {
-                $editar = [
-                    "title" => "Error",
-                    "message" => "Hubo un problema al editar los datos del proveedor.",
-                    "icon" => "error"
-                ];
-            }
+            } 
         }
-    }
 } else if (isset($_POST['eliminar'])) {
     if (!empty($_POST['provCodigo'])) {
         $resul = $objProveedores->geteliminar($_POST["provCodigo"]);
