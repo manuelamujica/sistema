@@ -372,4 +372,39 @@ public function eliminardetalle($detallep) {
     }
 }
 
+/*=============================
+FILTRADO 
+===============================*/
+public function getmostrarPorFechas($fechaInicio, $fechaFin) {
+    $sql = "SELECT
+        p.cod_producto,
+        p.nombre,
+        p.marca,
+        detp.cod_presentacion,
+        detp.fecha_vencimiento,
+        c.nombre AS cat_nombre,
+        c.cod_categoria AS cat_codigo,
+        present.cod_presentacion,
+        present.presentacion,
+        present.cantidad_presentacion,
+        present.costo,
+        present.porcen_venta,
+        present.excento,
+        u.tipo_medida,
+        u.cod_unidad,
+        (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat
+    FROM productos AS p
+    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+    JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
+    JOIN detalle_productos AS detp ON detp.cod_presentacion = present.cod_presentacion
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+    WHERE detp.fecha_vencimiento BETWEEN :fechaInicio AND :fechaFin
+    GROUP BY present.cod_presentacion";
+
+    $stmt = $this->conex->prepare($sql);
+    $stmt->bindParam(':fechaInicio', $fechaInicio);
+    $stmt->bindParam(':fechaFin', $fechaFin);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

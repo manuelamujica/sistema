@@ -1,121 +1,259 @@
-<?php 
+<?php
 
 require_once 'conexion.php';
 
-class Proveedor extends Conexion{
+class Proveedor extends Conexion
+{
 
-private $conex;
-private $rif;
-private $razon_social;
-private $correo;
-private $direccion;
-private $status;
+  private $conex;
+  private $cod_prov;
+  private $rif;
+  private $razon_social;
+  private $email;
+  private $direccion;
+  private $status;
 
 
-  public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
-    }
 
-  public function getRif(){
+  public function __construct()
+  {
+    $this->conex = new Conexion();
+    $this->conex = $this->conex->conectar();
+  }
+
+
+  public function setCod($cod_prov)
+  {
+    $this->cod_prov = $cod_prov;
+  }
+
+
+  public function gettCod()
+  {
+    return $this->cod_prov;
+  }
+  public function getRif()
+  {
     return $this->rif;
   }
 
-    public function setRif($rif){
-      $this->rif=$rif;
-    }
+  public function setRif($rif)
+  {
+    $this->rif = $rif;
+  }
 
-    public function getRazon_social(){
+  public function getRazon_Social()
+  {
     return $this->razon_social;
   }
 
-    public function setRazon_social($razon_social){
-      $this->razon_social=$razon_social;
-    }
-  
-    public function get_Email(){
-    return $this->correo;
+  public function setRazon_Social($razon_social)
+  {
+    $this->razon_social = $razon_social;
   }
- 
-     public function setcorreo($valor){
-      $this->correo=$valor;
-    }
 
-
-
-    public function getDireccion(){
-     return $this->direccion;
+  public function get_Email()
+  {
+    return $this->email;
   }
-   
-   public function setDireccion($direccion){
-      $this->direccion=$direccion;
-    }
 
-  
-     
-     public function getStatus(){
-        return $this->status;
-    }
-   
-   public function setStatus($status){
-        $this->status=$status;
-    }
+  public function setemail($email)
+  {
+    $this->email = $email;
+  }
 
 
-//metodos crud  //
 
-public function registrar(){
-    
-  $sql = "INSERT INTO proveedores(rif,razon_social,email,direccion, status)  VALUES  (:rif,:razon_social,:email,:direccion, 1)";
+  public function getDireccion()
+  {
+    return $this->direccion;
+  }
 
-    $strExec =$this->conex->prepare($sql);
+  public function setDireccion($direccion)
+  {
+    $this->direccion = $direccion;
+  }
 
-    $strExec->bindParam(':rif',$this->rif);
-    $strExec->bindParam(':razon_social',$this->razon_social);
-    $strExec->bindParam(':email',$this->correo);
-    $strExec->bindParam(':direccion',$this->direccion);
-    
-    $resul=$strExec->execute();
+
+
+  public function getStatus()
+  {
+    return $this->status;
+  }
+
+  public function setStatus($status)
+  {
+    $this->status = $status;
+  }
+
+
+  //metodos crud    TODO FUNCIONA  //
+
+  private function registrar()
+  {
+
+    $sql = "INSERT INTO proveedores(rif,razon_social,email,direccion,status)  VALUES  (:rif,:razon_social,:email,:direccion,1)";
+
+    $strExec = $this->conex->prepare($sql);
+
+    $strExec->bindParam(':rif', $this->rif);
+    $strExec->bindParam(':razon_social', $this->razon_social);
+    $strExec->bindParam(':email', $this->email);
+    $strExec->bindParam(':direccion', $this->direccion);
+
+
+    $resul = $strExec->execute();
     if ($resul) {
-      $res=1;
-    }else{
-      $res=0;
+      $res = 1;
+    } else {
+      $res = 0;
     }
     return $res;
+  } //fin de registrar//
 
- }//fin de registrar//
+  public function getregistra()
+  {
+    return $this->registrar();
+  }
 
 
- //inicio de consultar//
-public function consultar(){
+  //inicio de actualizar//
+  private function editar() {
+    
+    $sql = "UPDATE proveedores SET rif = :rif, razon_social = :razon_social, email = :email, direccion = :direccion, status = :status WHERE cod_prov = :cod_prov";
 
-  $registro="select * from proveedores";
-    $consulta=$this->conex->prepare($registro);
-    $resul=$consulta->execute();
-   $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
-   if($resul){
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':cod_prov', $this->cod_prov);
+    $strExec->bindParam(':rif', $this->rif);
+    $strExec->bindParam(':razon_social', $this->razon_social);
+    $strExec->bindParam(':email', $this->email);
+    $strExec->bindParam(':direccion', $this->direccion);
+    $strExec->bindParam(':status', $this->status);
+
+    // Ejecuta la consulta  
+    $resul = $strExec->execute();
+
+    if ($resul == 1) {
+      return 1; // Éxito  
+    } else {
+      return 0; // Fallo  
+    }
+}
+
+public function getedita() {
+    return $this->editar();
+}
+  //actualizar//
+
+
+
+    //acomodar ti tiene compra o//
+    private function eliminar($valor)
+    {
+        // Verificar si hay compras asociadas
+        $sql = "SELECT COUNT(*) AS n_compras FROM compras WHERE cod_prov = :cod_prov";
+        $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+        $strExec->execute();
+        $resultadoCompras = $strExec->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultadoCompras['n_compras'] > 0) {
+            // No se puede eliminar, tiene compras asociadas
+            return 'error_compra_asociada';
+        }
+    
+        // Verificar si hay representantes asociados
+        $sql = "SELECT COUNT(*) AS n_representantes FROM prov_representantes WHERE cod_prov = :cod_prov";
+        $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+        $strExec->execute();
+        $resultadoRepresentantes = $strExec->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultadoRepresentantes['n_representantes'] > 0) {
+            // Actualizar el estado a 2
+            $logico = "UPDATE proveedores SET status = 2 WHERE cod_prov = :cod_prov";
+            $strExec = $this->conex->prepare($logico);
+            $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+            $strExec->execute();
+            return 'success';
+        } else {
+            // Eliminar proveedor
+            $fisico = "DELETE FROM proveedores WHERE cod_prov = :cod_prov";
+            $strExec = $this->conex->prepare($fisico);
+            $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
+            $strExec->execute();
+            return 'success';
+        }
+    }
+  
+  public function geteliminar($valor)
+  {
+      return $this->eliminar($valor);
+  }
+
+  //inicio de consultar todo//
+  private  function consultar()
+  {
+    $registro = "SELECT 
+    p.cod_prov,
+    p.rif,
+    p.razon_social,
+    p.email,
+    p.direccion,
+    p.status,
+    pr.cod_representante,
+    pr.cedula,
+    pr.nombre,
+    pr.apellido,
+    pr.telefono AS rep_tel,
+    pr.status AS statusr,
+    GROUP_CONCAT(t.telefono SEPARATOR '/ ') AS telefonos
+FROM 
+    proveedores p
+LEFT JOIN 
+    prov_representantes pr ON p.cod_prov = pr.cod_prov
+LEFT JOIN 
+    tlf_proveedores t ON p.cod_prov = t.cod_prov
+GROUP BY 
+    p.cod_prov, pr.cod_representante;";
+
+    $consulta = $this->conex->prepare($registro);
+    $resul = $consulta->execute();
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($resul) {
       return $datos;
-   }else{
-    return $res=0;
-   }
+    } else {
+      return $res = 0;
+    }
+  }
+  public function getconsulta()
+  {
+    return $this->consultar();
+  }
 
- } //fin de consultar//
+  //fin de consultar//
 
-public function buscar($valor){
-  $this->rif = $valor;
-  $registro= "select * from proveedores where rif='".$this->rif."'";
-  $resultado= "";
-  $dato = $this->conex->prepare($registro);
-  $resul = $dato->execute();
-  $resultado=$dato->fetch(PDO::FETCH_ASSOC);
-  if($resul){
+
+
+  //metodo buscar
+  private function buscar($dato)
+  {
+    $this->rif = $dato;
+    $registro = "select * from proveedores where rif='" . $this->rif . "'";
+    $resulado = "";
+    $dato = $this->conex->prepare($registro);
+    $resul = $dato->execute();
+    $resultado = $dato->fetch(PDO::FETCH_ASSOC);
+    if ($resul) {
       return $resultado;
-  }else{
+    } else {
       return false;
+    }
+  }
+
+  public function getbuscar($valor)
+  {
+    return $this->buscar($valor);
   }
 }
-
-
-}
-
-?>

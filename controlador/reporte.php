@@ -1,5 +1,9 @@
 <?php
 require_once 'modelo/productos.php';
+require_once 'modelo/dcarga.php';
+
+$carga = new Dcarga();
+$datos = $carga->gettodo();
 
 $obj = new Productos();
 $productos = $obj->getmostrar();

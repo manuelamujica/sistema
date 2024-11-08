@@ -29,7 +29,7 @@ if(isset($_POST['buscar'])){
 
 //REGISTRAR
 }elseif (isset($_POST['guardar'])){
-    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"]) && !empty($_POST["costo"]) && !empty($_POST["presentacion"]) && !empty($_POST["cant_presentacion"]) && !empty($_POST["costo"]) && !empty($_POST["porcen"])){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"]) && !empty($_POST["presentacion"]) && !empty($_POST["cant_presentacion"])){
 
         if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
 

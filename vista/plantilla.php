@@ -41,7 +41,6 @@ PLUGINGS DE CSS
   <!-- Date Range Picker -->
   <script src="vista/plugins/moment/moment.min.js"></script>
   <script src="vista/plugins/daterangepicker/daterangepicker.js"></script>
-
   <!-- DataTables  & Plugins -->
 <script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -79,7 +78,10 @@ PLUGINGS DE CSS
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
     $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
+    $_GET["ruta"] == "carga" && $_SESSION["inventario"]==1 ||
     $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
+    $_GET["ruta"] == "rep-inventario" && $_SESSION["reporte"]==1 ||
+    $_GET["ruta"] == "rep-proveedores" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
