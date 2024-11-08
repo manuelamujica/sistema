@@ -57,7 +57,7 @@ if (isset($_POST['buscar'])) {
         $objRepresentante->setnombre($_POST['nombre']);
         $objRepresentante->setapellido($_POST['apellido']);
         $objRepresentante->settelefono($_POST['telefono']);
-        $objRepresentante->setCod1($_POST['cod_prov']);
+        $objRepresentante->setCod1($_POST['cod_provREPRE']);
 
         $resul = $objRepresentante->getregistra();
 
