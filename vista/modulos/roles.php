@@ -20,7 +20,7 @@
             </div>
             <div class="card-body">
             <div class="table-responsive">
-            <table id="categorias" class="table table-bordered table-striped datatable">
+            <table id="categorias" class="table table-bordered table-striped datatable" style="width: 100%;">
                 <thead>
                         <tr>
                             <th>Código</th>

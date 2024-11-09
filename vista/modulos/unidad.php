@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <!-- MOSTRAR EL REGISTRO DE UNIDADES DE MEDIDA -->
                             <div class="table-responsive">
-                                <table id="unidad" class="table table-bordered table-striped">
+                                <table id="unidad" class="table table-bordered table-striped datatable" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Código</th>

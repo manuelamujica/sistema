@@ -38,7 +38,7 @@ class Divisa extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha, c.status AS cambio_status FROM divisas AS d 
+        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha AS cambio_status FROM divisas AS d 
         JOIN cambio_divisa AS c ON d.cod_divisa = c.cod_divisa ORDER BY d.cod_divisa;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();

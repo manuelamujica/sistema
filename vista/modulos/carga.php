@@ -26,7 +26,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <!-- MOSTRAR EL REGISTRO DE CARGA DE PRODUCTOS -->
-                                <table id="carga" class="table table-bordered table-striped">
+                                <table id="carga" class="table table-bordered table-striped datatable" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Código</th>

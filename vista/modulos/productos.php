@@ -67,7 +67,7 @@ require_once "controlador/productos.php";
                                             echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea
                                             ?>
                                         </td>
-                                            <td>Stock total</td>
+                                            <td>12</td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
