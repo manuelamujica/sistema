@@ -6,7 +6,7 @@ require_once "modelo/roles.php";
 $objuser= new Usuario();
 $objroles = new Rol();
 
-$roles = $objroles->consultar(); // Obtener los roles para pasarlos a la vista
+$roles = $objroles->consultarUsuario(); // Obtener los roles para pasarlos a la vista
 
 if(isset($_POST['buscar'])){
     $user = $_POST['buscar']; 
@@ -18,11 +18,14 @@ if(isset($_POST['buscar'])){
 }else if (isset($_POST['guardar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['pass']) && !empty($_POST['rol'])){
         if (!$objuser->buscar($_POST["user"])){ #Que no sea el mismo user
-            
-            #Validar la longitud + formato de la contraseña
-            $longitud = strlen($_POST["pass"]);
 
-            if($longitud >= 8 && preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/',$_POST["pass"] ) && $_POST["pass"] !== $_POST["user"]){
+
+            if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z\s]+$/', $_POST['user'])){
+                
+                #Validar la longitud + formato de la contraseña
+                $longitud = strlen($_POST["pass"]);
+
+                if($longitud >= 8 && preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/',$_POST["pass"] ) && $_POST["pass"] !== $_POST["user"]){
 
                     $password = password_hash($_POST["pass"], PASSWORD_DEFAULT); // guardar la contraseña cifrada con HASH
                     
@@ -52,12 +55,25 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                     ];
                 }
+            } else {
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "No se pudo registrar. Caracteres no permitidos.",
+                    "icon" => "error"
+                    ];
             }
+        } else {
+            $registrar = [
+                "title" => "Error",
+                "message" => "No se pudo registrar porque el nombre de usuario ya existe.",
+                "icon" => "error"
+                ];
+        }
     }else{
-        $advertencia = [
-            "title" => "Advertencia",
-            "message" => "Rellena todos los campos",
-            "icon" => "warning"
+        $registrar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacíos",
+            "icon" => "error"
         ];
     }
 }
@@ -66,7 +82,6 @@ if(isset($_POST['buscar'])){
 else if (isset($_POST['actualizar'])) {
     
     $passwordCambiada=0;
-    //var_dump($_POST['nombre'], $_POST['user'], $_POST['roles'], $_POST['status']);
 
     if (!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['roles']) && isset($_POST['status'])) {
 
@@ -74,12 +89,14 @@ else if (isset($_POST['actualizar'])) {
             // Si el user cambió, verificamos si ya existe en la base de datos
             if ($objuser->buscar($_POST['user'])) {
                 $advertencia = [
-                    "title" => "Advertencia",
-                    "message" => "El usuario ya está registrado.",
-                    "icon" => "warning"
+                    "title" => "Error",
+                    "message" => "No se pudo registrar porque el nombre de usuario ya existe.",
+                    "icon" => "error"
                 ];
             }
         }
+
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z\s]+$/', $_POST['user'])){
         //Password
             if (!empty($_POST['pass'])) {
                 $longitud = strlen($_POST['pass']);
@@ -90,9 +107,9 @@ else if (isset($_POST['actualizar'])) {
                     $passwordCambiada = 1;
 
                 } else {
-                    $advertencia = [
+                    $editar = [
                         "title" => "Error",
-                        "message" => "La contraseña no cumple con los requisitos. Intenta de nuevo",
+                        "message" => "La contraseña no con los requisitos. Intenta de nuevo",
                         "icon" => "error"
                     ];
                 }
@@ -106,7 +123,7 @@ else if (isset($_POST['actualizar'])) {
             // Si se cambió la contraseña, usamos el método que también actualiza la contraseña
             $objuser->setPassword($password);
             $result = $objuser->editar2($_POST['codigo'], $_POST['roles']);
-            //var_dump($result);
+            
         } else {
             // Si no se cambió la contraseña, usamos el método que no la modifica
             $result = $objuser->editar($_POST['codigo'], $_POST['roles']);
@@ -126,12 +143,19 @@ else if (isset($_POST['actualizar'])) {
             ];
         }
     } else {
-            $advertencia = [
-                "title" => "Advertencia",
-                "message" => "Rellena todos los campos",
-                "icon" => "warning"
+            $editar = [
+                "title" => "Error",
+                "message" => "No se pudo registrar. Caracteres no permitidos.",
+                "icon" => "error"
             ];
         }
+    } else {
+        $editar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacíos",
+            "icon" => "error"
+        ];
+    }
 
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['usercode'])){
@@ -146,7 +170,7 @@ else if (isset($_POST['actualizar'])) {
     } elseif ($result == 'error_ultimo') {
             $eliminar = [
                 "title" => "Error",
-                "message" => "El usuario no se puede eliminar porque es el ultimo administrador",
+                "message" => "El usuario no se puede eliminar porque es el último administrador",
                 "icon" => "error"
             ];
         }

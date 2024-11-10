@@ -2,16 +2,16 @@
 #1) Requerir los modelos
 
 require_once 'modelo/productos.php';
-require_once 'modelo/categorias.php';
-require_once 'modelo/unidad.php';
+//require_once 'modelo/categorias.php';
+//require_once 'modelo/unidad.php';
 
 #Objetos
-$objCategoria = new Categoria();
+//$objCategoria = new Categoria();
 $objProducto = new Productos();
-$objUnidad = new Unidad();
+//$objUnidad = new Unidad();
 
-$categoria = $objCategoria->getmostrar(); // Obtener los categorias para pasarlos a la vista
-$unidad = $objUnidad->consultarUnidad();  // Obtener las unidades de medida para pasarlos a la vista
+$categoria = $objProducto->consultarCategoria(); // Obtener los categorias activas para pasarlos a la vista
+$unidad = $objProducto->consultarUnidad();  // Obtener las unidades de medida activas para pasarlos a la vista
 
 //BUSCAR REGISTRAR
 if(isset($_POST['buscar'])){
@@ -29,7 +29,7 @@ if(isset($_POST['buscar'])){
 
 //REGISTRAR
 }elseif (isset($_POST['guardar'])){
-    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"]) && !empty($_POST["costo"]) && !empty($_POST["presentacion"]) && !empty($_POST["cant_presentacion"]) && !empty($_POST["costo"]) && !empty($_POST["porcen"])){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
         if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
 
@@ -82,7 +82,7 @@ if(isset($_POST['buscar'])){
 }
 //EDITAR
 } else if (isset($_POST['editar'])){
-    if(!empty($_POST['nombre']) && !empty($_POST['categoria']) && !empty($_POST['costo']) && !empty($_POST['unidad'])){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
         
         if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
 
@@ -160,19 +160,16 @@ if(isset($_POST['buscar'])){
                 "icon" => "success"
                 ];
         }
-        } 
+    } 
+}
 
-//BUSCAR ELIMINAR DETALLE (AJAX/JSON)
-}  else if(isset($_POST['codigo'])){
+/*BUSCAR ELIMINAR DETALLE (AJAX/JSON)
+else if(isset($_POST['codigo'])){
     $result=$objProducto->eliminardetalle($_POST['codigo']);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-}
-
-
-
-
+}*/
 
 
 $registro = $objProducto->getmostrar();

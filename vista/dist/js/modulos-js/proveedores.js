@@ -324,8 +324,8 @@ $(document).ready(function() {
             var email = $(this).val();
             if (email.trim() === '') {
                 showError('#email', 'El campo email no puede estar vacío');
-            } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) || email.length < 10 || email.length > 40) {
-                showError('#email', 'El email debe ser válido y tener entre 10 y 40 caracteres.');
+            } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) || email.length > 40) {
+                showError('#email', 'El email debe ser válido y no debe excederse de los 40 caracteres.');
             } else {
                 hideError('#email');
             }

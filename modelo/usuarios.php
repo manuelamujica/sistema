@@ -111,10 +111,10 @@ VALIDAR USUARIO (USER)
 ================================*/
 public function buscar($valor){
     $this->user=$valor;
-    $registro = "select * from usuarios where user=:user";  //".$this->user."'"
+    $registro = "select * from usuarios where user=:user"; 
     $resultado= "";
         $dato=$this->conex->prepare($registro);
-        $dato->bindParam(':user',$this->user); //agregado
+        $dato->bindParam(':user',$this->user); 
         $resul=$dato->execute();
         $resultado=$dato->fetch(PDO::FETCH_ASSOC);  
         if ($resul) {
@@ -165,7 +165,6 @@ EDITAR USUARIO
         $strExec->bindParam(':status', $this->status);
         $strExec->bindParam(':codigo', $codigo, PDO::PARAM_INT);
 
-        // Ejecutar la consulta
         $resul = $strExec->execute();
 
         return $resul ? 1 : 0;
@@ -189,6 +188,7 @@ EDITAR USUARIO
 
             return $resul ? 1 : 0;
     }
+
 /*==============================
 ELIMINAR USUARIO
 ================================*/
@@ -209,7 +209,7 @@ public function eliminar($valor) {
             $strExec->execute();
             $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
 
-            if ($resultado['total'] == 1) {
+            if ($resultado['total'] == 2) { // 2 porque por defecto, el admin de programadores estará en la bd
                 return 'error_ultimo';
             }
         }
@@ -222,4 +222,5 @@ public function eliminar($valor) {
         return $delete ? 'success' : 'error_delete'; 
         }
     }
+
 }

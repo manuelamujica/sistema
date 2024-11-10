@@ -80,6 +80,18 @@ REGISTRAR TIPOS DE USUARIO
         }
     }
 
+    public function consultarUsuario(){
+        $registro="SELECT * FROM tipo_usuario WHERE status=1";
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
+    }
+
     public function consultarLogin($cod){
         $registro="SELECT rol FROM tipo_usuario WHERE cod_tipo_usuario=:cod_tipo_usuario";
         $resul=$this->conex->prepare($registro);

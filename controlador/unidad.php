@@ -9,7 +9,7 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-} else if (isset($_POST["guardar"])) {
+} else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
     if (preg_match("/^[a-zA-Z]+$/", $_POST["tipo_medida"])) {
         if (!empty($_POST["tipo_medida"])) {
             if (!$objUnidad->getbuscar($_POST['tipo_medida'])) {
