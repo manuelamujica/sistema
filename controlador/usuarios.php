@@ -20,7 +20,7 @@ if(isset($_POST['buscar'])){
         if (!$objuser->buscar($_POST["user"])){ #Que no sea el mismo user
 
 
-            if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z\s]+$/', $_POST['user'])){
+            if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z0-9]+$/', $_POST['user'])){
                 
                 #Validar la longitud + formato de la contraseña
                 $longitud = strlen($_POST["pass"]);
@@ -96,7 +96,7 @@ else if (isset($_POST['actualizar'])) {
             }
         }
 
-        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z\s]+$/', $_POST['user'])){
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z0-9]+$/', $_POST['user'])){
         //Password
             if (!empty($_POST['pass'])) {
                 $longitud = strlen($_POST['pass']);

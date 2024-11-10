@@ -1,6 +1,6 @@
 <!-- EN REVISIOON EN EL CONTROLADOR NO QUIERE REGISTRAR LA CARGA :(  
  COMENTARIO 2/11/2024-->
-<?php require_once 'controlador/carga.php' ?>
+ <?php require_once 'controlador/carga.php' ?>
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -8,6 +8,12 @@
                 <div class="col-sm-6">
                     <!-- MODULO TRANSACIONAL DE CARGA DE PRODUCTOS EN AJUSTE DE INVENTARIO  -->
                     <h1>Carga de productos</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
+                        <li class="breadcrumb-item active">Carga de productos</li>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -26,14 +32,14 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <!-- MOSTRAR EL REGISTRO DE CARGA DE PRODUCTOS -->
-                                <table id="carga" class="table table-bordered table-striped datatable" style="width: 100%;">
+                                <table id="carga" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>Código</th>
                                             <th>Fecha</th>
                                             <th>Descripción</th>
-                                            <th>Producto</th>
-                                            <th>Cantidad cargada</th>
+                                            <th>Detalles</th>
+
                                             <!--<th>Cantidad total</th>-->
                                             <!-- ##### CUAL DEJO? CANTIDAD CARGADA O CANTIDAD TOTAL(STOCK) ##### -->
                                             <th>Estado</th>
@@ -48,8 +54,14 @@
                                                 <td><?php echo $dato['cod_carga'] ?></td>
                                                 <td><?php echo $dato['fecha'] ?></td>
                                                 <td><?php echo $dato['descripcion'] ?></td>
-                                                <td><?php echo $dato['nombre'] . " en " . $dato['presentacion'] ?></td>
-                                                <td><?php echo $dato['cantidad'] ?></td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
+                                                        data-codigo="<?php echo $dato["cod_carga"]; ?>">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+
+                                                </td>
+
                                                 <!--<td><?php //echo $dato['stock'] 
                                                         ?></td>-->
                                                 <td>
@@ -76,7 +88,7 @@
 MODAL REGISTRAR CARGA CON EXITO
 ============================= -->
 
-                <div class="modal fade" id="modalregistrarCarga" tabindex="-1" aria-labelledby="modalregistrarCargaLabel" aria-hidden="true">
+                <div class="modal fade" id="modalregistrarCarga" tabindex="-1" aria-labelledby="modalregistrarCargaLabel">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
@@ -91,13 +103,13 @@ MODAL REGISTRAR CARGA CON EXITO
                                     <!--   FECHA      -->
                                     <div class="form-group">
                                         <label for="fecha">Fecha</label>
-                                        <input type="date" class="form-control" name="fecha" id="fecha">
+                                        <input type="datetime-local" name="fecha" id="fecha" class="form-control">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                     <!--   DESCRIPCIÓN  -->
                                     <div class="form-group">
                                         <label for="descripcion">Descripción</label>
-                                        <input type="text" class="form-control" id="descripcion" name="descripcion">
+                                        <input type="text" class="form-control" id="descripcion" name="descripcion" maxlength="100">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
 
@@ -147,6 +159,46 @@ MODAL REGISTRAR CARGA CON EXITO
         <?php endif; ?>
 
 
+
+        <!-- =============================
+    MODAL MOSTRAR DETALLES 
+================================== -->
+        <div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Detalle de productos</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Presentacion del Producto</th>
+                                                <th>Lote</th>
+                                                <th>Fecha de vencimiento</th>
+                                                <th>Stock</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detalleBody">
+                                            <!-- Los detalles se cargarán aquí -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- registrar DETALLEP -->
         <div class="modal fade" id="modalregistrardetallep">
             <div class="modal-dialog">
@@ -161,7 +213,7 @@ MODAL REGISTRAR CARGA CON EXITO
                         <div class="modal-body">
 
                             <div class="form-group">
-                                <label for="cod_producto">Código del Producto:</label>
+                                <label for="cod_presentacion">Código del Producto:</label>
                                 <input type="text" class="form-control" name="cod_presentacion" id="cod_presentacion" required readonly>
                             </div>
                             <div class="form-group">
@@ -170,7 +222,7 @@ MODAL REGISTRAR CARGA CON EXITO
                             </div>
                             <div class="form-group">
                                 <label for="lote">Lote</label>
-                                <input type="text" class="form-control" id="lote" name="lote" required placeholder="Ingrese el lote del producto">
+                                <input type="text" class="form-control" id="lote" name="lote" required placeholder="Ingrese el lote del producto" maxlength="20">
                             </div>
                         </div>
                         <div class="modal-footer justify-content-between">
@@ -187,10 +239,67 @@ MODAL REGISTRAR CARGA CON EXITO
     </section>
 </div>
 
+<script>
+    //Modal detalle
+    $(document).ready(function() {
+        // Evento al abrir el modal
+        $('#detallemodal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Botón que abrió el modal
+            var cod = button.data('codigo'); // Extraer el cod_presentacion
+
+            // Limpiar la tabla de detalles antes de cargar nuevos datos
+            $('#detalleBody').empty();
+
+            // Hacer una llamada AJAX para obtener los detalles del producto
+            $.ajax({
+                url: 'index.php?pagina=carga',
+                method: 'POST',
+                data: {
+                    detalle: cod
+                },
+                dataType: 'json',
+                success: function(data) {
+                    //console.log(data);
+                    // Verificar si hay datos en la respuesta
+                    if (data.length === 0) {
+                        // Si no hay detalles mostrar un mensaje 
+                        $('#detalleBody').append(
+                            '<tr>' +
+                            '<td colspan="6" class="text-center">No hay detalles disponibles para este producto</td>' +
+                            '</tr>'
+                        );
+                    } else {
+                        // Recorrer los datos devueltos y llenar la tabla
+                        $.each(data, function(index, detalle) {
+
+                            var statusText = detalle.status == '1' //Si el status es 1 mostrar activo sino inactivo
+                                ?
+                                '<span class="badge badge-success">Activo</span>' :
+                                '<span class="badge badge-danger">Inactivo</span>' //NECESITO MEJORAR LA LOGIA Y EL FILTRADO DEL CONSULTAR
+
+                            $('#detalleBody').append(
+                                '<tr>' +
+                                '<td>' + detalle.cod_det_carga + '</td>' +
+                                '<td>' + detalle.nombre + ' en ' + detalle.presentacion + '</td>' +
+                                '<td>' + detalle.lote + '</td>' +
+                                '<td>' + detalle.fecha_vencimiento + '</td>' +
+                                '<td class="stock">' + detalle.stock + '</td>' +
+                                '</tr>'
+                            );
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar los detalles:', error);
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
-        
+
 
         var productoIndex = 0; // Contador para las filas de productos
 
@@ -204,7 +313,7 @@ MODAL REGISTRAR CARGA CON EXITO
             </td>
                  <td>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="nombreProducto${index}" name="productos[${index}][nombre]" placeholder="Nombre del producto">
+                    <input type="text" class="form-control" id="nombreProducto${index}" name="productos[${index}][nombre]" placeholder="Nombre del producto" maxlength="30">
                     <div id="lista-productos${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
@@ -235,242 +344,290 @@ MODAL REGISTRAR CARGA CON EXITO
             $('#fila' + index).remove();
         };
 
-           // Manejo del envío del formulario para registrar la carga
-    $('#formregistrarCarga').on('submit', function(event) {
-        
-        var detallesVerificados = 0;
-        var totalProductos = productosTabla.length;
-        $.each(productosTabla, function(index, producto) {
-            $.ajax({
-                type: 'POST',
-                url: 'index.php?pagina=carga',
-                data: {
-                    verificarDetalle: true,
-                    id: producto.codigo // Usar el código del producto para verificar
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        detallesVerificados++;
-                        console.log('no');
-                    } else {
-                        Swal.fire({
-                            title: 'Producto Sin información',
-                            text: 'El producto con código "' + producto.codigo + '" no tiene información registrada.',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Registrar Detalle',
-                            cancelButtonText: 'Cancelar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $('#cod_presentacion').val(producto.codigo); // Llenar el campo del modal
-                                $('#modalregistrardetallep').modal('show'); // Mostrar el modal
-                            }
-                        });
-                    }
+        // Manejo del envío del formulario para registrar la carga
+        $('#formregistrarCarga').on('submit', function(event) {
 
-                    // Si se han verificado todos los productos
-                    if (detallesVerificados === totalProductos) {
-                        console.log("Pasa por la funcion de registrar");
-                        //return true // Enviar el formulario si todos los detalles están verificados
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error en AJAX:', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Ocurrió un error al verificar los detalles del producto.',
-                        icon: 'error'
-                    });
-                    
-                    return;
-                }
-            });
-        });
-         // Prevenir el envío del formulario por defecto
 
-         // Validar la fecha
-         var fechaInput = $('#fecha').val();
+            // Validar la fecha y hora listo
+            var fechaInput = $('#fecha').val();
             var fechaSeleccionada = new Date(fechaInput);
             var fechaActual = new Date();
 
-            // Establecer la hora a 00:00:00 para la comparación
-            fechaActual.setHours(0, 0, 0, 0);
-
+            // Comparar la fecha y hora seleccionadas con la fecha y hora actuales
             if (fechaSeleccionada > fechaActual) {
                 Swal.fire({
-                    title: 'Fecha no válida',
-                    text: 'La fecha seleccionada no puede ser futura.',
+                    title: 'Fecha y hora no válidas',
+                    text: 'La fecha y hora seleccionadas no pueden ser futuras.',
                     icon: 'warning'
                 });
                 event.preventDefault();
                 return; // Salir de la función si la fecha es futura
             }
 
-        // Recoger los datos de la tabla
-        var productosTabla = [];
-        $('#productosCarga tbody tr').each(function() {
-            var codigo = $(this).find('input[name^="productos["][name$="[codigo]"]').val(); // Obtener el código
-            var cantidad = $(this).find('input[name^="productos["][name$="[cantidad]"]').val(); // Obtener la cantidad
-            if (codigo && cantidad) {
-                productosTabla.push({
-                    codigo: codigo,
-                    cantidad: cantidad
-                });
-            }
-        });
-
-        
-       
-    });
-
-    // Función para enviar el formulario de carga
-    /*function enviarFormularioCarga() {
-        var formData = $('#formregistrarCarga').serializeArray();
-        formData.push({ name: 'guardar', value: '1' });
-
-        $.ajax({
-            type: 'POST',
-            url: 'index.php?pagina=carga',
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    console.log('pasa por registro de carga');
-                    Swal.fire({
-                        title: response.data.title,
-                        text: response.data.message,
-                        icon: response.data.icon,
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location = 'carga'; // Redirigir a la página de carga
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: response.data.title,
-                        text: response.data.message,
-                        icon: response.data.icon
+            var productosTabla = [];
+            $('#productosCarga tbody tr').each(function() {
+                var codigo = $(this).find('input[name^="productos["][name$="[codigo]"]').val(); // Obtener el código
+                var cantidad = $(this).find('input[name^="productos["][name$="[cantidad]"]').val(); // Obtener la cantidad
+                if (codigo && cantidad) {
+                    productosTabla.push({
+                        codigo: codigo,
+                        cantidad: cantidad
                     });
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error en AJAX:', error);
-                alert('Ocurrió un error al registrar la carga.');
-            }
-        });
-    }*/
-
-    // Manejo del envío del formulario para registrar detalle de producto
-    $('#formRegistrarDetalle').on('submit', function(event) {
-        event.preventDefault(); // Prevenir el envío del formulario por defecto
-        enviarFormularioDetalle(); // Llamar a la función para registrar el detalle
-    });
-
-    function enviarFormularioDetalle() {
-        var formData = $('#formRegistrarDetalle').serializeArray();
-        formData.push({ name: 'registrarD', value: '1' });
-
-        $.ajax({
-            type: 'POST',
-            url: 'index.php?pagina=carga',
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    Swal.fire({
-                        title: response.data.title,
-                        text: response.data.message,
-                        icon: response.data.icon
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $('#modalregistrardetallep').modal('hide');
-                            $('#formRegistrarDetalle')[0].reset(); // Reinicia el formulario
+            });
+            var detallesVerificados = 0;
+            var totalProductos = productosTabla.length;
+            $.each(productosTabla, function(index, producto) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'index.php?pagina=carga',
+                    data: {
+                        verificarDetalle: true,
+                        id: producto.codigo // Usar el código del producto para verificar
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            detallesVerificados++;
+                            console.log('no');
+                        } else {
+                            Swal.fire({
+                                title: 'Producto Sin información',
+                                text: 'El producto con código "' + producto.codigo + '" no tiene información registrada.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Registrar Detalle',
+                                cancelButtonText: 'Cancelar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#cod_presentacion').val(producto.codigo); // Llenar el campo del modal
+                                    $('#modalregistrardetallep').modal('show'); // Mostrar el modal
+                                }
+                            });
                         }
-                    });
-                } else {
+
+                        // Si se han verificado todos los productos
+                        if (detallesVerificados === totalProductos) {
+                            console.log("Pasa por la funcion de registrar");
+                            //return true // Enviar el formulario si todos los detalles están verificados
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en AJAX:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Ocurrió un error al verificar los detalles del producto.',
+                            icon: 'error'
+                        });
+                        event.preventDefault();
+                        return;
+                    }
+                });
+            });
+            // Prevenir el envío del formulario por defecto
+
+
+
+            // Recoger los datos de la tabla
+
+
+
+
+        });
+
+        // Función para enviar el formulario de carga
+        /*function enviarFormularioCarga() {
+            var formData = $('#formregistrarCarga').serializeArray();
+            formData.push({ name: 'guardar', value: '1' });
+
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?pagina=carga',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        console.log('pasa por registro de carga');
+                        Swal.fire({
+                            title: response.data.title,
+                            text: response.data.message,
+                            icon: response.data.icon,
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location = 'carga'; // Redirigir a la página de carga
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: response.data.title,
+                            text: response.data.message,
+                            icon: response.data.icon
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en AJAX:', error);
+                    alert('Ocurrió un error al registrar la carga.');
+                }
+            });
+        }*/
+
+        // Manejo del envío del formulario para registrar detalle de producto
+        $('#formRegistrarDetalle').on('submit', function(event) {
+            event.preventDefault(); // Prevenir el envío del formulario por defecto
+            enviarFormularioDetalle(); // Llamar a la función para registrar el detalle
+        });
+
+        function enviarFormularioDetalle() {
+            var formData = new FormData($('#formRegistrarDetalle')[0]); // Crear un objeto FormData
+
+            // Agregar un campo adicional
+            formData.append('registrarD', '1'); // Usar append para agregar parámetros
+
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?pagina=carga',
+                data: formData,
+                processData: false, // Importante: No procesar los datos
+                contentType: false, // Importante: No establecer el tipo de contenido
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            title: response.data.title,
+                            text: response.data.message,
+                            icon: response.data.icon
+                        }).then(() => {
+                            $('#modalregistrardetallep').modal('hide'); // Cerrar el modal
+                            $('#formRegistrarDetalle')[0].reset(); // Reiniciar el formulario
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en AJAX:', error);
+                    console.log('Respuesta del servidor:', xhr.responseText); // Muestra la respuesta del servidor
                     Swal.fire({
                         title: 'Error',
-                        text: response.message,
+                        text: 'Ocurrió un error al registrar más detalles.',
                         icon: 'error'
                     });
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error en AJAX:', error);
-                alert('Ocurrió un error al registrar más detalles.');
+            });
+        }
+
+        // Evento 'input' en los campos de productos dinámicos
+        $(document).on('input', '[id^=nombreProducto]', function() {
+            var inputId = $(this).attr('id');
+            var index = inputId.replace('nombreProducto', ''); // Obtener el índice del campo
+            var query = $(this).val(); // Valor ingresado por el usuario
+
+            if (query.length > 2) {
+                $.ajax({
+                    url: 'index.php?pagina=carga',
+                    method: 'POST',
+                    data: {
+                        buscar: query
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        var listaProductos = $('#lista-productos' + index);
+                        listaProductos.empty(); // Limpiar resultados anteriores
+
+                        if (data.length > 0) {
+                            // Recorrer los productos recibidos y mostrar nombre + código + precio concatenados Solo tome la logica y su funcion de venta para mostrar productos pero al quitar el costo no me muestra los productos
+                            $.each(data, function(key, producto) {
+                                var costo = parseFloat(producto.costo);
+                                var precioVenta = costo + (costo * producto.porcen_venta / 100);
+                                listaProductos.append(
+                                    '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
+                                    'data-nombre="' + producto.producto_nombre + '" ' +
+                                    'data-tipo="' + producto.excento + '" ' +
+                                    'data-codigo="' + producto.cod_presentacion + '" ' +
+                                    'data-marca="' + producto.marca + '" ' +
+                                    'data-precio="' + precioVenta + '">' +
+                                    producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion + '</a>'
+                                );
+                            });
+                            listaProductos.fadeIn();
+                        } else {
+                            listaProductos.append('<p class="list-group-item">No se encontraron productos</p>');
+                        }
+                    }
+                });
+            } else {
+                $('#lista-productos' + index).fadeOut(); // Ocultar la lista si no hay suficientes caracteres
             }
         });
-    }
 
-    // Evento 'input' en los campos de productos dinámicos
-    $(document).on('input', '[id^=nombreProducto]', function() {
-        var inputId = $(this).attr('id');
-        var index = inputId.replace('nombreProducto', ''); // Obtener el índice del campo
-        var query = $(this).val(); // Valor ingresado por el usuario
+        // Cuando el usuario selecciona un producto
+        $(document).on('click', '.producto-item', function() {
+            var selectedProduct = $(this).data('nombre');
+            var codigo = $(this).data('codigo');
+            var tipo = $(this).data('tipo');
+            var cant = 1;
 
-        if (query.length > 2) {
-            $.ajax({
-                url: 'index.php?pagina=carga',
-                method: 'POST',
-                data: {
-                    buscar: query
-                },
-                dataType: 'json',
-                success: function(data) {
-                    var listaProductos = $('#lista-productos' + index);
-                    listaProductos.empty(); // Limpiar resultados anteriores
+            var inputId = $(this).closest('.list-group').prev('input').attr('id');
+            var index = inputId.replace('nombreProducto', ''); // Extrae el índice del campo
+            $('#' + inputId).val(selectedProduct);
 
-                    if (data.length > 0) {
-                        // Recorrer los productos recibidos y mostrar nombre + código + precio concatenados Solo tome la logica y su funcion de venta para mostrar productos pero al quitar el costo no me muestra los productos
-                        $.each(data, function(key, producto) {
-                            var costo = parseFloat(producto.costo);
-                            var precioVenta = costo + (costo * producto.porcen_venta / 100);
-                            listaProductos.append(
-                                '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
-                                'data-nombre="' + producto.producto_nombre + '" ' +
-                                'data-tipo="' + producto.excento + '" ' +
-                                'data-codigo="' + producto.cod_presentacion + '" ' +
-                                'data-marca="' + producto.marca + '" ' +
-                                'data-precio="' + precioVenta + '">' +
-                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion + '</a>'
-                            );
-                        });
-                        listaProductos.fadeIn();
-                    } else {
-                        listaProductos.append('<p class="list-group-item">No se encontraron productos</p>');
-                    }
-                }
-            });
-        } else {
-            $('#lista-productos' + index).fadeOut(); // Ocultar la lista si no hay suficientes caracteres
-        }
+            $('#codigoProducto' + index).val(codigo);
+            $('#tipoProducto' + index).val(tipo);
+            $('#cantidadProducto' + index).val(cant).trigger('change');
+            $(this).closest('.list-group').fadeOut();
+        });
     });
-
-    // Cuando el usuario selecciona un producto
-    $(document).on('click', '.producto-item', function() {
-        var selectedProduct = $(this).data('nombre');
-        var codigo = $(this).data('codigo');
-        var tipo = $(this).data('tipo');
-        var cant = 1;
-
-        var inputId = $(this).closest('.list-group').prev('input').attr('id');
-        var index = inputId.replace('nombreProducto', ''); // Extrae el índice del campo
-        $('#' + inputId).val(selectedProduct);
-
-        $('#codigoProducto' + index).val(codigo);
-        $('#tipoProducto' + index).val(tipo);
-        $('#cantidadProducto' + index).val(cant).trigger('change');
-        $(this).closest('.list-group').fadeOut();
-    });
-});
-    
 </script>
 
 <script>
-    //VALIDACIONES JS
     $(document).ready(function() {
+        // Manejo del evento blur para los campos de código de producto NOTA: HOY 6/11/2024 YA FUNCIONA EL CODIGO CON LA VERIFICACION DE DETALLE DE PRODUCTO Y SU REGISTRO... DEJO TODO COMO ESTA YA ME DA MIEDO MOVER LAS COSAS JAJSJASJA
+
+        $(document).on('blur', '.producto-item', function(e) {
+            var codigo = $(this).data('codigo');
+            if (codigo) { // Verifica que el código no esté vacío
+                $.post('index.php?pagina=carga', {
+                    id: codigo,
+                    verificarDetalle: true // Asegúrate de enviar este parámetro
+                }, function(response) {
+                    if (response.status === 'error') {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No tiene detalle.',
+                            icon: 'warning'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#cod_presentacion').val(codigo);
+                                $('#modalregistrardetallep').modal('show'); // Mostrar el modal
+                            }
+                        });
+                    }
+                }, 'json');
+            }
+        });
+
+
+        //Mostrar detalle
+        $('#myModalr').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var nombre = button.data('nombre');
+            var cantidad = button.data('cantidad');
+
+
+            // Modal
+            var modal = $(this);
+            modal.find('.modal-body #cod').val(nombre);
+            modal.find('.modal-body #nombre').val(cantidad);
+
+
+        });
+        // Validaciones JS
         // Validación por cada campo cuando se pierde el foco
         $('#fecha').on('blur', function() {
             var fecha = $(this).val();
@@ -485,7 +642,7 @@ MODAL REGISTRAR CARGA CON EXITO
             var cantidad = $(this).val();
             if (cantidad.trim() === '') {
                 showError('#cantidad', 'el campo cantidad no puede estar vacío');
-            } else if (!/^[Z0-9\.,]+$/.test(cantidad)) {
+            } else if (!/^[0-9\.,]+$/.test(cantidad)) { // Cambié 'Z0-9' a '0-9'
                 showError('#cantidad', 'solo se aceptan números');
             } else {
                 hideError('#cantidad');
@@ -502,7 +659,6 @@ MODAL REGISTRAR CARGA CON EXITO
                 hideError('#descripcion');
             }
         });
-
 
         function showError(selector, message) {
             $(selector).addClass('is-invalid');
