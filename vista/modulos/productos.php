@@ -209,7 +209,7 @@ require_once "controlador/productos.php";
                                                         $('[data-toggle="tooltip"]').tooltip();
                                                     });
                                                 </script>
-                                                <input type="number" class="form-control" id="cant_presentacion" name="cant_presentacion" step="0.001" placeholder="Ingresa la cantidad">
+                                                <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ingresa la cantidad">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
@@ -217,7 +217,7 @@ require_once "controlador/productos.php";
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="costo">Costo</label>
-                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
+                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" >
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             <div class="invalid-feedback" style="display: none;"></div></div>
                                             <div class="col-6">
@@ -227,7 +227,7 @@ require_once "controlador/productos.php";
                                             </div>
                                         </div>
                                         <div class="input-group mb-2">
-                                            <input type="number" class="form-control nuevoPorcentaje" min="0" step="1" placeholder="Porcentaje de ganancia" id="porcen" name="porcen" required>
+                                            <input type="number" class="form-control nuevoPorcentaje" min="0" step="1" placeholder="Porcentaje de ganancia" id="porcen" name="porcen">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>

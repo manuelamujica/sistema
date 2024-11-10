@@ -85,6 +85,10 @@ if(!empty($datos)){
     if(!isset($_SESSION["logo"])){
         $_SESSION["logo"]=$datos[0]["logo"];
         $_SESSION["n_empresa"]=$datos[0]["nombre"];
+        $_SESSION["rif"]=$datos[0]["rif"];
+        $_SESSION["telefono"] = $datos[0]["telefono"];
+        $_SESSION["email"] = $datos[0]["email"];
+        $_SESSION["direccion"] = $datos[0]["direccion"];
     }
 }
 $_GET['ruta']='general';

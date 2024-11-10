@@ -121,7 +121,13 @@ else if(isset($_POST['actualizar'])){
             "message" => "Hubo un problema al eliminar el cliente",
             "icon" => "error"
         ];
-    }
+    } elseif ($result == 'venta') {
+        $editar = [
+            "title" => "Error",
+            "message" => "El cliente tiene ventas asociadas",
+            "icon" => "error"
+        ];
+        }
     }
 }
 

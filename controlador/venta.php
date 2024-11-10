@@ -44,7 +44,7 @@ if(isset($_POST['buscar'])){
     }else{
         echo json_encode([
             'success' => false,
-            'message' => 'Faltan campos obligatorios: cod_cliente, total_general o fecha_hora'
+            'message' => 'Faltan campos obligatorios'
         ]);
         exit;
     }
