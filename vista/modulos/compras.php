@@ -120,8 +120,8 @@
                                     <label for="cedula_rif">RIF</label>
                                     <div class="row">
                                         <div class="col-md-11">
-                                            <input type="text" class="form-control form-control-sm" id="rif-r" name="rif" placeholder="RIF">
-                                            <input type="hidden" id="cod_prov" name="cod_prov">
+                                            <input type="text" class="form-control form-control-sm" id="rif-r" name="rif" placeholder="RIF" required>
+                                            <input type="hidden" id="cod_prov" name="cod_prov" required>
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#modalProv">+</button>
@@ -185,17 +185,26 @@
                             </table>
                         
                         <!-- Botón para agregar nuevo producto -->
-                        <div class="d-flex justify-content-end mb-3">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="agregarFila()">+ Agregar Producto</button>
-                        </div>
+                        <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar Producto</button>
 
-                        <!-- Resumen de la compra -->
+                        
                         <div class="card card-outline card-primary float-right" style="width: 300px;">
                             <div class="card-body">
+                                <!--
                                 <p>Subtotal: Bs. <input type="number" class="form-control" name="subtotal" placeholder="Subtotal" style="width: 120px;" readonly></p>
                                 <p>IVA (16%): Bs. <input type="number" class="form-control" name="impuesto_total" placeholder="IVA" style="width: 120px;" readonly></p>
                                 <p class="text-bold">TOTAL: Bs. <span id="total-span" class="text-bold">0.00</span></p>
                                 <input type="hidden" id="total-general" name="total_general">
+                                    nuevo -->
+                                <p>Subtotal: Bs <span id="subtotal" class="text-bold">0.00</span></p>
+                                <p>Exento: Bs <span id="exento" class="text-bold">0.00</span></p>
+                                <p>Base imponible: Bs <span id="base-imponible" class="text-bold">0.00</span></p>
+                                <p>IVA (16%): Bs <span id="iva" class="text-bold">0.00</span></p>
+                                <p class="text-bold">TOTAL: Bs <span id="total-span" class="text-bold">0.00</span></p>
+                                <input type="hidden" id="total-general" name="total_general">
+                                <input type="hidden" id="subt" name="subtotal">
+                                <input type="hidden" id="impuesto_total" name="impuesto_total">
+
                             </div>
                         </div>
                     </div>
@@ -311,11 +320,11 @@ function crearfila(index) {
     return `
         <tr id="fila${index}">
             <td>
-                <input type="text" class="form-control" name="productos[${index}][cod_presentacion]" id="codigoProducto${index}" placeholder="Código del proveedor">
+                <input type="text" class="form-control" name="productos[${index}][cod_presentacion]" id="codigoProducto${index}" placeholder="Código de la presentacion" required readonly>
             </td>
             <td>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="productos[${index}][nombre_producto]" id="nombreProducto${index}" placeholder="Nombre del producto">
+                    <input type="text" class="form-control" name="productos[${index}][nombre_producto]" id="nombreProducto${index}" placeholder="Nombre del producto" required>
                     <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos(${index})">+</button>
@@ -332,7 +341,7 @@ function crearfila(index) {
             </td>
             <td>
                 <div class="input-group">
-                    <input type="number" class="form-control" name="productos[${index}][cantidad]" value="1" step="0.001" onchange="calcularMontos(${index})">
+                    <input type="number" class="form-control" name="productos[${index}][cantidad]" value="1" step="0.001" onchange="calcularMontos(${index})" required>
                     <div class="input-group-append">
                         <span id="unidadm${index}" class="input-group-text" value=" "></span>
                     </div>
@@ -346,7 +355,7 @@ function crearfila(index) {
                 <option value="1">E</option>
                 <option value="2">G</option>
                 </select></td>
-            <td><input type="number" class="form-control" name="productos[${index}][total]" placeholder="Total" readonly required></td>
+            <td><input type="number" class="form-control" id="total${index}" name="productos[${index}][total]" placeholder="Total" readonly required></td>
             <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFila(${index})">&times;</button></td>
         </tr>
     `;
@@ -378,6 +387,15 @@ function inicializarFilas() {
 $(document).ready(function() {
     inicializarFilas(); 
 });
+
+function eliminarFila(index) {
+    // Eliminar la fila del DOM usando el identificador de fila
+    var fila = document.getElementById(`fila${index}`);
+    if (fila) {
+        fila.remove();
+    }
+    calcularMontos();
+}
 
 $(document).ready(function() {
     // Manejar el cambio de la divisa seleccionada
@@ -416,36 +434,83 @@ function calcularMontos(index) {
     var precio = parseFloat($(`[name="productos[${index}][precio]"]`).val()) || 0;
     var total = cantidad * precio;
     $(`[name="productos[${index}][total]"]`).val(total.toFixed(2));
-    actualizarResumen(index); 
+    actualizarResumen(); 
 }
 
-function actualizarResumen(index) {
+function actualizarResumen() {
     var subtotal = 0;
+    var exento = 0;
+    var baseImponible = 0;
+    var iva = 0;
 
-    // Sumar todos los valores de los inputs "total" de cada producto
+    for (var i = 1; i < productoIndex; i++) {
+        var totalProducto = parseFloat($('#total' + i).val()) || 0;
+
+        
+        console.log('Total del producto ' + i + ':', totalProducto);
+
+        
+        if (isNaN(totalProducto)) {
+            totalProducto = 0;
+        }
+
+        subtotal += totalProducto;
+
+        var tipoProducto = parseFloat($('#tipoProducto' + i).val());
+
+    if (tipoProducto === 1) {
+            exento += totalProducto;
+        } else if (tipoProducto === 2) {
+            baseImponible += totalProducto;
+        }
+    }
+    iva = baseImponible * 0.16;
+    var totalGeneral = subtotal + iva;
+
+    // Verificar los valores calculados para el resumen (para depuración)
+    console.log('Subtotal:', subtotal);
+    console.log('Exento:', exento);
+    console.log('Base Imponible:', baseImponible);
+    console.log('IVA:', iva);
+    console.log('Total General:', totalGeneral);
+
+
+    /* Sumar todos los valores de los inputs "total" de cada producto
     $('#ProductosBody input[name^="productos"][name$="[total]"]').each(function() {
+        var totalp=parseFloat($(this).val()) || 0;
+        subtotal += parseFloat($(this).val()) || 0;
+
+    });
+    $('#ProductosBody input[name^="productos"][name$="[iva]"]').each(function() {
+        var tipoProducto = $(this).val();
+        if(tipoProducto==1){
+            exento
+        }
         subtotal += parseFloat($(this).val()) || 0;
     });
 
     var tipoProducto = $('#tipoProducto' + index).val();
-    var iva=0;
     if (tipoProducto == 2) {
             iva = subtotal * 0.16;
         }
     // Calcular el IVA y el total general
     console.log(iva);
     console.log(tipoProducto);
-    var totalGeneral = subtotal + iva;
+    var totalGeneral = subtotal + iva;*/
 
     // Actualizar el DOM con los valores calculados
     $('#subtotal').text(subtotal.toFixed(2));
+    $('#exento').text(exento.toFixed(2));
     $('#iva').text(iva.toFixed(2));
     $('#total-span').text(totalGeneral.toFixed(2));
     $('#total-general').val(totalGeneral.toFixed(2));
+    $('#base-imponible').text(baseImponible.toFixed(2));
+    $('#subt').val(subtotal.toFixed(2));
+    $('#impuesto_total').val(iva.toFixed(2));
 
-    // Actualizar los inputs ocultos correspondientes
+    /*Actualizar los inputs ocultos correspondientes
     $('input[name="subtotal"]').val(subtotal.toFixed(2));
-    $('input[name="impuesto_total"]').val(iva.toFixed(2));
+    $('input[name="impuesto_total"]').val(iva.toFixed(2));*/
 }
 
 $(document).ready(function() {

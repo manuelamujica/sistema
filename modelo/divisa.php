@@ -24,7 +24,7 @@ class Divisa extends Conexion{
         $resul=$strExec->execute();
         if ($resul){
             $ultimo_cod= $this->conex->lastInsertId();
-            $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha, status) VALUES (:cod_divisa, :tasa, :fecha, 1)";
+            $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
             $strExec=$this->conex->prepare($sqlCambio);
             $strExec->bindParam(':cod_divisa', $ultimo_cod);
             $strExec->bindParam(':tasa', $this->tasa);
@@ -38,7 +38,7 @@ class Divisa extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha, c.status AS cambio_status FROM divisas AS d 
+        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha FROM divisas AS d 
         JOIN cambio_divisa AS c ON d.cod_divisa = c.cod_divisa ORDER BY d.cod_divisa;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();

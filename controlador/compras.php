@@ -13,7 +13,7 @@ if (isset($_POST['buscar'])) {
     echo json_encode($re);
     exit;
 }else if (isset($_POST["registrar"])) {  
-    if (!empty($_POST["subtotal"]) && !empty($_POST["total_general"]) && !empty($_POST["impuesto_total"]) && 
+    if (!empty($_POST["subtotal"]) && !empty($_POST["total_general"]) && 
         !empty($_POST["cod_prov"]) && !empty($_POST["fecha"])){
         if(isset($_POST['productos'])){
         $objCompras->setCod1($_POST['cod_prov']);
@@ -28,7 +28,11 @@ if (isset($_POST['buscar'])) {
                 "icon" => "success"
             ];
         }
+        }else{
+            echo '<script> alert("no pasa de productos");</script>';
         }
+    } else{
+        echo '<script> alert("no pasa del primer if");</script>';
     }
 }else if (isset($_POST['anular'])) {
     if (!empty($_POST['codcom'])) {

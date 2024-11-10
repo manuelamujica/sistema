@@ -172,7 +172,7 @@ class Compra extends Conexion
             $sentencia->execute();
             
          }else{
-               $dproducto = "INSERT INTO detalle_productos (cod_presentacion, stock, fecha_vencimiento, lote, status) VALUES (:cod_presentacion, :stock, :fecha_vencimiento, :lote, 1)";
+               $dproducto = "INSERT INTO detalle_productos (cod_presentacion, stock, fecha_vencimiento, lote) VALUES (:cod_presentacion, :stock, :fecha_vencimiento, :lote)";
                $strExec = $this->conex->prepare($dproducto);  
                $strExec->bindParam(':cod_presentacion', $producto['cod_presentacion']);  
                $strExec->bindParam(':stock', $producto['cantidad']);  
@@ -373,7 +373,7 @@ class Compra extends Conexion
    }
 
    public function buscar_l($lot, $cod){
-      $busqueda="SELECT dp.*, dp.status AS detalle_status, pp.*
+      $busqueda="SELECT dp.*, pp.*
       FROM detalle_productos AS dp
       JOIN presentacion_producto AS pp ON dp.cod_presentacion = pp.cod_presentacion WHERE pp.cod_presentacion = :cod_presentacion AND dp.lote LIKE :lote;";
       $consulta = $this->conex->prepare($busqueda);

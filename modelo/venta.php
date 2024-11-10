@@ -60,7 +60,7 @@ class Venta extends Conexion{
     u.cod_unidad,
     u.tipo_medida, 
     c.nombre AS cat_nombre,
-    CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion,
+    CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' x ', u.tipo_medida) AS presentacion,
     COALESCE(ROUND(SUM(dp.stock), 2), 0) AS total_stock 
     FROM presentacion_producto AS present
     JOIN productos AS p ON present.cod_producto = p.cod_producto

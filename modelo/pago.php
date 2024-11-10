@@ -47,7 +47,7 @@ class Pago extends Conexion{
             $nuevo_cod = $this->conex->lastInsertId();
             foreach ($pago as $pagos){
                 if(!empty($pagos['monto']) && $pagos['monto']>0){
-                    $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto, status) VALUES($nuevo_cod, :cod_tipo_pago, :monto, 1)";
+                    $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto) VALUES($nuevo_cod, :cod_tipo_pago, :monto)";
                     $sentencia=$this->conex->prepare($registro);
                     $sentencia->bindParam(':cod_tipo_pago', $pagos['cod_tipo_pago']);
                     $sentencia->bindParam(':monto', $pagos['monto']);
@@ -74,7 +74,7 @@ class Pago extends Conexion{
     public function parcialp($pago){
         foreach ($pago as $pagos){
             if(!empty($pagos['monto']) && $pagos['monto']>0){
-                $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto, status) VALUES(:cod_pago, :cod_tipo_pago, :monto, 1)";
+                $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto) VALUES(:cod_pago, :cod_tipo_pago, :monto)";
                 $sentencia=$this->conex->prepare($registro);
                 $sentencia->bindParam(':cod_pago', $this->cod_pago);
                 $sentencia->bindParam(':cod_tipo_pago', $pagos['cod_tipo_pago']);

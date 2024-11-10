@@ -209,7 +209,7 @@ require_once "controlador/productos.php";
                                                         $('[data-toggle="tooltip"]').tooltip();
                                                     });
                                                 </script>
-                                                <input type="number" class="form-control" id="cant_presentacion" name="cant_presentacion" step="0.001" placeholder="Ingresa la cantidad">
+                                                <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ingresa la cantidad">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
