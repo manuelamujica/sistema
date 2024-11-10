@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Proveedores</h1>
+                    <h1>Proveedores Y Representantes </h1>
                 </div>
             </div>
         </div>
@@ -156,17 +156,20 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="email">Correo Electronico:</label>
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese  Correo Electronico" required>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese  Correo Electronico">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="direccion">Direccion:</label>
-                                        <input type="text" class="form-control" id="direccion" name="direccion" placeholder=" Ingrese Direccion" required>
+                                        <input type="text" class="form-control" id="direccion" name="direccion" placeholder=" Ingrese Direccion">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                 </div>
+
+
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -201,6 +204,7 @@ if (isset($registrar)): ?>
 <!--------------------------------------- 
 REGISTRO DEL REPRESENTANTE DEL PROVEEDOR
 --------------------------------------------->
+
 <div class="modal fade" id="registrarRepresentante" tabindex="-1" role="dialog" aria-labelledby="registrarRepresentanteLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -233,14 +237,14 @@ REGISTRO DEL REPRESENTANTE DEL PROVEEDOR
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="apellido">Apellido:</label>
-                                        <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Ingrese Apellido" required>
+                                        <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Ingrese Apellido" >
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="telefono">Teléfono:</label>
-                                        <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Ingrese Teléfono" required>
+                                        <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Ingrese Teléfono" >
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                 </div>
@@ -361,6 +365,8 @@ MOSTRAR MODAL DEL  REPRESENTANTE DEL PROVEEDOR
 <!--------------------------------------- 
 EDITAR REPRESENTANTE DEL PROVEEDOR
 --------------------------------------------->
+
+
 <div class="modal fade" id="modalProveditr" tabindex="-1" role="dialog" aria-labelledby="provModaledit" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -373,6 +379,8 @@ EDITAR REPRESENTANTE DEL PROVEEDOR
             <div class="modal-body">
                 <form action="index.php?pagina=representantes" id="formrepresentantesedit" method="post">
                     <input type="hidden" name="cod_representante" id="cod_oculto" readonly>
+
+
                     <div class="card card-default">
                         <div class="card-header" style="background: #E89005; color: #ffffff">
                             <h3 class="card-title">Información del representante</h3>
@@ -403,21 +411,21 @@ EDITAR REPRESENTANTE DEL PROVEEDOR
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="apellido">Apellido:</label>
-                                        <input type="text" class="form-control" id="apellido3" name="apellido" required>
+                                        <input type="text" class="form-control" id="apellido3" name="apellido" >
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="telefono">Teléfono:</label>
-                                        <input type="text" class="form-control" id="reptel" name="reptel" required>
+                                        <input type="text" class="form-control" id="reptel" name="reptel" >
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="status">Estatus</label>
-                                        <select name="status" id="status1" class="form-control" required>
+                                        <select name="status" id="status1" class="form-control" >
                                             <option value="1">Activo</option>
                                             <option value="0">Inactivo</option>
                                         </select>
@@ -436,6 +444,7 @@ EDITAR REPRESENTANTE DEL PROVEEDOR
     </div>
 </div>
 
+
 <?php if (isset($editar)): ?>
     <script>
         Swal.fire({
@@ -453,7 +462,7 @@ EDITAR REPRESENTANTE DEL PROVEEDOR
 
 
 <!--------------------------------------- 
-ELIMINAR  REPRESENTANTE DEL PROVEEDOR
+ELIMINAR  REPRESENTANTE DEL PROVEEDOR acomodar 
 --------------------------------------------->
 <div class="modal fade" id="Modalel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -562,6 +571,7 @@ ELIMINAR  REPRESENTANTE DEL PROVEEDOR
 <!--------------------------------------- 
 EDITAR  PROVEEDOR
 --------------------------------------------->
+
 <div class="modal fade" id="modalProvedit" tabindex="-1" role="dialog" aria-labelledby="provModaledit" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -574,6 +584,8 @@ EDITAR  PROVEEDOR
             <div class="modal-body">
                 <form id="formproveedoresedit" method="post">
                     <input type="hidden" name="cod_prov" id="cod_oculto" value="<?php echo $datos['cod_prov']; ?>" readonly>
+
+
                     <div class="card card-default">
                         <div class="card-header" style="background: #E89005; color: #ffffff">
                             <h3 class="card-title">Información del proveedor</h3>
@@ -604,7 +616,7 @@ EDITAR  PROVEEDOR
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="email">Correo Electrónico:</label>
-                                        <input type="email" class="form-control" id="email1" name="email" required>
+                                        <input type="email" class="form-control" id="email1" name="email" >
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                 </div>
@@ -624,14 +636,7 @@ EDITAR  PROVEEDOR
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="telefono">Teléfono:</label>
-                                        <input type="text" class="form-control" id="telefono3" name="telefono">
-                                        <input type="hidden" name="cod_tlf" id="cod_tlf">
-                                        <div class="invalid-feedback" style="display: none;"></div>
-                                    </div>
-                                </div>
+                              
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -660,7 +665,7 @@ EDITAR  PROVEEDOR
 <?php endif; ?>
 
 <!--------------------------------------- 
-ELIMINAR PROVEEDOR
+ELIMINAR PROVEEDOR acomodar 
 --------------------------------------------->
 <div class="modal fade" id="Modale" tabindex="-1" role="dialog" aria-labelledby="exampaleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

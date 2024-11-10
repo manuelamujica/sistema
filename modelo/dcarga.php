@@ -91,55 +91,22 @@
         return $this->getproductod();
     }
 
-
-        private function mostrartodo(){
-            //OBTENGO DATOS DE LA TABLA CARGA
-            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.lote, dp.fecha_vencimiento, dp.stock, dc.cod_det_carga, dc.cantidad
-            FROM detalle_carga dc
-            JOIN carga c ON dc.cod_carga = c.cod_carga
-            JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
-            JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
-            JOIN productos p ON pre.cod_producto = p.cod_producto";
-
-            $strExec = $this->conex->prepare($sql);
-            $resul = $strExec->execute();
-            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-            if($resul){
-                return $result;;
-            }else{
-                return $r = 0;
-            }
-        }
-
-        public function gettodo(){
-            return $this->mostrartodo();
-        }
-
         private function mostrartodoo($valor) {
             // Construir la consulta SQL
             $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, 
-                           pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
-                           pre.cantidad_presentacion, p.cod_producto, p.nombre, 
-                           dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
+                    pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
+                    pre.cantidad_presentacion, p.cod_producto, p.nombre, 
+                    dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
                     FROM detalle_carga dc
                     JOIN carga c ON dc.cod_carga = c.cod_carga
                     JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
                     JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
-                    JOIN productos p ON pre.cod_producto = p.cod_producto";
-        
-            // Si se proporciona un código de carga, agregar una cláusula WHERE
-            if ($valor !== null) {
-                $sql .= " WHERE c.cod_carga = :cod_carga"; // Filtrar por cod_carga
-            }
+                    JOIN productos p ON pre.cod_producto = p.cod_producto
+                    WHERE c.cod_carga = :cod_carga";
         
             $strExec = $this->conex->prepare($sql);
-        
-            // Si se proporciona un código de carga, enlazar el parámetro
-            if ($valor !== null) {
-                $strExec->bindParam(':cod_carga', $cod_carga, PDO::PARAM_STR);
-            }
-        
+            $strExec->bindParam(':cod_carga', $valor, PDO::PARAM_STR);
+    
             $resul = $strExec->execute();
             $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
         
@@ -150,8 +117,8 @@
             }
         }
         
-        public function gettodoo($valor) {
-            return $this->mostrartodo($valor);
+        public function getmostrartodo($valor) {
+            return $this->mostrartodoo($valor);
         }
 
 
