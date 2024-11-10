@@ -54,7 +54,7 @@
                                                         <button name="telef" class="btn btn-outline-primary telef" title="telef" data-toggle="modal" data-target="#myModalt"
                                                             data-cod1="<?php echo $datos['cod_prov']; ?>" data-rif="<?php echo $datos['rif']; ?>">
                                                             <i class="fa fa-phone"></i>
-                                                            <?php echo $datos["telefono"]; ?>
+                                                            <?php echo $datos["telefonos"]; ?>
                                                         </button>
                                                     </td>
                                                     <td>
@@ -86,13 +86,11 @@
                                                     <td>
                                                         <button name="editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modalProvedit" title="editar"
                                                             data-cod="<?php echo $datos["cod_prov"]; ?>"
-                                                            data-cod_tlf="<?php echo $datos["cod_tlf"]; ?>"
                                                             data-rif="<?php echo $datos['rif']; ?>"
                                                             data-razon="<?php echo $datos["razon_social"]; ?>"
                                                             data-email="<?php echo $datos['email']; ?>"
                                                             data-dire="<?php echo $datos['direccion']; ?>"
-                                                            data-status="<?php echo $datos['status']; ?>"
-                                                            data-telefono="<?php echo $datos['telefono']; ?>">
+                                                            data-status="<?php echo $datos['status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
                                                     <!-- BOTON ELIMINAR PROVEEDORES -->
@@ -636,7 +634,6 @@ EDITAR  PROVEEDOR
                                         </select>
                                     </div>
                                 </div>
-                              
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

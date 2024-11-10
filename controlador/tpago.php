@@ -32,13 +32,13 @@ if(isset($_POST['buscar'])){
     }
 }else if(isset($_POST['editar'])){
     if(!empty($_POST['tpago'])){
-        if($_POST['tpago'] !== $_POST['origin']){
-            if($obj->buscar($_POST['tpago'])){
-                echo "<script>
+        if($_POST['tpago'] !== $_POST['origin'] && $obj->buscar($_POST['tpago'])){
+            echo "<script>
                     alert('el tipo de pago ya existe');
                     window.location = 'tpago'
                 </script>";
-            }else {
+        }else{
+            
                 $obj->setmetodo($_POST['tpago']);
                 $obj->setstatus($_POST['status']);
                 $result=$obj->editar($_POST['codigo']);
@@ -57,7 +57,7 @@ if(isset($_POST['buscar'])){
                 }
             }
         }
-    }
+    
     
 
 }else if(isset($_POST['borrar'])){

@@ -164,15 +164,14 @@ private function eliminar($valor){
     if($resul){
         $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
         if ($resultado['n_ventas']>0){
-            $logico="UPDATE clientes SET status=2 WHERE cod_cliente=$valor";
-            $strExec=$this->conex->prepare($logico);
-            $strExec->execute();
+            $r='venta';
         }else{
             $fisico="DELETE FROM clientes WHERE cod_cliente=$valor";
             $strExec=$this->conex->prepare($fisico);
             $strExec->execute();
+            $r='success';
         }
-        $r='success';
+        
     }else {
         $r='error_delete';
     }

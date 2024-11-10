@@ -52,19 +52,23 @@
                                         <?php endif;?>
                                     </td>
                                     <td>
-                                    <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
-                                    data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
-                                    data-medio="<?php echo $dato["medio_pago"]; ?>" 
-                                    data-divisa="<?php echo $dato["abreviatura"]; ?>" 
-                                    data-nombre="<?php echo $dato["nombre"]; ?>"
-                                    data-status="<?php echo $dato["status_pago"]; ?>" >
-                                    <i class="fas fa-pencil-alt"></i>
-                                    </button>
-                                    <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
-                                    data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
-                                    data-medio="<?php echo $dato["medio_pago"]; ?>" >
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
+                                    <?php if($dato['cod_tipo_pago']!=1): ?>
+                                        <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
+                                        data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
+                                        data-medio="<?php echo $dato["medio_pago"]; ?>" 
+                                        data-divisa="<?php echo $dato["abreviatura"]; ?>" 
+                                        data-nombre="<?php echo $dato["nombre"]; ?>"
+                                        data-status="<?php echo $dato["status_pago"]; ?>" >
+                                        <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
+                                        data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
+                                        data-medio="<?php echo $dato["medio_pago"]; ?>" >
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    <?php else: ?>
+
+                                    <?php endif; ?>
                                     </td>
                                 </tr>
                                 <?php endif; ?>
