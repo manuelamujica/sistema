@@ -64,7 +64,7 @@ $('#lista-productos').css({
     
 });
 
-    // Aquí tu código de creación de filas y búsqueda
+    // Creación de filas y búsqueda
     $(document).on('input', '[id^="nombreProducto"]', function() {
         var query = $(this).val(); 
         var index = $(this).attr('id').replace('nombreProducto', ''); // Obtener el índice de la fila actual
@@ -77,7 +77,7 @@ $('#lista-productos').css({
                 data: { buscar: query },
                 dataType: 'json',
                 success: function(data) {
-                    // console.log("Datos recibidos:", data); Log de los datos recibidos
+                    console.log("Datos recibidos:", data); //Log de los datos recibidos
                     listaProductos.empty(); // Limpiar resultados anteriores
                     listaProductos.show(); // Mostrar la lista de productos
 

@@ -189,17 +189,14 @@ public function getedita() {
   private  function consultar()
   {
     $registro = "SELECT 
-        p.cod_prov, 
         p.*, 
         pr.cod_representante,  
         pr.nombre, 
         pr.cedula, 
         pr.apellido, 
         pr.telefono AS rep_tel, 
-        p.status, 
         pr.status AS statusr,
-        t.telefono,
-        t.cod_tlf  -- Agregar cod_tlf del teléfono
+        GROUP_CONCAT(t.telefono SEPARATOR '/ ') AS telefonos
     FROM 
         proveedores p  
     LEFT JOIN 
@@ -207,7 +204,7 @@ public function getedita() {
     LEFT JOIN 
         tlf_proveedores t ON p.cod_prov = t.cod_prov  
     ORDER BY 
-        p.cod_prov ASC";
+        p.cod_prov, pr.cod_representante;";
 
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();

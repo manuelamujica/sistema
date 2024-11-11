@@ -301,8 +301,8 @@ $(document).ready(function() {
 
         $('#direccion').on('blur', function() {
             var direccion = $(this).val();
-            if (direccion.length < 6 || direccion.length > 30) {
-                showError('#direccion', 'La dirección debe tener maximo y 40 caracteres.');
+            if (direccion.length < 6 || direccion.length > 100) {
+                showError('#direccion', 'La dirección debe tener maximo y 100 caracteres.');
             } else {
                 hideError('#direccion');
             }

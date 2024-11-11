@@ -47,7 +47,7 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                        foreach ($datos as $dato) {
+                                        foreach ($carga as $dato) {
                                         ?>
                                             <?php if ($dato['status'] != 2): ?>
 

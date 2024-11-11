@@ -164,6 +164,6 @@ else if (isset($_POST['editar'])) {
 $productos = $objcargad->getP();
 $detalles = $objcargad->getmos();
 $carga = $objcarga->getmosc();
-$datos = $objcargad->gettodo();
+//$datos = $objcargad->gettodoo();
 $_GET['ruta'] = 'carga';
 require_once 'plantilla.php';

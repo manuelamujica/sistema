@@ -117,7 +117,7 @@
             }
         }
         
-        public function getmostrartodo($valor) {
+        public function gettodoo($valor) {
             return $this->mostrartodoo($valor);
         }
 

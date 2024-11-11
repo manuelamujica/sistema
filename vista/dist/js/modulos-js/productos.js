@@ -389,7 +389,7 @@ $(document).ready(function() {
                 // Recorrer los datos devueltos y llenar la tabla
                 $.each(data, function(index, detalle) {
                     let lote = detalle.lote || 'No disponible';
-                    let fechaVencimiento = detalle.fecha_vencimiento || 'No disponible'; //No esta funcionando
+                    let fechaVencimiento = detalle.fecha_vencimiento; //No esta funcionando  || 'No disponible'
 
                         $('#detalleBody').append(
                             '<tr>' +

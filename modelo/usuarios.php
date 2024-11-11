@@ -195,13 +195,18 @@ ELIMINAR USUARIO
 public function eliminar($valor) {
 
     // el usuario a eliminar es administrador?
-    $sql = "SELECT cod_tipo_usuario FROM usuarios WHERE cod_usuario = :valor";
+    $sql = "SELECT cod_tipo_usuario, status FROM usuarios WHERE cod_usuario = :valor";
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
     $strExec->execute();
     $usuario = $strExec->fetch(PDO::FETCH_ASSOC);
 
     if ($usuario) {
+        // Si el usuario tiene status activo, mostrar error
+        if($usuario['status'] == 1){
+            return 'error_status';
+        }
+        
         // Si el usuario es administrador, verificar si es el último
         if ($usuario['cod_tipo_usuario'] == 1) {
             $sql = "SELECT COUNT(*) as total FROM usuarios WHERE cod_tipo_usuario = 1";
@@ -213,6 +218,7 @@ public function eliminar($valor) {
                 return 'error_ultimo';
             }
         }
+
 
         $sqlDelete = "DELETE FROM usuarios WHERE cod_usuario = :valor";
         $strExecDelete = $this->conex->prepare($sqlDelete);

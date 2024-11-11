@@ -627,7 +627,7 @@ EDITAR  PROVEEDOR
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="status">Estatus</label>
+                                        <label for="status">Status</label>
                                         <select name="status" id="status" class="form-control">
                                             <option value="1">Activo</option>
                                             <option value="0">Inactivo</option>

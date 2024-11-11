@@ -80,7 +80,8 @@ REGISTRAR TIPOS DE USUARIO
         }
     }
 
-    public function consultarUsuario(){
+    //Para usuario
+    private function consultarUsuario(){
         $registro="SELECT * FROM tipo_usuario WHERE status=1";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
@@ -90,6 +91,11 @@ REGISTRAR TIPOS DE USUARIO
         }else{
             return $res=0;
         }
+    }
+
+
+    public function getconsultarUsuario(){
+        return $this->consultarUsuario();
     }
 
     public function consultarLogin($cod){
@@ -169,7 +175,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     private function eliminar($valor){
-        $registro = "SELECT COUNT(*) AS n_usuario FROM tpu_permisos WHERE cod_tipo_usuario = $valor";
+        $registro = "SELECT COUNT(*) AS n_usuario FROM usuarios WHERE cod_tipo_usuario = $valor";
         $strExec = $this->conex->prepare($registro);
         $strExec->execute();
         

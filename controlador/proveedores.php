@@ -33,8 +33,8 @@ if (isset($_POST['buscar'])) {
     }
 
     // Validación del campo dirección (opcional)
-    if (!empty($_POST["direccion"]) && (strlen($_POST["direccion"]) < 6 || strlen($_POST["direccion"]) > 40)) {
-        $errores[] = "La dirección debe contener maximo  y 40 caracteres.";
+    if (!empty($_POST["direccion"]) && (strlen($_POST["direccion"]) < 6 || strlen($_POST["direccion"]) > 100)) {
+        $errores[] = "La dirección debe contener maximo  y 100 caracteres.";
     }
 
     $direccion = $_POST["direccion"]; 
@@ -77,7 +77,7 @@ if (isset($_POST['buscar'])) {
 
         // Verifica si el RIF es diferente del original y si ya existe en la base de datos
         if ($_POST['rif'] !== $_POST['origin'] && $objProveedores->getbuscar($_POST['rif'])) {
-           
+
         } else {
             // Establecer los valores para la edición
             $objProveedores->setRif($_POST["rif"]);
