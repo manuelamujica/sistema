@@ -63,11 +63,17 @@ require_once "controlador/productos.php";
                                             </td>
                                             <td>
                                             <?php 
-                                            $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"]; 
-                                            echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea
+                                            if($producto["excento"] == 1){
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }  else{
+                                                $costoiva = $producto["costo"] * 1.16;
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $costoiva;
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }
                                             ?>
                                         </td>
-                                            <td>Stock total</td>
+                                            <td><?php echo $producto["stock_total"] ?></td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
@@ -159,10 +165,10 @@ require_once "controlador/productos.php";
                                                 </div>
 
                                             <div class="col-6">
-                                                <label for="excento">Impuesto IVA</label>
+                                                <label for="exento">Impuesto IVA</label>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
-                                                        <option value="1">Excento</option>
+                                                        <option value="1">Exento</option>
                                                         <option value="2">Gravable</option>
                                                     </select>
                                             </div>
@@ -409,10 +415,10 @@ require_once "controlador/productos.php";
                                                 </select>
                                         </div>
                                         <div class="col-6">
-                                            <label for="excento">¿Tiene IVA?</label>
+                                            <label for="exento">¿Tiene IVA?</label>
                                                 <select class="form-control" id="ivaE" name="iva" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
-                                                    <option value="1">Excento</option>
+                                                    <option value="1">Exento</option>
                                                     <option value="2">Gravable</option>
                                                 </select>
                                         </div>
@@ -547,9 +553,7 @@ require_once "controlador/productos.php";
                                                             <th>Código</th>
                                                             <th>Lote</th>
                                                             <th>Fecha de vencimiento</th>
-                                                            <th>Status</th>
                                                             <th>Stock</th>
-                                                            <th>Acciones</th>
                                                         </tr>         
                                                     </thead>
                                                     <tbody id="detalleBody">
@@ -566,7 +570,7 @@ require_once "controlador/productos.php";
 
 <!-- ====================================
     MODAL CONFIRMAR ELIMINAR DETALLE 
-========================================= -->
+========================================= 
                 <div class="modal fade" id="eliminarDetalleModal" tabindex="-1" aria-labelledby="eliminarDetalleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -590,7 +594,7 @@ require_once "controlador/productos.php";
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>-->
 
             </div>
         </div>      

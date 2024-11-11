@@ -48,7 +48,7 @@
                                     <td><?php echo $divisa['nombre']?></td>
                                     <td><?php echo $divisa['abreviatura'] ?></td>
                                     <td><?php echo $divisa['tasa']."  Bs" ?></td>
-                                    <td><?php echo $divisa['fecha'] ?></td>
+                                    <td><?php echo $divisa['divisa_status'] ?></td>
                                     <td>
                                         <?php if ($divisa['divisa_status']==1):?>
                                             <span class="badge bg-success">Activo</span>

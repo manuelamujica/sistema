@@ -141,7 +141,11 @@ class  Representantes extends Conexion
 
     // Ejecuta la consulta  
     $resul = $strExec->execute();
-    return $resul ? 1 : 0;
+    if ($resul == 1) {
+      return 1; // Éxito  
+    } else {
+      return 0; // Fallo  
+    }
   }
 
 
@@ -152,66 +156,25 @@ class  Representantes extends Conexion
 
 
   //actualizar//
-
-
-  //eliminar 
   private function eliminar($valor)
   {
-    // Verificar si el representante existe y si está asociado a un proveedor
-    $sql = "SELECT * FROM prov_representantes WHERE cod_representante = :cod_representante";
-    $strExec = $this->conex->prepare($sql);
-    $strExec->bindParam(':cod_representante', $valor);
-
-    if ($strExec->execute()) {
-      $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
-
-      // Si el representante existe
-      if ($resultado) {
-        // Verificar si está asociado a un proveedor
-        $codProv = $resultado['cod_prov'];
-        $sqlCheck = "SELECT COUNT(*) FROM proveedores WHERE cod_prov = :cod_prov";
-        $strExecCheck = $this->conex->prepare($sqlCheck);
-        $strExecCheck->bindParam(':cod_prov', $codProv);
-        $strExecCheck->execute();
-        $asociado = $strExecCheck->fetchColumn();
-
-        if ($asociado > 0) {
-
-          $updateStatus = "UPDATE prov_representantes SET status = 2 WHERE cod_representante = :cod_representante";
-          $strExecUpdate = $this->conex->prepare($updateStatus);
-          $strExecUpdate->bindParam(':cod_representante', $valor);
-
-          if ($strExecUpdate->execute()) {
-            return 'success_logical_delete';
-          } else {
-            return 'error_logical_delete';
-          }
-        } else {
-          // Eliminar de forma física si no está asociado a un proveedor
-          $eliminar = "DELETE FROM prov_representantes WHERE cod_representante = :cod_representante";
-          $strExecDelete = $this->conex->prepare($eliminar);
-          $strExecDelete->bindParam(':cod_representante', $valor);
-
-          if ($strExecDelete->execute()) {
-            return 'success_physical_delete';
-          } else {
-            return 'error_physical_delete';
-          }
-        }
+      // Eliminar de forma física sin buscar nada
+      $eliminar = "DELETE FROM prov_representantes WHERE cod_representante = :cod_representante";
+      $strExecDelete = $this->conex->prepare($eliminar);
+      $strExecDelete->bindParam(':cod_representante', $valor);
+  
+      if ($strExecDelete->execute()) {
+          return 'success_physical_delete';
       } else {
-        return 'representante_not_found';
+          return 'error_physical_delete';
       }
-    } else {
-      return 'error_search';
-    }
   }
-
+  
+  // Método para obtener el resultado de la eliminación
   public function geteliminar($valor)
   {
-    return $this->eliminar($valor);
+      return $this->eliminar($valor);
   }
-
-
 
   //inicio de consultar//
   private function consultar()

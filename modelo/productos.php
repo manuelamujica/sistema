@@ -9,7 +9,6 @@ class Productos extends Conexion{
     private $nombre;
     private $marca;
 
-
     #presentacion
     private $presentacion;
     private $cant_presentacion;
@@ -119,6 +118,34 @@ public function getRegistrar($unidad,$categoria){
 }
 
 /*==============================
+Consultar solo las UNIDADES activas
+================================*/
+public function consultarUnidad(){
+    $sql = "SELECT * FROM unidades_medida WHERE status=1";
+    $consulta = $this->conex->prepare($sql);
+    $resul = $consulta->execute();
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    if($resul){
+        return $datos;
+    }return $r = 0;
+}
+
+/*==============================
+Consultar solo las CATEGORIAS activas
+================================*/
+public function consultarCategoria(){
+    $registro = "SELECT * FROM categorias WHERE status=1";
+    $consulta = $this->conex->prepare($registro);
+    $resul = $consulta->execute();
+
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    if($resul){
+        return $datos;
+    }else{
+        return $r=0;
+    }
+}
+/*==============================
 REGISTRAR PRESENTACION A UN PRODUCTO EXISTENTE
 ================================*/
 
@@ -169,11 +196,13 @@ public function mostrar(){
     present.excento,
     u.tipo_medida,
     u.cod_unidad,
-    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat #Concatena
+    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat, #Concatena
+    COALESCE(ROUND(SUM(dp.stock), 2), 0) AS stock_total
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+    LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
     GROUP BY present.cod_presentacion;"; #Se agrupa por el código de presentacion para separar las distintas presentaciones q puede haber
     $consulta = $this->conex->prepare($sql);
     $resul = $consulta->execute();
@@ -194,7 +223,6 @@ public function getmostrar(){
 /*======================================
 EDITAR PRODUCTO y categoria, unidad y su presentación
 ========================================*/
-
 public  function editar($present,$product,$categoria,$unidad){
     
     $sql="UPDATE productos SET 
@@ -318,8 +346,7 @@ public function consultardetalleproducto($cod_presentacion){
     detp.lote,
     detp.cod_detallep,
     detp.fecha_vencimiento,
-    detp.stock,
-    detp.status
+    detp.stock
     FROM detalle_productos AS detp JOIN presentacion_producto AS present ON detp.cod_presentacion=:cod_presentacion
     GROUP BY detp.cod_detallep';
     $strExec = $this->conex->prepare($sql);
@@ -337,7 +364,7 @@ public function consultardetalleproducto($cod_presentacion){
 ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
 ========================================================================*/
 
-public function eliminardetalle($detallep) {
+/*public function eliminardetalle($detallep) {
     
     // Obtener el detalle específico que se desea eliminar
     $sql = 'SELECT
@@ -349,14 +376,14 @@ public function eliminardetalle($detallep) {
     $strExec->execute();
     $detalle = $strExec->fetch(PDO::FETCH_ASSOC);
 
-    // Verificar si el detalle existe
+     Verificar si el detalle existe
     if (!$detalle) {
         return ['status' => 'error', 'message' => 'Detalle no encontrado.'];
     }
 
     // Validar si el detalle tiene stock > 0 o status != 2 (inactivo)
     if ($detalle['stock'] > 0 || $detalle['status'] != 2) {
-        return ['status' => 'error', 'message' => 'No se puede eliminar el detalle porque debe estar inactivo y tener stock en 0.'];
+        return 'error_stock';
     }
 
     // Proceder a eliminar
@@ -370,11 +397,11 @@ public function eliminardetalle($detallep) {
     } else {
         return ['status' => 'error', 'message' => 'Error al eliminar el detalle.'];
     }
-}
+}*/
 
 /*=============================
 FILTRADO 
-===============================*/
+===============================
 public function getmostrarPorFechas($fechaInicio, $fechaFin) {
     $sql = "SELECT
         p.cod_producto,
@@ -406,5 +433,5 @@ public function getmostrarPorFechas($fechaInicio, $fechaFin) {
     $stmt->bindParam(':fechaFin', $fechaFin);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+}*/
 }

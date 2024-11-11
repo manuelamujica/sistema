@@ -80,6 +80,24 @@ REGISTRAR TIPOS DE USUARIO
         }
     }
 
+    //Para usuario
+    private function consultarUsuario(){
+        $registro="SELECT * FROM tipo_usuario WHERE status=1";
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
+    }
+
+
+    public function getconsultarUsuario(){
+        return $this->consultarUsuario();
+    }
+
     public function consultarLogin($cod){
         $registro="SELECT rol FROM tipo_usuario WHERE cod_tipo_usuario=:cod_tipo_usuario";
         $resul=$this->conex->prepare($registro);
@@ -157,7 +175,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     private function eliminar($valor){
-        $registro = "SELECT COUNT(*) AS n_usuario FROM tpu_permisos WHERE cod_tipo_usuario = $valor";
+        $registro = "SELECT COUNT(*) AS n_usuario FROM usuarios WHERE cod_tipo_usuario = $valor";
         $strExec = $this->conex->prepare($registro);
         $strExec->execute();
         

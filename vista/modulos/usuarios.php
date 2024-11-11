@@ -91,7 +91,7 @@ require_once "controlador/usuarios.php";
             <div class="modal-body">
                 <form id="formregistrarusuario" method="post">
                     <div class="form-group">
-                        <label for="nombre">Nombre y apellido</label>
+                        <label for="nombre">Nombre</label>
                         <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido" required>
                         <div class="invalid-feedback" style="display: none;"></div>
                     </div>

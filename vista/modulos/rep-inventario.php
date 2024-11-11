@@ -41,26 +41,10 @@ require_once 'controlador/reporte.php';
                                         <form action="index.php?pagina=productoexcel" method="post" target="_blank" class="d-inline">
                                             <button class="btn btn-success ml-2" name="excel" title="Generar excel" id="excel">Excel</button>
                                         </form>
-                                    </div>
-
-                                    <!-- Formulario de filtrado -->
-                                    <div class="row mb-2">
                                         <form action="index.php?pagina=productopdf" method="post" target="_blank" class="d-inline" id="form">
-                                            <!-- Campos ocultos para las fechas -->
-                                            <input type="hidden" name="fechaInicio" id="fechaInicio" value="<?php echo date('Y-m-d') ?>">
-                                            <input type="hidden" name="fechaFin" id="fechaFin" value="<?php echo date('Y-m-d') ?>">
-
-                                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
-                                                <span><i class="fa fa-calendar"></i> Rango de fecha</span>
-                                                <i class="fas fa-caret-down"></i>
-                                            </button>
-
                                             <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">PDF</button>
-                                            <button type="button" class="btn btn-secondary ml-2" id="reset-btn">Restablecer Rango</button>
                                         </form>
-
                                     </div>
-
                                     <table id="producto-table" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                         <thead>
                                             <tr>

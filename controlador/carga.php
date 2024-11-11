@@ -5,11 +5,16 @@ require_once "modelo/detallep.php"; //AQUI DEBERIA LLAMAR AL MODELO DE PRODUCTO
 
 $objcarga = new Carga();
 $objcargad = new Dcarga();
-$objprod = new Detallep();
+
 
 // Manejo de búsqueda de carga
 if (isset($_POST['buscar'])) {
     $resul = $objcargad->b_productos($_POST['buscar']);
+    header('Content-type: application/json');
+    echo json_encode($resul);
+    exit;
+}else if (isset($_POST['detalle'])) {
+    $resul = $objcargad->gettodoo($_POST['detalle']);
     header('Content-type: application/json');
     echo json_encode($resul);
     exit;
@@ -20,10 +25,10 @@ if (isset($_POST['buscar'])) {
         $cod_producto = $_POST['cod_presentacion'];
         $fecha = $_POST['fecha_vencimiento'];
         $lote = $_POST['lote'];
-        $objprod->setCodp($cod_producto);
-        $objprod->setlote($lote);
-        $objprod->setFecha($fecha);
-        $res = $objprod->getcrear();
+        $objcarga->setCodp($cod_producto);
+        $objcarga->setlote($lote);
+        $objcarga->setFechaV($fecha);
+        $res = $objcarga->getcrearPro();
 
         if ($res == 1) {
             $response['status'] = 'success';
@@ -33,13 +38,15 @@ if (isset($_POST['buscar'])) {
                 "icon" => "success"
             ];
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'No se pudo registrar el producto']);
+            $response['status'] = 'error';
+            $response['message'] = 'No se pudo registrar el producto';
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'El código del producto está vacío']);
+        $response['status'] = 'error';
+        $response['message'] = 'El código del producto está vacío';
     }
     // Enviar la respuesta como JSON
-    //header('Content-Type: application/json');
+    header('Content-Type: application/json');
     echo json_encode($response);
     exit();
 } else if (isset($_POST['verificarDetalle'])) {
@@ -57,7 +64,8 @@ if (isset($_POST['buscar'])) {
 }
 // Manejo de guardar carga
 else if (isset($_POST['guardar'])) {
-
+    // Inicializar el array de respuesta
+    //$response = [];
     // Verificar que la fecha y descripción no estén vacías
     if (!empty($_POST['fecha']) && !empty($_POST['descripcion'])) {
         if (preg_match("/^[a-zA-Z0-9\.,\s]+$/", $_POST['descripcion'])) {
@@ -99,7 +107,7 @@ else if (isset($_POST['guardar'])) {
                             $cargaExitosa = false;
                             $registrar = [
                                 "title" => "Error",
-                                "message" => "El producto manuela no tiene detalle",
+                                "message" => "El producto " . $codigo . " no tiene detalle",
                                 "icon" => "error"
                             ];
                         }
@@ -138,9 +146,6 @@ else if (isset($_POST['guardar'])) {
     }
 
 }
-
-
-
 // Manejo de edición de carga
 else if (isset($_POST['editar'])) {
     $cod_carga = $_POST['cod_carga'];
@@ -159,6 +164,6 @@ else if (isset($_POST['editar'])) {
 $productos = $objcargad->getP();
 $detalles = $objcargad->getmos();
 $carga = $objcarga->getmosc();
-$datos = $objcargad->gettodo();
+//$datos = $objcargad->gettodoo();
 $_GET['ruta'] = 'carga';
 require_once 'plantilla.php';

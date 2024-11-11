@@ -145,7 +145,6 @@ class Descarga extends Conexion{
         det.cod_presentacion,
         det.stock,
         det.lote,
-        det.status,
         u.tipo_medida,
         present.cod_unidad,                             
         pro.nombre AS producto_nombre, 
@@ -155,7 +154,7 @@ class Descarga extends Conexion{
         FROM detalle_productos AS det JOIN presentacion_producto AS present ON det.cod_presentacion = present.cod_presentacion      
         JOIN productos AS pro ON pro.cod_producto=present.cod_producto 
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
-        WHERE det.status = 1 AND pro.nombre LIKE ? GROUP BY det.cod_detallep LIMIT 5;";
+        WHERE pro.nombre LIKE ? GROUP BY det.cod_detallep LIMIT 7;";
 
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $nombrep. '%';
