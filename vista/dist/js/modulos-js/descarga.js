@@ -24,6 +24,7 @@ function crearfila(index) {
             </td>
             <td>
                 <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001">
+            <div class="invalid-feedback" style="display: none;"></div>
             </td>
             <td>
                 <button type="button" class="btn-sm btn-danger" onclick="eliminarFila(${index})">&times;</button>
@@ -77,7 +78,7 @@ $('#lista-productos').css({
                 data: { buscar: query },
                 dataType: 'json',
                 success: function(data) {
-                    console.log("Datos recibidos:", data); //Log de los datos recibidos
+                    //console.log("Datos recibidos:", data);
                     listaProductos.empty(); // Limpiar resultados anteriores
                     listaProductos.show(); // Mostrar la lista de productos
 
@@ -150,9 +151,17 @@ $('#lista-productos').css({
         $(selector).next('.invalid-feedback').css('display','none');
     }
 
-    //PENDIENTE FECHA
-    
-
+    // Fecha y hora
+    $('#fecha').on('change', function() {
+        const seleccionada = new Date($(this).val()); 
+        const actual = new Date(); 
+        if (seleccionada > actual) {
+            showError('#fecha', 'La fecha y hora no pueden ser futuras.');
+        } else {
+            hideError('#fecha'); 
+        }
+    });    
+    //Descripcion
     $('#descripcion').on('blur', function() {
         var descripcion = $(this).val();
         if (descripcion.trim() === '') {
@@ -163,6 +172,18 @@ $('#lista-productos').css({
             showError('#descripcion', 'Solo se permiten letras, números y caracteres: ! - . \' ,');
         } else {
             hideError('#descripcion');
+        }
+    });
+    //Cantidad y stock
+    $(document).on('input', '[id^="cantidad"]', function() {
+        const index = $(this).attr('id').replace('cantidad', ''); // Obtiene el índice de la fila actual
+        const cantidad = parseFloat($(this).val());
+        const stock = parseFloat($('#stock' + index).val());
+    
+        if (cantidad > stock) {
+            showError('#cantidad' + index, 'La cantidad no puede ser mayor al stock disponible.');
+        } else {
+            hideError('#cantidad' + index);
         }
     });
 

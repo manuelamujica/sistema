@@ -89,7 +89,7 @@ MODAL REGISTRAR CARGA CON EXITO
 ============================= -->
 
                 <div class="modal fade" id="modalregistrarCarga" tabindex="-1" aria-labelledby="modalregistrarCargaLabel">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
                                 <h5 class="modal-title" id="exampleModalLabel">Registrar Carga</h5>
@@ -276,13 +276,14 @@ MODAL REGISTRAR CARGA CON EXITO
                                 ?
                                 '<span class="badge badge-success">Activo</span>' :
                                 '<span class="badge badge-danger">Inactivo</span>' //NECESITO MEJORAR LA LOGIA Y EL FILTRADO DEL CONSULTAR
-
+                            var lote = detalle.lote || 'No disponible';
+                            var fecha = detalle.fecha_vencimiento || 'No disponible';
                             $('#detalleBody').append(
                                 '<tr>' +
                                 '<td>' + detalle.cod_det_carga + '</td>' +
                                 '<td>' + detalle.nombre + ' en ' + detalle.presentacion + '</td>' +
-                                '<td>' + detalle.lote + '</td>' +
-                                '<td>' + detalle.fecha_vencimiento + '</td>' +
+                                '<td>' + lote + '</td>' +
+                                '<td>' + fecha + '</td>' +
                                 '<td class="stock">' + detalle.stock + '</td>' +
                                 '</tr>'
                             );

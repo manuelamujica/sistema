@@ -45,47 +45,56 @@ require_once 'controlador/reporte.php';
                                             <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">PDF</button>
                                         </form>
                                     </div>
-                                    <table id="producto-table" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>Código</th>
-                                                <th>Nombre</th>
-                                                <th>Marca</th>
-                                                <th>Presentacion</th>
-                                                <th>Categoría</th>
-                                                <th>Costo</th>
-                                                <th>IVA</th>
-                                                <th>Precio de venta</th>
-                                                <th>Stock</th>
-                                                <th>Detalle</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <?php
-                                                foreach ($productos as $producto) {
-                                                ?>
-                                                    <td> <?php echo $producto["cod_producto"] ?></td>
-                                                    <td> <?php echo $producto["nombre"] ?></td>
-                                                    <td> <?php echo $producto["marca"] ?></td>
-                                                    <td> <?php echo $producto["presentacion"] ?></td>
-                                                    <td> <?php echo $producto["cat_nombre"] ?></td>
-                                                    <td> <?php echo $producto["costo"] ?></td>
-                                                    <td> <?php echo $producto["excento"] ?></td>
-                                                    <td><?php $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
-                                                        echo $precioVenta ?>
-                                                    </td>
-                                                    <td>Stock total</td>
-                                                    <!-- Detalle de producto -->
-                                                    <td class="text-center">
-                                                        <button class="btn btn-primary btn-sm" style="position: center;">
-                                                            <i class="fas fa-plus"></i>
-                                                        </button>
-                                                    </td>
-                                            </tr>
-                                        <?php } ?>
-                                        </tbody>
-                                    </table>
+                                    <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Marca</th>
+                                        <th>Presentación</th>
+                                        <th>Categoría</th>
+                                        <th>Costo</th>
+                                        <th>IVA</th>
+                                        <th>Precio de venta</th>
+                                        <th>Stock total</th>
+                                    </tr>         
+                                </thead>
+                                <tbody>
+                                <!-- Tabla con los datos que se muestren dinamicamente -->
+                                    <?php
+                                    foreach ($productos as $producto){
+                                        ?>
+                                        <tr>
+                                            <td> <?php echo $producto["cod_presentacion"] ?></td>
+                                            <td> <?php echo $producto["nombre"] ?></td>
+                                            <td> <?php echo $producto["marca"] ?></td>
+                                            <td> <?php echo $producto["presentacion_concat"] ?></td>
+                                            <td> <?php echo $producto["cat_nombre"] ?></td>
+                                            <td> <?php echo $producto["costo"] ?></td>
+                                            <td> <?php if($producto["excento"] == 1){
+                                                echo 'E';
+                                            }  else{
+                                                echo 'G';
+                                            }
+                                            ?>
+                                            </td>
+                                            <td>
+                                            <?php 
+                                            if($producto["excento"] == 1){
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }  else{
+                                                $costoiva = $producto["costo"] * 1.16;
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $costoiva;
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }
+                                            ?>
+                                            </td>
+                                            <td><?php echo $producto["stock_total"] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                                 </div>
 
                                 

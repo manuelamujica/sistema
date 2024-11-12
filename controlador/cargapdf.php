@@ -16,19 +16,9 @@ $fechaFin = $_POST['fechaFin1'] ?? null;
 if (!empty($fechaInicio) && !empty($fechaFin)) {
     $datos = $obj->getmostrarPorFechas($fechaInicio, $fechaFin);
 } else {
-    $datos = $obj->gettodo(); // Obtener todos los datos si no hay filtros
+    $datos = $obj->getodoo(); // Obtener todos los datos si no hay filtros
 }
-$general = new General();
 
-$logo = $general->mostrar();
-if (!empty($logo)) {
-    $_SESSION["logo"] = $logo[0]["logo"];
-    $_SESSION["n_empresa"] = $logo[0]["nombre"];
-    $_SESSION["rif"] = $logo[0]["rif"];
-    $_SESSION["telefono"] = $logo[0]["telefono"];
-    $_SESSION["email"] = $logo[0]["email"];
-    $_SESSION["direccion"] = $logo[0]["direccion"];
-}
 if (isset($datos)) {
     $html = '
     <style>

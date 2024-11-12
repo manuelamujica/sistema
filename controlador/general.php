@@ -78,6 +78,31 @@ if(isset($_POST['buscar'])){
         
     }
 
+}else if(isset($_POST['editar'])){
+    
+    $rif = $_POST['rif'];
+    $nombre = $_POST['nombre'];
+    $direccion = $_POST['direccion'];
+    $telefono = $_POST['telefono'];
+    $email = $_POST['email'];
+    $descripcion = $_POST['descripcion'];
+    $logo = $_POST['logo'];
+    //Setter
+        $objGeneral->setRif($rif);
+        $objGeneral->setNom($nombre);
+        $objGeneral->setDir($direccion);
+        $objGeneral->settlf($telefono);
+        $objGeneral->setemail($email);
+        $objGeneral->setDescri($descripcion);
+        $objGeneral->setlogo($logo);
+
+    $res = $objGeneral->geteditar();
+    if($res == 1){
+        echo "<script>alert('Información actualizada con éxito'); window.location = 'general'</script>";
+    }else{
+        echo "<script>alert('Error al actualizar'); window.location = 'general'</script>";
+    }
+
 }
 
 $datos=$objGeneral->mostrar();
@@ -91,6 +116,8 @@ if(!empty($datos)){
         $_SESSION["direccion"] = $datos[0]["direccion"];
     }
 }
+
+
 $_GET['ruta']='general';
 require_once 'plantilla.php';
 /*if(!empty($datos)){

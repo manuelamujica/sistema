@@ -174,37 +174,40 @@ REGISTRAR TIPOS DE USUARIO
         return $this->editar();
     }
 
-    private function eliminar($valor){
-        $registro = "SELECT COUNT(*) AS n_usuario FROM usuarios WHERE cod_tipo_usuario = $valor";
-        $strExec = $this->conex->prepare($registro);
+    private function eliminar($valor) {
+        // Verificar el status del rol
+        $consultaStatus = "SELECT status FROM tipo_usuario WHERE cod_tipo_usuario = :valor";
+        $strExec = $this->conex->prepare($consultaStatus);
+        $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
         $strExec->execute();
         
-            $resul = $strExec->fetch(PDO::FETCH_ASSOC);
-            if($resul){
-            if($resul['n_usuario'] == 0){
-                $f = "DELETE FROM tipo_usuario WHERE cod_tipo_usuario = $valor";
-                $strExec = $this->conex->prepare($f);
-                $result = $strExec->execute();
-
-                if($result){
-                    $r='success';
-                    return $r;
-                }else{
-                    $r='error_delete';
-                    return $r;
-                }
-            }else{
-                $r='error_associated';
-                return $r;
-            }
-            
-            
-        } else{
-            $r='error_query';
-            return $r;
+        $status = $strExec->fetch(PDO::FETCH_ASSOC);
+    
+        if ($status && $status['status'] == 1) {
+            return 'error_status'; // El rol tiene status activo, no se puede eliminar
         }
+    
+        // Verificar si hay usuarios asociados al rol
+        $consultaUsuarios = "SELECT COUNT(*) AS n_usuario FROM usuarios WHERE cod_tipo_usuario = :valor";
+        $strExec = $this->conex->prepare($consultaUsuarios);
+        $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
+        $strExec->execute();
         
+        $usuarios = $strExec->fetch(PDO::FETCH_ASSOC);
+    
+        if ($usuarios && $usuarios['n_usuario'] > 0) {
+            return 'error_associated'; // Hay usuarios asociados al rol, no se puede eliminar
+        }
+    
+        // Eliminar el rol
+        $deleteQuery = "DELETE FROM tipo_usuario WHERE cod_tipo_usuario = :valor";
+        $strExec = $this->conex->prepare($deleteQuery);
+        $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
+        $result = $strExec->execute();
+    
+        return $result ? 'success' : 'error_delete';
     }
+    
 
     public function geteliminar($valor){
         return $this->eliminar($valor);

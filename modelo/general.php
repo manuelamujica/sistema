@@ -53,7 +53,12 @@ class General extends Conexion{
     public function setDescri($descripcion){
         $this->descripcion = $descripcion;
     }
-
+    public function getlogo(){
+        return $this->logo;
+    }
+    public function setlogo($logo){
+        $this->logo = $logo;
+    }
 /*==============================
 REGISTRAR INFO DE EMPRESA
 ================================*/
@@ -116,11 +121,38 @@ MOSTRAR INFO DE EMPRESA
     }
 
     public function subirlogo($valor){
-        $nombre_logo = $_FILES['logo']['name'];
-        $tmp_logo = $_FILES['logo']['tmp_name'];
+        $nombre_logo = $valor['name'];
+        $tmp_logo = $valor['tmp_name'];
         $ruta_logo = "vista/dist/img/".$nombre_logo;
         move_uploaded_file($tmp_logo, $ruta_logo);
         $this->logo = $ruta_logo; // Guardar la ruta del archivo
         //el archivo de imagen se guardará en la carpeta logos con move_uploaded_file
     }
+
+/*==============================
+EDITAR INFO DE EMPRESA
+================================*/
+    private function editar(){
+        $registro = "UPDATE empresa SET nombre = :nombre, direccion = :direccion, descripcion = :descripcion logo=:logo WHERE rif = :rif";
+
+        $strExec = $this->conex->prepare($registro);
+        $strExec->bindParam(':rif',$this->rif);
+        $strExec->bindParam(':nombre',$this->nombre);
+        $strExec->bindParam(':direccion',$this->direccion);
+        $strExec->bindParam(':descripcion',$this->descripcion);
+        $strExec->bindParam(":logo", $this->logo);
+
+        $resul = $strExec->execute();
+        if($resul == 1){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+        return $r;
+    }
+
+    public function geteditar(){
+        return $this->editar();
+    }
 }
+
