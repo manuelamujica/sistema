@@ -2,17 +2,13 @@
 session_start();
 require_once "./vendor/autoload.php";
 require_once 'modelo/productos.php';
-//require_once 'modelo/categorias.php';
-//require_once 'modelo/unidad.php';
-//require_once "modelo/general.php";
-
 
 use Spipu\Html2Pdf\Html2Pdf;
 
 $html2pdf = new Html2Pdf('P', 'LETTER', 'es');
 $objProducto = new Productos();
-
-$datos = $objProducto->getmostrar(); // Obtener todos los datos si no hay filtros
+$datos = $objProducto->getmostrar();
+$fechaActual = date("d/m/Y");
 
 if (isset($datos)) {
     $html = '
@@ -56,7 +52,7 @@ if (isset($datos)) {
     <br>
     <hr style="border=0.5px;">
     <br>
-    <h1 style="text-align:center;">Reporte de Productos</h1>
+    <h1 style="text-align:center;">Listado de Productos</h1>
     <table id="t">
             <thead>
                 <tr>
@@ -108,7 +104,8 @@ if (isset($datos)) {
     <page_footer>
                 <div style="text-align: center;">
                     <p>' . $_SESSION["telefono"] . '  |  ' . $_SESSION["direccion"] . '  |  ' . $_SESSION["email"] . '</p>
-                </div>
+                    <p><i>  Fecha de generación:'.$fechaActual.'</i> </p>
+                    </div>
     </page_footer>
 </page>';
     $html2pdf->writeHTML($html);

@@ -30,12 +30,12 @@ class Descarga extends Conexion{
     public function setdescripcion($descripcion){
         $this->descripcion = $descripcion;
     }
-    public function getstatus(){
+    /*public function getstatus(){
         return $this->status;
     }
     public function setstatus($status){
         $this->status = $status;
-    }
+    }*/
     public function getcantidad(){
         return $this->cantidad;
     }
@@ -44,100 +44,100 @@ class Descarga extends Conexion{
     }
 
     public function registrar($cod_detalle) {
-        // Insertar en la tabla `descarga`
+        // 1. Insertar en la tabla `descarga`
         $sql = 'INSERT INTO descarga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)';
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(':fecha', $this->fecha);
         $strExec->bindParam(':descripcion', $this->descripcion);
         $resul = $strExec->execute();
-
-                if ($resul) {
-                    // Obtener el último ID insertado en `descarga`
-                    $ultimocodigo = $this->conex->lastInsertId();
-            
-                    // Iterar sobre los detalles
-                    foreach ($cod_detalle as $det) {
-                        if (!empty($det['cantidad']) && !empty($det['cod_detallep'])) {
-            
-                    // Insertar en `detalle_descarga`
-                    $sql2 = "INSERT INTO detalle_descarga(cod_detallep, cod_descarga, cantidad) VALUES(:cod_detallep, :cod_descarga, :cantidad)";
-                    $sentencia = $this->conex->prepare($sql2);
-                    $sentencia->bindParam(':cod_detallep', $det['cod_detallep']);
-                    $sentencia->bindParam(':cod_descarga', $ultimocodigo);
-                    $sentencia->bindParam(':cantidad', $det['cantidad']);
-                    $detalle = $sentencia->execute();
-
-                    if (!$detalle) {
-                        // Si falla la inserción en `detalle_descarga`, devolver error
-                        return 0;
-                    }
     
-                    // Actualizar el stock en `detalle_productos`
-                    $sql3 = "UPDATE detalle_productos SET stock = stock - :cantidad WHERE cod_detallep = :cod_detallep";
-                    $updateStock = $this->conex->prepare($sql3);
-                    $updateStock->bindParam(':cantidad', $det['cantidad']);
-                    $updateStock->bindParam(':cod_detallep', $det['cod_detallep']);
-                    $stockactualizado = $updateStock->execute();
-                    if (!$stockactualizado) {
-                        // Si falla la actualización de stock, devolver error
-                        return 0;
-                    }
+        // Si la descarga no se registró correctamente, se retorna 0
+        if (!$resul) {
+            return 0;
+        }
+    
+        // Obtener el último codigo de descarga insertado
+        $ultimocodigo = $this->conex->lastInsertId();
+    
+        // 2. Insertar los detalles de la descarga
+        foreach ($cod_detalle as $det) {
+            if (!empty($det['cantidad']) && !empty($det['cod_detallep'])) {
+                $sql2 = "INSERT INTO detalle_descarga(cod_detallep, cod_descarga, cantidad) VALUES(:cod_detallep, :cod_descarga, :cantidad)";
+                $sentencia = $this->conex->prepare($sql2);
+                $sentencia->bindParam(':cod_detallep', $det['cod_detallep']);
+                $sentencia->bindParam(':cod_descarga', $ultimocodigo);
+                $sentencia->bindParam(':cantidad', $det['cantidad']);
+                $detalle = $sentencia->execute();
+    
+                // Si no se insertó correctamente el detalle de descarga
+                if (!$detalle) {
+                    return 0;
+                }
+    
+                // 3. Actualizar el stock en detalle_productos
+                $sql3 = "UPDATE detalle_productos SET stock = stock - :cantidad WHERE cod_detallep = :cod_detallep";
+                $updateStock = $this->conex->prepare($sql3);
+                $updateStock->bindParam(':cantidad', $det['cantidad']);
+                $updateStock->bindParam(':cod_detallep', $det['cod_detallep']);
+                $stockactualizado = $updateStock->execute();
+    
+                // Si no se actualizó correctamente el stock
+                if (!$stockactualizado) {
+                    return 0;
                 }
             }
-            // Si todas las operaciones fueron exitosas
-            return 1;
         }
-        
-        // Si falla la inserción en `descarga`
-        return 0;
+        return 1;
     }
-    
-
-    public function consultardetalleproducto(){
-        $sql = 'SELECT 
-        det.cod_detallep,
-        det.cod_presentacion,
-        det.stock,
-        det.status,
+// DETALLE DESCARGA (Modal)
+    public function consultardetalledescarga($cod_descarga){
+        $sql = 'SELECT
+		de.cod_descarga,
+        dd.cod_det_descarga,
+        dd.cod_detallep,
+        dd.cantidad,
+        detp.cod_detallep,
+        detp.cod_presentacion,
+        detp.stock,
+        detp.lote,
         present.cod_producto,
+        (CONCAT(present.presentacion, " x ",present.cantidad_presentacion, " x ", u.tipo_medida)) AS presentacion_concat,
         pro.nombre
-        FROM detalle_productos AS det JOIN presentacion_producto AS present ON det.cod_presentacion=present.cod_presentacion
-        JOIN productos AS pro ON pro.cod_producto=present.cod_producto WHERE det.status = 1;';
+        FROM descarga AS de 
+        JOIN detalle_descarga AS dd ON de.cod_descarga = dd.cod_descarga
+        JOIN detalle_productos AS detp ON detp.cod_detallep = dd.cod_detallep
+        JOIN presentacion_producto AS present ON present.cod_presentacion=detp.cod_presentacion
+        JOIN unidades_medida AS u ON u.cod_unidad = present.cod_unidad
+        JOIN productos AS pro ON pro.cod_producto = present.cod_producto
+        WHERE de.cod_descarga = :cod_descarga';
+
         $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':cod_descarga', $cod_descarga, PDO::PARAM_INT);
         $resul=$strExec->execute();
         $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
 
         if($resul){
             return $array;
         }else{
-            return $r=[];
+            return [];
         }
     }
 
+    //Mostrar productos en el datatable
     public function consultardescarga(){
-        $sql = 'SELECT
-        de.cod_descarga,
-        de.status,
-        de.fecha,
-        de.descripcion,
-        detd.cantidad,
-        pro.nombre AS nombre_producto
-        FROM descarga AS de JOIN detalle_descarga AS detd ON detd.cod_descarga = de.cod_descarga
-        JOIN detalle_productos AS detp ON detp.cod_detallep=detd.cod_detallep
-        JOIN presentacion_producto AS present ON present.cod_presentacion = detp.cod_presentacion
-        JOIN productos AS pro ON pro.cod_producto=present.cod_producto;';
+        $sql = 'SELECT * FROM descarga';
         $strExec = $this->conex->prepare($sql);
         $resul = $strExec->execute();
-
-        $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
+        $array = $strExec->fetchAll(PDO::FETCH_ASSOC);
 
         if($resul){
             return $array;
         }else{
-            return $r=[];
+            return [];
         }
     }
 
+    //Buscar productos para seleccionar
     public function buscar($nombrep){
 
         $sql="SELECT                
@@ -154,7 +154,7 @@ class Descarga extends Conexion{
         FROM detalle_productos AS det JOIN presentacion_producto AS present ON det.cod_presentacion = present.cod_presentacion      
         JOIN productos AS pro ON pro.cod_producto=present.cod_producto 
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
-        WHERE pro.nombre LIKE ? GROUP BY det.cod_detallep LIMIT 7;";
+        WHERE pro.nombre LIKE ? AND det.stock != 0 GROUP BY det.cod_detallep LIMIT 7;";
 
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $nombrep. '%';

@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Proveedores Y Representantes </h1>
+                    <h1>Proveedores</h1>
                 </div>
             </div>
         </div>
@@ -47,12 +47,13 @@
                                                     <td><?php echo $datos["cod_prov"] ?></td>
                                                     <td><?php echo $datos["rif"] ?></td>
                                                     <td><?php echo $datos["razon_social"] ?></td>
-                                                    <td><?php echo $datos["email"] ?></td>
-                                                    <td><?php echo $datos["direccion"] ?></td>
+                                                    <td><?php echo !empty($datos["email"]) ? $datos["email"] : 'No disponible'; ?></td>
+                                                    <td><?php echo !empty($datos["direccion"]) ? $datos["direccion"] : 'No disponible'; ?></td>
                                                     <!-- REGISTRO TELEFONO PROVEEDOR -->
                                                     <td>
                                                         <button name="telef" class="btn btn-outline-primary telef" title="telef" data-toggle="modal" data-target="#myModalt"
-                                                            data-cod1="<?php echo $datos['cod_prov']; ?>" data-rif="<?php echo $datos['rif']; ?>">
+                                                            data-cod1="<?php echo $datos['cod_prov']; ?>"
+                                                            data-rif="<?php echo $datos['rif']; ?>">
                                                             <i class="fa fa-phone"></i>
                                                             <?php echo $datos["telefonos"]; ?>
                                                         </button>
@@ -165,9 +166,6 @@
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                 </div>
-
-
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -363,8 +361,6 @@ MOSTRAR MODAL DEL  REPRESENTANTE DEL PROVEEDOR
 <!--------------------------------------- 
 EDITAR REPRESENTANTE DEL PROVEEDOR
 --------------------------------------------->
-
-
 <div class="modal fade" id="modalProveditr" tabindex="-1" role="dialog" aria-labelledby="provModaledit" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -441,8 +437,6 @@ EDITAR REPRESENTANTE DEL PROVEEDOR
         </div>
     </div>
 </div>
-
-
 <?php if (isset($editar)): ?>
     <script>
         Swal.fire({
@@ -457,7 +451,6 @@ EDITAR REPRESENTANTE DEL PROVEEDOR
         });
     </script>
 <?php endif; ?>
-
 
 <!--------------------------------------- 
 ELIMINAR  REPRESENTANTE DEL PROVEEDOR acomodar 

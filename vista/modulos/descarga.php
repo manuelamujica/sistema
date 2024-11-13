@@ -28,11 +28,10 @@ require_once "controlador/descarga.php";
                                     <thead>
                                         <tr>
                                             <th>Código</th>
-                                            <th>Descripcion</th>
-                                            <th>Producto</th>
                                             <th>Fecha</th>
-                                            <th>Cantidad descargada</th>
+                                            <th>Descripcion</th> 
                                             <th>Status</th>
+                                            <th>Detalles</th>
                                         </tr>         
                                     </thead>
                                     <tbody>
@@ -42,16 +41,20 @@ require_once "controlador/descarga.php";
                                             ?>
                                             <tr>
                                                 <td> <?php echo $d["cod_descarga"] ?></td>
-                                                <td> <?php echo $d["descripcion"] ?></td>
-                                                <td> <?php echo $d["nombre_producto"] ?> </td>
                                                 <td> <?php echo $d["fecha"] ?></td>
-                                                <td> <?php echo $d["cantidad"] ?></td>
+                                                <td> <?php echo $d["descripcion"] ?></td>
                                                 <td>
                                                     <?php if ($d['status'] == 1):?>
                                                         <span class="badge bg-success">Activo</span>
                                                     <?php else:?>
                                                         <span class="badge bg-danger">Inactivo</span>
                                                     <?php endif;?>
+                                                </td>
+                                                <td>
+                                                    <button class='btn btn-primary btn-sm' id='detalles' style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
+                                                    data-codigo="<?php echo $d["cod_descarga"];?>">
+                                                    <i class="fas fa-plus"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -102,11 +105,9 @@ require_once "controlador/descarga.php";
                                                 <!--Se generan dinamicamente las filas de productos-->
                                                 </tbody>
                                             </table>
-
                                             <!--Agregar otro producto-->
                                             <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar otro producto</button>
                                         </div>
-
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -116,7 +117,44 @@ require_once "controlador/descarga.php";
                             </div>
                         </div>
                     </div>
-
+<!-- =============================
+    MODAL DETALLE DESCARGA 
+================================== -->
+                <div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="detalleModalLabel">Detalle de descarga</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h2><span id='descripciondetdescarga'></span></h2>
+                                            <div class="table-responsive">
+                                                <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Código</th>
+                                                            <th>Producto</th>
+                                                            <th>Presentacion</th>
+                                                            <th>Lote</th>
+                                                            <th>Cantidad descargada</th>
+                                                        </tr>         
+                                                    </thead>
+                                                    <tbody id="detalleBody">
+                                                        <!-- Los detalles se cargarán aquí -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
 
 
 <?php 
@@ -135,6 +173,21 @@ if (isset($registrar)): ?>
     </script>
 <?php endif; ?>
 
+<?php if (isset($r)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $r["title"]; ?>',
+            text: '<?php echo $r["message"]; ?>',
+            icon: '<?php echo $r["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'descarga';
+                exit;
+            }
+        });
+    </script>
+<?php endif; ?>
             </div>
         </div>
     </section>

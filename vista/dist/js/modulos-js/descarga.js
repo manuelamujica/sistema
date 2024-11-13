@@ -1,3 +1,58 @@
+//Modal detalle descarga
+
+console.log('Abrio JS');
+
+$(document).ready(function() {
+    $('#detallemodal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget); // Botón que abrió el modal
+        var codigoDescarga = button.data('codigo'); // Extraer el cod_descarga
+        
+        console.log(codigoDescarga);
+
+        // Limpiar la tabla de detalles antes de cargar nuevos datos
+        $('#detalleBody').empty();
+
+        // Hacer una llamada AJAX para obtener los detalles de la descarga
+        $.ajax({
+            url: 'index.php?pagina=descarga',
+            method: 'POST',
+            data: { detalled: codigoDescarga },
+            dataType: 'json',
+            success: function(data) {
+                
+                // Verificar si hay datos en la respuesta
+                console.log(data);
+                
+                
+                if (data.length === 0) {
+                    // Si no hay detalles mostrar un mensaje 
+                    $('#detalleBody').append(
+                        '<tr>' +
+                            '<td colspan="4" class="text-center">No hay detalles disponibles para este producto</td>' +
+                        '</tr>'
+                    );
+                } else {
+                // Recorrer los datos devueltos y llenar la tabla
+                $.each(data, function(index, detalle) {
+                    let lote = detalle.lote || 'No disponible';
+                        $('#detalleBody').append(
+                            '<tr>' +
+                                '<td>' + detalle.cod_det_descarga + '</td>' +
+                                '<td>' + detalle.nombre + '</td>' +
+                                '<td>' + detalle.presentacion_concat + '</td>' +
+                                '<td>' + lote + '</td>' +
+                                '<td>' + detalle.cantidad + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar los detalles:', error);
+            }
+        });
+    });
+});
 
 var productoIndex = 1;
 // Función para crear una nueva fila en la tabla
@@ -53,7 +108,7 @@ $(document).ready(function() {
     agregarFila(); // Inicializa la tabla con una fila
 
 //Buscar para seleccionar detalle de producto
-// Estilos de la lista
+/*
 $('#lista-productos').css({
     'position': 'absolute', 
     'z-index': '10000',
@@ -64,7 +119,7 @@ $('#lista-productos').css({
     'box-shadow': '0px 4px 8px rgba(0, 0, 0, 0.1)'
     
 });
-
+*/
     // Creación de filas y búsqueda
     $(document).on('input', '[id^="nombreProducto"]', function() {
         var query = $(this).val(); 
@@ -78,12 +133,13 @@ $('#lista-productos').css({
                 data: { buscar: query },
                 dataType: 'json',
                 success: function(data) {
-                    //console.log("Datos recibidos:", data);
+                    console.log("Datos recibidos:", data);
                     listaProductos.empty(); // Limpiar resultados anteriores
                     listaProductos.show(); // Mostrar la lista de productos
 
                     if (data.length > 0) {
                         $.each(data, function(key, detproducto) {
+                            console.log(detproducto); // Verifica que cada objeto tiene las propiedades esperadas
                             listaProductos.append(
                                 '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333; font-weight:normal;"' +
                                 'data-codigo="'+ detproducto.cod_detallep +'" '+
@@ -103,7 +159,7 @@ $('#lista-productos').css({
                 }
             });
         } else {
-            listaProductos.fadeOut(); // Ocultar la lista si no hay suficientes caracteres
+            listaProductos.fadeOut();
         }
     });
 
@@ -116,7 +172,7 @@ $('#lista-productos').css({
         var lote = $(this).data('lote'); 
         var stock = $(this).data('stock'); 
 
-        console.log("Producto seleccionado:", codigo, nombre, present, lote); // Log de producto seleccionado
+        //console.log("Producto seleccionado:", codigo, nombre, present, lote, stock); // Log de producto seleccionado
 
         // Asigna los valores seleccionados a los inputs
         var index = $(this).closest('.input-group').find('input').attr('id').replace('nombreProducto', '');
@@ -137,7 +193,6 @@ $('#lista-productos').css({
 
 
     //VALIDAR ENTRADAS
-
     //Funciones
     function showError(selector,message){
         $(selector).addClass('is-invalid');
@@ -150,6 +205,7 @@ $('#lista-productos').css({
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display','none');
     }
+    //Fin Funciones
 
     // Fecha y hora
     $('#fecha').on('change', function() {
@@ -160,7 +216,8 @@ $('#lista-productos').css({
         } else {
             hideError('#fecha'); 
         }
-    });    
+    }); 
+
     //Descripcion
     $('#descripcion').on('blur', function() {
         var descripcion = $(this).val();
@@ -174,6 +231,7 @@ $('#lista-productos').css({
             hideError('#descripcion');
         }
     });
+
     //Cantidad y stock
     $(document).on('input', '[id^="cantidad"]', function() {
         const index = $(this).attr('id').replace('cantidad', ''); // Obtiene el índice de la fila actual

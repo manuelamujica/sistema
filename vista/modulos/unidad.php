@@ -85,7 +85,7 @@ MODAL REGISTRAR Unidades de medida
                                         <div class="form-group">
                                             <label for="tipo_medida">Tipo de medida</label>
                                             <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kilo">
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kg">
                                                 <i class="fas fa-info-circle"></i>
                                             </button>
                                             <script>
@@ -93,7 +93,7 @@ MODAL REGISTRAR Unidades de medida
                                                     $('[data-toggle="tooltip"]').tooltip();
                                                 });
                                             </script>
-                                            <input type="text" class="form-control" name="tipo_medida" placeholder="Ej: Kilo." id="tipo_medida1" maxlength="10">
+                                            <input type="text" class="form-control" name="tipo_medida" placeholder="Ej: Kg." id="tipo_medida1" maxlength="10">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                 </div>

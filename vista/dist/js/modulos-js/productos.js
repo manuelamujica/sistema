@@ -1,6 +1,6 @@
 //Si ya existe un producto, tener la opcion de asignarle una presentacion
 $(document).ready(function() {
-    // Estils de la lista
+    /* Estils de la lista 
     $('#lista-productos').css({
         'position': 'absolute', 
         'z-index': '1000',
@@ -9,7 +9,7 @@ $(document).ready(function() {
         'overflow-y': 'auto',
         'border': '1px solid #ddd',
         'box-shadow': '0px 4px 8px rgba(0, 0, 0, 0.1)'
-    });
+    });*/
     
     $(document).on('input', '#nombre', function() {
         var query = $(this).val(); // Valor ingresado por el usuario
@@ -27,10 +27,10 @@ $(document).ready(function() {
                     //console.log("Data recibida:", data);
 
                     if (data.length > 0) {
-                        $.each(data, function(key, producto) {
+                        $.each(data, function(key, producto) { //Necesario para que reconozca las variables!
                             // Crea un nuevo elemento de lista para cada producto
                             listaProductos.append(
-                                '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333;"' +
+                                '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333; font-weight:normal;"' +
                                 'data-codigo="'+ producto.cod_producto +'" '+
                                 'data-nombre="'+ producto.producto_nombre +'" ' +
                                 'data-marca="'+ producto.marca +'" ' +
@@ -277,10 +277,9 @@ function calcularPrecioVenta(modal) {
     }
 }
 
-// Asigna la lógica de cálculo a los inputs de los modales
+// Llama a la funcion de calcular para el modal de registro
 $(document).on('input', '#costo, #porcen, #iva', function() {
-    var modal = $(this).closest('.modal'); // Detecta en qué modal estás trabajando (registro o edición)
-    calcularPrecioVenta(modal); 
+    calcularPrecioVenta($('#modalRegistrarProducto')); 
 });
 
 // Función para calcular el precio de venta EDITAR
@@ -303,10 +302,9 @@ function calcularPrecioVentaEditar(modal) {
     }
 }
 
-/* Asigna la lógica de cálculo a los inputs de los modales*/
+// Llamar a la funcion de calcular para el modal de edicion
 $(document).on('input', '#costoE, #porcenE, #ivaE', function() {
-    var modal = $(this).closest('.modal'); // Detecta en qué modal estás trabajando (registro o edición)
-    calcularPrecioVentaEditar(modal); 
+    calcularPrecioVenta($('#modalRegistrarProducto')); 
 });
 
 // NUEVA CATEGORIA DESDE PRODUCTO

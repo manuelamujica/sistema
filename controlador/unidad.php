@@ -88,7 +88,6 @@ if (isset($_POST['buscar'])) {
     }
 } else if (isset($_POST['eliminar'])) {
     $cod_unidad = $_POST['eliminar'];
-    //$objUnidad->setCod($cod_unidad);
     $resul = $objUnidad->geteliminar($cod_unidad);
 
     if ($resul == 'success') {
@@ -96,6 +95,12 @@ if (isset($_POST['buscar'])) {
             "title" => "Eliminado con éxito",
             "message" => "La unidad de medida ha sido eliminada",
             "icon" => "success"
+        ];
+    } else if ($resul == 'error_status') {
+        $eliminar = [
+            "title" => "Error",
+            "message" => "La unidad de medida no se puede eliminar porque tiene status: activo",
+            "icon" => "error"
         ];
     } else if ($resul == 'error_associated') {
         $eliminar = [
@@ -118,7 +123,6 @@ if (isset($_POST['buscar'])) {
     }
 }
 
-//AQUI LLAMO PARA MOSTRAR LOS REGISTROS
 $datos = $objUnidad->consultarUnidad();
 if(isset($_POST["vista"])){
     $_GET['ruta'] = 'productos';
