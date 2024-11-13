@@ -9,8 +9,9 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+
 } else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
-    if (preg_match("/^[a-zA-Z]+$/", $_POST["tipo_medida"])) {
+    if (preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $_POST["tipo_medida"])) {
         if (!empty($_POST["tipo_medida"])) {
             if (!$objUnidad->getbuscar($_POST['tipo_medida'])) {
                 #Instanciar los setter
@@ -27,12 +28,30 @@ if (isset($_POST['buscar'])) {
                 } else {
                     $registrar = [
                         "title" => "Error",
-                        "message" => "¡Las unidades de medida no pueden ir vacía o llevar caracteres especiales!",
+                        "message" => "Hubo un problema al intentar registrar la unidad de medida..",
                         "icon" => "error"
                     ];
                 }
+            } else {
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "No se pudo registrar. La unidad de medida ya existe.",
+                    "icon" => "error"
+                ];
             }
+        } else {
+            $registrar = [
+                "title" => "Error",
+                "message" => "No se pudo registrar. No se permiten campos vacios.",
+                "icon" => "error"
+            ];
         }
+    } else {
+        $registrar = [
+            "title" => "Error",
+            "message" => "No se pudo registrar. Caracteres no permitidos.",
+            "icon" => "error"
+        ];
     }
 } else if (isset($_POST['editar'])) {
 
@@ -41,7 +60,7 @@ if (isset($_POST['buscar'])) {
     $status = $_POST['status'];
 
 
-    $unidad_existente = $objUnidad->getbuscar($tipo_medida); // Verificar si el nuevo rol ya existe
+    //$unidad_existente = $objUnidad->getbuscar($tipo_medida);  Verificar si el nuevo rol ya existe
     // Validaciones
     if (!($tipo_medida) || preg_match("/^\s*$/", $tipo_medida)) {
         $editar = [

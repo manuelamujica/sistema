@@ -224,7 +224,7 @@ require_once "controlador/productos.php";
                                                 <label for="costo">Costo</label>
                                                 <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" >
                                                 <div class="invalid-feedback" style="display: none;"></div>
-                                            <div class="invalid-feedback" style="display: none;"></div></div>
+                                            </div>
                                             <div class="col-6">
                                                 <label for="precio">Precio</label>
                                                 <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >

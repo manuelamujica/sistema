@@ -92,14 +92,6 @@ $(document).ready(function() {
         });
     }
 
-    function showErrorP(selector, message) {
-        $(selector).addClass('is-invalid');
-        $(selector).next('.invalid-feedback').html(message.toUpperCase()).css({
-            'display': 'block',
-            'color': 'red',
-        });
-    }
-
     function hideError(selector) {
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display', 'none');

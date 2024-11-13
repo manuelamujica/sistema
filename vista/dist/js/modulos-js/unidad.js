@@ -1,4 +1,4 @@
-//BUSCAR
+//Validar registrar
 $('#tipo_medida1').blur(function (e) {
     var buscar = $('#tipo_medida1').val();
     $.post('index.php?pagina=unidad', { buscar }, function (response) {
@@ -6,39 +6,57 @@ $('#tipo_medida1').blur(function (e) {
             Swal.fire({
                 title: 'Error',
                 text: 'La unidad de medida ya se encuentra registrada.',
-                icon: 'error'
+                icon: 'warning'
             });
         }
     }, 'json');
 });
 
+
 //VALIDACIÓN
-function validacion() {
-
-    const valor = document.getElementById("tipo_medida1").value;
-    if (valor == null || valor.length === 0 || /^\s+$/.test(valor)) {
-        Swal.fire({
-            title: 'Error',
-            text: 'El campo Unindad de medida es obligatorio y no puede estar vacío.',
-            icon: 'warning'
+$(document).ready(function () {
+    // FUNCIONES
+    function showError(selector, message) {
+        $(selector).addClass('is-invalid');
+        $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
+            'display': 'block',
+            'color': 'red',
         });
-        return false; // Evita el envío del formulario
     }
 
-    // Verificar si el valor contiene solo caracteres especiales
-    if (/^[^a-zA-Z\s]+$/.test(valor)) {
-        Swal.fire({
-            title: 'Error',
-            text: 'El campo Unindad de medida no puede contener solo caracteres especiales.',
-            icon: 'warning'
-        });
-        return false; // Evita el envío del formulario
+    function hideError(selector) {
+        $(selector).removeClass('is-invalid');
+        $(selector).next('.invalid-feedback').css('display', 'none');
     }
+    // FIN FUNCIONES
 
 
-    return true; // Permite el envío del formulario
+    $('#tipo_medida1').on('blur', function() {
+        var tipo_medida1 = $(this).val();
+        if(tipo_medida1.trim() === ''){
+            hideError('#tipo_medida1');
+        }else if (tipo_medida1.length > 10) {
+            showError('#tipo_medida1', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
+        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida1)) {
+            showError('#tipo_medida1', 'Solo se permiten letras');
+        } else {
+            hideError('#tipo_medida1');
+        }
+    });
 
-};
+    $('#tipo_medida').on('blur', function() {
+        var tipo_medida = $(this).val();
+        if(tipo_medida.trim() === ''){
+            hideError('#tipo_medida');
+        }else if (tipo_medida.length > 10) {
+            showError('#tipo_medida', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
+        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida)) {
+            showError('#tipo_medida', 'Solo se permiten letras');
+        } else {
+            hideError('#tipo_medida');
+        }
+    });
+});
 
 //EDITAR
 $(document).ready(function () {
@@ -53,10 +71,7 @@ $(document).ready(function () {
         $('#cod_unidad_oculto').val(cod);
         $('#tipo_medida').val(tipo);
         $('#status').val(status);
-        $('#origin').val(tipo);
-
-        
-        
+        $('#origin').val(tipo);   
     });
 
 
