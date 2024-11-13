@@ -38,12 +38,16 @@
                                 <p><b>Logo: </b><img src="<?php echo $dato['logo']; ?>" alt="quesera don pedro"></p>
                             </div>
                             <div class="card-footer">
-                                <form method="POST">
-                                    <button name="ajustar" class="btn btn-primary btn-sm editar" value="<?php echo $dato['rif']; ?>">
-                                        <i class="fas fa-pencil-alt" title="Editar"></i>
+                                    <button name="ajustar" class="btn btn-primary btn-sm editar" data-target="#editModal" data-toggle="modal"
+                                    data-rif = <?php echo $dato['rif']; ?>
+                                    data-rs = <?php echo $dato['nombre']; ?>
+                                    data-direc = <?php echo $dato['direccion']; ?>
+                                    data-tlf = <?php echo $dato['telefono']; ?>
+                                    data-email = <?php echo $dato['email']; ?>
+                                    data-des = <?php echo $dato['descripcion']; ?>
+                                    data-logo = <?php echo $dato['logo']; ?>>
+                                    <i class="fas fa-pencil-alt" title="Editar"></i>
                                     </button>
-
-                                </form>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -97,6 +101,7 @@ MODAL REGISTRAR INFO GENERAL
                                 <label for="descripcion">Descripción</label>
                                 <input type="text" class="form-control" name="descripcion" required>
                             </div>
+                            <!--   LOGO    -->
                             <div class="form-group">
                                 <label for="logo">Ingrese el logo</label>
                                 <input type="file" class="form-control" name="logo" id="logo" required>
@@ -110,8 +115,7 @@ MODAL REGISTRAR INFO GENERAL
                 </div>
             </div>
         </div>
-    </section>
-</div>
+        
 <?php
 if (isset($registrar)): ?>
     <script>
@@ -127,16 +131,65 @@ if (isset($registrar)): ?>
         });
     </script>
 <?php endif; ?>
+<!-- =======================
+MODAL EDITAR INFO GENERAL 
+============================= -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Editar informacion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="Generaleditar" method="post">
+                            <input type="hidden" name="rif">
+                            <!--   RIF DE LA empresa     -->
+                            <div class="form-group">
+                                <label for="rif">Rif de la empresa</label>
+                                <input type="text" class="form-control" name="rif" id="rifE" readonly>
+                            </div>
+                            <!--   NOMBRE DE LA empresa     -->
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" id="rsE" required>
+                            <!--   DIRECCION     -->
+                            <div class="form-group">
+                                <label for="direccion">Direccion</label>
+                                <input type="text" class="form-control" name="direccion" id="direcE" required>
+                            </div>
+                            <!--   TELEFONO     -->
+                            <div class="form-group">
+                                <label for="telefono">Telefono</label>
+                                <input type="tel" class="form-control" name="telefono" id="tlfE" required>
+                            </div>
+                            <!--   EMAIL     -->
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" name="email" id="emailE" required>
+                            </div>
+                            <!--   DESCRIPCION    -->
+                            <div class="form-group">
+                                <label for="descripcion">Descripción</label>
+                                <input type="text" class="form-control" name="descripcion" id="desE" required>
+                            </div>
+                            <!--   LOGO    -->
+                            <div class="form-group">
+                                <label for="logo">Ingrese el logo</label>
+                                <input type="file" class="form-control" name="logo" id="logoE" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" name="editar">Editar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
-<!--     VALIDACIÓN        -->
-<script src="assets/js/general.js"></script>
-        <script>
-                $('#registrar').click(function(e){
-                    var buscar = 'true';
-                    $.post('index.php?pagina=general', {buscar}, function(response){
-                    if(response.total > 0){
-                        alert('Los datos de la empresa ya estan registrados');
-                    }
-                },'json');
-            });
-        </script>
+<script src="vista/dist/js/modulos-js/general.js"></script>

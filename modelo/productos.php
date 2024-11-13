@@ -357,9 +357,10 @@ public function consultardetalleproducto($cod_presentacion){
     if($resul){
         return $array;
     }else{
-        return $r=[];
+        return [];
     }
 }
+
 /*======================================================================
 ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
 ========================================================================*/
@@ -376,7 +377,7 @@ ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
     $strExec->execute();
     $detalle = $strExec->fetch(PDO::FETCH_ASSOC);
 
-     Verificar si el detalle existe
+    Verificar si el detalle existe
     if (!$detalle) {
         return ['status' => 'error', 'message' => 'Detalle no encontrado.'];
     }

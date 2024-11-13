@@ -2,37 +2,14 @@
 session_start();
 require_once "./vendor/autoload.php";
 require_once 'modelo/productos.php';
-require_once 'modelo/categorias.php';
-require_once 'modelo/unidad.php';
-require_once "modelo/general.php";
-
 
 use Spipu\Html2Pdf\Html2Pdf;
 
 $html2pdf = new Html2Pdf('P', 'LETTER', 'es');
-#Objetos
 $objProducto = new Productos();
-// Obtener las fechas del formulario
+$datos = $objProducto->getmostrar();
+$fechaActual = date("d/m/Y");
 
-$fechaInicio = $_POST['fechaInicio'] ?? null;
-$fechaFin = $_POST['fechaFin'] ?? null;
-
-if (!empty($fechaInicio) && !empty($fechaFin)) {
-    $datos = $objProducto->getmostrarPorFechas($fechaInicio, $fechaFin);
-} else {
-    $datos = $objProducto->getmostrar(); // Obtener todos los datos si no hay filtros
-}
-
-$general = new General();
-$logo = $general->mostrar();
-if (!empty($logo)) {
-    $_SESSION["logo"] = $logo[0]["logo"];
-    $_SESSION["n_empresa"] = $logo[0]["nombre"];
-    $_SESSION["rif"] = $logo[0]["rif"];
-    $_SESSION["telefono"] = $logo[0]["telefono"];
-    $_SESSION["email"] = $logo[0]["email"];
-    $_SESSION["direccion"] = $logo[0]["direccion"];
-}
 if (isset($datos)) {
     $html = '
     <style>
@@ -64,7 +41,7 @@ if (isset($datos)) {
         </td>
             <td style="text-align:rigth; border: none;">';
     $html .= '  
-                <h3 style="margin-bottom: 5px;">' . $_SESSION["nombre"] . '</h3>
+                <h3 style="margin-bottom: 5px;">' . $_SESSION["n_empresa"] . '</h3>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["rif"] . '</p>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["telefono"] . '</p>
                 <p style="margin-top: 0;">' . $_SESSION["email"] . '</p>
@@ -75,9 +52,9 @@ if (isset($datos)) {
     <br>
     <hr style="border=0.5px;">
     <br>
-    <h1 style="text-align:center;">Reporte de Productos</h1>
+    <h1 style="text-align:center;">Listado de Productos</h1>
     <table id="t">
-    <thead>
+            <thead>
                 <tr>
                     <th>Código</th>
                     <th>Nombre</th>
@@ -86,22 +63,40 @@ if (isset($datos)) {
                     <th>Categoría</th>
                     <th>Costo</th>
                     <th>IVA</th>
-                    <th>Precio de venta</th>
+                    <th>Precio V.</th>
                 </tr>
             </thead>
             <tbody>';
     foreach ($datos as $datos) {
-            $html .= '
-                <tr>
-                    <td>' .  $datos['cod_producto'] . '</td>
-                    <td>' . $datos['nombre'] . '</td>
-                    <td>' . $datos['marca'] . '</td>
-                    <td>' . $datos['presentacion'] . '</td>
-                    <td>' . $datos['cat_nombre'] . '</td>
-                    <td>' .  $datos['costo'] . '</td>
-                    <td>' . $datos['excento'] . '</td>
-                    <td>' . $precioVenta = ($datos['porcen_venta']/100+1)*$datos['costo'] . '</td>
-                </tr>';
+        $html .= '<tr>
+        <td>' .  $datos['cod_producto'] . '</td>
+        <td>' . $datos['nombre'] . '</td>
+        <td>' . $datos['marca'] . '</td>
+        <td>' . $datos['presentacion_concat'] . '</td>
+        <td>' . $datos['cat_nombre'] . '</td>
+        <td>' .  $datos['costo'] . '</td>
+        <td>';
+
+        // Validación de exento
+        if ($datos["excento"] == 1) {
+            $html .= 'E'; 
+        } else {
+            $html .= 'G'; 
+        }
+        $html .= '</td>
+                <td>';
+
+                // Validación de exento y cálculo de precio
+                if ($datos["excento"] == 1) {
+                    $precioVenta = ($datos["porcen_venta"] / 100 + 1) * $datos["costo"];
+                    $html .= number_format($precioVenta, 2, '.', '') . " Bs"; // 2 decimales
+                } else {
+                    $costoiva = $datos["costo"] * 1.16;
+                    $precioVenta = ($datos["porcen_venta"] / 100 + 1) * $costoiva;
+                    $html .= number_format($precioVenta, 2, '.', '') . " Bs"; // 2 decimales
+                }
+        $html .= '</td>
+            </tr>';
     }
     $html .= '
             </tbody>
@@ -109,7 +104,8 @@ if (isset($datos)) {
     <page_footer>
                 <div style="text-align: center;">
                     <p>' . $_SESSION["telefono"] . '  |  ' . $_SESSION["direccion"] . '  |  ' . $_SESSION["email"] . '</p>
-                </div>
+                    <p><i>  Fecha de generación:'.$fechaActual.'</i> </p>
+                    </div>
     </page_footer>
 </page>';
     $html2pdf->writeHTML($html);

@@ -3,8 +3,9 @@ require_once 'modelo/productos.php';
 require_once 'modelo/dcarga.php';
 
 $carga = new Dcarga();
-$datos = $carga->gettodo();
+$datos = $carga->getodoo();
 
+//DATATABLE PRODUCTOS
 $obj = new Productos();
 $productos = $obj->getmostrar();
 
