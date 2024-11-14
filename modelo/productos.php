@@ -178,7 +178,7 @@ public function registrar2($unidad, $cod_producto){
 }
 
 /*==============================
-MOSTRAR PRODUCTO y asignar categoria, unidad y su presentación (tabla)
+MOSTRAR PRODUCTO categoria, unidad y su presentación (tabla)
 ================================*/
 
 public function mostrar(){
@@ -196,7 +196,7 @@ public function mostrar(){
     present.excento,
     u.tipo_medida,
     u.cod_unidad,
-    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat, #Concatena
+    (CONCAT(present.presentacion,'  ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat, #Concatena
     COALESCE(ROUND(SUM(dp.stock), 2), 0) AS stock_total
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
@@ -360,79 +360,140 @@ public function consultardetalleproducto($cod_presentacion){
         return [];
     }
 }
-
 /*======================================================================
-ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
+PRODUCTOS MAS VENDIDOS
 ========================================================================*/
+public function productosmasvendidos(){
+    $sql="SELECT
+	present.cod_presentacion,
+    p.nombre,
+    p.marca,
+    SUM(detv.cantidad) AS cantidad_vendida,
+    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat
+    FROM productos AS p
+    JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+    LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
+    JOIN detalle_ventas AS detv ON detv.cod_detallep = dp.cod_detallep
+    GROUP BY present.cod_presentacion
+    ORDER BY cantidad_vendida DESC LIMIT 10";
 
-/*public function eliminardetalle($detallep) {
-    
-    // Obtener el detalle específico que se desea eliminar
-    $sql = 'SELECT
-    stock, 
-    status 
-    FROM detalle_productos WHERE cod_detallep = :cod_detallep';
     $strExec = $this->conex->prepare($sql);
-    $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
-    $strExec->execute();
-    $detalle = $strExec->fetch(PDO::FETCH_ASSOC);
+    $resul=$strExec->execute();
+    $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
 
-    Verificar si el detalle existe
-    if (!$detalle) {
-        return ['status' => 'error', 'message' => 'Detalle no encontrado.'];
+    if($resul){
+        return $array;
+    }else{
+        return [];
     }
 
-    // Validar si el detalle tiene stock > 0 o status != 2 (inactivo)
-    if ($detalle['stock'] > 0 || $detalle['status'] != 2) {
-        return 'error_stock';
-    }
-
-    // Proceder a eliminar
-    $sqld = "DELETE FROM detalle_productos WHERE cod_detallep = :cod_detallep";
-    $strExec = $this->conex->prepare($sqld);
-    $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
-    $delete = $strExec->execute();
-
-    if ($delete) {
-        return ['status' => 'success', 'message' => 'Detalle eliminado correctamente.'];
-    } else {
-        return ['status' => 'error', 'message' => 'Error al eliminar el detalle.'];
-    }
-}*/
-
-/*=============================
-FILTRADO 
-===============================
-public function getmostrarPorFechas($fechaInicio, $fechaFin) {
-    $sql = "SELECT
-        p.cod_producto,
-        p.nombre,
-        p.marca,
-        detp.cod_presentacion,
-        detp.fecha_vencimiento,
-        c.nombre AS cat_nombre,
-        c.cod_categoria AS cat_codigo,
-        present.cod_presentacion,
-        present.presentacion,
-        present.cantidad_presentacion,
-        present.costo,
-        present.porcen_venta,
-        present.excento,
-        u.tipo_medida,
-        u.cod_unidad,
-        (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat
+}
+/*======================================================================
+    FILTRADO POR CATEGORIA
+========================================================================*/
+public function productocategoria($cod_categoria){
+    $sql= "SELECT
+	present.cod_presentacion,
+    p.nombre,
+    p.marca,
+    c.cod_categoria,
+    c.nombre AS cat_nombre,
+    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
-    JOIN detalle_productos AS detp ON detp.cod_presentacion = present.cod_presentacion
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
-    WHERE detp.fecha_vencimiento BETWEEN :fechaInicio AND :fechaFin
-    GROUP BY present.cod_presentacion";
+    WHERE c.cod_categoria = :cod_categoria";
 
-    $stmt = $this->conex->prepare($sql);
-    $stmt->bindParam(':fechaInicio', $fechaInicio);
-    $stmt->bindParam(':fechaFin', $fechaFin);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}*/
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam('cod_categoria',$cod_categoria);
+    $result = $strExec->execute();
+    $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
+
+    if($result){
+        return $array;
+    }else{
+        return [];
+    }
+
+
+}
+
+
+
+    /*======================================================================
+    ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
+    ========================================================================*/
+
+    /*public function eliminardetalle($detallep) {
+        
+        // Obtener el detalle específico que se desea eliminar
+        $sql = 'SELECT
+        stock, 
+        status 
+        FROM detalle_productos WHERE cod_detallep = :cod_detallep';
+        $strExec = $this->conex->prepare($sql);
+        $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
+        $strExec->execute();
+        $detalle = $strExec->fetch(PDO::FETCH_ASSOC);
+
+        Verificar si el detalle existe
+        if (!$detalle) {
+            return ['status' => 'error', 'message' => 'Detalle no encontrado.'];
+        }
+
+        // Validar si el detalle tiene stock > 0 o status != 2 (inactivo)
+        if ($detalle['stock'] > 0 || $detalle['status'] != 2) {
+            return 'error_stock';
+        }
+
+        // Proceder a eliminar
+        $sqld = "DELETE FROM detalle_productos WHERE cod_detallep = :cod_detallep";
+        $strExec = $this->conex->prepare($sqld);
+        $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
+        $delete = $strExec->execute();
+
+        if ($delete) {
+            return ['status' => 'success', 'message' => 'Detalle eliminado correctamente.'];
+        } else {
+            return ['status' => 'error', 'message' => 'Error al eliminar el detalle.'];
+        }
+    }*/
+
+    /*=============================
+    FILTRADO 
+    ===============================
+    public function getmostrarPorFechas($fechaInicio, $fechaFin) {
+        $sql = "SELECT
+            p.cod_producto,
+            p.nombre,
+            p.marca,
+            detp.cod_presentacion,
+            detp.fecha_vencimiento,
+            c.nombre AS cat_nombre,
+            c.cod_categoria AS cat_codigo,
+            present.cod_presentacion,
+            present.presentacion,
+            present.cantidad_presentacion,
+            present.costo,
+            present.porcen_venta,
+            present.excento,
+            u.tipo_medida,
+            u.cod_unidad,
+            (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat
+        FROM productos AS p
+        JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+        JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
+        JOIN detalle_productos AS detp ON detp.cod_presentacion = present.cod_presentacion
+        JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+        WHERE detp.fecha_vencimiento BETWEEN :fechaInicio AND :fechaFin
+        GROUP BY present.cod_presentacion";
+
+        $stmt = $this->conex->prepare($sql);
+        $stmt->bindParam(':fechaInicio', $fechaInicio);
+        $stmt->bindParam(':fechaFin', $fechaFin);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }*/
 }

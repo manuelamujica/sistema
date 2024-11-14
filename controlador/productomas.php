@@ -7,7 +7,7 @@ use Spipu\Html2Pdf\Html2Pdf;
 
 $html2pdf = new Html2Pdf('P', 'LETTER', 'es');
 $objProducto = new Productos();
-$datos = $objProducto->getmostrar();
+$datos = $objProducto->productosmasvendidos();
 $fechaActual = date("d/m/Y");
 
 if (isset($datos)) {
@@ -48,11 +48,11 @@ if (isset($datos)) {
                 </td>
         </tr>
     </table>
-
     <br>
+    <p><i>  Fecha de generación:'.$fechaActual.'</i> </p>
     <hr style="border=0.5px;">
     <br>
-    <h1 style="text-align:center;">Listado de Productos</h1>
+    <h1 style="text-align:center;">Los productos más vendidos</h1>
     <table id="t">
             <thead>
                 <tr>
@@ -60,50 +60,26 @@ if (isset($datos)) {
                     <th>Nombre</th>
                     <th>Marca</th>
                     <th>Presentacion</th>
-                    <th>Costo</th>
-                    <th>IVA</th>
-                    <th>Precio V.</th>
-                    <th>Stock</th>
+                    <th>Cantidad vendida</th>
                 </tr>
             </thead>
             <tbody>';
     foreach ($datos as $datos) {
-        $html .= '<tr>
-        <td>' .  $datos['cod_producto'] . '</td>
-        <td>' . $datos['nombre'] . '</td>
-        <td>' . $datos['marca'] . '</td>
-        <td>' . $datos['presentacion_concat'] . '</td>
-        <td>' .  $datos['costo'] . '</td>
-        <td>';
-
-        // Validación de exento
-        if ($datos["excento"] == 1) {
-            $html .= 'E'; 
-        } else {
-            $html .= 'G'; 
+        $html .= 
+        '<tr>
+            <td>' .  $datos['cod_presentacion'] . '</td>
+            <td>' . $datos['nombre'] . '</td>
+            <td>' . $datos['marca'] . '</td>
+            <td>' . $datos['presentacion_concat'] . '</td>
+            <td>' .  $datos['cantidad_vendida'] . '</td>
+        </tr>';
         }
-        $html .= '</td>
-                <td>';
-
-                // Validación de exento y cálculo de precio
-                if ($datos["excento"] == 1) {
-                    $precioVenta = ($datos["porcen_venta"] / 100 + 1) * $datos["costo"];
-                    $html .= number_format($precioVenta, 2, '.', '') . " Bs"; // 2 decimales
-                } else {
-                    $costoiva = $datos["costo"] * 1.16;
-                    $precioVenta = ($datos["porcen_venta"] / 100 + 1) * $costoiva;
-                    $html .= number_format($precioVenta, 2, '.', '') . " Bs"; // 2 decimales
-                }
-        $html .= '</td>
-            </tr>';
-    }
     $html .= '
             </tbody>
     </table>
     <page_footer>
                 <div style="text-align: center;">
                     <p>' . $_SESSION["telefono"] . '  |  ' . $_SESSION["direccion"] . '  |  ' . $_SESSION["email"] . '</p>
-                    <p><i>  Fecha de generación:'.$fechaActual.'</i> </p>
                     </div>
     </page_footer>
 </page>';

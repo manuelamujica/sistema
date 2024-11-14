@@ -82,6 +82,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
     $_GET["ruta"] == "rep-inventario" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-proveedores" && $_SESSION["reporte"]==1 ||
+    $_GET["ruta"] == "rep-cliente" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-venta" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-compra" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
