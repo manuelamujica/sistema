@@ -53,7 +53,11 @@
                                                             data-status="<?php echo $dato['status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
-                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_unidad']; ?>"><i class="fas fa-trash-alt"></i></button>
+                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
+                                                        data-cod="<?php echo $dato['cod_unidad']; ?>"
+                                                        data-tipo="<?php echo $dato['tipo_medida']; ?>">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
                                                     </td>
                                                 </tr>
                                         <?php
@@ -198,13 +202,11 @@ MODAL REGISTRAR Unidades de medida
                 </button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de eliminar la unidad medida?</p>
+                <p>¿Estás seguro de eliminar la unidad medida: <b><span id=tipomedidaD></span>?</p></b>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 <form method="post">
-
-                    <!--   YA ELIMINA!!!!! BUAJAJAJA  -->
                     <input type="hidden" name="eliminar" id="cod_eliminar" value="">
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>

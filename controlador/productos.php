@@ -1,14 +1,10 @@
 <?php
 #1) Requerir los modelos
-
 require_once 'modelo/productos.php';
-//require_once 'modelo/categorias.php';
-//require_once 'modelo/unidad.php';
 
 #Objetos
-//$objCategoria = new Categoria();
 $objProducto = new Productos();
-//$objUnidad = new Unidad();
+
 
 $categoria = $objProducto->consultarCategoria(); // Obtener los categorias activas para pasarlos a la vista
 $unidad = $objProducto->consultarUnidad();  // Obtener las unidades de medida activas para pasarlos a la vista

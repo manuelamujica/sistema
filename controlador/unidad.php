@@ -55,56 +55,55 @@ if (isset($_POST['buscar'])) {
     }
 } else if (isset($_POST['editar'])) {
 
-    $cod_unidad = $_POST['cod_unidad'];
     $tipo_medida = $_POST['tipo_medida'];
     $status = $_POST['status'];
 
+        if ($tipo_medida !== $_POST['origin']) {
+            // Si la unidad cambió, verificamos si ya existe en la base de datos
+            if ($objUnidad->getbuscar($tipo_medida)) {
+                $advertencia = [
+                    "title" => "Error",
+                    "message" => "No se pudo registrar porque el nombre de usuario ya existe.",
+                    "icon" => "error"
+                ];
+            }
+        }
 
-    //$unidad_existente = $objUnidad->getbuscar($tipo_medida);  Verificar si el nuevo rol ya existe
-    // Validaciones
-    if (!($tipo_medida) || preg_match("/^\s*$/", $tipo_medida)) {
-        $editar = [
-            "title" => "No puede estar el campo vacío",
-            "message" => "La unidad de medida no se pudo actualizar",
-            "icon" => "error"
-        ];
-    } else if (preg_match("/\d/", $tipo_medida)) {
-        $editar = [
-            "title" => "No puede contener números",
-            "message" => "La unidad de medida no se pudo actualizar",
-            "icon" => "error"
-        ];
-    } else if (preg_match("/[^a-zA-Z\s]/", $tipo_medida)) {
-        $editar = [
-            "title" => "No puede contener caracteres especiales",
-            "message" => "La unidad de medida no se pudo actualizar",
-            "icon" => "error"
-        ];
-    } else if ($tipo_medida !== $_POST['origin'] && $objUnidad->getbuscar($tipo_medida)) {
-        $editar = [
-            "title" => "Error",
-            "message" => "Unidad ya existente",
-            "icon" => "error"
-        ];
-    } else {
-        $objUnidad->setCod($_POST["cod_unidad"]);
-        $objUnidad->setTipo($_POST["tipo_medida"]);
-        $objUnidad->setStatus($status);
-        $res = $objUnidad->geteditar();
-        if ($res == 1) {
-            $editar = [
-                "title" => "Editado con éxito",
-                "message" => "La unidad ha sido actualizada",
-                "icon" => "success"
-            ];
+        // Validaciones
+        if (!empty($tipo_medida)){
+            if(preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $tipo_medida)){
+                $objUnidad->setCod($_POST["cod_unidad"]);
+                $objUnidad->setTipo($_POST["tipo_medida"]);
+                $objUnidad->setStatus($status);
+                $res = $objUnidad->geteditar();
+                if ($res == 1) {
+                    $editar = [
+                        "title" => "Editado con éxito",
+                        "message" => "La unidad ha sido actualizada",
+                        "icon" => "success"
+                    ];
+                } else {
+                    $editar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al editar la unidad de medida",
+                        "icon" => "error"
+                    ];
+                }
+            } else {
+                $editar = [
+                    "title" => "Error",
+                    "message" => "No se pudo editar. Caracteres no permitidos.",
+                    "icon" => "error"
+                ];
+            }
         } else {
             $editar = [
                 "title" => "Error",
-                "message" => "Hubo un problema al editar la unidad de medida",
+                "message" => "No se permiten campos vacios.",
                 "icon" => "error"
             ];
         }
-    }
+
 } else if (isset($_POST['eliminar'])) {
     $cod_unidad = $_POST['eliminar'];
     $resul = $objUnidad->geteliminar($cod_unidad);

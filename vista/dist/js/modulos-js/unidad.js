@@ -77,11 +77,17 @@ $(document).ready(function () {
 
 });
 //ELIMINAR
-$('.eliminar').click(function () {
-    var codUnidad = $(this).data('cod'); // Obtener el código de la unidad
-    $('#cod_eliminar').val(codUnidad); // Asignar el valor al campo oculto
-});
+$('#modaleliminar').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); 
+    var codigo = button.data('cod');
+    var tipomedida = button.data('tipo');
 
+    var modal = $(this);
+    modal.find('.modal-body #cod_eliminar').val(codigo);
+    modal.find('#tipomedidaD').text(tipomedida);
+
+    console.log(tipomedida,codigo);
+});
 
 
 
