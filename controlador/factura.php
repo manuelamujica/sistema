@@ -63,7 +63,7 @@ foreach ($dventa as $detalle) {
             <td style="border: 1px solid #666; padding: 5px; text-align:left;">' . $detalle['producto_nombre']." ".$detalle["presentacion"] . '</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['cantidad'] . '</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['tipo_medida'] . '</td>
-            <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . number_format(($detalle['porcen_venta'] / 100 + 1) * $detalle['costo'], 2). ' Bs</td>
+            <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . number_format(($detalle['importe']/$detalle['cantidad']), 2). ' Bs</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . ($detalle['excento'] == 1 ? "E" : "G") . '</td>
             <td style="border: 1px solid #666; padding: 5px; text-align:center;">' . $detalle['importe'] . ' Bs</td>
         </tr>';

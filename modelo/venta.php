@@ -34,10 +34,11 @@ class Venta extends Conexion{
     }
 
     public function consultar(){
-    $registro="SELECT v.*, c.*, p.*, v.status AS status_venta, c.status AS status_cliente, v.cod_venta AS codigov
-        FROM ventas v
-        INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente
-        LEFT JOIN pagos p ON v.cod_venta = p.cod_venta;";
+        $registro="SELECT v.*, c.nombre, c.apellido, c.cedula_rif ,c.telefono, c.email, c.direccion, p.cod_pago, p.monto_total, p.cod_venta AS codigov 
+    FROM ventas v 
+    INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente 
+    LEFT JOIN pagos p ON v.cod_venta = p.cod_venta 
+    ORDER BY v.cod_venta;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -90,13 +91,15 @@ class Venta extends Conexion{
             $strExec->bindParam(':total', $this->total);
             $strExec->bindParam(':fecha', $this->fecha);
             $resul = $strExec->execute();
-
             if (!$resul) {
                 throw new Exception("Error al registrar la venta");
             }
 
             $nuevo_cod = $this->conex->lastInsertId();
             foreach ($productos as $producto) {
+                if ($producto['cantidad']==0) {
+                    throw new Exception("la cantidad del producto es invalida");
+                }
                 $cod_presentacion = $producto['codigo'];
                 $cantidad_a_vender = $producto['cantidad'];
                 $precio = $producto['precio'];
@@ -195,7 +198,7 @@ class Venta extends Conexion{
             // Revertir todos los cambios si ocurre un error
             $this->conex->rollBack();
             error_log($e->getMessage()); // Registrar el error
-            return 2; // Error
+            return 0; // Error
         }
     }
     
@@ -259,4 +262,49 @@ class Venta extends Conexion{
             return [];
         }
     }
+
+    public function v_cliente(){
+        $sql="SELECT 
+        c.cod_cliente,
+        c.nombre,
+        c.apellido,
+        c.cedula_rif,
+        c.telefono,
+        c.email,
+        c.direccion,
+        COUNT(v.cod_venta) AS cantidad_ventas,
+        COALESCE(SUM(v.total), 0) AS monto_total
+    FROM clientes c
+    LEFT JOIN ventas v ON c.cod_cliente = v.cod_cliente
+    GROUP BY c.cod_cliente,c.nombre,c.apellido,c.cedula_rif,c.telefono,c.email,c.direccion
+    ORDER BY cantidad_ventas DESC;";
+    $consulta=$this->conex->prepare($sql);
+    $resul = $consulta->execute();
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return [];
+        }
+    }
+
+    public function venta_f($fi, $ff){
+        $sql="SELECT c.nombre, c.apellido, v.*
+    FROM clientes c
+    INNER JOIN ventas v ON c.cod_cliente = v.cod_cliente
+    WHERE v.fecha BETWEEN :fechainicio AND :fechafin
+    ORDER BY v.cod_venta ASC;";
+        $stmt = $this->conex->prepare($sql);
+        $stmt->bindParam(':fechainicio', $fi);
+        $stmt->bindParam(':fechafin', $ff);
+        $resul=$stmt->execute();
+        $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return [];
+        }
+    }
+
+
 }

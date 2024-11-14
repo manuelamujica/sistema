@@ -61,7 +61,6 @@ class Tproveedor extends Conexion
         $strExec->bindParam(':cod_tlf', $this->cod_tlf); 
         $strExec->bindParam(':telefono', $this->telefono);
     
-       
         // Ejecuta la consulta  
         $resul = $strExec->execute();
 

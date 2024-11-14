@@ -37,17 +37,17 @@ function crearfila(index) {
             <td>
                 <div class="input-group">
                     <input type="text" class="form-control" id="nombreProducto${index}" name="productos[${index}][nombre]" placeholder="Nombre del producto" required>
-                    <div id="lista-productos${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
                     </div>
                 </div>
+                <div id="lista-productos${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
             </td>
             <td>
                 <input type="hidden" class="form-control" id="stockproducto${index}" step="0.001">
                 <div class="input-group">
-                    <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidadProducto${index}" step="0.001" onchange="calcularTotal(${index})" required>
-                    <div class="invalid-feedback" style="display: none;"></div>
+                    <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidadProducto${index}" min="0" step="0.001" onchange="calcularTotal(${index})" required>
+                    <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
                     <div class="input-group-append">
                         <span id="unidadm${index}" class="input-group-text" value=" "></span>
                     </div>
@@ -55,7 +55,7 @@ function crearfila(index) {
             </td>
             <td>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="precioProducto${index}" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularTotal(${index})">
+                    <input type="text" class="form-control" id="precioProducto${index}" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularTotal(${index})" readonly>
                     <div class="input-group-append">
                         <span class="input-group-text">Bs</span>
                     </div>
@@ -102,34 +102,34 @@ function eliminarFila(index) {
     calcularTotal();
 }
 
+function showError(selector, message) {
+    $(selector).addClass('is-invalid');
+    $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
+        'display': 'block',
+        'color': 'red',
+    });
+}
+function hideError(selector) {
+    $(selector).removeClass('is-invalid');
+    $(selector).next('.invalid-feedback').css('display', 'none');
+}
+
 $(document).ready(function() {
-
-    function showError(selector, message) {
-        $(selector).addClass('is-invalid');
-        $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
-            'display': 'block',
-            'color': 'red',
-        });
-    }
-    function hideError(selector) {
-        $(selector).removeClass('is-invalid');
-        $(selector).next('.invalid-feedback').css('display', 'none');
-    }
-
-    $('[id^=cantidadProducto]').on('input', function() {
+    $(document).on('input', '[id^=cantidadProducto]', function() {
         var inputId = $(this).attr('id');
         var index = inputId.replace('cantidadProducto', ''); // Extrae el índice de la cantidad
         var cantidad = parseFloat($(this).val()) || 0;
+        var negativo=$(this).val();
         var stock = parseFloat($('#stockproducto' + index).val()) || 0;
 
         if (cantidad > stock) {
             showError('#' + inputId, 'stock insuficiente');
-        } else {
+        } else if(!/^(?!-)\d*\.?\d+$/.test(negativo) || cantidad==0){
+            showError('#' + inputId, 'cantidad invalida');
+        }else {
             hideError('#' + inputId);
         }
     });
-
-
 });
 
 
@@ -198,7 +198,7 @@ function actualizarResumen() {
 }
 
 
-$('#cedula-rif').blur(function (e){
+    /*$('#cedula-rif').blur(function (e){
         var buscar=$('#cedula-rif').val();
         $.post('index.php?pagina=clientes', {buscar}, function(response){
             var nombre=response['nombre']+" "+response['apellido'];
@@ -213,7 +213,52 @@ $('#cedula-rif').blur(function (e){
             modal.find('.modal-body #cod_cliente').val(codigo);
             }
         },'json');
+    });*/
+
+    $('#cedula-rif').on('blur keydown', function (e) {
+        if (e.type === 'blur' || (e.type === 'keydown' && e.keyCode === 13)) {
+            e.preventDefault(); // Previene el envío del formulario con Enter
+            var buscar = $('#cedula-rif').val();
+            $.post('index.php?pagina=clientes', { buscar }, function(response) {
+                if(response !== false){
+                    if (response['status'] != 0) {
+                    var nombre = response['nombre'] + " " + response['apellido'];
+                    var telefono = response['telefono'];
+                    var apellido = response['apellido'];
+                    var codigo = response['cod_cliente'];
+                    var modal = $('#ventaModal');
+                    modal.find('.modal-body #numero-cliente').val(telefono);
+                    modal.find('.modal-body #nombre-cliente').val(nombre);
+                    modal.find('.modal-body #cod_cliente').val(codigo);
+                    modal.find('.modal-body [id^="nombreProducto"]').first().focus();
+                    }else{
+                        limpiarCamposCliente();
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'El cliente se encuentra inactivo.',
+                            icon: 'error',
+                            confirmButtonText: 'Ok'
+                        });
+                    }
+                }else{
+                    limpiarCamposCliente();
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Cliente no encontrado. Por favor, verifica la cédula.',
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    });
+                }
+            }, 'json');
+        }
     });
+
+    function limpiarCamposCliente() {
+        var modal = $('#ventaModal');
+        modal.find('.modal-body #numero-cliente').val('');
+        modal.find('.modal-body #nombre-cliente').val('');
+        modal.find('.modal-body #cod_cliente').val('');
+    }
 
 
     $(document).ready(function() {
@@ -272,10 +317,10 @@ $('#cedula-rif').blur(function (e){
         var cant=1;
 
 
-        var inputId = $(this).closest('.list-group').prev('input').attr('id');
-        var index = inputId.replace('nombreProducto', ''); // Extrae el índice del campo
-        $('#' + inputId).val(selectedProduct); 
+        var inputId = $(this).closest('.list-group').attr('id'); // Obtiene 'listaX' donde X es el índice
+        var index = inputId.replace('lista-productos', ''); // Extrae el número de índice
 
+        $('#nombreProducto' + index).val(selectedProduct); 
         $('#codigoProducto' + index).val(codigo); 
         $('#tipoProducto' + index).val(tipo);
         $('#precioProducto' + index).val(precio.toFixed(2));
@@ -342,7 +387,12 @@ $(document).ready(function() {
                     $('#monto_pagar').val(response.total);
 
                 } else {
-                    alert('Error al registrar la venta: ' + response.message);
+                    Swal.fire({
+                        title: 'Error al registrar la venta',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    });
                 }
             },
             error: function(jqXHR, xhr, status, error) {
@@ -395,6 +445,13 @@ function calcularTotalpago() {
     let diferencia = montoPagar - totalBs;
     document.getElementById('diferencia').value = diferencia.toFixed(2);
 }
+
+$(document).ready(function() {
+    $('#pagoModal').on('hidden.bs.modal', function () {
+        // Recargar la página cuando el modal se cierra
+        location.reload();
+    });
+});
 
 $('#pagoModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);

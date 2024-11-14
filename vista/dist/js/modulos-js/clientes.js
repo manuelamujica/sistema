@@ -55,10 +55,10 @@ $('#cedularif').blur(function (e){
 //validacions del registro del cliente
 $(document).ready(function() {
     // Validación de Cédula o Rif
-    $('#cedula_rif').on('blur', function() {
+    $('#cedula_rif').on('input', function() {
         var cedula_rif = $(this).val();
-        if (!cedula_rif || !/^[\w\s()+-]*$/.test(cedula_rif) || cedula_rif.length < 1 || cedula_rif.length > 12) {
-            showError('#cedula_rif', 'debe contener  minimo 6 ymaximo  12 caracteres (letras, números )');
+        if (!/^[\w\s()+-]*$/.test(cedula_rif) || cedula_rif.length < 2 || cedula_rif.length > 12) {
+            showError('#cedula_rif', 'debe contener maximo 12 números');
         } else {
             hideError('#cedula_rif');
         }
