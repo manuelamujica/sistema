@@ -38,21 +38,21 @@
                                         <tbody>
                                         <?php foreach ($consulta as $venta) { ?>
                                             <tr>
-                                                <td><?php echo $venta['codigov']?></td>
+                                                <td><?php echo $venta['cod_venta']?></td>
                                                 <td><?php echo $venta['nombre']." ".$venta['apellido']?></td>
                                                 <td><?php echo $venta['fecha'] ?></td>
                                                 <td><?php echo $venta['total'] ?></td>
                                                 <td>
-                                                    <?php if ($venta['status_venta']==1):?>
+                                                    <?php if ($venta['status']==1):?>
                                                         <span class="badge bg-default">Pendiente</span>
                                                         <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
-                                                            data-codventa="<?php echo $venta["codigov"]; ?>" 
+                                                            data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                             data-totalv="<?php echo $venta["total"]; ?>" 
                                                             data-fecha="<?php echo $venta["fecha"]; ?>"
                                                             data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
                                                             <i class="fas fa-money-bill-wave"></i>
                                                             </button>
-                                                    <?php elseif ($venta['status_venta']==2):?>
+                                                    <?php elseif ($venta['status']==2):?>
                                                         <span class="badge bg-warning">Pago parcial</span>
                                                         <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
                                                             data-codventa="<?php echo $venta["cod_venta"]; ?>" 
@@ -63,24 +63,24 @@
                                                             data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
-                                                    <?php elseif ($venta['status_venta']==3):?>
+                                                    <?php elseif ($venta['status']==3):?>
                                                         <span class="badge bg-success">Completada</span>
                                                     <?php else: ?>
                                                         <span class="badge bg-danger">Anulada</span>
                                                     <?php endif;?>
                                                 </td>
                                                 <td>
-                                                <?php if ($venta['status_venta']!=0):?>
+                                                <?php if ($venta['status']!=0):?>
                                                     <button name="anular" title="Anular" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#anularventa" 
-                                                    data-codventa="<?php echo $venta["codigov"]; ?>" 
-                                                    data-status="<?php echo $venta["status_venta"]; ?>">
+                                                    data-codventa="<?php echo $venta["cod_venta"]; ?>" 
+                                                    data-status="<?php echo $venta["status"]; ?>">
                                                     <i class="fas fa-trash-alt"></i>
                                                     </button>
-                                                    <button form="facturaform_<?= $venta['codigov']; ?>" type="submit" name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar">
+                                                    <button form="facturaform_<?= $venta['cod_venta']; ?>" type="submit" name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar">
                                                     <i class="fas fa-file"></i>
                                                     </button>
-                                                    <form id="facturaform_<?= $venta['codigov']; ?>" action="index.php?pagina=factura" method="post" target="_blank">
-                                                        <input type="hidden" name="cod_venta" value="<?= $venta['codigov']; ?>">
+                                                    <form id="facturaform_<?= $venta['cod_venta']; ?>" action="index.php?pagina=factura" method="post" target="_blank">
+                                                        <input type="hidden" name="cod_venta" value="<?= $venta['cod_venta']; ?>">
                                                         <input type="hidden" name="total" value="<?= $venta['total']; ?>">
                                                         <input type="hidden" name="fecha" value="<?= $venta['fecha']; ?>">
                                                         <input type="hidden" name="cliente" value="<?= $venta['nombre']." ".$venta['apellido']; ?>">
@@ -164,7 +164,7 @@
                                     <?php 
                                     if(!empty($consulta)){
                                         $ultimo=end($consulta); 
-                                        $nueva=$ultimo['codigov']+1;
+                                        $nueva=$ultimo['cod_venta']+1;
                                     }else{
                                         $nueva=1;
                                     }

@@ -46,7 +46,7 @@
                                             <th>Fecha</th>
                                             <th>total</th>
                                             <th>status</th>
-                                            <!--<th>Accion</th>-->
+                                            <th>Info</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,20 +67,15 @@
                                                             <span class="badge bg-danger">Anulada</span>
                                                         <?php endif; ?>
                                                     </td>
-                                                    <!--<td>
-                                                        <?php if ($compras['compra_status'] == 1): ?>
-                                                            <button name="anular" class="btn btn-danger btn-sm eliminar" title="anular" data-toggle="modal" data-target="#anularcompra"
-                                                            data-cod="<?php //echo $compras['cod_compra']; ?>">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        <?php else: ?>
-                                                            <button class="btn btn-danger btn-sm disabled" title="anular">
-                                                            <i class="fas fa-trash-alt"></i>
+                                                    <td>
+                                                        <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
+                                                        data-codigo="<?= $compras["cod_compra"];?>"
+                                                        data-nombre="<?= $compras['razon_social'] ?>"
+                                                        data-fecha="<?= $compras["fecha"] ?>"
+                                                        data-total="<?= $compras["total"] ?>">
+                                                        <i class="fas fa-plus"></i>
                                                         </button>
-                                                        <?php endif; ?>
-                                                        anular cambia los estatus de compra
-                                                        
-                                                    </td>-->
+                                                    </td>
                                                 </tr>
                                             <?php endif; ?>
                                         <?php } ?>
@@ -173,9 +168,9 @@
                                         <th>Fecha de vencimiento</th>
                                         <th>Lote</th>
                                         <th>Cantidad</th>
-                                        <th class="col-divisa" style="display: none;">Precio de compra (<span id="labelDivisa"></span>)</th>
-                                        <th>Precio de compra-Bs</th>
-                                        <th>Iva</th>
+                                        <th class="col-divisa" style="display: none;">Precio unitario (<span id="labelDivisa"></span>)</th>
+                                        <th>Precio unitario (Bs)</th>
+                                        <th style="width: 7%;">IVA</th>
                                         <th>Total</th>
                                     </tr>
                                 </thead>
@@ -190,12 +185,6 @@
                         
                         <div class="card card-outline card-primary float-right" style="width: 300px;">
                             <div class="card-body">
-                                <!--
-                                <p>Subtotal: Bs. <input type="number" class="form-control" name="subtotal" placeholder="Subtotal" style="width: 120px;" readonly></p>
-                                <p>IVA (16%): Bs. <input type="number" class="form-control" name="impuesto_total" placeholder="IVA" style="width: 120px;" readonly></p>
-                                <p class="text-bold">TOTAL: Bs. <span id="total-span" class="text-bold">0.00</span></p>
-                                <input type="hidden" id="total-general" name="total_general">
-                                    nuevo -->
                                 <p>Subtotal: Bs <span id="subtotal" class="text-bold">0.00</span></p>
                                 <p>Exento: Bs <span id="exento" class="text-bold">0.00</span></p>
                                 <p>Base imponible: Bs <span id="base-imponible" class="text-bold">0.00</span></p>
@@ -235,60 +224,68 @@ if (isset($registrar)): ?>
 <?php endif; ?>
 <!-- registrar compra-->
 
-<!-- =======================
-MODAL CONFIRMAR ELIMINAR 
-============================= -->
-<div class="modal fade" id="anularcompra" tabindex="-1" aria-labelledby="anularcompraLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="anularcompraLabel">Confirmar Eliminación</h5>
+            <div class="modal-header" style="background: #db6a00; color: #ffffff;">
+                <h5 class="modal-title" id="detalleLabel">Informacion de la compra</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-            <form id="anumodal" method="post"> 
-                <p>¿Está seguro que desea eliminar la venta nro: <span id="codc"></span>?</p>
-                <input type="hidden" id="codcom" name="codcom"> 
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button type="submit" form="anumodal" class="btn btn-danger" id="confirmDelete" name="anular">Eliminar</button>
-        </div>
+                <div class="form-row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="nro_venta">Nro de compra</label>
+                            <input type="text" class="form-control" id="nro-compra" name="nro_venta" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="nombre_cliente">Razon social</label>
+                            <input type="text" class="form-control" id="r_social" name="nombre_cliente" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="fecha_venta">Fecha de la compra</label>
+                            <input type="text" class="form-control" id="fecha_compra" name="fecha_venta" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Fecha de vencimiento</th>
+                                    <th>Lote</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio unitario (Bs)</th>
+                                    <!--<th style="width: 7%;">IVA</th>-->
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalleBody">
+                                <!-- Aquí se agregarán dinámicamente las filas de productos -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card card-outline card-primary float-right" style="width: 300px;">
+                        <div class="card-body">
+                            <p class="text-bold">TOTAL: Bs <span id="total_compra" class="text-bold">0.00</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<?php if (isset($eliminar)): ?>
-    <script>
-        Swal.fire({
-            title: '<?php echo $eliminar["title"]; ?>',
-            text: '<?php echo $eliminar["message"]; ?>',
-            icon: '<?php echo $eliminar["icon"]; ?>',
-            confirmButtonText: 'Ok'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location = 'compras';
-            }
-        });
-    </script>
-<?php endif; ?>
-
-
 
 <script>
-    $('#anularcompra').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var codigo = button.data('cod');
-    // Modal
-    var modal = $(this);
-    modal.find('.modal-body #codc').text(codigo);
-    modal.find('.modal-body #codcom').val(codigo);
-});
-
-
-
     $('#rif-r').blur(function(e) {
             console.log("Evento blur activado"); // Depuración
             var buscar = $('#rif-r').val();
@@ -325,36 +322,39 @@ function crearfila(index) {
             <td>
                 <div class="input-group">
                     <input type="text" class="form-control" name="productos[${index}][nombre_producto]" id="nombreProducto${index}" placeholder="Nombre del producto" required>
-                    <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
+                    
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos(${index})">+</button>
                     </div>
                 </div>
+                <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
             </td>
             <td><input type="date" id="fecha-v${index}" class="form-control" name="productos[${index}][fecha_v]" placeholder="Fecha">
             <input type="hidden" id="cod-dp${index}" class="form-control" name="productos[${index}][cod-dp]"></td>
             <td>
-                <div class="input-group">
-                    <input type="text" id="lotes${index}" class="form-control" name="productos[${index}][lote]" placeholder="Lote">
-                    <div id="lista-lotes${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
-                </div>
+                <input type="text" id="lotes${index}" class="form-control" name="productos[${index}][lote]" placeholder="Lote">
+                <div id="lista-lotes${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
             </td>
             <td>
                 <div class="input-group">
-                    <input type="number" class="form-control" name="productos[${index}][cantidad]" value="1" step="0.001" onchange="calcularMontos(${index})" required>
+                    <input type="number" class="form-control" name="productos[${index}][cantidad]" value="1" step="0.001" oninput="calcularMontos(${index})" required>
                     <div class="input-group-append">
                         <span id="unidadm${index}" class="input-group-text" value=" "></span>
                     </div>
                 </div>
             </td>
             <td class="col-divisa" style="display: none;">
-                <input type="number" step="0.001" class="form-control precio-divisa" placeholder="Precio en divisa" onchange="calcularMontos(${index})">
+                <input type="number" step="0.001" class="form-control precio-divisa" placeholder="Precio en divisa" id="precio_divisa${index}" oninput="calcularMontos(${index})">
             </td>
-            <td><input type="number" class="form-control" step="0.001" name="productos[${index}][precio]" placeholder="Precio" onchange="calcularMontos(${index})"></td>
-            <td><select class="form-control" id="tipoProducto${index}" name="productos[${index}][iva]" onchange="calcularMontos(${index})" required>
-                <option value="1">E</option>
-                <option value="2">G</option>
-                </select></td>
+            <td>
+                <input type="number" class="form-control" step="0.001" name="productos[${index}][precio]" placeholder="Precio" oninput="calcularMontos(${index})" required>
+            </td>
+            <td>
+                <select class="form-control" id="tipoProducto${index}" name="productos[${index}][iva]" onchange="calcularMontos(${index})" required>
+                <option value="1"> E </option>
+                <option value="2"> G </option>
+                </select>
+            </td>
             <td><input type="number" class="form-control" id="total${index}" name="productos[${index}][total]" placeholder="Total" readonly required></td>
             <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFila(${index})">&times;</button></td>
         </tr>
@@ -418,14 +418,39 @@ $(document).ready(function() {
         }
     });
 
-    // Calcular el precio en Bs al cambiar el valor en la columna de divisa
+    /* $('[id^=precio_divisa]').on('input', function(){
+        var inputId = $(this).attr('id');
+        var index = inputId.replace('precio_divisa', '');
+        var tasa = parseFloat($(this).attr('data-tasa'));
+        var precioDivisa = parseFloat($(this).val()) || 0;
+        var precioBs = (precioDivisa * tasa).toFixed(2);
+        console.log(precioBs);
+        $(`[name="productos[${index}][precio]"]`).val(precioBs);
+        calcularMontos(index);
+    });*/
+    
+    $(document).on('input', '[id^=precio_divisa]', function() {
+    var inputId = $(this).attr('id');
+    var index = inputId.replace('precio_divisa', '');  // Extraemos el índice de la fila actual
+    var tasa = parseFloat($(this).attr('data-tasa'));  // Obtenemos la tasa de cambio de la divisa
+    var precioDivisa = parseFloat($(this).val()) || 0;  // Obtenemos el valor del precio en divisa
+    var precioBs = (precioDivisa * tasa).toFixed(2);  // Convertimos a Bs
+
+    // Actualizamos el campo correspondiente del precio en Bs de la fila actual
+    $(`[name="productos[${index}][precio]"]`).val(precioBs);
+
+    // Llamamos a calcularMontos para la fila específica
+    calcularMontos(index);
+    });
+
+    /* Calcular el precio en Bs al cambiar el valor en la columna de divisa
     $(document).on('input', '.precio-divisa', function() {
         var tasa = parseFloat($(this).attr('data-tasa'));
         var precioDivisa = parseFloat($(this).val()) || 0;
         var precioBs = (precioDivisa * tasa).toFixed(2);
         $(this).closest('tr').find('[name$="[precio]"]').val(precioBs);
         calcularMontos($(this).closest('tr').index()); // Llamar a la función de cálculo
-    });
+    });*/
 });
 
 
@@ -475,29 +500,6 @@ function actualizarResumen() {
     console.log('Total General:', totalGeneral);
 
 
-    /* Sumar todos los valores de los inputs "total" de cada producto
-    $('#ProductosBody input[name^="productos"][name$="[total]"]').each(function() {
-        var totalp=parseFloat($(this).val()) || 0;
-        subtotal += parseFloat($(this).val()) || 0;
-
-    });
-    $('#ProductosBody input[name^="productos"][name$="[iva]"]').each(function() {
-        var tipoProducto = $(this).val();
-        if(tipoProducto==1){
-            exento
-        }
-        subtotal += parseFloat($(this).val()) || 0;
-    });
-
-    var tipoProducto = $('#tipoProducto' + index).val();
-    if (tipoProducto == 2) {
-            iva = subtotal * 0.16;
-        }
-    // Calcular el IVA y el total general
-    console.log(iva);
-    console.log(tipoProducto);
-    var totalGeneral = subtotal + iva;*/
-
     // Actualizar el DOM con los valores calculados
     $('#subtotal').text(subtotal.toFixed(2));
     $('#exento').text(exento.toFixed(2));
@@ -520,10 +522,17 @@ $(document).ready(function() {
     });
 });
 
-// Evento para calcular montos al cambiar cantidad, precio o descuento en una fila
+$(document).on('input', 'input[name^="productos"][name$="[cantidad]"], input[name^="productos"][name$="[precio]"]', function() {
+    // Obtén el índice del nombre del input, asumiendo que sigue el patrón "productos[index][campo]"
+    var name = $(this).attr('name');
+    var index = name.match(/\[([0-9]+)\]/)[1]; // Extrae el índice del nombre usando una expresión regular
+    calcularMontos(index); // Llama a calcularMontos con el índice correcto
+});
+
+/* Evento para calcular montos al cambiar cantidad, precio o descuento en una fila
 $(document).on('change', 'input[name^="productos"][name$="[cantidad]"], input[name^="productos"][name$="[precio]"], input[name^="productos"][name$="[descuento]"]', function() {
     calcularMontos($(this));
-});
+});*/
 
 $(document).ready(function() {
     // Evento 'input' en los campos de productos dinámicos
@@ -580,14 +589,15 @@ $(document).ready(function() {
         var unidad=$(this).data('unidad');
         var cant=1;
 
-
-        var inputId = $(this).closest('.list-group').prev('input').attr('id');
-        var index = inputId.replace('nombreProducto', ''); // Extrae el índice del campo
-        $('#' + inputId).val(selectedProduct); 
-
+        // Encuentra el índice de la entrada de producto en la que se seleccionó
+        var inputId = $(this).closest('.list-group').attr('id'); // Obtiene 'listaX' donde X es el índice
+        var index = inputId.replace('lista', ''); // Extrae el número de índice
+        
+        // Coloca el producto seleccionado en el campo correspondiente usando el índice
+        $('#nombreProducto' + index).val(selectedProduct); 
         $('#codigoProducto' + index).val(codigo); 
         $('#tipoProducto' + index).val(tipo);
-        $('#unidadm'+index).text(unidad);
+        $('#unidadm' + index).text(unidad);
         $(this).closest('.list-group').fadeOut(); 
     });
 });
@@ -632,7 +642,7 @@ $(document).ready(function() {
                         });
                         listaProductos.fadeIn();
                     } else {
-                        listaProductos.append('<p class="list-group-item">No se encontraron productos</p>');
+                        listaProductos.fadeOut();
                     }
                 }
             });
@@ -668,4 +678,64 @@ $(document).ready(function() {
         // Asignar el valor al input de fecha-hora
         $('#fecha-hora').val(fecha);
     });
+
+    //Modal detalle
+$(document).ready(function() {
+    // Evento al abrir el modal
+    $('#detallemodal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget); // Botón que abrió el modal
+        var codigo = button.data('codigo'); // Extraer el cod_presentacion
+        var fecha = button.data('fecha');
+        var nombre = button.data('nombre');
+        var total = button.data('total');
+        
+        var modal = $(this);
+        modal.find('.modal-body #nro-compra').val(codigo);
+        modal.find('.modal-body #r_social').val(nombre);
+        modal.find('.modal-body #fecha_compra').val(fecha);
+        modal.find('.modal-body #total_compra').text(total);
+
+        $('#detalleBody').empty();
+
+        // Hacer una llamada AJAX para obtener los detalles del producto
+        $.ajax({
+            url: 'index.php?pagina=compras',
+            method: 'POST',
+            data: { detallep: codigo },
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Verificar si hay datos en la respuesta
+                if (data.length === 0) {
+                    // Si no hay detalles mostrar un mensaje 
+                    $('#detalleBody').append(
+                        '<tr>' +
+                        '<td colspan="7" class="text-center">No hay detalles disponibles para este producto</td>' +
+                        '</tr>'
+                    );
+                } else {
+                // Recorrer los datos devueltos y llenar la tabla
+                $.each(data, function(index, detalle) {
+                    
+                    $('#detalleBody').append(
+                        '<tr>' +
+                        '<td>' + detalle.cod_detallep + '</td>' +
+                        '<td>' + detalle.presentacion + '</td>' +
+                        '<td>' + detalle.fecha_vencimiento + '</td>' +
+                        '<td>' + detalle.lote + '</td>' +
+                        '<td class="stock">' + detalle.cantidad + '</td>' +
+                        '<td>' + detalle.monto + '</td>' +
+
+                        '<td>' + (detalle.monto*detalle.cantidad).toFixed(2) + '</td>' +
+                        '</tr>'
+                    );
+                });
+            }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar los detalles:', error);
+            }
+        });
+    });
+});
 </script>

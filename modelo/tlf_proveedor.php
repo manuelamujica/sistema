@@ -67,7 +67,7 @@ class Tproveedor extends Conexion
 
      // registrar
     private function registra() {
-        $sql = "INSERT INTO tlf_proveedores (cod_prov, cod_tlf, telefono, status) VALUES (:cod_prov, :cod_tlf, :telefono, 1)";
+        $sql = "INSERT INTO tlf_proveedores (cod_prov, cod_tlf, telefono) VALUES (:cod_prov, :cod_tlf, :telefono)";
         
         $strExec = $this->conex->prepare($sql);
     
@@ -76,7 +76,6 @@ class Tproveedor extends Conexion
         $strExec->bindParam(':cod_tlf', $this->cod_tlf); 
         $strExec->bindParam(':telefono', $this->telefono);
     
-       
         // Ejecuta la consulta  
         $resul = $strExec->execute();
 
