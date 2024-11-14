@@ -145,7 +145,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="deventas" class="nav-link">
+                            <a href="rep-venta" class="nav-link">
                                 <i class="fas fa-file-invoice nav-icon"></i>                                        
                                     <p>
                                         De ventas
@@ -153,7 +153,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="deventas" class="nav-link">
+                            <a href="rep-compra" class="nav-link">
                                 <i class="fas fa-shopping-bag nav-icon"></i>                                       
                                     <p>
                                         De compras
@@ -218,6 +218,8 @@
             </ul>
         </nav>
     </div>
+
+
 <?php else: ?>
 
     <div class="sidebar">
@@ -351,7 +353,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="deventas" class="nav-link disabled">
+                            <a href="rep-venta" class="nav-link disabled">
                                 <i class="fas fa-file-invoice nav-icon"></i>                                        
                                     <p>
                                         De ventas
@@ -359,7 +361,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="deventas" class="nav-link disabled">
+                            <a href="" class="nav-link disabled">
                                 <i class="fas fa-shopping-bag nav-icon"></i>                                       
                                     <p>
                                         De compras

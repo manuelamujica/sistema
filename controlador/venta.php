@@ -18,7 +18,7 @@ if(isset($_POST['buscar'])){
             $resul=$obj->registrar($_POST['cod_cliente'], $_POST['productos']);
             error_log($resul);
             header('Content-Type: application/json');
-            if($resul){
+            if($resul>0){
                 echo json_encode([
                     'success'=>true,
                     'cod_venta'=>$resul,
@@ -114,6 +114,7 @@ if(isset($_POST['buscar'])){
     }
 }
 
+$datos=$obj->v_cliente();
 $opciones=$objpago->consultar();
 $consulta=$obj->consultar();
 $_GET['ruta']='venta';

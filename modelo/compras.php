@@ -156,7 +156,7 @@ class Compra extends Conexion
             $strExec->bindParam(':cod_compra', $cod_c);  
             $strExec->bindParam(':cod_detallep', $producto['cod-dp']);  
             $strExec->bindParam(':cantidad', $producto['cantidad']);  
-            $strExec->bindParam(':monto', $producto['total']);
+            $strExec->bindParam(':monto', $producto['precio']);
             $dc=$strExec->execute();
 
             $incre="UPDATE detalle_productos SET stock = stock + :cantidad WHERE cod_detallep = :cod_detallep;";
@@ -165,10 +165,11 @@ class Compra extends Conexion
             $str->bindParam(':cantidad', $producto['cantidad']);
             $dp=$str->execute();
 
-            $costo="UPDATE presentacion_producto SET costo= :costo WHERE cod_presentacion=:cod_presentacion;";
+            $costo="UPDATE presentacion_producto SET costo= :costo, excento=:excento WHERE cod_presentacion=:cod_presentacion;";
             $sentencia=$this->conex->prepare($costo);
             $sentencia->bindParam(':costo', $producto['precio']);
             $sentencia->bindParam(':cod_presentacion', $producto['cod_presentacion']);
+            $sentencia->bindParam(':excento', $producto['iva']);
             $sentencia->execute();
             
          }else{
@@ -389,6 +390,39 @@ class Compra extends Conexion
       }
    }
 
+   public function b_detalle($cod){
+      $busqueda="SELECT dc.*, dp.*, CONCAT(prod.nombre,' ', prod.marca, ' - ', p.presentacion, ' x ', p.cantidad_presentacion) AS presentacion FROM detalle_compras dc 
+      JOIN compras c ON dc.cod_compra=c.cod_compra 
+      JOIN detalle_productos dp ON dc.cod_detallep=dp.cod_detallep
+      JOIN presentacion_producto p ON dp.cod_presentacion=p.cod_presentacion
+      JOIN productos AS prod ON p.cod_producto = prod.cod_producto
+      WHERE dc.cod_compra=:cod_compra;";
+      $consulta = $this->conex->prepare($busqueda);
+      $consulta->bindParam(':cod_compra', $cod);
+      $resul = $consulta->execute();
+      $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+      if($resul){
+         return $datos;
+      }else{
+         return [];
+      }
+   }
 
-
+   public function compra_f($fi, $ff){
+      $sql="SELECT p.razon_social, c.*
+   FROM compras c
+   INNER JOIN proveedores p ON c.cod_prov = p.cod_prov
+   WHERE c.fecha BETWEEN :fechainicio AND :fechafin
+   ORDER BY c.cod_compra ASC;";
+      $stmt = $this->conex->prepare($sql);
+      $stmt->bindParam(':fechainicio', $fi);
+      $stmt->bindParam(':fechafin', $ff);
+      $resul=$stmt->execute();
+      $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+      if($resul){
+         return $datos;
+      }else{
+         return [];
+      }
+   }
 }

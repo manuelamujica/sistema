@@ -12,6 +12,11 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($re);
     exit;
+}else if (isset($_POST['detallep'])) {
+    $detalle = $objCompras->b_detalle($_POST['detallep']);
+    header('Content-Type: application/json');
+    echo json_encode($detalle);
+    exit;
 }else if (isset($_POST["registrar"])) {  
     if (!empty($_POST["subtotal"]) && !empty($_POST["total_general"]) && 
         !empty($_POST["cod_prov"]) && !empty($_POST["fecha"])){
