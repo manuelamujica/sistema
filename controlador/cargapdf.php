@@ -42,15 +42,13 @@ if (isset($datos)) {
     <tr>
         <td style="text-align:left; border: none";>';
     if (isset($_SESSION["logo"])) {
-        $html .= '<img src="' . $_SESSION["logo"] . '" style="width:100px; max-width:200px;">'; //ajustar el tama;o
+        $html .= '<img src="' . $_SESSION["logo"] . '" style="width:100px; max-width:200px;">'; 
     } else {
         $html .= '<img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro" style="width:100%; max-width:200px;">';
     }
     $html .= '
         </td>
             <td style="text-align:rigth; border: none;">';
-    //$nombreEmpresa = isset($_SESSION["nombre-empresa"]) ? $_SESSION["nombre-empresa"] : 'Nombre no disponible';
-    //$rifEmpresa = isset($_SESSION["rif"]) ? $_SESSION["rif"] : 'RIF no disponible';
     $html .= '  
                 <h3 style="margin-bottom: 5px;">' . $_SESSION["n_empresa"] . '</h3>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["rif"] . '</p>

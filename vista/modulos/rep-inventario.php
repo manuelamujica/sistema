@@ -82,8 +82,8 @@ require_once 'controlador/reporte.php';
                                                     <tr>
                                                         <td> <?php echo $producto["cod_presentacion"] ?></td>
                                                         <td> <?php echo $producto["nombre"] ?></td>
-                                                        <td> <?php echo $producto["marca"] ?></td>
-                                                        <td> <?php echo $producto["presentacion_concat"] ?></td>
+                                                        <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
+                                                        <td> <?php echo $producto["presentacion_concat"] ? $producto["presentacion_concat"] : 'No disponible' ?></td>
                                                         <td> <?php echo $producto["cat_nombre"] ?></td>
                                                         <td> <?php echo $producto["costo"] ?></td>
                                                         <td> <?php if($producto["excento"] == 1){

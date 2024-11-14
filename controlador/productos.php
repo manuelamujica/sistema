@@ -6,8 +6,8 @@ require_once 'modelo/productos.php';
 $objProducto = new Productos();
 
 
-$categoria = $objProducto->consultarCategoria(); // Obtener los categorias activas para pasarlos a la vista
-$unidad = $objProducto->consultarUnidad();  // Obtener las unidades de medida activas para pasarlos a la vista
+$categoria = $objProducto->consultarCategoria(); 
+$unidad = $objProducto->consultarUnidad(); 
 
 //BUSCAR REGISTRAR
 if(isset($_POST['buscar'])){
@@ -27,59 +27,87 @@ if(isset($_POST['buscar'])){
 }elseif (isset($_POST['guardar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
-        /*if (!empty($_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca'])){
-            $objProducto->setMarca($_POST["marca"]);
+        $errors = [];
+        $marca = '';
+        $presentacion = '';
+        $cant_presentacion = '';
+
+        // Validación de marca
+        if (!empty($_POST['marca'])){
+            if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
+                $errors[] = 1;  // Marca no válida
+            } else {
+                $marca = $_POST["marca"];
+            }
         }
 
-        if (!empty($_POST['presentacion']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
-            $objProducto->setPresentacion($_POST["presentacion"]);
+        // Validación de presentación
+        if (!empty($_POST['presentacion'])){
+            if (!preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['presentacion'])){
+                $errors[] = true;  
+            } else {
+                $presentacion = $_POST["presentacion"];
+            }
         }
 
-        if (!empty($_POST['presentacion']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\s.,]+$/',$_POST['presentacion'])){
-            $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
-        }*/
+        // Validación de cantidad de presentación
+        if (!empty($_POST['cant_presentacion'])){
+            if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s.,]+$/', $_POST['cant_presentacion'])){
+                $errors[] = true;  
+            } else {
+                $cant_presentacion = $_POST["cant_presentacion"];
+            }
+        }
 
-        if(preg_match('/^[a-zA-ZÀ-ÿ0-9\s]+$/',$_POST['nombre'])){
-        $categoria = $_POST["categoria"];
-        $unidad = $_POST['unidad'];
-
-        $objProducto->setNombre($_POST["nombre"]);
-        $objProducto->setExcento($_POST["iva"]);
-        $objProducto->setCosto($_POST["costo"]);
-        $objProducto->setGanancia($_POST["porcen"]);
-        $objProducto->setMarca($_POST["marca"]);
-        $objProducto->setPresentacion($_POST["presentacion"]);
-        $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
-
-        if (!empty($_POST["cod_productoR"])) {
-            // Si existe el ID del producto, registrar solo la presentación
-            $cod_producto = $_POST["cod_productoR"];
-            $result = $objProducto->registrar2($unidad, $cod_producto);
+        // Validación del nombre del producto
+        if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s]+$/', $_POST['nombre'])){
+            $errors[] = true;
         } else {
-            // Si no existe, registrar un nuevo producto con su presentación
-            $result = $objProducto->getRegistrar($unidad, $categoria);
+            $nombre = $_POST["nombre"];
         }
 
-        if($result == 1){
-            $registrarp = [
-            "title" => "Registrado con éxito",
-            "message" => "El producto ha sido registrado",
-            "icon" => "success"
-            ];
-    }else{
+        if (count($errors) > 0) {
             $registrarp = [
                 "title" => "Error",
-                "message" => "Hubo un error al registrar el producto",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
                 "icon" => "error"
             ];
+        } else{
+
+            $categoria = $_POST["categoria"];
+            $unidad = $_POST['unidad'];
+
+            $objProducto->setNombre($nombre);
+            $objProducto->setExcento($_POST["iva"]);
+            $objProducto->setCosto($_POST["costo"]);
+            $objProducto->setGanancia($_POST["porcen"]);
+            $objProducto->setMarca($marca);
+            $objProducto->setPresentacion($presentacion);
+            $objProducto->setCantPresentacion($cant_presentacion);
+
+            if (!empty($_POST["cod_productoR"])) {
+                // Si existe el ID del producto, registrar solo la presentación
+                $cod_producto = $_POST["cod_productoR"];
+                $result = $objProducto->registrar2($unidad, $cod_producto);
+            } else {
+                // Si no existe, registrar un nuevo producto con su presentación
+                $result = $objProducto->getRegistrar($unidad, $categoria);
+            }
+
+            if($result == 1){
+                $registrarp = [
+                "title" => "Registrado con éxito",
+                "message" => "El producto ha sido registrado",
+                "icon" => "success"
+                ];
+            } else {
+                $registrarp = [
+                    "title" => "Error",
+                    "message" => "Hubo un error al registrar el producto",
+                    "icon" => "error"
+                ];
+            }
         }
-    } else{
-        $registrarp = [
-            "title" => "Error al registrar",
-            "message" => "Algunos caracteres ingresados no son permitidos.",
-            "icon" => "error"
-        ];
-    } 
     } else {
         $registrarp = [
         "title" => "Error",
@@ -90,21 +118,68 @@ if(isset($_POST['buscar'])){
 //EDITAR
 } else if (isset($_POST['editar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
-        
-        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
 
-            $cod_producto = $_POST['cod_producto'];
-            $cod_presentacion = $_POST['cod_presentacion'];
-            
-            $objProducto->setNombre($_POST['nombre']);
-            $objProducto->setMarca($_POST['marca']);
-            $objProducto->setCosto($_POST['costo']);
-            $objProducto->setExcento($_POST['iva']);
-            $objProducto->setGanancia($_POST["porcen"]);
-            $objProducto->setPresentacion($_POST['presentacion']);
-            $objProducto->setCantPresentacion($_POST['cant_presentacion']);
+            $errors = [];
+            $marca = '';
+            $presentacion = '';
+            $cant_presentacion = '';
+    
+            // Validación de marca
+            if (!empty($_POST['marca'])){
+                if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
+                    $errors[] = 1;  // Marca no válida
+                } else {
+                    $marca = $_POST["marca"];
+                }
+            }
+    
+            // Validación de presentación
+            if (!empty($_POST['presentacion'])){
+                if (!preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['presentacion'])){
+                    $errors[] = true;  
+                } else {
+                    $presentacion = $_POST["presentacion"];
+                }
+            }
+    
+            // Validación de cantidad de presentación
+            if (!empty($_POST['cant_presentacion'])){
+                if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s.,]+$/', $_POST['cant_presentacion'])){
+                    $errors[] = true;  
+                } else {
+                    $cant_presentacion = $_POST["cant_presentacion"];
+                }
+            }
+    
+            // Validación del nombre del producto
+            if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s]+$/', $_POST['nombre'])){
+                $errors[] = true;
+            } else {
+                $nombre = $_POST["nombre"];
+            }
 
-            $result=$objProducto->editar($cod_presentacion, $cod_producto, $_POST["categoria"],$_POST['unidad']);
+            if (count($errors) > 0) {
+                $registrarp = [
+                    "title" => "Error",
+                    "message" => "Algunos caracteres ingresados no son permitidos.",
+                    "icon" => "error"
+                ];
+            } else{
+
+                $cod_producto = $_POST['cod_producto'];
+                $cod_presentacion = $_POST['cod_presentacion'];
+                $cat = $_POST["categoria"];
+                $uni = $_POST['unidad'];
+
+                $objProducto->setNombre($_POST['nombre']);
+                $objProducto->setMarca($_POST['marca']);
+                $objProducto->setCosto($_POST['costo']);
+                $objProducto->setExcento($_POST['iva']);
+                $objProducto->setGanancia($_POST["porcen"]);
+                $objProducto->setPresentacion($_POST['presentacion']);
+                $objProducto->setCantPresentacion($_POST['cant_presentacion']);
+
+                $result=$objProducto->editar($cod_presentacion, $cod_producto, $cat, $uni);
             
             if($result == 1){
                 $editar = [
@@ -119,18 +194,13 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                     ];
                 }
-        }else { 
-            $editar = [
-                "title" => "Error al editar",
-                "message" => "Algunos caracteres ingresados no son permitidos.",
-                "icon" => "error"
-                ];
             }
-    } else {$editar = [
-        "title" => "Error al editar",
-        "message" => "Completa todos los campos obligatorios",
-        "icon" => "error"
-        ];
+        } else {
+            $editar = [
+            "title" => "Error al editar",
+            "message" => "Completa todos los campos obligatorios",
+            "icon" => "error"
+            ];
     }
 
 //ELIMINAR

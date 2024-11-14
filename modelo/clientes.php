@@ -120,7 +120,7 @@ public function buscar($valor){
         if ($resul) {
             return $resultado;
         }else{
-            return false;
+            return [];
         }
 
 }

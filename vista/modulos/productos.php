@@ -53,7 +53,7 @@ require_once "controlador/productos.php";
                                             <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
                                             <td> <?php echo $producto["presentacion_concat"] ? $producto["presentacion_concat"] : 'No disponible' ?></td>
                                             <td> <?php echo $producto["cat_nombre"] ?></td>
-                                            <td> <?php echo $producto["costo"] ?></td>
+                                            <td> <?php echo $producto["costo"] ?> Bs</td>
                                             <td> <?php if($producto["excento"] == 1){
                                                 echo 'E';
                                             }  else{
@@ -174,6 +174,15 @@ require_once "controlador/productos.php";
                                         </div>
                                         <div class="form-group">
                                             <label for="unidad">Unidad de medida<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Selecciona la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
                                             <div class="input-group">
                                                 <select class="form-control" id="unidad" name="unidad" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
@@ -192,7 +201,7 @@ require_once "controlador/productos.php";
                                             <div class="col-6">
                                                 <label for="presentacion">Presentación</label>
                                                 <!-- TOOLTIPS-->
-                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Como usar presentacion? no sabemos">
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la presentación de como viene el producto. Ej: Pieza.">
                                                     <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <script>
@@ -200,13 +209,13 @@ require_once "controlador/productos.php";
                                                         $('[data-toggle="tooltip"]').tooltip();
                                                     });
                                                 </script>
-                                                <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ingresa la presentación">
+                                                <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ej: Pieza.">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
-                                                <label for="cant_presentacion">Cantidad de presentación</label><!-- Botón de información pequeño con estilos personalizados -->
+                                                <label for="cant_presentacion">Cantidad de presentación</label>
                                                 <!-- TOOLTIPS-->
-                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Como usar cantidad de presentacion? no sabemos">
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la cantidad de presentación de como viene el producto. Ej: 250gr.">
                                                     <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <script>
@@ -214,7 +223,7 @@ require_once "controlador/productos.php";
                                                         $('[data-toggle="tooltip"]').tooltip();
                                                     });
                                                 </script>
-                                                <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ingresa la cantidad">
+                                                <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ej: 1.5kg">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
@@ -222,12 +231,12 @@ require_once "controlador/productos.php";
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="costo">Costo</label>
-                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" >
+                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra en Bs" >
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
                                                 <label for="precio">Precio</label>
-                                                <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >
+                                                <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta en Bs" readonly >
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
@@ -244,7 +253,6 @@ require_once "controlador/productos.php";
                                             <span>Todos los campos marcados con (*) son obligatorios</span>
                                         </div>
                                         <div class="modal-footer">
-                                            <!--<small>Los campos con * son obligatorios.</small> AJUSTARR ALINEACION -->
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                             <button type="submit" class="btn btn-secondary" name="deshacer" id="deshacer">Deshacer</button>
                                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>

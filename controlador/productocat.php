@@ -68,8 +68,8 @@ if (isset($datos)) {
         $html .= '<tr>
                     <td>' .  $datos['cod_presentacion'] . '</td>
                     <td>' . $datos['nombre'] . '</td>
-                    <td>' . $datos['marca'] . '</td>
-                    <td>' . $datos['presentacion_concat'] . '</td>
+                    <td>' . (!empty($datos['marca']) ? $datos['marca'] : 'No disponible') . '</td>
+                    <td>' . (!empty($datos['presentacion_concat']) ? $datos['presentacion_concat'] : 'No disponible') . '</td>
                     <td>' . $datos['cat_nombre'] . '</td>
                 </tr>';
                 }

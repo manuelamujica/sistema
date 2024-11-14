@@ -78,40 +78,38 @@ REGISTRAR PRODUCTO con CATEGORIA + REGISTRAR PRESENTACION con UNIDAD
 private function registrar($unidad, $categoria){ 
 
     $registro = "INSERT INTO productos(cod_categoria,nombre,marca) VALUES(:cod_categoria,:nombre, :marca)";
-    
-    #instanciar el metodo PREPARE no la ejecuta, sino que la inicializa
     $strExec = $this->conex->prepare($registro);
-
-    #instanciar metodo bindparam
     $strExec->bindParam(':cod_categoria',$categoria);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':marca', $this->marca);
     $resul = $strExec->execute();
 
     if($resul){
-        $nuevo_cod=$this->conex->lastInsertId(); #Obtiene el código del último producto creado para registrar presentacion + unidad
+        $nuevo_cod=$this->conex->lastInsertId(); 
+        
             $sqlproducto = "INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion,costo,porcen_venta,excento) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion,:costo,:porcen_venta,:excento)";  
             $strExec=$this->conex->prepare($sqlproducto);
-            $strExec->bindParam(':cod_unidad',$unidad);
-            $strExec->bindParam(':cod_producto',$nuevo_cod);
-            $strExec->bindParam(':presentacion',$this->presentacion);
-            $strExec->bindParam(':cantidad_presentacion',$this->cant_presentacion);
-            $strExec->bindParam(':costo',$this->costo);
-            $strExec->bindParam(':porcen_venta',$this->ganancia);
-            $strExec->bindParam(':excento',$this->excento);
-            $execute = $strExec->execute();
 
-            if($execute){
-            $r=1;
-            }else{
-                $r = 0;
+                $strExec->bindParam(':cod_unidad',$unidad);
+                $strExec->bindParam(':cod_producto',$nuevo_cod);
+                $strExec->bindParam(':presentacion',$this->presentacion);
+                $strExec->bindParam(':cantidad_presentacion',$this->cant_presentacion);
+                $strExec->bindParam(':costo',$this->costo);
+                $strExec->bindParam(':porcen_venta',$this->ganancia);
+                $strExec->bindParam(':excento',$this->excento);
+                $execute = $strExec->execute();
+
+                if($execute){
+                $r=1;
+                }else{
+                    $r = 0;
+                }
+                return $r;
+
+            } else{
+                return $resul=0;
             }
-            return $r;
-
-        } else{
-            return $resul=0;
-        }
-} 
+    }
 
 public function getRegistrar($unidad,$categoria){
     return $this->registrar($unidad,$categoria);
@@ -150,14 +148,8 @@ REGISTRAR PRESENTACION A UN PRODUCTO EXISTENTE
 ================================*/
 
 public function registrar2($unidad, $cod_producto){
-    $sql='SELECT * FROM productos WHERE cod_producto=:cod_producto';
-    $strExec = $this->conex->prepare($sql);
-    $strExec->bindParam(':cod_producto',$cod_producto);
-    $strExec->execute();
-    $datos=$strExec->fetchAll(PDO::FETCH_ASSOC);
-
-    if($datos){
         $sql2='INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion,costo,porcen_venta,excento) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion,:costo,:porcen_venta,:excento)';
+        
         $strExec=$this->conex->prepare($sql2);
         $strExec->bindParam(':cod_unidad',$unidad);
         $strExec->bindParam(':cod_producto',$cod_producto);
@@ -175,7 +167,6 @@ public function registrar2($unidad, $cod_producto){
             }
             return $res;
     }
-}
 
 /*==============================
 MOSTRAR PRODUCTO categoria, unidad y su presentación (tabla)
@@ -249,14 +240,14 @@ public  function editar($present,$product,$categoria,$unidad){
         porcen_venta=:porcen_venta,
         cod_unidad=:cod_unidad
         WHERE cod_presentacion=:cod_presentacion";
-        $strExec = $this->conex->prepare($sqlPresent);
-        $strExec->bindParam(':presentacion', $this->presentacion);
-        $strExec->bindParam(':cant_presentacion', $this->cant_presentacion);
-        $strExec->bindParam(':costo',$this->costo);
-        $strExec->bindParam(':excento',$this->excento);
-        $strExec->bindParam(':porcen_venta',$this->ganancia);
-        $strExec->bindParam(':cod_unidad', $unidad);
-        $strExec->bindParam(':cod_presentacion',$present);
+            $strExec = $this->conex->prepare($sqlPresent);
+            $strExec->bindParam(':presentacion', $this->presentacion);
+            $strExec->bindParam(':cant_presentacion', $this->cant_presentacion);
+            $strExec->bindParam(':costo',$this->costo);
+            $strExec->bindParam(':excento',$this->excento);
+            $strExec->bindParam(':porcen_venta',$this->ganancia);
+            $strExec->bindParam(':cod_unidad', $unidad);
+            $strExec->bindParam(':cod_presentacion',$present);
 
         return $strExec->execute() ? 1 : 0;
     }
@@ -362,7 +353,7 @@ public function consultardetalleproducto($cod_presentacion){
 }
 /*======================================================================
 PRODUCTOS MAS VENDIDOS
-========================================================================*/
+
 public function productosmasvendidos(){
     $sql="SELECT
 	present.cod_presentacion,
@@ -388,7 +379,7 @@ public function productosmasvendidos(){
         return [];
     }
 
-}
+}========================================================================*/
 /*======================================================================
     FILTRADO POR CATEGORIA
 ========================================================================*/
@@ -399,7 +390,7 @@ public function productocategoria($cod_categoria){
     p.marca,
     c.cod_categoria,
     c.nombre AS cat_nombre,
-    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat
+    (CONCAT(present.presentacion,' ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
@@ -416,84 +407,5 @@ public function productocategoria($cod_categoria){
     }else{
         return [];
     }
-
-
-}
-
-
-
-    /*======================================================================
-    ELIMINAR DETALLE DE PRODUCTO SOLO SI STATUS == 2 Y STOCK ==0
-    ========================================================================*/
-
-    /*public function eliminardetalle($detallep) {
-        
-        // Obtener el detalle específico que se desea eliminar
-        $sql = 'SELECT
-        stock, 
-        status 
-        FROM detalle_productos WHERE cod_detallep = :cod_detallep';
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
-        $strExec->execute();
-        $detalle = $strExec->fetch(PDO::FETCH_ASSOC);
-
-        Verificar si el detalle existe
-        if (!$detalle) {
-            return ['status' => 'error', 'message' => 'Detalle no encontrado.'];
-        }
-
-        // Validar si el detalle tiene stock > 0 o status != 2 (inactivo)
-        if ($detalle['stock'] > 0 || $detalle['status'] != 2) {
-            return 'error_stock';
-        }
-
-        // Proceder a eliminar
-        $sqld = "DELETE FROM detalle_productos WHERE cod_detallep = :cod_detallep";
-        $strExec = $this->conex->prepare($sqld);
-        $strExec->bindParam(':cod_detallep', $detallep, PDO::PARAM_INT);
-        $delete = $strExec->execute();
-
-        if ($delete) {
-            return ['status' => 'success', 'message' => 'Detalle eliminado correctamente.'];
-        } else {
-            return ['status' => 'error', 'message' => 'Error al eliminar el detalle.'];
-        }
-    }*/
-
-    /*=============================
-    FILTRADO 
-    ===============================
-    public function getmostrarPorFechas($fechaInicio, $fechaFin) {
-        $sql = "SELECT
-            p.cod_producto,
-            p.nombre,
-            p.marca,
-            detp.cod_presentacion,
-            detp.fecha_vencimiento,
-            c.nombre AS cat_nombre,
-            c.cod_categoria AS cat_codigo,
-            present.cod_presentacion,
-            present.presentacion,
-            present.cantidad_presentacion,
-            present.costo,
-            present.porcen_venta,
-            present.excento,
-            u.tipo_medida,
-            u.cod_unidad,
-            (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat
-        FROM productos AS p
-        JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
-        JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
-        JOIN detalle_productos AS detp ON detp.cod_presentacion = present.cod_presentacion
-        JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
-        WHERE detp.fecha_vencimiento BETWEEN :fechaInicio AND :fechaFin
-        GROUP BY present.cod_presentacion";
-
-        $stmt = $this->conex->prepare($sql);
-        $stmt->bindParam(':fechaInicio', $fechaInicio);
-        $stmt->bindParam(':fechaFin', $fechaFin);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }*/
+    }
 }

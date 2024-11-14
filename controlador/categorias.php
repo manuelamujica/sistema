@@ -15,7 +15,7 @@ if(isset($_POST['buscar'])){
 
     if(!empty($_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && strlen($_POST['nombre']) <= 40) {
 
-        if (!$objCategoria->getbuscar($_POST["nombre"])){ #Optimizado (Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
+        if (!$objCategoria->getbuscar($_POST["nombre"])){ #(Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
 
             $objCategoria->setNombre($_POST["nombre"]);
             $result=$objCategoria->getregistrar();

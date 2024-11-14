@@ -1,6 +1,36 @@
+console.log('abrio js');
 
+//BUSCAR POR CEDULA O RIF
+$('#cedula_rif').blur(function (e){
+    var buscar=$('#cedula_rif').val();
+    $.post('index.php?pagina=clientes', {buscar}, function(response){
+        if(response != ''){
+            Swal.fire({
+                title: 'Error',
+                text: 'El cliente ya se encuentra registrado',
+                icon: 'warning'
+            });
+        }
+    },'json');
+});
 
+$('#cedularif1').blur(function (e){
+    var buscar=$('#cedularif1').val();
+    $.post('index.php?pagina=clientes', {buscar}, function(response){
+        if(response != ''){
+            Swal.fire({
+                title: 'Error',
+                text: 'El cliente ya se encuentra registrado',
+                icon: 'warning'
+            });
+        }
+    },'json');
+});
+
+//EDITAR CLIENTE
 $('#editModal').on('show.bs.modal', function (event) {
+
+    console.log('EDITAR js');
         var button=$(event.relatedTarget);
         var codigo=button.data('codigo');
         var nombre=button.data('nombre');
@@ -25,7 +55,10 @@ $('#editModal').on('show.bs.modal', function (event) {
         modal.find('.modal-body #origin').val(origin);
     });
 
+//ELIMINAR CLIENTE
 $('#eliminarcliente').on('show.bs.modal', function (event) {
+    console.log('ELIMINAR js');
+
     var button = $(event.relatedTarget); 
     var nombre = button.data('nombre');
     var codigo = button.data('codigo');
@@ -34,25 +67,24 @@ $('#eliminarcliente').on('show.bs.modal', function (event) {
     modal.find('#clienteNombre').text(nombre);
     modal.find('.modal-body #clienteCodigo').val(codigo);
 });
-$('#cedula_rif').blur(function (e){
-    var buscar=$('#cedula_rif').val();
-    $.post('index.php?pagina=clientes', {buscar}, function(response){
-        if(response != ''){
-            alert('El cliente ya se encuentra registrado');
-        }
-    },'json');
-});
 
-$('#cedularif').blur(function (e){
-    var buscar=$('#cedularif').val();
-    $.post('index.php?pagina=clientes', {buscar}, function(response){
-        if(response != ''){
-            alert('La cedula ya existe');
-        }
-    },'json');
-});
+$(document).ready(function() {
+//FUNCIONES PARA VALIDAR
+function showError(selector, message) {
+    $(selector).addClass('is-invalid');
+    $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toLowerCase()).css({
+        'display': 'block',
+        'color': 'red',
+        'background-color': 'white'
+    });
+}
 
-//validacions del registro del cliente
+function hideError(selector) {
+    $(selector).removeClass('is-invalid');
+    $(selector).next('.invalid-feedback').css('display', 'none');
+}
+
+//VALIDACIONES REGISTRO
 $(document).ready(function() {
     // Validación de Cédula o Rif
     $('#cedula_rif').on('input', function() {
@@ -68,7 +100,7 @@ $(document).ready(function() {
     $('#nombre').on('blur', function() {
         var nombre = $(this).val();
         if (!nombre || !/^[a-zA-Z\s]+$/.test(nombre) || nombre.length < 1 || nombre.length > 12) {
-            showError('#nombre', 'debe contener  minimo 6 y maximo  12  letras ');
+            showError('#nombre', 'debe contener maximo  12  letras ');
         } else {
             hideError('#nombre');
         }
@@ -78,7 +110,7 @@ $(document).ready(function() {
     $('#apellido').on('blur', function() {
         var apellido = $(this).val();
         if (!apellido || !/^[a-zA-Z\s]+$/.test(apellido) || apellido.length < 1 || apellido.length > 12) {
-            showError('#apellido', 'debe contener entre minimo 6 o 12 letras ');
+            showError('#apellido', 'debe contener maximo 12 letras ');
         } else {
             hideError('#apellido');
         }
@@ -94,29 +126,8 @@ $(document).ready(function() {
         }
     });
 
-   
-    function showError(selector, message) {
-        $(selector).addClass('is-invalid');
-        $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toLowerCase()).css({
-            'display': 'block',
-            'color': 'red',
-            'background-color': 'white'
-        });
-    }
+//VALIDACIONES EDITAR
 
-   
-    function hideError(selector) {
-        $(selector).removeClass('is-invalid');
-        $(selector).next('.invalid-feedback').css('display', 'none');
-    }
-});
-
-
-
-
-
-//validacion de editar cliente 
-$(document).ready(function() {
     // Validación de Nombre
     $('#nombre1').on('blur', function() {
         var nombre = $(this).val();
@@ -167,7 +178,7 @@ $(document).ready(function() {
         toggleEditButton();
     });
 
-    // Función para mostrar el error
+    /*Función para mostrar el error
     function showError(selector, message) {
         $(selector).addClass('is-invalid');
         $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toLowerCase()).css({
@@ -181,7 +192,7 @@ $(document).ready(function() {
     function hideError(selector) {
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display', 'none');
-    }
+    }*/
 
     // Función para habilitar o deshabilitar el botón de editar
     function toggleEditButton() {
@@ -193,4 +204,5 @@ $(document).ready(function() {
         });
         $('button[name="actualizar"]').prop('disabled', !isValid);
     }
+});
 });
