@@ -27,16 +27,27 @@ if(isset($_POST['buscar'])){
 }elseif (isset($_POST['guardar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
-        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
+        /*if (!empty($_POST['marca']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/',$_POST['marca'])){
+            $objProducto->setMarca($_POST["marca"]);
+        }
 
+        if (!empty($_POST['presentacion']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['presentacion'])){
+            $objProducto->setPresentacion($_POST["presentacion"]);
+        }
+
+        if (!empty($_POST['presentacion']) && preg_match('/^[a-zA-ZÀ-ÿ0-9\s.,]+$/',$_POST['presentacion'])){
+            $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
+        }*/
+
+        if(preg_match('/^[a-zA-ZÀ-ÿ0-9\s]+$/',$_POST['nombre'])){
         $categoria = $_POST["categoria"];
         $unidad = $_POST['unidad'];
 
         $objProducto->setNombre($_POST["nombre"]);
-        $objProducto->setMarca($_POST["marca"]);
         $objProducto->setExcento($_POST["iva"]);
         $objProducto->setCosto($_POST["costo"]);
         $objProducto->setGanancia($_POST["porcen"]);
+        $objProducto->setMarca($_POST["marca"]);
         $objProducto->setPresentacion($_POST["presentacion"]);
         $objProducto->setCantPresentacion($_POST["cant_presentacion"]);
 

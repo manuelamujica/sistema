@@ -196,7 +196,7 @@ public function mostrar(){
     present.excento,
     u.tipo_medida,
     u.cod_unidad,
-    (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat, #Concatena
+    (CONCAT(present.presentacion,'  ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat, #Concatena
     COALESCE(ROUND(SUM(dp.stock), 2), 0) AS stock_total
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
