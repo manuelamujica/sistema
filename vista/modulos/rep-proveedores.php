@@ -11,15 +11,12 @@ require_once 'controlador/reportep.php';
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-
                         <li class="breadcrumb-item active">Reporte De Proveedores</li>
                     </ol>
                 </div>
             </div>
         </div>
     </section>
-
-
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -53,11 +50,7 @@ require_once 'controlador/reportep.php';
                                             <th>Dirección</th>
                                             <th>Telefonos</th>
                                             <th>Status</th>
-
                                             <th>Representante</th>
-
-
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,20 +60,9 @@ require_once 'controlador/reportep.php';
                                                     <td><?php echo $datos["cod_prov"] ?></td>
                                                     <td><?php echo $datos["rif"] ?></td>
                                                     <td><?php echo $datos["razon_social"] ?></td>
-                                                    <td><?php echo $datos["email"] ?></td>
-                                                    <td><?php echo $datos["direccion"] ?></td>
-
-
-
-                                                    <!-- regidtro de telefono del proveeed-->
-                                                    <td>
-                                                    <button name="telef" class="btn btn-outline-primary telef" title="telef" data-toggle="modal" data-target="#myModalt"
-                                                            data-cod1="<?php echo $datos['cod_prov']; ?>" data-rif="<?php echo $datos['rif']; ?>">
-                                                            <i class="fa fa-phone"></i>
-                                                            <?php echo $datos["telefono"]; ?>
-                                                        </button>
-
-                                                    </td>
+                                                    <td><?php echo !empty($datos["email"]) ? $datos["email"] : 'No disponible'; ?></td>
+                                                    <td><?php echo !empty($datos["direccion"]) ? $datos["direccion"] : 'No disponible'; ?></td>
+                                                    <td><?php echo !empty($datos["telefonos"]) ? $datos["telefonos"] : 'No disponible'; ?></td>
 
                                                     <td>
                                                         <?php if ($datos['status'] == 1): ?>
@@ -89,23 +71,10 @@ require_once 'controlador/reportep.php';
                                                             <span class="badge bg-danger">Inactivo</span>
                                                         <?php endif; ?>
                                                     </td>
-
-                                                    <td>
-
-                                                        <!-- mostrar representante del proveeedo-->
-
-
-                                                        <button name="mostrar" class="btn btn-outline-info btn-sm  mostrar" title="representante" data-toggle="modal" data-target="#myModalr">
-
-                                                            <i class="fa fa-user"></i>
-                                                            <?php echo $datos['nombre']; ?>
-                                                        </button>
-                                                    </td>
-
+                                                    <td><?php echo !empty($dato["nombre"]) ? $dato["nombre"] : 'No disponible'; ?></td>
                                                 </tr>
                                             <?php endif; ?>
                                         <?php } ?>
-
                                     </tbody>
                                 </table>
                             </div>

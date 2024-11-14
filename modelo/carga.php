@@ -6,6 +6,9 @@
     private $fecha;
     private $descripcion;
     private $status;
+    private $lote;
+    private $fecha_vencimiento;
+    private $cod_presentacion;
     private $conex;
 
     public function __construct(){
@@ -31,6 +34,25 @@
     }
     public function getFecha(){
         return $this->fecha;
+    }
+    public function setCodp($cod_presentacion){
+        $this->cod_presentacion = $cod_presentacion;
+    }
+    public function setFechaV($fecha_vencimiento){
+        $this->fecha_vencimiento = $fecha_vencimiento;
+    }
+    public function setlote($lote){
+        $this->lote = $lote;
+    }
+    
+    public function getCodp(){
+        return $this->cod_presentacion;
+    }
+    public function getFechaV(){
+        return $this->fecha_vencimiento;
+    }
+    public function getlote(){
+        return $this->lote;
     }
     public function getDes(){
         return $this->descripcion;
@@ -172,6 +194,32 @@
             }
     
     }
+       
+
+        //METODO REGISTRAR
+        private function registrarPro(){
+            $registro = "INSERT INTO detalle_productos(cod_presentacion,stock, fecha_vencimiento, lote) VALUES(:cod_presentacion,0, :fecha_vencimiento, :lote)";
+    
+            $strExec= $this->conex->prepare($registro);
+            $strExec->bindParam('cod_presentacion', $this->cod_presentacion);
+            $strExec->bindParam(':fecha_vencimiento',$this->fecha_vencimiento);
+            $strExec->bindParam(':lote', $this->lote);
+    
+            $result = $strExec->execute();
+    
+            if($result){
+                $r = 1;
+            }else{
+                $r = 0;
+            }
+    
+            return $r;
+    
+        }
+    
+        public function getcrearPro(){
+           return $this->registrarPro();
+        }
 
    }
 ?>

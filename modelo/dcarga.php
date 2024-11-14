@@ -22,7 +22,7 @@
             $cantidad = $this->cantidad;
             $cod_carga = $this->carga(); // Obtener el último código de carga insertado
             $this->setcodcarga($cod_carga); // Asignar el código de carga a la propiedad
-            $sql = "INSERT INTO detalle_carga(cod_detallep,cod_carga, cantidad, status) VALUES(:cod_detallep, :cod_carga, :cantidad, 1)";
+            $sql = "INSERT INTO detalle_carga(cod_detallep,cod_carga, cantidad) VALUES(:cod_detallep, :cod_carga, :cantidad)";
 
             $strExec = $this->conex->prepare($sql);
             $strExec->bindParam(':cod_detallep', $this->cod_detallep);
@@ -91,31 +91,63 @@
         return $this->getproductod();
     }
 
-
-        private function mostrartodo(){
-            //OBTENGO DATOS DE LA TABLA CARGA
-            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
-            FROM detalle_carga dc
-            JOIN carga c ON dc.cod_carga = c.cod_carga
-            JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
-            JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
-            JOIN productos p ON pre.cod_producto = p.cod_producto";
-
+        private function mostrartodoo($valor) {
+            // Construir la consulta SQL
+            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, 
+                    pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
+                    pre.cantidad_presentacion, p.cod_producto, p.nombre, 
+                    dp.cod_detallep, dp.stock, dp.lote, dp.fecha_vencimiento,dc.cod_det_carga, dc.cantidad
+                    FROM detalle_carga dc
+                    JOIN carga c ON dc.cod_carga = c.cod_carga
+                    JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
+                    JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
+                    JOIN productos p ON pre.cod_producto = p.cod_producto
+                    WHERE c.cod_carga = :cod_carga";
+        
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':cod_carga', $valor, PDO::PARAM_STR);
+    
+            $resul = $strExec->execute();
+            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
+        
+            if ($resul) {
+                return $result;
+            } else {
+                return []; // Retornar un array vacío si no hay resultados
+            }
+        }
+        
+        public function gettodoo($valor) {
+            return $this->mostrartodoo($valor);
+        }
+        
+        //MOSTRAR EN REPORTE TODO
+        private function mostrartodo() {
+            // Construir la consulta SQL
+            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, 
+                    pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
+                    pre.cantidad_presentacion, p.cod_producto, p.nombre, 
+                    dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
+                    FROM detalle_carga dc
+                    JOIN carga c ON dc.cod_carga = c.cod_carga
+                    JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
+                    JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
+                    JOIN productos p ON pre.cod_producto = p.cod_producto";
+        
             $strExec = $this->conex->prepare($sql);
             $resul = $strExec->execute();
             $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-            if($resul){
-                return $result;;
-            }else{
-                return $r = 0;
+        
+            if ($resul) {
+                return $result;
+            } else {
+                return []; // Retornar un array vacío si no hay resultados
             }
         }
-
-        public function gettodo(){
+        
+        public function getodoo() {
             return $this->mostrartodo();
         }
-
 
         private function obtenerP(){
             $sql = "SELECT pre.cod_presentacion, pre.cod_producto, pre.presentacion, p.cod_producto, p.nombre, p.marca

@@ -34,6 +34,12 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                 ];
             }
+        } else {
+            $registrar = [
+                "title" => "Error",
+                "message" => "No se puede registrar la categoría con un nombre existente.",
+                "icon" => "error"
+            ];
         }
     }else {
         $registrar = [
@@ -69,7 +75,7 @@ if(isset($_POST['buscar'])){
                 }
             } else {
                 // Si el nombre ha cambiado, verificar si ya existe en la base de datos
-                if (!$objCategoria->buscar($nombre)) {
+                if (!$objCategoria->getbuscar($nombre)) {
                     $objCategoria->setNombre($nombre);
                     $objCategoria->setStatus($_POST['status']);
     

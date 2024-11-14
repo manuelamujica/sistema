@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <!-- MOSTRAR EL REGISTRO DE UNIDADES DE MEDIDA -->
                             <div class="table-responsive">
-                                <table id="unidad" class="table table-bordered table-striped">
+                                <table id="unidad" class="table table-bordered table-striped datatable" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Código</th>
@@ -84,7 +84,16 @@ MODAL REGISTRAR Unidades de medida
                                         <!--   TIPO DE MEDIDA      -->
                                         <div class="form-group">
                                             <label for="tipo_medida">Tipo de medida</label>
-                                            <input type="text" class="form-control" name="tipo_medida" placeholder="Ingrese Tipo de Medida" id="tipo_medida1" maxlength="10">
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" name="tipo_medida" placeholder="Ej: Kg." id="tipo_medida1" maxlength="10">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                 </div>

@@ -1,7 +1,7 @@
 // Validar entradas
 $(document).ready(function() {
 
-    // FUNCIONES
+    // FUNCIONES ====================
     function showError(selector, message) {
         $(selector).addClass('is-invalid');
         $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
@@ -14,14 +14,16 @@ $(document).ready(function() {
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display', 'none');
     }
-    // FIN FUNCIONES
+    // ===============================
 
-    // Registrar
+    // REGISTRAR
     $('#nombre').on('blur', function() {
         var nombre = $(this).val();
         if (nombre.trim() === '') {
-            hideError('#nombre'); // Si está vacío, oculta el error
-        } else if (!/^[a-zA-Z\s]+$/.test(nombre)) {
+            hideError('#nombre');
+        } else if (nombre.length > 50) {
+            showError('#nombre', 'El texto no debe exceder los 50 caracteres'); 
+        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nombre)) {
             showError('#nombre', 'Solo letras');
         } else {
             hideError('#nombre');
@@ -32,6 +34,8 @@ $(document).ready(function() {
         var user = $(this).val();
         if (user.trim() === '') {
             hideError('#user'); // Si está vacío, oculta el error
+        } else if (user.length > 20) {
+            showError('#user', 'El texto no debe exceder los 20 caracteres'); 
         } else if (!/^[a-zA-Z0-9]+$/.test(user)) {
             showError('#user', 'Solo letras y numeros');
         } else {
@@ -46,7 +50,7 @@ $(document).ready(function() {
         var isValid = true;
 
         if (password.trim() === '') {
-            hideError('#passU'); // Si está vacío, oculta el error
+            hideError('#passU');
 
         }else if (password.length < 8) {
             showError('#passU', 'La contraseña debe tener al menos 8 caracteres');
@@ -57,6 +61,8 @@ $(document).ready(function() {
         } else if (!/[!@#$%^&*()/,.?":{}|<>]/.test(password)) {
             showError('#passU', 'La contraseña debe contener al menos un carácter especial');
             isValid = false;
+        } else if (password.length > 255) {
+            showError('#passU', 'La contraseña no debe exceder los 255 caracteres'); 
         } else {
             hideError('#passU');
         }
@@ -66,12 +72,14 @@ $(document).ready(function() {
         }
     });
 
-    // Editar
+    // EDITAR
     $('#nombreE').on('blur', function() {
         var nombre = $(this).val();
         if (nombre.trim() === '') {
-            hideError('#nombreE'); // Si está vacío, oculta el error
-        } else if (!/^[a-zA-Z\s]+$/.test(nombre)) {
+            hideError('#nombreE'); 
+        } else if (nombre.length > 50) {
+            showError('#nombreE', 'El texto no debe exceder los 50 caracteres'); 
+        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nombre)) {
             showError('#nombreE', 'Solo letras');
         } else {
             hideError('#nombreE');
@@ -81,7 +89,9 @@ $(document).ready(function() {
     $('#userE').on('blur', function() {
         var user = $(this).val();
         if (user.trim() === '') {
-            hideError('#userE'); // Si está vacío, oculta el error
+            hideError('#userE'); 
+        } else if (user.length > 20) {
+            showError('#userE', 'El texto no debe exceder los 20 caracteres'); 
         } else if (!/^[a-zA-Z0-9]+$/.test(user)) {
             showError('#userE', 'Solo letras y numeros');
         } else {
@@ -96,7 +106,7 @@ $('#passE').on('blur', function(e) {
     var isValid = true;
 
     if (password.trim() === '') {
-        hideError('#passE'); // Si está vacío, oculta el error
+        hideError('#passE'); 
 
     }else if (password.length < 8) {
         showError('#passE', 'La contraseña debe tener al menos 8 caracteres');
@@ -107,6 +117,8 @@ $('#passE').on('blur', function(e) {
     } else if (!/[!@#$%^&*()/,.?":{}|<>]/.test(password)) {
         showError('#passE', 'La contraseña debe contener al menos un carácter especial');
         isValid = false;
+    } else if (password.length > 255) {
+        showError('#passE', 'La contraseña no debe exceder los 255 caracteres'); 
     } else {
         hideError('#passE');
     }

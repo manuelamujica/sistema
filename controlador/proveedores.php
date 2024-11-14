@@ -14,28 +14,31 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($resul);
     exit;
-} else if (isset($_POST["guardar"])) {
+}else if (isset($_POST["guardar"])) {
     $errores = [];
 
     // Validación del campo RIF
-    if (empty($_POST["rif"]) || !preg_match("/^[a-zA-Z0-9\s\-\.\/]+$/", $_POST["rif"]) || strlen($_POST["rif"]) < 6 || strlen($_POST["rif"]) > 12) {
-        $errores[] = "El RIF debe contener entre 6 o  12 caracteres, .";
+    if (empty($_POST["rif"]) || !preg_match("/^[a-zA-Z0-9\s\-\.\/]+$/", $_POST["rif"]) || strlen($_POST["rif"]) < 4 || strlen($_POST["rif"]) > 12) {
+        $errores[] = "El RIF debe contener maximo  12 caracteres.";
     }
 
     // Validación del campo razón social
     if (empty($_POST["razon_social"]) || !preg_match("/^[a-zA-Z0-9\s\-\.\/]+$/", $_POST["razon_social"]) || strlen($_POST["razon_social"]) < 6 || strlen($_POST["razon_social"]) > 30) {
-        $errores[] = "La razón social debe contener entre 6 o 30 caracteres, incluyendo letras y numeros, .";
+        $errores[] = "La razón social debe contener maximo  30 caracteres, incluyendo letras y números.";
     }
 
-    // Validación del campo email
-    if (empty($_POST["email"]) || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || strlen($_POST["email"]) < 15 || strlen($_POST["email"]) > 40) {
-        $errores[] = "El email debe ser válido y tener entre 15 o 40 caracteres.";
+    // Validación del campo email (opcional)
+    if (!empty($_POST["email"]) && (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || strlen($_POST["email"]) < 10 || strlen($_POST["email"]) > 40)) {
+        $errores[] = "El email debe ser válido y tener maximo  40 caracteres.";
     }
 
- 
+    // Validación del campo dirección (opcional)
+    if (!empty($_POST["direccion"]) && (strlen($_POST["direccion"]) < 6 || strlen($_POST["direccion"]) > 100)) {
+        $errores[] = "La dirección debe contener maximo  y 100 caracteres.";
+    }
+
     $direccion = $_POST["direccion"]; 
 
-  
     if (!empty($errores)) {
         $registrar = [
             "title" => "Error",
@@ -48,8 +51,8 @@ if (isset($_POST['buscar'])) {
         if (!$dato) {
             $objProveedores->setRif($_POST['rif']);
             $objProveedores->setRazon_Social($_POST['razon_social']);
-            $objProveedores->setemail($_POST['email']);
-            $objProveedores->setDireccion($_POST['direccion']);
+            $objProveedores->setemail($_POST['email']); // Se permite vacío
+            $objProveedores->setDireccion($_POST['direccion']); // Se permite vacío
 
             $resul = $objProveedores->getregistra();
 
@@ -68,43 +71,60 @@ if (isset($_POST['buscar'])) {
             }
         } 
     }
-} else if (isset($_POST['editar'])) {
-    if (!empty($_POST["rif"]) && !empty($_POST["razon_social"]) && !empty($_POST["email"]) && !empty($_POST["direccion"]) && isset($_POST["status"])) {
+}else if (isset($_POST['editar'])) {
+    // Verifica que los campos obligatorios estén llenos
+    if (!empty($_POST["rif"]) && !empty($_POST["razon_social"]) && isset($_POST["status"])) {
 
+        // Verifica si el RIF es diferente del original y si ya existe en la base de datos
         if ($_POST['rif'] !== $_POST['origin'] && $objProveedores->getbuscar($_POST['rif'])) {
+
         } else {
+            // Establecer los valores para la edición
             $objProveedores->setRif($_POST["rif"]);
             $objProveedores->setRazon_Social($_POST["razon_social"]);
-            $objProveedores->setEmail($_POST["email"]);
-            $objProveedores->setDireccion($_POST["direccion"]);
+            
+            // Solo establecer el email y la dirección si no están vacíos
+            if (!empty($_POST["email"])) {
+                $objProveedores->setEmail($_POST["email"]);
+            } else {
+                $objProveedores->setEmail(null); // O puedes omitir esta línea si no deseas actualizar el campo
+            }
+
+            if (!empty($_POST["direccion"])) {
+                $objProveedores->setDireccion($_POST["direccion"]);
+            } else {
+                $objProveedores->setDireccion(null); // O puedes omitir esta línea si no deseas actualizar el campo
+            }
+
             $objProveedores->setStatus($_POST["status"]);
             $objProveedores->setCod($_POST["cod_prov"]);
 
+            // Intentar editar los datos
             $resul = $objProveedores->getedita();
             if ($resul == 1) {
-
-                    $editar = [
-                        "title" => "Editado con éxito",
-                        "message" => "Los datos del proveedor han sido actualizados.",
-                        "icon" => "success"
-                    ];
-                } else {
-                    $editar = [
-                        "title" => "Error",
-                        "message" => "Hubo un problema al editar los datos del proveedor.",
-                        "icon" => "error"
-                    ];
-                }
-            } 
+                $editar = [
+                    "title" => "Editado con éxito",
+                    "message" => "Los datos del proveedor han sido actualizados.",
+                    "icon" => "success"
+                ];
+            } else {
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al editar los datos del proveedor.",
+                    "icon" => "error"
+                ];
+            }
         }
-} else if (isset($_POST['eliminar'])) {
+    } 
+} elseif (isset($_POST['eliminar'])) {
     if (!empty($_POST['provCodigo'])) {
         $resul = $objProveedores->geteliminar($_POST["provCodigo"]);
 
-        if ($resul === 'success') {
+        // Mensajes según el resultado de la eliminación
+        if ($resul === 'success_eliminado') {
             $eliminar = [
                 "title" => "Eliminado con éxito",
-                "message" => "El proveedor ha sido eliminado .",
+                "message" => "El proveedor ha sido eliminado.",
                 "icon" => "success"
             ];
         } elseif ($resul === 'error_compra_asociada') {
@@ -116,7 +136,6 @@ if (isset($_POST['buscar'])) {
         }
     }
 }
-
 $registro = $objProveedores->getconsulta();
 if (isset($_POST["vista"])) {
     $_GET['ruta'] = 'compras';

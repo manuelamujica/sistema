@@ -63,11 +63,17 @@ require_once "controlador/productos.php";
                                             </td>
                                             <td>
                                             <?php 
-                                            $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"]; 
-                                            echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea
+                                            if($producto["excento"] == 1){
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }  else{
+                                                $costoiva = $producto["costo"] * 1.16;
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $costoiva;
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }
                                             ?>
                                         </td>
-                                            <td>Stock total</td>
+                                            <td><?php echo $producto["stock_total"] ?></td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
@@ -119,7 +125,6 @@ require_once "controlador/productos.php";
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-
                                 <div class="modal-body">
                                     <form id="formRegistrarProducto" method="post">
                                         <div class="form-group row">
@@ -127,7 +132,7 @@ require_once "controlador/productos.php";
                                                 <!-- Campo oculto para el código del producto -->
                                                 <input type="hidden" id="cod_productoR" name="cod_productoR">
 
-                                                <label for="nombre">Nombre del producto</label>
+                                                <label for="nombre">Nombre del producto<span class="text-danger" style="font-size: 20px;"> *</span></label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                                 <div id="lista-productos" class="list-group" style="display: none;"></div>
@@ -142,7 +147,7 @@ require_once "controlador/productos.php";
 
                                         <div class="form-group row">
                                                 <div class="col-6">
-                                                    <label for="categoria">Categoría</label>
+                                                    <label for="categoria">Categoría de producto<span class="text-danger" style="font-size: 20px;"> *</span></label>
                                                     <div class="input-group">
                                                         <select class="form-control" id="categoria" name="categoria" required>
                                                             <option value="" selected disabled>Seleccione una opción</option>
@@ -159,16 +164,16 @@ require_once "controlador/productos.php";
                                                 </div>
 
                                             <div class="col-6">
-                                                <label for="excento">Impuesto IVA</label>
+                                                <label for="exento">Impuesto IVA<span class="text-danger" style="font-size: 20px;"> *</span></label>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
-                                                        <option value="1">Excento</option>
+                                                        <option value="1">Exento</option>
                                                         <option value="2">Gravable</option>
                                                     </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="unidad">Unidad de medida</label>
+                                            <label for="unidad">Unidad de medida<span class="text-danger" style="font-size: 20px;"> *</span></label>
                                             <div class="input-group">
                                                 <select class="form-control" id="unidad" name="unidad" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
@@ -233,7 +238,13 @@ require_once "controlador/productos.php";
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
                                         </div>
+                                        <!-- Alert Message -->
+                                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span>Todos los campos marcados con (*) son obligatorios</span>
+                                        </div>
                                         <div class="modal-footer">
+                                            <!--<small>Los campos con * son obligatorios.</small> AJUSTARR ALINEACION -->
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                             <button type="submit" class="btn btn-secondary" name="deshacer" id="deshacer">Deshacer</button>
                                             <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
@@ -328,7 +339,16 @@ require_once "controlador/productos.php";
                         <form id="formregistrarUnidad" action="index.php?pagina=unidad" method="post">
                             <div class="form-group">
                                 <label for="tipo_medida">Tipo de medida</label>
-                                <input type="text" class="form-control" name="tipo_medida" id="tipo_medidau" placeholder="Ingrese unidad de medida" required>
+                                <!-- TOOLTIPS-->
+                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                                <script>
+                                    $(function () {
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                    });
+                                </script>
+                                <input type="text" class="form-control" name="tipo_medida" id="tipo_medidau" placeholder="Ej: Kg" required>
                                 <input type="hidden" name="vista" value="unidad">
                             </div>
                         </div>
@@ -409,10 +429,10 @@ require_once "controlador/productos.php";
                                                 </select>
                                         </div>
                                         <div class="col-6">
-                                            <label for="excento">¿Tiene IVA?</label>
+                                            <label for="exento">¿Tiene IVA?</label>
                                                 <select class="form-control" id="ivaE" name="iva" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
-                                                    <option value="1">Excento</option>
+                                                    <option value="1">Exento</option>
                                                     <option value="2">Gravable</option>
                                                 </select>
                                         </div>
@@ -532,7 +552,7 @@ require_once "controlador/productos.php";
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editModalLabel">Detalle de productos</h5>
+                                    <h5 class="modal-title" id="detalleModalLabel">Detalle de productos</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -547,9 +567,7 @@ require_once "controlador/productos.php";
                                                             <th>Código</th>
                                                             <th>Lote</th>
                                                             <th>Fecha de vencimiento</th>
-                                                            <th>Status</th>
                                                             <th>Stock</th>
-                                                            <th>Acciones</th>
                                                         </tr>         
                                                     </thead>
                                                     <tbody id="detalleBody">
@@ -566,7 +584,7 @@ require_once "controlador/productos.php";
 
 <!-- ====================================
     MODAL CONFIRMAR ELIMINAR DETALLE 
-========================================= -->
+========================================= 
                 <div class="modal fade" id="eliminarDetalleModal" tabindex="-1" aria-labelledby="eliminarDetalleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -590,7 +608,7 @@ require_once "controlador/productos.php";
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>-->
 
             </div>
         </div>      
