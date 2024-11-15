@@ -91,26 +91,25 @@ require_once "controlador/usuarios.php";
             <div class="modal-body">
                 <form id="formregistrarusuario" method="post">
                     <div class="form-group">
-                        <label for="nombre">Nombre</label>
+                        <label for="nombre">Nombre<span class="text-danger" style="font-size: 15px;"> *</span></label>
                         <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido" required>
                         <div class="invalid-feedback" style="display: none;"></div>
                     </div>
                     <div class="form-group">
-                        <label for="user">Usuario</label>
+                        <label for="user">Usuario<span class="text-danger" style="font-size: 15px;"> *</span></label>
                         <input type="text" class="form-control" id="user" name="user" placeholder="Ingresa el nombre de usuario"  required>
                         <div class="invalid-feedback" style="display: none;"></div>
                     </div>
                     <div class="form-group">
-                        <label for="pass">Contraseña</label>
+                        <label for="pass">Contraseña<span class="text-danger" style="font-size: 15px;"> *</span></label>
                             <div class="input-group ">
                                 <input type="password" class="form-control" id="passU" placeholder="Contraseña" name="pass" required>
                                 <div class="invalid-feedback" style="display: none; margin: botton 4px;"></div>
                                 <span class="fas fa-eye icon-password" data-target="passU"></span>
                             </div>
                     </div>
-                    
-                        <div class="form-group">
-                        <label for="rol">Rol</label>
+                    <div class="form-group">
+                        <label for="rol">Rol<span class="text-danger" style="font-size: 15px;"> *</span></label>
                         <select class="form-control" id="rol" name="rol" required>
                         <option value="" selected disabled>Seleccione un rol</option>
                             <?php foreach($roles as $role): ?>
@@ -119,7 +118,12 @@ require_once "controlador/usuarios.php";
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                    </div>    
+                    </div>   
+                    <!-- Alert Message -->
+                    <div class="alert alert-light d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>Todos los campos marcados con (*) son obligatorios</span>
+                    </div> 
                 </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

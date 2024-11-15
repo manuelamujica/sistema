@@ -1,7 +1,5 @@
 //Modal detalle descarga
-
 console.log('Abrio JS');
-
 $(document).ready(function() {
     $('#detallemodal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Botón que abrió el modal
@@ -19,11 +17,8 @@ $(document).ready(function() {
             data: { detalled: codigoDescarga },
             dataType: 'json',
             success: function(data) {
-                
-                // Verificar si hay datos en la respuesta
-                console.log(data);
-                
-                
+            
+                //console.log(data);
                 if (data.length === 0) {
                     // Si no hay detalles mostrar un mensaje 
                     $('#detalleBody').append(
@@ -78,7 +73,7 @@ function crearfila(index) {
                 <input type="text" class="form-control" id="stock${index}" name="productos[${index}][stock]" placeholder="Stock" readonly>
             </td>
             <td>
-                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001">
+                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001"
             <div class="invalid-feedback" style="display: none;"></div>
             </td>
             <td>
@@ -105,21 +100,9 @@ function eliminarFila(index) {
 
 // Al documentarse, inicializamos la primera fila
 $(document).ready(function() {
-    agregarFila(); // Inicializa la tabla con una fila
+    agregarFila(); 
 
 //Buscar para seleccionar detalle de producto
-/*
-$('#lista-productos').css({
-    'position': 'absolute', 
-    'z-index': '10000',
-    'width': '100%',
-    'max-height': '200px',
-    'overflow-y': 'auto',
-    'border': '1px solid #ddd',
-    'box-shadow': '0px 4px 8px rgba(0, 0, 0, 0.1)'
-    
-});
-*/
     // Creación de filas y búsqueda
     $(document).on('input', '[id^="nombreProducto"]', function() {
         var query = $(this).val(); 

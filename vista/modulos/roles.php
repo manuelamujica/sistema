@@ -90,13 +90,32 @@ MODAL REGISTRAR ROLES
                                     <form id="formAgregarRol" method="post">
                                         <!--   NOMBRE DEL ROL     -->
                                         <div class="form-group">
-                                            <label for="rol">Rol</label>
-                                            <input type="text" class="form-control" id="rol1" name="rol" placeholder="Ingresa el nombre" maxlength="30"> <!--  #############  AGG LIMITE DE CARACTERES  ############ -->
+                                            <label for="rol">Rol<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa el rol para un usuario. Ej: Vendedor.">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
+                                            <input type="text" class="form-control" id="rol1" name="rol" placeholder="Ej: Vendedor." maxlength="30">
                                             <div class="invalid-feedback" style="display: none;"></div>
 
                                         </div>
                                         <div class="form-group">
-                                            <label for="permisos">Selecciona los permisos:</label><br>
+                                            <label for="permisos">Selecciona los permisos:<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Asigna a cuáles módulos tendrá acceso este rol de usuario. Selecciona mínimo 1.">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
+                                            <br>
                                             <?php foreach ($permiso as $datos): ?>
                                                 <div class="icheck-primary d-inline">
                                                     <input type="checkbox" id="campo" name="permisos[]" value="<?php echo $datos['cod_permiso']; ?>" id="categoria<?php echo $datos['cod_permiso']; ?>">
@@ -107,7 +126,11 @@ MODAL REGISTRAR ROLES
                                                 <br>
                                             <?php endforeach; ?>
                                         </div>
-
+                                        <!-- Alert Message -->
+                                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span>Todos los campos marcados con (*) son obligatorios</span>
+                                        </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

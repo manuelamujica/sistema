@@ -42,13 +42,13 @@ class Usuario extends Conexion{
         $this->status = $status;
     }
 
-//Login
-    public function mostrar($item, $valor){
+//LOGIN
+    public function mostrar($valor){
             $resultado = [];
 
-            $sql = "SELECT * FROM usuarios WHERE $item = :$item";
+            $sql = "SELECT * FROM usuarios WHERE user = :user";
             $stmt = $this->conex->prepare($sql);
-            $stmt->bindParam(":".$item, $valor, PDO::PARAM_STR);
+            $stmt->bindParam(":user", $valor, PDO::PARAM_STR);
             $stmt->execute();
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -66,7 +66,7 @@ public function accesos($valor){
         INNER JOIN permisos p ON tp.cod_permiso = p.cod_permiso
         WHERE u.cod_usuario = :valor;";
     $strExec = $this->conex->prepare($sql);
-    $strExec->bindParam(':valor', $valor, PDO::PARAM_INT); #sentencia preparada... ?
+    $strExec->bindParam(':valor', $valor, PDO::PARAM_INT); 
     $resul=$strExec->execute();
     $datos=$strExec->fetchAll(PDO::FETCH_ASSOC);
     if($resul){
@@ -76,6 +76,7 @@ public function accesos($valor){
     }
 
 }
+//FIN LOGIN
 
 /*==============================
 REGISTRAR USUARIO

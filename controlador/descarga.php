@@ -36,11 +36,20 @@ if(isset($_POST['buscar'])){
                 
                 $errorCantidad = false;
                 
-                foreach ($_POST['productos'] as $index => $producto) {
+                foreach ($_POST['productos'] as $producto) {
                     if (empty($producto['cantidad'])) {
                         $r = [
                             "title" => "Error",
-                            "message" => "La cantidad del producto no puede estar vacía.",
+                            "message" => "La cantidad a descargar no puede estar vacía.",
+                            "icon" => "error"
+                        ];
+                        $errorCantidad = true;
+                        break;  // Si hay 1 un error, se detiene la ejecución
+                    }
+                    if($producto['cantidad'] > $producto['stock']){
+                        $r = [
+                            "title" => "Error",
+                            "message" => "La cantidad del producto no puede ser mayor al stock.",
                             "icon" => "error"
                         ];
                         $errorCantidad = true;
