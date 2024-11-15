@@ -84,7 +84,12 @@ class Venta extends Conexion{
     public function registrar($cliente, $productos) {
         try {
             $this->conex->beginTransaction();
-            
+            foreach ($productos as $producto) {
+                if ($producto['cantidad']==0) {
+                    throw new Exception("la cantidad del producto es invalida");
+                }
+            }
+            //registro de la venta
             $registro = "INSERT INTO ventas(cod_cliente, total, fecha, status) VALUES(:cod_cliente, :total, :fecha, 1)";
             $strExec = $this->conex->prepare($registro);
             $strExec->bindParam(':cod_cliente', $cliente);
@@ -94,17 +99,13 @@ class Venta extends Conexion{
             if (!$resul) {
                 throw new Exception("Error al registrar la venta");
             }
-
             $nuevo_cod = $this->conex->lastInsertId();
+            //Recorrer los Detalles de ventas
             foreach ($productos as $producto) {
-                if ($producto['cantidad']==0) {
-                    throw new Exception("la cantidad del producto es invalida");
-                }
                 $cod_presentacion = $producto['codigo'];
                 $cantidad_a_vender = $producto['cantidad'];
                 $precio = $producto['precio'];
-    
-                // Obtener los detalles de producto con stock disponible para este producto
+
                 $loteQuery = "SELECT cod_detallep, stock FROM detalle_productos 
                             WHERE cod_presentacion = :cod_presentacion AND stock > 0 
                             ORDER BY cod_detallep ASC";
@@ -112,22 +113,21 @@ class Venta extends Conexion{
                 $loteStmt->bindParam(':cod_presentacion', $cod_presentacion);
                 $loteStmt->execute();
                 $lotes = $loteStmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
                 $cantidad_restante = $cantidad_a_vender;
-    
                 // Iterar sobre los lotes para reducir el stock y registrar detalle_ventas
                 foreach ($lotes as $lote) {
                     $cod_detallep = $lote['cod_detallep'];
                     $stock_disponible = $lote['stock'];
-    
+
                     if ($cantidad_restante <= 0) {
                         break; // Si ya se cubrió la cantidad requerida, salir del bucle
                     }
-    
+
                     if ($stock_disponible >= $cantidad_restante) {
                         // Si el lote actual cubre la cantidad restante
                         $nuevo_stock = $stock_disponible - $cantidad_restante;
-    
+
                         // Registrar en detalle_ventas
                         $detalleQuery = "INSERT INTO detalle_ventas(cod_venta, cod_detallep, cantidad, importe) 
                                         VALUES(:cod_venta, :cod_detallep, :cantidad, :importe)";

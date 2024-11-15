@@ -118,7 +118,8 @@ MODAL REGISTRAR CLIENTES
                         <div class="invalid-feedback"></div>
 
                         <label for="email">Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Ingrese el correo electrónico">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese el correo electrónico">
+                        <div class="invalid-feedback"></div>
 
                         <label for="direccion">Dirección:</label>
                         <textarea class="form-control" name="direccion" placeholder="Ingrese la dirección de vivienda"></textarea>

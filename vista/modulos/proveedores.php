@@ -42,7 +42,7 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach ($registro as $datos) { ?>
-                                            <?php if ($datos['status'] != 2): ?>
+                                            <?php //if ($datos['status'] != 2): ?>
                                                 <tr>
                                                     <td><?php echo $datos["cod_prov"] ?></td>
                                                     <td><?php echo $datos["rif"] ?></td>
@@ -102,7 +102,7 @@
                                                         </button>
                                                     </td>
                                                 </tr>
-                                            <?php endif; ?>
+                                            <?php //endif; ?>
                                         <?php } ?>
                                     </tbody>
                                 </table>
