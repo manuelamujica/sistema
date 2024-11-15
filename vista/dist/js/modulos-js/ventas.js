@@ -3,27 +3,6 @@
 SCRIPT DE VENTA
 ============================= */
 
-
-        /* Cuando se haga clic en "Realizar Venta" en el modal de Ver Venta
-        $('#realizarVentaBtn').click(function() {
-            $('#pagoModal').modal('show');
-
-            
-            var cliente = $('#cliente').val(); //cargar el nombre del cliente
-            $('#cliente-resumen').val(cliente);
-        });
-
-        
-        /*$('#finalizarPagoBtn').click(function() {
-            
-            alert('Pago Finalizado');
-            
-            $('#resumenVentaModal').modal('hide');
-            $('#ventaModal').modal('hide'); 
-        });*/
-
-
-
 var productoIndex = 1; 
 
 // Función para agregar una nueva fila a la tabla
@@ -130,6 +109,17 @@ $(document).ready(function() {
             hideError('#' + inputId);
         }
     });
+    
+    $('#cedula-rif').on('input', function() {
+        var cedula_rif = $(this).val();
+        if (cedula_rif.length > 12) {
+            showError('#cedula-rif', 'debe contener maximo 12 números');
+        } else if (!/^\d+$/.test(cedula_rif)) {
+            showError('#cedula-rif', 'debe contener solo numeros');
+        }else {
+            hideError('#cedula-rif');
+        }
+    });
 });
 
 
@@ -139,13 +129,9 @@ function calcularTotal(index) {
     var precio = parseFloat($(`[name="productos[${index}][precio]"]`).val()) || 0;
     var total = cantidad * precio;
     $(`[name="productos[${index}][total]"]`).val(total.toFixed(2));
-
     actualizarResumen(); 
 }
 
-/*function mostrarProductos() {
-    alert('Mostrar lista de productos');
-}*/
 
 // Función para actualizar el resumen de venta
 function actualizarResumen() { 
@@ -154,22 +140,15 @@ function actualizarResumen() {
     var baseImponible = 0;
     var iva = 0;
 
-    
+    //recorrer todas las filas 
     for (var i = 1; i < productoIndex; i++) {
         var totalProducto = parseFloat($('#total' + i).val()) || 0;
-
-        
         console.log('Total del producto ' + i + ':', totalProducto);
-
-        
         if (isNaN(totalProducto)) {
             totalProducto = 0;
         }
-
         subtotal += totalProducto;
-
         var tipoProducto = parseFloat($('#tipoProducto' + i).val());
-
     if (tipoProducto === 1) {
             exento += totalProducto;
         } else if (tipoProducto === 2) {
@@ -179,45 +158,25 @@ function actualizarResumen() {
     iva = baseImponible * 0.16;
     var totalGeneral = subtotal + iva;
 
-    // Verificar los valores calculados para el resumen (para depuración)
     console.log('Subtotal:', subtotal);
     console.log('Exento:', exento);
     console.log('Base Imponible:', baseImponible);
     console.log('IVA:', iva);
     console.log('Total General:', totalGeneral);
 
-    
+    //asignacion de valores 
     $('#subtotal').text(subtotal.toFixed(2));
     $('#exento').text(exento.toFixed(2));
     $('#base-imponible').text(baseImponible.toFixed(2));
     $('#iva').text(iva.toFixed(2));
-    
-    
     $('#total-span').text(totalGeneral.toFixed(2));
     $('#total-general').val(totalGeneral.toFixed(2));
 }
 
 
-    /*$('#cedula-rif').blur(function (e){
-        var buscar=$('#cedula-rif').val();
-        $.post('index.php?pagina=clientes', {buscar}, function(response){
-            var nombre=response['nombre']+" "+response['apellido'];
-            var telefono=response['telefono'];
-            var apellido=response['apellido'];
-            var codigo=response['cod_cliente'];
-
-            if(response['status']!=0){
-            var modal = $('#ventaModal');
-            modal.find('.modal-body #numero-cliente').val(telefono);
-            modal.find('.modal-body #nombre-cliente').val(nombre);
-            modal.find('.modal-body #cod_cliente').val(codigo);
-            }
-        },'json');
-    });*/
-
     $('#cedula-rif').on('blur keydown', function (e) {
         if (e.type === 'blur' || (e.type === 'keydown' && e.keyCode === 13)) {
-            e.preventDefault(); // Previene el envío del formulario con Enter
+            e.preventDefault(); 
             var buscar = $('#cedula-rif').val();
             $.post('index.php?pagina=clientes', { buscar }, function(response) {
                 if(response !== false){
@@ -262,11 +221,10 @@ function actualizarResumen() {
 
 
     $(document).ready(function() {
-    // Evento 'input' en los campos de productos dinámicos
     $(document).on('input', '[id^=nombreProducto]', function() {
         var inputId = $(this).attr('id');
-        var index = inputId.replace('nombreProducto', ''); // Obtener el índice del campo
-        var query = $(this).val(); // Valor ingresado por el usuario
+        var index = inputId.replace('nombreProducto', '');
+        var query = $(this).val();
 
         if (query.length > 2) {
             $.ajax({
@@ -276,10 +234,9 @@ function actualizarResumen() {
                 dataType: 'json', 
                 success: function(data) {
                     var listaProductos = $('#lista-productos' + index);
-                    listaProductos.empty(); // Limpiar resultados anteriores
+                    listaProductos.empty(); 
 
                     if (data.length > 0) {
-                        // Recorrer los productos recibidos y mostrar nombre + código + precio concatenados
                         $.each(data, function(key, producto) {
                             var costo = parseFloat(producto.costo);
                             var precioVenta = costo + (costo * producto.porcen_venta / 100);
@@ -302,10 +259,9 @@ function actualizarResumen() {
                 }
             });
         } else {
-            $('#lista-productos' + index).fadeOut(); // Ocultar la lista si no hay suficientes caracteres
+            $('#lista-productos' + index).fadeOut();
         }
     });
-
     // Cuando el usuario selecciona un producto
     $(document).on('click', '.producto-item', function(){
         var selectedProduct = $(this).data('nombre'); 
@@ -317,8 +273,8 @@ function actualizarResumen() {
         var cant=1;
 
 
-        var inputId = $(this).closest('.list-group').attr('id'); // Obtiene 'listaX' donde X es el índice
-        var index = inputId.replace('lista-productos', ''); // Extrae el número de índice
+        var inputId = $(this).closest('.list-group').attr('id'); 
+        var index = inputId.replace('lista-productos', ''); 
 
         $('#nombreProducto' + index).val(selectedProduct); 
         $('#codigoProducto' + index).val(codigo); 
@@ -339,7 +295,7 @@ $(document).ready(function() {
             String(now.getDate()).padStart(2, '0');
 
 // Formatea la hora en el formato HH:MM:SS
-var hora=String(now.getHours()).padStart(2, '0') + ':' +
+    var hora=String(now.getHours()).padStart(2, '0') + ':' +
         String(now.getMinutes()).padStart(2, '0') + ':' +
         String(now.getSeconds()).padStart(2, '0');
     
@@ -358,12 +314,9 @@ $(function() {//inicio de los alertas peque;os
 $(document).ready(function() {
     $('#ventamodal').on('submit', function(event) {
         event.preventDefault();
-        
-        // Serializa los datos del formulario
         var datosVenta = $(this).serialize();
         console.log('form:', datosVenta);
 
-        // Enviar la solicitud AJAX
         $.ajax({
             type: 'POST',
             url: 'index.php?pagina=venta',
@@ -378,7 +331,7 @@ $(document).ready(function() {
                     })
                     console.log('cod:', response.cod_venta);
                     console.log('total:', response.total);
-                    // Abre el modal de pago
+                    
                     $('#pagoModal').modal('show');
                     $('#nro-venta').val(response.cod_venta);
                     $('#nombre_cliente').val(response.cliente); 
@@ -410,13 +363,11 @@ $(document).ready(function() {
 
 function calcularTotalpago() {
     let totalBs = 0;
-
     // 1. Procesar las entradas que ya están en bolívares (sin conversión)
     document.querySelectorAll('.monto-bs:not(.monto-con)').forEach(function(input) {
         let montoBs = parseFloat(input.value) || 0;
         totalBs += montoBs;  // Sumar cada monto en bolívares directo
     });
-
     // 2. Procesar las entradas en divisas (convertirlas a bolívares)
     document.querySelectorAll('.monto-divisa').forEach(function(inputDivisa) {
         let index = inputDivisa.id.split('-').pop();  // Obtener el índice de la fila actual

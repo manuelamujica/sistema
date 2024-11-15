@@ -32,12 +32,23 @@ if (isset($_POST['buscar'])) {
                 "title" => "La compra ha sido registrada exitosamente.",
                 "icon" => "success"
             ];
+        }else{
+            $registrar = [
+                "title" => "Error al registrar la compra.",
+                "icon" => "error"
+            ];
         }
         }else{
-            echo '<script> alert("no pasa de productos");</script>';
+            $registrar = [
+                "title" => "No se encontraron productos en tu solicitud.",
+                "icon" => "error"
+            ];
         }
     } else{
-        echo '<script> alert("no pasa del primer if");</script>';
+        $registrar = [
+            "title" => "Faltan campos obligatorios.",
+            "icon" => "error"
+        ];
     }
 }else if (isset($_POST['anular'])) {
     if (!empty($_POST['codcom'])) {

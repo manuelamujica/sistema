@@ -111,13 +111,7 @@
     </section>
 </div>
 
-<script>
-    <?php if (isset($_GET['abrirModal']) && $_GET['abrirModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#ventaModal').modal('show');
-        });
-    <?php endif; ?>
-</script>
+
 <!-- Modal de Venta con búsqueda interactiva -->
 <div class="modal fade" id="ventaModal" tabindex="-1" aria-labelledby="ventaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" >
@@ -139,6 +133,7 @@
                                 <div class="row">
                                     <div class="col-md-11">
                                         <input type="text" class="form-control form-control-sm" id="cedula-rif" name="cedula-rif" placeholder="Cédula o RIF">
+                                        <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
                                         <input type="hidden" id="cod_cliente" name="cod_cliente" required>
                                     </div>
                                     <div class="col-md-1">
