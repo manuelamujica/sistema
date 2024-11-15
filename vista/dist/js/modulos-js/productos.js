@@ -296,7 +296,7 @@ function calcularPrecioVentaEditar(modal) {
 
 // Llamar a la funcion de calcular para el modal de edicion
 $(document).on('input', '#costoE, #porcenE, #ivaE', function() {
-    calcularPrecioVenta($('#modalRegistrarProducto')); 
+    calcularPrecioVentaEditar($('#editModal')); 
 });
 
 // NUEVA CATEGORIA DESDE PRODUCTO

@@ -51,24 +51,24 @@ class Venta extends Conexion{
 
     public function b_productos($valor){
         $sql="SELECT
-    present.cod_presentacion,
-    p.cod_producto,
-    p.nombre AS producto_nombre,
-    present.costo,
-    p.marca,
-    present.excento,
-    present.porcen_venta,
-    u.cod_unidad,
-    u.tipo_medida, 
-    c.nombre AS cat_nombre,
-    CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' x ', u.tipo_medida) AS presentacion,
-    COALESCE(ROUND(SUM(dp.stock), 2), 0) AS total_stock 
-    FROM presentacion_producto AS present
-    JOIN productos AS p ON present.cod_producto = p.cod_producto
-    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
-    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
-    LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
-    WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
+        present.cod_presentacion,
+        p.cod_producto,
+        p.nombre AS producto_nombre,
+        present.costo,
+        p.marca,
+        present.excento,
+        present.porcen_venta,
+        u.cod_unidad,
+        u.tipo_medida, 
+        c.nombre AS cat_nombre,
+        CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' x ', u.tipo_medida) AS presentacion,
+        COALESCE(ROUND(SUM(dp.stock), 2), 0) AS total_stock 
+        FROM presentacion_producto AS present
+        JOIN productos AS p ON present.cod_producto = p.cod_producto
+        JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+        JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+        LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
+        WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $valor . '%';
         $consulta->bindParam(1, $buscar, PDO::PARAM_STR);

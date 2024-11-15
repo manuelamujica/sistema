@@ -42,13 +42,13 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach ($registro as $datos) { ?>
-                                            <?php //if ($datos['status'] != 2): ?>
                                                 <tr>
                                                     <td><?php echo $datos["cod_prov"] ?></td>
                                                     <td><?php echo $datos["rif"] ?></td>
                                                     <td><?php echo $datos["razon_social"] ?></td>
                                                     <td><?php echo !empty($datos["email"]) ? $datos["email"] : 'No disponible'; ?></td>
                                                     <td><?php echo !empty($datos["direccion"]) ? $datos["direccion"] : 'No disponible'; ?></td>
+                                                    
                                                     <!-- REGISTRO TELEFONO PROVEEDOR -->
                                                     <td>
                                                         <button name="telef" class="btn btn-outline-primary telef" title="telef" data-toggle="modal" data-target="#myModalt"
@@ -59,7 +59,7 @@
                                                         </button>
                                                     </td>
                                                     <td>
-                                                        <?php if ($datos['status'] == 1): ?>
+                                                        <?php if ($datos['proveedor_status'] == 1): ?>
                                                             <span class="badge bg-success">Activo</span>
                                                         <?php else: ?>
                                                             <span class="badge bg-danger">Inactivo</span>
@@ -91,7 +91,7 @@
                                                             data-razon="<?php echo $datos["razon_social"]; ?>"
                                                             data-email="<?php echo $datos['email']; ?>"
                                                             data-dire="<?php echo $datos['direccion']; ?>"
-                                                            data-status="<?php echo $datos['status']; ?>">
+                                                            data-status="<?php echo $datos['proveedor_status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
                                                     <!-- BOTON ELIMINAR PROVEEDORES -->
@@ -102,7 +102,6 @@
                                                         </button>
                                                     </td>
                                                 </tr>
-                                            <?php //endif; ?>
                                         <?php } ?>
                                     </tbody>
                                 </table>

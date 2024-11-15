@@ -48,8 +48,8 @@ if (isset($datos)) {
                 </td>
         </tr>
     </table>
-
     <br>
+    <p><i>  Fecha de generación:'.$fechaActual.'</i> </p>
     <hr style="border=0.5px;">
     <br>
     <h1 style="text-align:center;">Listado de Productos</h1>
@@ -69,11 +69,11 @@ if (isset($datos)) {
             <tbody>';
     foreach ($datos as $datos) {
         $html .= '<tr>
-        <td>' .  $datos['cod_producto'] . '</td>
+        <td>' . $datos['cod_producto'] . '</td>
         <td>' . $datos['nombre'] . '</td>
-        <td>' . $datos['marca'] . '</td>
-        <td>' . $datos['presentacion_concat'] . '</td>
-        <td>' .  $datos['costo'] . '</td>
+        <td>' . (!empty($datos['marca']) ? $datos['marca'] : 'No disponible') . '</td>
+        <td>' . (!empty($datos['presentacion_concat']) ? $datos['presentacion_concat'] : 'No disponible') . '</td>
+        <td>' . $datos['costo'] . 'Bs </td>
         <td>';
 
         // Validación de exento
@@ -95,6 +95,7 @@ if (isset($datos)) {
                     $html .= number_format($precioVenta, 2, '.', '') . " Bs"; // 2 decimales
                 }
         $html .= '</td>
+                <td>' . $datos['stock_total'] . '</td>
             </tr>';
     }
     $html .= '
@@ -103,7 +104,6 @@ if (isset($datos)) {
     <page_footer>
                 <div style="text-align: center;">
                     <p>' . $_SESSION["telefono"] . '  |  ' . $_SESSION["direccion"] . '  |  ' . $_SESSION["email"] . '</p>
-                    <p><i>  Fecha de generación:'.$fechaActual.'</i> </p>
                     </div>
     </page_footer>
 </page>';

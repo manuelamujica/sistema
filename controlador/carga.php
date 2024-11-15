@@ -1,7 +1,6 @@
 <?php
 require_once "modelo/carga.php";
 require_once "modelo/dcarga.php";
-require_once "modelo/detallep.php"; //AQUI DEBERIA LLAMAR AL MODELO DE PRODUCTO
 
 $objcarga = new Carga();
 $objcargad = new Dcarga();
@@ -14,9 +13,9 @@ if (isset($_POST['buscar'])) {
     echo json_encode($resul);
     exit;
 }else if (isset($_POST['detalle'])) {
-    $resul = $objcargad->gettodoo($_POST['detalle']);
+    $detalle = $objcargad->gettodoo($_POST['detalle']);
     header('Content-type: application/json');
-    echo json_encode($resul);
+    echo json_encode($detalle);
     exit;
 } else if (isset($_POST['registrarD'])) {
     // Inicializar el array de respuesta
@@ -68,7 +67,7 @@ else if (isset($_POST['guardar'])) {
     //$response = [];
     // Verificar que la fecha y descripción no estén vacías
     if (!empty($_POST['fecha']) && !empty($_POST['descripcion'])) {
-        if (preg_match("/^[a-zA-Z0-9\.,\s]+$/", $_POST['descripcion'])) {
+        if (preg_match("/^[a-zA-ZÀ-ÿ0-9\s]+$/", $_POST['descripcion'])) {
             $objcarga->setFecha($_POST['fecha']);
             $objcarga->setDes($_POST['descripcion']);
             $resul = $objcarga->getcrear(); // Registrar carga
@@ -145,19 +144,6 @@ else if (isset($_POST['guardar'])) {
         ];
     }
 
-}
-// Manejo de edición de carga
-else if (isset($_POST['editar'])) {
-    $cod_carga = $_POST['cod_carga'];
-    $des = $_POST['descripcion'];
-    $objcarga->setCod($cod_carga);
-    $objcarga->setDes($des);
-    $res = $objcarga->geteditar();
-    if ($res == 1) {
-        echo "<script>alert('Carga actualizada con éxito'); window.location.href='?pagina=carga'; </script>";
-    } else {
-        echo "<script>alert('No se pudo actualizar'); window.location.href='?pagina=carga'; </script>";
-    }
 }
 
 // Código adicional para manejar otras operaciones

@@ -42,8 +42,8 @@ $sheet->getStyle('B1:O5')->getFont()->setBold(true)->setSize(14);
 $sheet->getStyle('B1:O5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
 // Establecer color de fondo para el encabezado
-$sheet->getStyle('A1:I5')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-$sheet->getStyle('A1:I5')->getFill()->getStartColor()->setARGB('F4F6F9');
+$sheet->getStyle('A1:I7')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+$sheet->getStyle('A1:I7')->getFill()->getStartColor()->setARGB('F4F6F9');
 
 // Ajustar el ancho de las columnas
 $sheet->getColumnDimension('A')->setWidth(15);
@@ -55,7 +55,6 @@ $sheet->getColumnDimension('F')->setWidth(15);
 $sheet->getColumnDimension('G')->setWidth(15);
 $sheet->getColumnDimension('H')->setWidth(20);
 $sheet->getColumnDimension('I')->setWidth(15);
-//$sheet->getColumnDimension('J')->setWidth(20);
 
 // Agregar la fecha de generación
 $sheet->setCellValue('A7', 'Fecha de generación: ' . date("d-m-Y"));
@@ -73,7 +72,6 @@ $sheet->setCellValue('F' . $row, 'Costo');
 $sheet->setCellValue('G' . $row, 'IVA');
 $sheet->setCellValue('H' . $row, 'Precio de venta');
 $sheet->setCellValue('I' . $row, 'Stock');
-//$sheet->setCellValue('J' . $row, 'Detalle');
 
 // Establecer formato para el encabezado de la tabla
 $sheet->getStyle('A' . $row . ':I' . $row)->getFont()->setBold(true);
@@ -100,13 +98,13 @@ foreach ($datos as $producto) {
     
     $sheet->setCellValue('A' . $row, $producto["cod_producto"]);
     $sheet->setCellValue('B' . $row, $producto["nombre"]);
-    $sheet->setCellValue('C' . $row, $producto["marca"]);
-    $sheet->setCellValue('D' . $row, $producto["presentacion"]);
+    $sheet->setCellValue('C' . $row, ($producto["marca"]) ? $producto["marca"] : 'No disponible');
+    $sheet->setCellValue('D' . $row, ($producto["presentacion"]) ? $producto["presentacion"] : 'No disponible');
     $sheet->setCellValue('E' . $row, $producto["cat_nombre"]);
     $sheet->setCellValue('F' . $row, $producto["costo"]);
-    $sheet->setCellValue('G' . $row, $producto["excento"]);
+    $sheet->setCellValue('G' . $row, ($producto["excento"] == 1 ? 'E' : 'G'));
     $sheet->setCellValue('H' . $row, $precioVenta);
-    $sheet->setCellValue('I' . $row, 'Stock total'); // Aquí puedes agregar el stock real si lo tienes
+    $sheet->setCellValue('I' . $row, $producto['stock_total']); // Aquí puedes agregar el stock real si lo tienes
     //$sheet->setCellValue('J' . $row, 'Detalle'); // Aquí puedes agregar el detalle real si lo tienes
 
    // Aplicar sombreado de fondo a la fila de datos (más claro)
@@ -115,10 +113,10 @@ foreach ($datos as $producto) {
 
    // Aplicar bordes a las filas de datos
    $sheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
-       'borders' => [
-           'allBorders' => [
-               'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-               'color' => ['argb' => '000000'], // Color de los bordes
+    'borders' => [
+        'allBorders' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            'color' => ['argb' => '000000'], // Color de los bordes
            ],
        ],
    ]);

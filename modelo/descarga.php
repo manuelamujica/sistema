@@ -30,12 +30,7 @@ class Descarga extends Conexion{
     public function setdescripcion($descripcion){
         $this->descripcion = $descripcion;
     }
-    /*public function getstatus(){
-        return $this->status;
-    }
-    public function setstatus($status){
-        $this->status = $status;
-    }*/
+    
     public function getcantidad(){
         return $this->cantidad;
     }
@@ -43,48 +38,69 @@ class Descarga extends Conexion{
         $this->cantidad = $cantidad;
     }
 
+/*================================
+    REGISTRAR DESCARGA (TRANSACCION)
+===========================*/
     public function registrar($cod_detalle) {
-        $sql = 'INSERT INTO descarga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)';
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':fecha', $this->fecha);
-        $strExec->bindParam(':descripcion', $this->descripcion);
-        $resul = $strExec->execute();
-        // Si la descarga no se registró correctamente
-        if (!$resul) {
-            return 0;
-        }
-        
-        $ultimocodigo = $this->conex->lastInsertId();
+        try {
+
+            $this->conex->beginTransaction();
+            
+            // Insertar en la tabla descarga
+            $sql = 'INSERT INTO descarga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)';
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':fecha', $this->fecha);
+            $strExec->bindParam(':descripcion', $this->descripcion);
+            $resul = $strExec->execute();
+            
+            if (!$resul) {
+                throw new Exception("Error al registrar la descarga");
+            }
     
-        foreach ($cod_detalle as $det) {
-            if (!empty($det['cantidad']) && !empty($det['cod_detallep'])) {
+            $ultimocodigo = $this->conex->lastInsertId();
+            
+            // Insertar los detalles de descarga
+            foreach ($cod_detalle as $det) {
+                // Validar que los datos de cantidad y cod_detallep estén presentes
+                if (empty($det['cantidad']) || empty($det['cod_detallep'])) {
+                    throw new Exception("La cantidad o el código del detalle no son válidos.");
+                }
+    
+                // Insertar en la tabla 'detalle_descarga'
                 $sql2 = "INSERT INTO detalle_descarga(cod_detallep, cod_descarga, cantidad) VALUES(:cod_detallep, :cod_descarga, :cantidad)";
                 $sentencia = $this->conex->prepare($sql2);
                 $sentencia->bindParam(':cod_detallep', $det['cod_detallep']);
                 $sentencia->bindParam(':cod_descarga', $ultimocodigo);
                 $sentencia->bindParam(':cantidad', $det['cantidad']);
                 $detalle = $sentencia->execute();
-    
-                // Si no se insertó correctamente el detalle de descarga
+
                 if (!$detalle) {
-                    return 0;
+                    throw new Exception("Error al registrar el detalle de descarga para el producto con código " . $det['cod_detallep']);
                 }
-    
-                //Actualizar el stock en detalle_productos
+
+                // Actualizar el stock en detalle_productos
                 $sql3 = "UPDATE detalle_productos SET stock = stock - :cantidad WHERE cod_detallep = :cod_detallep";
                 $updateStock = $this->conex->prepare($sql3);
                 $updateStock->bindParam(':cantidad', $det['cantidad']);
                 $updateStock->bindParam(':cod_detallep', $det['cod_detallep']);
                 $stockactualizado = $updateStock->execute();
-    
-                // Si no se actualizó correctamente el stock
+
                 if (!$stockactualizado) {
-                    return 0;
+                    throw new Exception("Error al actualizar el stock para el producto con código " . $det['cod_detallep']);
                 }
             }
+            
+            // Si todo fue exitoso, confirmar la transacción
+            $this->conex->commit();
+            return 1; 
+        } catch (Exception $e) {
+            // Si algo salió mal, revertir los cambios
+            $this->conex->rollBack();
+            error_log($e->getMessage()); // Registrar el error
+            return 0;
         }
-        return 1;
     }
+    
 // DETALLE DESCARGA (Modal)
     public function consultardetalledescarga($cod_descarga){
         $sql = 'SELECT

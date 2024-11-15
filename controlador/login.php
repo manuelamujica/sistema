@@ -13,10 +13,8 @@ if (isset($_POST["ingresar"])) {
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
 	preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])){ 
 
-		$item = "user";
 		$valor = $_POST["ingUsuario"];
-
-		$respuesta = $objuser->mostrar($item, $valor);
+		$respuesta = $objuser->mostrar($valor);
 	}
 
 	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
@@ -68,7 +66,7 @@ if (isset($_POST["ingresar"])) {
 				}
 			}
 
-			//obtenemos el logo de la empresa
+			//Obtenemos la informacion de la empresa
 			$logo = $obj->mostrar();
 			if(!empty($logo)){
 			$_SESSION["logo"] = $logo[0]["logo"];

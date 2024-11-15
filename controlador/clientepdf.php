@@ -12,10 +12,8 @@ $listado = $obj->consultar();
 
 if (isset($listado)) { //&& $listado != []
     // Inicializa HTML2PDF
-    $html2pdf = new Html2Pdf('P', 'LETTER', 'es'); #vertical, formato pagina, idioma
-
-    $fechaHoraGeneracion = date('d-m-Y H:i:s');
-    // HTML que se convertirá en PDF
+    $html2pdf = new Html2Pdf('P', 'LETTER', 'es'); 
+    $fechaHoraGeneracion = date('d-m-Y');
     $html = '
     
     <style>
@@ -47,7 +45,7 @@ if (isset($listado)) { //&& $listado != []
     }
 </style>
 <page backtop="7mm" backbottom="10mm">
-     <table class="info-empresa">
+    <table class="info-empresa">
         <tr>
             <td style="width:150px; border:none;">
                 <img src="' . $_SESSION["logo"] . '" style="width:110px; height:auto;">
@@ -61,9 +59,9 @@ if (isset($listado)) { //&& $listado != []
             </td>
         </tr>
     </table>
-
     <!-- Tabla de datos -->
     <br>
+    <p><i>Fecha de generación: ' . $fechaHoraGeneracion . '</i></p>
     <hr style="border=0.5px;">
     <br>
     <h1 style="text-align:center;">Listado de Clientes</h1>
@@ -99,7 +97,6 @@ if (isset($listado)) { //&& $listado != []
             <page_footer>
                 <div style="text-align: center;">
                     <p>' . $_SESSION["telefono"] . '  |  ' . $_SESSION["direccion"] . '  |  ' . $_SESSION["email"] . '</p>
-                    <p><i>Fecha de generación: ' . $fechaHoraGeneracion . '</i></p>
                     </div>
             </page_footer>
 </page>';

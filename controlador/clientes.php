@@ -5,13 +5,12 @@ require_once 'modelo/clientes.php';
 $objCliente = new Clientes(); 
 
 if(isset($_POST['buscar'])){
-    
     $cedula=$_POST['buscar'];
-
     $result=$objCliente->buscar($cedula);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    
 }else if (isset($_POST['guardar'])) { 
     $errores = [];
     if (empty($_POST["nombre"]) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $_POST["nombre"])) {
