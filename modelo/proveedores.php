@@ -187,22 +187,29 @@ public function getedita() {
   private  function consultar()
   {
     $registro = "SELECT 
-        p.*, 
-        pr.cod_representante,  
-        pr.nombre, 
-        pr.cedula, 
-        pr.apellido, 
-        pr.telefono AS rep_tel, 
-        pr.status AS statusr,
-        GROUP_CONCAT(t.telefono SEPARATOR '/ ') AS telefonos
+        p.cod_prov,
+        p.rif,
+        p.razon_social,
+        p.email,
+        p.direccion,
+        p.status AS proveedor_status,
+        GROUP_CONCAT(DISTINCT t.telefono ORDER BY t.telefono SEPARATOR ', ') AS telefonos,
+        r.cod_representante,
+        r.cedula,
+        r.nombre,
+        r.apellido,
+        r.telefono AS rep_tel,
+        r.status AS statusr
     FROM 
-        proveedores p  
+        proveedores p
     LEFT JOIN 
-        prov_representantes pr ON p.cod_prov = pr.cod_prov  
+        tlf_proveedores t ON p.cod_prov = t.cod_prov
     LEFT JOIN 
-        tlf_proveedores t ON p.cod_prov = t.cod_prov  
+        prov_representantes r ON p.cod_prov = r.cod_prov
+    GROUP BY 
+      p.cod_prov
     ORDER BY 
-        p.cod_prov;";
+      p.cod_prov;";
 
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();

@@ -188,13 +188,14 @@ class Compra extends Conexion
                $strExec->bindParam(':cod_compra', $cod_c);  
                $strExec->bindParam(':cod_detallep', $codp);  
                $strExec->bindParam(':cantidad', $producto['cantidad']);  
-               $strExec->bindParam(':monto', $producto['total']);
+               $strExec->bindParam(':monto', $producto['precio']);
                $dc=$strExec->execute();
 
-               $costo="UPDATE presentacion_producto SET costo= :costo WHERE cod_presentacion=:cod_presentacion;";
+               $costo="UPDATE presentacion_producto SET costo= :costo, excento=:excento WHERE cod_presentacion=:cod_presentacion;";
                $sentencia=$this->conex->prepare($costo);
                $sentencia->bindParam(':costo', $producto['precio']);
                $sentencia->bindParam(':cod_presentacion', $producto['cod_presentacion']);
+               $sentencia->bindParam(':excento', $producto['iva']);
                $sentencia->execute();
          }
          }
@@ -206,7 +207,7 @@ class Compra extends Conexion
          return $res;
       }catch(Exception $e){
          $this->conex->rollBack();
-
+         
       }
    }
    
@@ -391,7 +392,8 @@ class Compra extends Conexion
    }
 
    public function b_detalle($cod){
-      $busqueda="SELECT dc.*, dp.*, CONCAT(prod.nombre,' ', prod.marca, ' - ', p.presentacion, ' x ', p.cantidad_presentacion) AS presentacion FROM detalle_compras dc 
+      $busqueda="SELECT dc.*, dp.*, 
+      CONCAT(prod.nombre,' ', prod.marca, ' - ', p.presentacion, ' x ', p.cantidad_presentacion) AS presentacion FROM detalle_compras dc 
       JOIN compras c ON dc.cod_compra=c.cod_compra 
       JOIN detalle_productos dp ON dc.cod_detallep=dp.cod_detallep
       JOIN presentacion_producto p ON dp.cod_presentacion=p.cod_presentacion
