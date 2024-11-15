@@ -29,7 +29,7 @@ require_once "controlador/descarga.php";
                                         <tr>
                                             <th>Código</th>
                                             <th>Fecha</th>
-                                            <th>Descripcion</th> 
+                                            <th>Descripción</th> 
                                             <th>Status</th>
                                             <th>Detalles</th>
                                         </tr>         
@@ -79,12 +79,12 @@ require_once "controlador/descarga.php";
                                 <div class="modal-body">
                                     <form id="formRegistrarDescarga" method="post">
                                         <div class="form-group">
-                                            <label for="fecha">Fecha</label>
+                                            <label for="fecha">Fecha<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                             <input type="datetime-local" class="form-control" id="fecha" name="fecha" required>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="descripcion">Descripcion</label>
+                                            <label for="descripcion">Descripcion<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                             <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Ej: Ajuste de stock." required></textarea>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
@@ -93,12 +93,12 @@ require_once "controlador/descarga.php";
                                             <table class="table table-bordered table-hover">
                                                 <thead>
                                                     <tr>
-                                                        <th>Codigo</th>
-                                                        <th>Producto</th>
-                                                        <th>Presentacion</th>
+                                                        <th>Código</th>
+                                                        <th>Producto<span class="text-danger" style="font-size: 15px;"> *</span></th>
+                                                        <th>Presentación</th>
                                                         <th>Lote</th>
                                                         <th>Stock disponible</th>
-                                                        <th>Cantidad</th>
+                                                        <th>Cantidad<span class="text-danger" style="font-size: 15px;"> *</span></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="detdescargabody">
@@ -107,6 +107,12 @@ require_once "controlador/descarga.php";
                                             </table>
                                             <!--Agregar otro producto-->
                                             <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar otro producto</button>
+                                        </div>
+                                        <br>
+                                        <!-- Alert Message -->
+                                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span>Todos los campos marcados con (*) son obligatorios</span>
                                         </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">

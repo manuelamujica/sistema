@@ -4,8 +4,6 @@ require_once 'modelo/productos.php';
 
 #Objetos
 $objProducto = new Productos();
-
-
 $categoria = $objProducto->consultarCategoria(); 
 $unidad = $objProducto->consultarUnidad(); 
 
@@ -35,7 +33,7 @@ if(isset($_POST['buscar'])){
         // Validación de marca
         if (!empty($_POST['marca'])){
             if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
-                $errors[] = 1;  // Marca no válida
+                $errors[] = true;  // Marca no válida
             } else {
                 $marca = $_POST["marca"];
             }

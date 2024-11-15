@@ -13,30 +13,26 @@ class Proveedor extends Conexion
   private $direccion;
   private $status;
 
-
-
   public function __construct()
   {
     $this->conex = new Conexion();
     $this->conex = $this->conex->conectar();
   }
 
-
   public function setCod($cod_prov)
   {
     $this->cod_prov = $cod_prov;
   }
 
-
   public function gettCod()
   {
     return $this->cod_prov;
   }
+
   public function getRif()
   {
     return $this->rif;
   }
-
   public function setRif($rif)
   {
     $this->rif = $rif;
@@ -62,8 +58,6 @@ class Proveedor extends Conexion
     $this->email = $email;
   }
 
-
-
   public function getDireccion()
   {
     return $this->direccion;
@@ -73,8 +67,6 @@ class Proveedor extends Conexion
   {
     $this->direccion = $direccion;
   }
-
-
 
   public function getStatus()
   {
@@ -86,9 +78,9 @@ class Proveedor extends Conexion
     $this->status = $status;
   }
 
-
-  //metodos crud    TODO FUNCIONA  //
-
+/*======================
+  REGISTRAR
+==========================*/
   private function registrar()
   {
 
@@ -101,7 +93,6 @@ class Proveedor extends Conexion
     $strExec->bindParam(':email', $this->email);
     $strExec->bindParam(':direccion', $this->direccion);
 
-
     $resul = $strExec->execute();
     if ($resul) {
       $res = 1;
@@ -109,7 +100,7 @@ class Proveedor extends Conexion
       $res = 0;
     }
     return $res;
-  } //fin de registrar//
+  } 
 
   public function getregistra()
   {
@@ -117,7 +108,9 @@ class Proveedor extends Conexion
   }
 
 
-  //inicio de actualizar//
+  /*======================
+  EDITAR
+  ==========================*/
   private function editar() {
     
     $sql = "UPDATE proveedores SET rif = :rif, razon_social = :razon_social, email = :email, direccion = :direccion, status = :status WHERE cod_prov = :cod_prov";
@@ -134,16 +127,19 @@ class Proveedor extends Conexion
     $resul = $strExec->execute();
 
     if ($resul == 1) {
-      return 1; // Éxito  
+      return 1; 
     } else {
-      return 0; // Fallo  
+      return 0;  
     }
 }
 
 public function getedita() {
     return $this->editar();
 }
-  //actualizar//
+
+/*======================
+  ELIMINAR
+==========================*/
 
   private function eliminar($valor)
   {
@@ -179,13 +175,15 @@ public function getedita() {
       return 'error_compra_asociada'; // Por si acaso
   }
   
-  // Método para obtener el resultado de la eliminación
   public function geteliminar($valor)
   {
       return $this->eliminar($valor);
   }
 
-  //inicio de consultar todo//
+/*======================
+  CONSULTAR
+==========================*/
+
   private  function consultar()
   {
     $registro = "SELECT 
@@ -200,11 +198,11 @@ public function getedita() {
     FROM 
         proveedores p  
     LEFT JOIN 
-        prov_representantes pr ON p.cod_prov = pr.cod_prov AND (pr.status = 0 OR pr.status = 1)  
+        prov_representantes pr ON p.cod_prov = pr.cod_prov  
     LEFT JOIN 
         tlf_proveedores t ON p.cod_prov = t.cod_prov  
     ORDER BY 
-        p.cod_prov, pr.cod_representante;";
+        p.cod_prov;";
 
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
@@ -222,7 +220,9 @@ public function getedita() {
   }
 
 
-  //metodo buscar
+/*======================
+  BUSCAR
+==========================*/
   private function buscar($dato)
   {
     $this->rif = $dato;

@@ -122,62 +122,6 @@
     public function getmosc(){
         return $this->mostrarc();
     }
-    
-
-    private function editar(){
-        $sql = "UPDATE carga SET fecha = :fecha, descripcion = :descripcion, status = :status WHERE cod_carga = :cod_carga";
-
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_carga', $this->codigo);
-        $strExec->bindParam('fecha',$this->fecha);
-        $strExec->bindParam(':descripcion',$this->descripcion);
-        $strExec->bindParam(':status', $this->status);
-        $resul = $strExec->execute();
-
-        if($resul){
-            $r = 1;
-        }else{
-            $r = 0;
-        }
-
-        return $r;
-
-    }
-
-    public function geteditar(){
-        return $this->editar();
-    }
-
-    /**
-     *  #########
-     *  ELIMINAR CARGA
-     *  #########
-     */
-    private function eliminar($valor){
-        $registro = "SELECT COUNT(*) AS n_dcarga FROM detalle_carga WHERE cod_carga = $valor";
-        $strExec = $this->conex->prepare($registro);
-        $result = $strExec->execute();
-        if($result){
-            $resul = $strExec->fetch(PDO::FETCH_ASSOC);
-            if($resul['n_dcarga'] > 0){
-                $l = "UPDATE carga SET status = 2 WHERE cod_carga = $valor";
-                $strExec = $this->conex->prepare($l);
-                $strExec->execute();
-            }else{
-                $f = "DELETE FROM carga WHERE cod_carga = $valor";
-                $strExec = $this->conex->prepare($f);
-                $strExec->execute();
-            }
-            $res = 1;
-        }else{
-            $res = 0;
-        }
-        return $res;
-    }
-
-    public function geteliminar($valor){
-        return $this->eliminar($valor);
-    }
 
     public function producto($valor){
         //$this->fecha=$valor;

@@ -47,9 +47,9 @@
                             <td> <?php echo $datos["nombre"] ?></td>
                             <td> <?php echo $datos["apellido"] ?></td>
                             <td> <?php echo $datos["cedula_rif"] ?></td>
-                            <td> <?php echo $datos["telefono"] ?></td>
-                            <td> <?php echo $datos["email"] ?></td>
-                            <td> <?php echo $datos["direccion"] ?></td>
+                            <td> <?php echo $datos["telefono"] ? $datos["telefono"] : 'No disponible'?></td>
+                            <td> <?php echo $datos["email"] ? $datos["email"] : 'No disponible' ?></td>
+                            <td> <?php echo $datos["direccion"] ? $datos["direccion"] : 'No disponible' ?></td>
                             <td>
                                 <?php if ($datos['status']==1):?>
                                 <span class="badge bg-success">Activo</span>
@@ -63,7 +63,7 @@
                             data-codigo="<?php echo $datos["cod_cliente"]; ?>" 
                             data-nombre="<?php echo $datos["nombre"]; ?>" 
                             data-apellido="<?php echo $datos["apellido"]; ?>" 
-                            data-telefono="<?php echo $datos["telefono"]; ?>" 
+                            data-telefono="<?php echo $datos["telefono"];  ?>" 
                             data-email="<?php echo $datos["email"]; ?>"
                             data-direccion="<?php echo $datos["direccion"]; ?>" 
                             data-status="<?php echo $datos["status"]; ?>">

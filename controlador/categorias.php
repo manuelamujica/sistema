@@ -150,9 +150,8 @@ if(isset($_POST['buscar'])){
 
 $registro = $objCategoria->getmostrar();
 
-if(isset($_POST["vista"])){
+if(isset($_POST["vista"])){ //Quiere decir que viene de productos
     $_GET['ruta'] = 'productos';
-    //exit();
 }else{
     $_GET['ruta'] = 'categorias';
 }

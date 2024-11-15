@@ -73,7 +73,7 @@ function crearfila(index) {
                 <input type="text" class="form-control" id="stock${index}" name="productos[${index}][stock]" placeholder="Stock" readonly>
             </td>
             <td>
-                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001">
+                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001"
             <div class="invalid-feedback" style="display: none;"></div>
             </td>
             <td>

@@ -93,16 +93,16 @@
 
         private function mostrartodoo($valor) {
             // Construir la consulta SQL
-            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, 
+            $sql = "SELECT c.cod_carga, c.status, c.descripcion, 
                     pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
                     pre.cantidad_presentacion, p.cod_producto, p.nombre, 
-                    dp.cod_detallep, dp.stock, dp.lote, dp.fecha_vencimiento,dc.cod_det_carga, dc.cantidad
+                    dp.cod_detallep,dc.cod_det_carga, dc.cantidad
                     FROM detalle_carga dc
                     JOIN carga c ON dc.cod_carga = c.cod_carga
                     JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
                     JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
                     JOIN productos p ON pre.cod_producto = p.cod_producto
-                    WHERE c.cod_carga = :cod_carga";
+                    WHERE dc.cod_carga = :cod_carga";
         
             $strExec = $this->conex->prepare($sql);
             $strExec->bindParam(':cod_carga', $valor, PDO::PARAM_STR);
@@ -226,60 +226,6 @@
             return $this->mostrar();
         }
 
-        //EDITAR
-        private function editar(){
-            $sql = "UPDATE detalle_carga SET cantidad = :cantidad, status = :status WHERE cod_det_carga = :cod_det_carga";
-            $strExec = $this->conex->prepare($sql);
-            $strExec->bindParam(':cod_det_carga', $this->codigo);
-            $strExec->bindParam(':cantidad', $this->cantidad);
-            $strExec->bindParam(':status', $this->status);
-            $resul = $strExec->execute();
-            if($resul == 1){
-                $res = 1;
-            }else{
-                $res = 0;
-            }
-
-            if($res == 1){
-                $aumentar = "UPDATE detalle_productos SET stock = stock  + :cantidad WHERE cod_detallep = :cod_detallep";
-                $strExec = $this->conex->prepare($aumentar);
-                $strExec->bindParam(':cod_detallep', $this->cod_detallep);
-                $strExec->bindParam(':cantidad', $this->cantidad);
-                $resul = $strExec->execute();
-
-            }
-            return $res;
-
-            //AL EDITAR TAMBIEN AUMENTA EL STOCK
-        }
-
-        public function geteditar(){
-            return $this->editar();
-        }
-
-        // ELIMINAR
-        private function eliminar($valor){
-            $sql = "UPDATE detalle_carga SET status = 2 WHERE cod_det_carga = $valor";
-            $strExec = $this->conex->prepare($sql);
-            $resul = $strExec->execute();
-            if($resul == 1){
-                $res = 1;
-            }else{
-                $res = 0;
-            }
-
-            //ES EL UNICO QUE TIENE UN ERROR AL ELIMINAR DE FORMA LOGICA QUIERO QUE RESTE LOS PRODUCTOS PERO NO LO HACE
-            if($res == 1){
-                $disminuir = "UPDATE detalle_productos SET stock = stock  - :cantidad WHERE cod_detallep = :cod_detallep";
-                $strExec = $this->conex->prepare($disminuir);
-                $strExec->bindParam(':cod_detallep', $this->cod_detallep);
-                $strExec->bindParam(':cantidad', $this->cantidad);
-                $resul = $strExec->execute();
-
-            }
-            return $res;
-        }
-
         public function getmostrarPorFechas($fechaInicio, $fechaFin) {
             $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
             FROM detalle_carga dc
@@ -297,9 +243,6 @@
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public function geteliminar($valor){
-            return $this->eliminar($valor);
-        }
         /* ######  SETTER Y GETTER      ###### */
         public function getcod(){
             return $this->codigo;

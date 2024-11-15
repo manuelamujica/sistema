@@ -32,7 +32,7 @@ require_once "controlador/productos.php";
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Marca</th>
-                                        <th>Presentacion</th>
+                                        <th>Presentación</th>
                                         <th>Categoría</th>
                                         <th>Costo</th>
                                         <th>IVA</th>
@@ -323,13 +323,6 @@ require_once "controlador/productos.php";
 </script> 
 <?php endif; ?>
 
-<script>
-<?php if (isset($_GET['categoriaModal']) && $_GET['categoriaModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#modalRegistrarProducto').modal('show');
-        });
-    <?php endif; ?>
-</script>
 
 <!-- =============================
     MODAL NUEVA UNIDAD DE MEDIDA
@@ -383,15 +376,6 @@ require_once "controlador/productos.php";
     });
 </script> 
 <?php endif; ?> 
-
-<script>
-    <?php if (isset($_GET['unidadModal']) && $_GET['unidadModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#modalRegistrarProducto').modal('show');
-        });
-    <?php endif; ?>
-</script>
-
 
 <!-- =============================
     MODAL EDITAR PRODUCTO 
