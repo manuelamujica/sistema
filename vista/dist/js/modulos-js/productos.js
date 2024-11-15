@@ -92,14 +92,6 @@ $(document).ready(function() {
         });
     }
 
-    function showErrorP(selector, message) {
-        $(selector).addClass('is-invalid');
-        $(selector).next('.invalid-feedback').html(message.toUpperCase()).css({
-            'display': 'block',
-            'color': 'red',
-        });
-    }
-
     function hideError(selector) {
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display', 'none');
@@ -113,8 +105,8 @@ $(document).ready(function() {
             hideError('#nombre');
         }else if (nombre.length > 40) {
             showError('#nombre', 'El texto no debe exceder los 40 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nombre)) {
-            showError('#nombre', 'Solo se permiten letras');
+        } else if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(nombre)) {
+            showError('#nombre', 'Solo se permiten letras y números');
         } else {
             hideError('#nombre');
         }
@@ -187,8 +179,8 @@ $(document).ready(function() {
             hideError('#name');
         }else if (name.length > 40) {
             showError('#name', 'El texto no debe exceder los 40 caracteres'); 
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) {
-            showError('#name', 'Solo se permiten letras');
+        } else if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(name)) {
+            showError('#name', 'Solo se permiten letras y números');
         } else {
             hideError('#name');
         }

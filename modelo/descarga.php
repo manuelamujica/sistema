@@ -44,22 +44,18 @@ class Descarga extends Conexion{
     }
 
     public function registrar($cod_detalle) {
-        // 1. Insertar en la tabla `descarga`
         $sql = 'INSERT INTO descarga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)';
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(':fecha', $this->fecha);
         $strExec->bindParam(':descripcion', $this->descripcion);
         $resul = $strExec->execute();
-    
-        // Si la descarga no se registró correctamente, se retorna 0
+        // Si la descarga no se registró correctamente
         if (!$resul) {
             return 0;
         }
-    
-        // Obtener el último codigo de descarga insertado
+        
         $ultimocodigo = $this->conex->lastInsertId();
     
-        // 2. Insertar los detalles de la descarga
         foreach ($cod_detalle as $det) {
             if (!empty($det['cantidad']) && !empty($det['cod_detallep'])) {
                 $sql2 = "INSERT INTO detalle_descarga(cod_detallep, cod_descarga, cantidad) VALUES(:cod_detallep, :cod_descarga, :cantidad)";
@@ -74,7 +70,7 @@ class Descarga extends Conexion{
                     return 0;
                 }
     
-                // 3. Actualizar el stock en detalle_productos
+                //Actualizar el stock en detalle_productos
                 $sql3 = "UPDATE detalle_productos SET stock = stock - :cantidad WHERE cod_detallep = :cod_detallep";
                 $updateStock = $this->conex->prepare($sql3);
                 $updateStock->bindParam(':cantidad', $det['cantidad']);
@@ -168,5 +164,54 @@ class Descarga extends Conexion{
             return [];
         }
     }
-}
 
+    //Buscar productos para seleccionar
+    public function consultardescargapdf(){
+        $sql="SELECT
+        de.descripcion,
+        de.fecha,
+        detd.cantidad,
+        detp.lote,
+        present.cod_presentacion,
+        (CONCAT(pro.nombre, ' x ', present.presentacion, ' ', present.cantidad_presentacion)) AS producto_concat
+        FROM descarga AS de JOIN detalle_descarga AS detd ON de.cod_descarga=detd.cod_descarga
+        JOIN detalle_productos AS detp ON detp.cod_detallep = detd.cod_detallep
+        JOIN presentacion_producto AS present ON present.cod_presentacion = detp.cod_presentacion
+        JOIN productos AS pro ON pro.cod_producto = present.cod_producto
+        GROUP BY detd.cod_det_descarga";
+
+        $strExec = $this->conex->prepare($sql);
+        $r = $strExec->execute();
+        $array = $strExec->fetchAll(PDO::FETCH_ASSOC);
+
+        if($r){
+            return $array;
+        }else{
+            return [];
+        }
+    }
+
+    public function consultardescargar(){
+        $sql="SELECT
+        de.cod_descarga,
+        de.descripcion,
+        de.fecha,
+        detp.lote,
+        detd.cantidad,
+        (CONCAT(pro.nombre, ' x ', present.presentacion, ' ', present.cantidad_presentacion)) AS producto_concat
+        FROM descarga AS de JOIN detalle_descarga AS detd ON de.cod_descarga=detd.cod_descarga
+        JOIN detalle_productos AS detp ON detp.cod_detallep = detd.cod_detallep
+        JOIN presentacion_producto AS present ON present.cod_presentacion = detp.cod_presentacion
+        JOIN productos AS pro ON pro.cod_producto = present.cod_producto";
+
+        $strExec = $this->conex->prepare($sql);
+        $r = $strExec->execute();
+        $array = $strExec->fetchAll(PDO::FETCH_ASSOC);
+
+        if($r){
+            return $array;
+        }else{
+            return [];
+        }
+    }
+}

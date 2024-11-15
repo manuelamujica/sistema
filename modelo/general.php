@@ -132,27 +132,27 @@ MOSTRAR INFO DE EMPRESA
 /*==============================
 EDITAR INFO DE EMPRESA
 ================================*/
-    private function editar(){
-        $registro = "UPDATE empresa SET nombre = :nombre, direccion = :direccion, descripcion = :descripcion logo=:logo WHERE rif = :rif";
+private function editar(){
+    $registro = "UPDATE empresa SET nombre = :nombre, direccion = :direccion, descripcion = :descripcion, logo=:logo WHERE rif = :rif";
 
-        $strExec = $this->conex->prepare($registro);
-        $strExec->bindParam(':rif',$this->rif);
-        $strExec->bindParam(':nombre',$this->nombre);
-        $strExec->bindParam(':direccion',$this->direccion);
-        $strExec->bindParam(':descripcion',$this->descripcion);
-        $strExec->bindParam(":logo", $this->logo);
+    $strExec = $this->conex->prepare($registro);
+    $strExec->bindParam(':rif',$this->rif);
+    $strExec->bindParam(':nombre',$this->nombre);
+    $strExec->bindParam(':direccion',$this->direccion);
+    $strExec->bindParam(':descripcion',$this->descripcion);
+    $strExec->bindParam(':logo', $this->logo);
 
-        $resul = $strExec->execute();
-        if($resul == 1){
-            $r = 1;
-        }else{
-            $r = 0;
-        }
-        return $r;
+    $resul = $strExec->execute();
+    if($resul == 1){
+        $r = 1;
+    }else{
+        $r = 0;
     }
+    return $r;
+}
 
-    public function geteditar(){
-        return $this->editar();
-    }
+public function geteditar(){
+    return $this->editar();
+}
 }
 

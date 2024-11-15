@@ -121,7 +121,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="declientes" class="nav-link">
+                            <a href="rep-cliente" class="nav-link">
                                 <i class="fas fa-user-friends nav-icon"></i>                                        
                                 <p>
                                     De clientes

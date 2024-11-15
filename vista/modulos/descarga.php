@@ -85,7 +85,7 @@ require_once "controlador/descarga.php";
                                         </div>
                                         <div class="form-group">
                                             <label for="descripcion">Descripcion</label>
-                                            <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                                            <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Ej: Ajuste de stock." required></textarea>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <!--SELECCIONAR PRODUCTOS (+ agregar productos)-->

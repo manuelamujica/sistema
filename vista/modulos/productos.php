@@ -50,8 +50,8 @@ require_once "controlador/productos.php";
                                         <tr>
                                             <td> <?php echo $producto["cod_presentacion"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
-                                            <td> <?php echo $producto["marca"] ?></td>
-                                            <td> <?php echo $producto["presentacion_concat"] ?></td>
+                                            <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
+                                            <td> <?php echo $producto["presentacion_concat"] ? $producto["presentacion_concat"] : 'No disponible' ?></td>
                                             <td> <?php echo $producto["cat_nombre"] ?></td>
                                             <td> <?php echo $producto["costo"] ?></td>
                                             <td> <?php if($producto["excento"] == 1){
@@ -132,7 +132,7 @@ require_once "controlador/productos.php";
                                                 <!-- Campo oculto para el código del producto -->
                                                 <input type="hidden" id="cod_productoR" name="cod_productoR">
 
-                                                <label for="nombre">Nombre del producto<span class="text-danger" style="font-size: 20px;"> *</span></label>
+                                                <label for="nombre">Nombre del producto<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                                 <div id="lista-productos" class="list-group" style="display: none;"></div>
@@ -147,7 +147,7 @@ require_once "controlador/productos.php";
 
                                         <div class="form-group row">
                                                 <div class="col-6">
-                                                    <label for="categoria">Categoría de producto<span class="text-danger" style="font-size: 20px;"> *</span></label>
+                                                    <label for="categoria">Categoría de producto<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                                     <div class="input-group">
                                                         <select class="form-control" id="categoria" name="categoria" required>
                                                             <option value="" selected disabled>Seleccione una opción</option>
@@ -164,7 +164,7 @@ require_once "controlador/productos.php";
                                                 </div>
 
                                             <div class="col-6">
-                                                <label for="exento">Impuesto IVA<span class="text-danger" style="font-size: 20px;"> *</span></label>
+                                                <label for="exento">Impuesto IVA<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
                                                         <option value="1">Exento</option>
@@ -173,7 +173,7 @@ require_once "controlador/productos.php";
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="unidad">Unidad de medida<span class="text-danger" style="font-size: 20px;"> *</span></label>
+                                            <label for="unidad">Unidad de medida<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                             <div class="input-group">
                                                 <select class="form-control" id="unidad" name="unidad" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
@@ -224,7 +224,7 @@ require_once "controlador/productos.php";
                                                 <label for="costo">Costo</label>
                                                 <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" >
                                                 <div class="invalid-feedback" style="display: none;"></div>
-                                            <div class="invalid-feedback" style="display: none;"></div></div>
+                                            </div>
                                             <div class="col-6">
                                                 <label for="precio">Precio</label>
                                                 <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >
