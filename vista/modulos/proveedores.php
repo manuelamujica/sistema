@@ -59,7 +59,7 @@
                                                         </button>
                                                     </td>
                                                     <td>
-                                                        <?php if ($datos['status'] == 1): ?>
+                                                        <?php if ($datos['proveedor_status'] == 1): ?>
                                                             <span class="badge bg-success">Activo</span>
                                                         <?php else: ?>
                                                             <span class="badge bg-danger">Inactivo</span>
@@ -91,7 +91,7 @@
                                                             data-razon="<?php echo $datos["razon_social"]; ?>"
                                                             data-email="<?php echo $datos['email']; ?>"
                                                             data-dire="<?php echo $datos['direccion']; ?>"
-                                                            data-status="<?php echo $datos['status']; ?>">
+                                                            data-status="<?php echo $datos['proveedor_status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
                                                     <!-- BOTON ELIMINAR PROVEEDORES -->
