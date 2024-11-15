@@ -55,7 +55,6 @@ require_once 'controlador/reportep.php';
                                     </thead>
                                     <tbody>
                                         <?php foreach ($registro as $datos) { ?>
-                                            <?php if ($datos['status'] != 2): ?>
                                                 <tr>
                                                     <td><?php echo $datos["cod_prov"] ?></td>
                                                     <td><?php echo $datos["rif"] ?></td>
@@ -65,7 +64,7 @@ require_once 'controlador/reportep.php';
                                                     <td><?php echo !empty($datos["telefonos"]) ? $datos["telefonos"] : 'No disponible'; ?></td>
 
                                                     <td>
-                                                        <?php if ($datos['status'] == 1): ?>
+                                                        <?php if ($datos['proveedor_status'] == 1): ?>
                                                             <span class="badge bg-success">Activo</span>
                                                         <?php else: ?>
                                                             <span class="badge bg-danger">Inactivo</span>
@@ -73,7 +72,6 @@ require_once 'controlador/reportep.php';
                                                     </td>
                                                     <td><?php echo !empty($dato["nombre"]) ? $dato["nombre"] : 'No disponible'; ?></td>
                                                 </tr>
-                                            <?php endif; ?>
                                         <?php } ?>
                                     </tbody>
                                 </table>
