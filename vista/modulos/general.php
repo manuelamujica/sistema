@@ -35,8 +35,14 @@
                                         <p><b>Teléfono: </b><?php echo $dato['telefono']; ?></p>
                                         <p><b>Email: </b><?php echo $dato['email']; ?></p>
                                         <p><b>Descripción: </b><?php echo $dato['descripcion']; ?></p>
-                                        <p><b>Logo: </b><img src="<?php echo $dato['logo']; ?>" alt="quesera don pedro"></p>
-                                    </div>
+                                        <p>
+                                            <b>Logo: </b>
+                                            <?php if (!empty($dato['logo'])): ?>
+                                                <img src="<?php echo $dato['logo']; ?>" alt="Logo" style="width: 100px; height: auto;">
+                                            <?php else: ?>
+                                                <span>No disponible</span>
+                                            <?php endif; ?>
+                                        </p>
                                     <div class="card-footer">
                                         <button name="ajustar" class="btn btn-primary btn-sm editar" data-target="#editModal" data-toggle="modal"
                                             data-rif="<?php echo $dato['rif']; ?>"
@@ -238,20 +244,20 @@ MODAL EDITAR INFO GENERAL
                                     <!-- TELEFONO -->
                                         <div class="col-6">
                                             <label for="telefono">Teléfono</label>
-                                            <input type="tel" class="form-control" name="telefono" id="tlfE" required>
+                                            <input type="tel" class="form-control" name="telefono" id="tlfE">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     </div>
                                     <!-- EMAIL -->
                                     <div class="form-group">
                                         <label for="email">Email</label>
-                                        <input type="email" class="form-control" name="email" id="emailE" required>
+                                        <input type="email" class="form-control" name="email" id="emailE">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                     <!-- DESCRIPCION -->
                                     <div class="form-group">
                                         <label for="descripcion">Descripción</label>
-                                        <input type="text" class="form-control" name="descripcion" id="desE" required>
+                                        <input type="text" class="form-control" name="descripcion" id="desE">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                     <!-- LOGO -->

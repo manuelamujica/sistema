@@ -90,20 +90,25 @@ $(document).ready(function () {
     `;
     }
 
-    // Evento al abrir el modal de registrar carga
+    //Evento al abrir el modal de registrar carga
     $('#modalregistrarCarga').on('show.bs.modal', function (event) {
         // Limpiar la tabla de productos
         $('#productosCarga tbody').empty();  //FUNCIONA
+
+        productoIndex = 1;
 
         // Agregar una fila vacía al abrir el modal
         var nuevaFila = crearFila(productoIndex);
         $('#productosCarga tbody').append(nuevaFila);
     });
+
      // Función para agregar una nueva fila a la tabla
     $('#add-product').on('click', function() {
+        productoIndex++;
+        
         var nuevaFila = crearFila(productoIndex);
         $('#productosCarga tbody').append(nuevaFila);
-        productoIndex++;
+        
     });
 
 

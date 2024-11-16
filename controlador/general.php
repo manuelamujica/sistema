@@ -23,10 +23,12 @@ if(isset($_POST['buscar'])){
 }
 
 else if (isset($_POST["guardar"])) {
-        if (!empty($_POST["rif"]) && !empty($_POST['nombre']) && !empty($_POST['direccion']) && !empty($_POST['descripcion']) && isset($_FILES['logo'])) {
+        if (!empty($_POST["rif"]) && !empty($_POST['nombre']) && !empty($_POST['direccion'])) {
             if(preg_match("/^[a-zA-ZÀ-ÿ0-9\s\-_\/]+$/", $_POST["rif"]) && preg_match("/^[a-zA-ZÀ-ÿ0-9\s\-_\/ ]+$/", $_POST['nombre']) && preg_match("/^[a-zA-ZÀ-ÿ0-9\s\-_\/ ]+$/", $_POST['direccion'])) { //Falta telefono - email - descripcion 13/11
     
-                if (!$objGeneral->buscar()) {
+                $imagenTemp = "";
+                // Validar si se subió un archivo
+                if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK)  {
                     $imagen = $_FILES['logo'];
                     $tipoImagen = $imagen['type'];
                     $tamanoImagen = $imagen['size'];
@@ -73,7 +75,8 @@ else if (isset($_POST["guardar"])) {
                         ];
                         return;
                     }
-    
+                    $objGeneral->subirlogo($_FILES['logo']);
+                }
                     #Instanciar los setter
                     $objGeneral->setRif($_POST["rif"]);
                     $objGeneral->setNom($_POST["nombre"]);
@@ -81,7 +84,7 @@ else if (isset($_POST["guardar"])) {
                     $objGeneral->settlf($_POST["telefono"]);
                     $objGeneral->setemail($_POST["email"]);
                     $objGeneral->setDescri($_POST["descripcion"]);
-                    $objGeneral->subirlogo($_FILES['logo']);
+                    
                     $resul = $objGeneral->getregistrar();
     
                     if ($resul == 1) {
@@ -97,7 +100,6 @@ else if (isset($_POST["guardar"])) {
                             "icon" => "error"
                         ];
                     }
-                }
             } else {
                 $registrar = [
                     "title" => "Error",
