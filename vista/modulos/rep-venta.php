@@ -30,35 +30,34 @@ require_once 'controlador/venta.php';
                         </div>
                         <div class="card-body">
                             <div class="tab-content">
-                                <!-- Productos -->
                                 <div class="tab-pane fade show active" id="ventaf" role="tabpanel">
-                                    <div class="row mb-2">
-                                        <form action="index.php?pagina=ventaxls" method="post" target="_blank" class="d-inline">
-                                            <input type="hidden" name="fechaInicio1" id="fechaInicio1" value="<?php echo date('Y-m-d') ?>">
-                                            <input type="hidden" name="fechaFin1" id="fechaFin1" value="<?php echo date('Y-m-d') ?>">
-                                            <button class="btn btn-success ml-2" name="excel" title="Generar excel" id="excel">Excel</button>
-                                        </form>
-                                    </div>
-                                    <!-- Formulario de filtrado -->
-                                    <div class="row mb-2">
+                                <div class="row mb-2">
                                         <form action="index.php?pagina=ventapdf" method="post" target="_blank" class="d-inline" id="form">
-                                            <!-- Campos ocultos para las fechas -->
                                             <input type="hidden" name="fechaInicio" id="fechaInicio" value="<?php echo date('Y-m-d') ?>">
                                             <input type="hidden" name="fechaFin" id="fechaFin" value="<?php echo date('Y-m-d') ?>">
-                                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
-                                                <span><i class="fa fa-calendar"></i> Rango de fecha</span>
-                                                <i class="fas fa-caret-down"></i>
-                                            </button>
-                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">PDF</button>
-                                            <button type="button" class="btn btn-secondary ml-2" id="reset-btn">Restablecer Rango</button>
+                                            <!-- Rango de fecha, Generar PDF, Restablecer -->
+                                            <div class="d-flex align-items-center">
+                                                <button type="button" class="btn btn-default mx-2" id="daterange-btn">
+                                                    <span><i class="fa fa-calendar"></i> Rango de fecha</span>
+                                                    <i class="fas fa-caret-down"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary mx-2" id="reset-btn">Restablecer Rango</button>
+                                                <button class="btn btn-danger mx-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">Generar PDF</button>
+                                            </div>
+                                        </form>
+                                        <!-- botón "Generar Excel" -->
+                                        <form action="index.php?pagina=ventaxls" method="post" target="_blank" class="d-inline ml-auto">
+                                            <input type="hidden" name="fechaInicio1" id="fechaInicio1" value="<?php echo date('Y-m-d') ?>">
+                                            <input type="hidden" name="fechaFin1" id="fechaFin1" value="<?php echo date('Y-m-d') ?>">
+                                            <button class="btn btn-success" name="excel" title="Generar excel" id="excel">Generar Excel</button>
                                         </form>
                                     </div>
                                     <table id="venta-table" class="table table-bordered table-striped table-hover datatable1" style="width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th>Nro. de Venta</th>
-                                                <th>clientes</th>
-                                                <th>Fecha de emision</th>
+                                                <th>Clientes</th>
+                                                <th>Fecha de emisión</th>
                                                 <th>Monto</th>
                                                 <th>Status</th>
                                             </tr>
@@ -90,16 +89,16 @@ require_once 'controlador/venta.php';
                                     <!-- Formulario de filtrado -->
                                     <div class="row mb-2">
                                         <form action="index.php?pagina=vclientespdf" method="post" target="_blank" class="d-inline" id="form1">
-                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdf1" type="submit">PDF</button>
+                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdf1" type="submit">Generar PDF</button>
                                         </form>
                                     </div>
                                     <table id="carga" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th>Nombre</th>
-                                                <th>Cedula/Rif</th>
-                                                <th>Telefono</th>
-                                                <th>cantidad de ventas</th>
+                                                <th>Cédula/Rif</th>
+                                                <th>Teléfono</th>
+                                                <th>Cantidad de ventas</th>
                                                 <th>Monto total</th>
                                             </tr>
                                         </thead>

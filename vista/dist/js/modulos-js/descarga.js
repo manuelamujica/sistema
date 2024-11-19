@@ -4,8 +4,13 @@ $(document).ready(function() {
     $('#detallemodal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Botón que abrió el modal
         var codigoDescarga = button.data('codigo'); // Extraer el cod_descarga
-        
-        console.log(codigoDescarga);
+        var fd = button.data('fechad');
+        var dd = button.data('descripd');
+
+        console.log(fd,dd);
+        var modal = $(this);
+        modal.find('.modal-body #fecha').val(fd);
+        modal.find('.modal-body #descripdescarga').val(dd);
 
         // Limpiar la tabla de detalles antes de cargar nuevos datos
         $('#detalleBody').empty();
@@ -73,7 +78,7 @@ function crearfila(index) {
                 <input type="text" class="form-control" id="stock${index}" name="productos[${index}][stock]" placeholder="Stock" readonly>
             </td>
             <td>
-                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001"
+                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" step="0.001">
             <div class="invalid-feedback" style="display: none;"></div>
             </td>
             <td>

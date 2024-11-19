@@ -52,7 +52,9 @@ require_once "controlador/descarga.php";
                                                 </td>
                                                 <td>
                                                     <button class='btn btn-primary btn-sm' id='detalles' style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
-                                                    data-codigo="<?php echo $d["cod_descarga"];?>">
+                                                    data-codigo="<?php echo $d["cod_descarga"];?>"
+                                                    data-fechad="<?php echo $d["fecha"];?>"
+                                                    data-descripd="<?php echo $d["descripcion"];?>">
                                                     <i class="fas fa-plus"></i>
                                                     </button>
                                                 </td>
@@ -137,6 +139,22 @@ require_once "controlador/descarga.php";
                                 </div>
                                 <div class="modal-body">
                                     <div class="card">
+                                    <div class="card-header">
+                                            <div class="form-row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fecha">Fecha</label>
+                                                        <input type="text" class="form-control" id="fecha" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="descripcion">Descripcion</label>
+                                                        <input type="text" class="form-control" id="descripdescarga" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="card-body">
                                             <h2><span id='descripciondetdescarga'></span></h2>
                                             <div class="table-responsive">

@@ -1,16 +1,6 @@
 //Si ya existe un producto, tener la opcion de asignarle una presentacion
 $(document).ready(function() {
-    /* Estils de la lista 
-    $('#lista-productos').css({
-        'position': 'absolute', 
-        'z-index': '1000',
-        'width': '100%',
-        'max-height': '200px',
-        'overflow-y': 'auto',
-        'border': '1px solid #ddd',
-        'box-shadow': '0px 4px 8px rgba(0, 0, 0, 0.1)'
-    });*/
-    
+
     $(document).on('input', '#nombre', function() {
         var query = $(this).val(); // Valor ingresado por el usuario
 
@@ -29,14 +19,16 @@ $(document).ready(function() {
                     if (data.length > 0) {
                         $.each(data, function(key, producto) { //Necesario para que reconozca las variables!
                             // Crea un nuevo elemento de lista para cada producto
+
+                            let marca = producto.marca || 'No disponible'; 
                             listaProductos.append(
                                 '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333; font-weight:normal;"' +
                                 'data-codigo="'+ producto.cod_producto +'" '+
                                 'data-nombre="'+ producto.producto_nombre +'" ' +
-                                'data-marca="'+ producto.marca +'" ' +
+                                'data-marca="'+ marca +'" ' +
                                 'data-categoria="'+ producto.cod_categoria +'" ' + 
                                 'data-cat-nombre="'+ producto.cat_nombre +'">' + 
-                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.cat_nombre + '</a>'
+                                producto.producto_nombre + ' - ' + marca + ' - ' + producto.cat_nombre + '</a>'
                             );
                         });
                         listaProductos.fadeIn(); // Muestra la lista de productos
@@ -353,6 +345,12 @@ $(document).ready(function() {
     $('#detallemodal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Botón que abrió el modal
         var codigoProducto = button.data('codigo'); // Extraer el cod_presentacion
+        var np = button.data('nombrep');
+        var pp = button.data('presentp');
+
+        var modal = $(this);
+        modal.find('.modal-body #nombreproducto').val(np);
+        modal.find('.modal-body #presentproducto').val(pp);
         
         console.log(codigoProducto);
         // Limpiar la tabla de detalles antes de cargar nuevos datos

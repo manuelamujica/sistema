@@ -133,11 +133,13 @@ MOSTRAR INFO DE EMPRESA
 EDITAR INFO DE EMPRESA
 ================================*/
 private function editar(){
-    $registro = "UPDATE empresa SET nombre = :nombre, direccion = :direccion, descripcion = :descripcion, logo=:logo WHERE rif = :rif";
+    $registro = "UPDATE empresa SET nombre = :nombre, telefono=:telefono, email=:email, direccion = :direccion, descripcion = :descripcion, logo=:logo WHERE rif = :rif";
 
     $strExec = $this->conex->prepare($registro);
     $strExec->bindParam(':rif',$this->rif);
     $strExec->bindParam(':nombre',$this->nombre);
+    $strExec->bindParam(':telefono',$this->telefono);
+    $strExec->bindParam(':email',$this->email);
     $strExec->bindParam(':direccion',$this->direccion);
     $strExec->bindParam(':descripcion',$this->descripcion);
     $strExec->bindParam(':logo', $this->logo);
