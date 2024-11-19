@@ -59,9 +59,14 @@ function crearfila(index) {
                 </div>
                 <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
             </td>
-            <td><input type="date" id="fecha-v${index}" class="form-control" name="productos[${index}][fecha_v]" placeholder="Fecha">
-            <input type="hidden" id="cod-dp${index}" class="form-control" name="productos[${index}][cod-dp]"></td>
             <td>
+                <div class="input-group">
+                    <input type="date" id="fecha-v${index}" class="form-control" name="productos[${index}][fecha_v]" placeholder="Fecha" onchange="validarfecha(${index})" min="<?= date('Y-m-d'); ?>">
+                    <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
+                </div>
+            </td>
+            <td>
+                <input type="hidden" id="cod-dp${index}" class="form-control" name="productos[${index}][cod-dp]">
                 <input type="text" id="lotes${index}" class="form-control" name="productos[${index}][lote]" placeholder="Lote">
                 <div id="lista-lotes${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
             </td>
@@ -127,6 +132,18 @@ function eliminarFila(index) {
     calcularMontos();
 }
 
+function showError(selector, message) {
+    $(selector).addClass('is-invalid');
+    $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
+        'display': 'block',
+        'color': 'red',
+    });
+}
+function hideError(selector) {
+    $(selector).removeClass('is-invalid');
+    $(selector).next('.invalid-feedback').css('display', 'none');
+}
+
 $(document).ready(function() {
     // Manejar el cambio de la divisa seleccionada
     $('#selectDivisa').on('change', function() {
@@ -148,17 +165,6 @@ $(document).ready(function() {
         }
     });
 
-    /* $('[id^=precio_divisa]').on('input', function(){
-        var inputId = $(this).attr('id');
-        var index = inputId.replace('precio_divisa', '');
-        var tasa = parseFloat($(this).attr('data-tasa'));
-        var precioDivisa = parseFloat($(this).val()) || 0;
-        var precioBs = (precioDivisa * tasa).toFixed(2);
-        console.log(precioBs);
-        $(`[name="productos[${index}][precio]"]`).val(precioBs);
-        calcularMontos(index);
-    });*/
-    
     $(document).on('input', '[id^=precio_divisa]', function() {
     var inputId = $(this).attr('id');
     var index = inputId.replace('precio_divisa', '');  // Extraemos el índice de la fila actual
@@ -173,15 +179,31 @@ $(document).ready(function() {
     calcularMontos(index);
     });
 
-    /* Calcular el precio en Bs al cambiar el valor en la columna de divisa
-    $(document).on('input', '.precio-divisa', function() {
-        var tasa = parseFloat($(this).attr('data-tasa'));
-        var precioDivisa = parseFloat($(this).val()) || 0;
-        var precioBs = (precioDivisa * tasa).toFixed(2);
-        $(this).closest('tr').find('[name$="[precio]"]').val(precioBs);
-        calcularMontos($(this).closest('tr').index()); // Llamar a la función de cálculo
-    });*/
+    $('#rif-r').on('input', function() {
+        var cedula_rif = $(this).val();
+        if (cedula_rif.length >1){
+            if (cedula_rif.length > 12) {
+                showError('#rif-r', 'debe contener maximo 12 números');
+            } else if (!/^[VJEvje]\d+$/.test(cedula_rif)) {
+                showError('#rif-r', 'debe comenzar con "J", "V" , "E" Y luego numeros');
+            }else {
+                hideError('#rif-r');
+            }
+        }
+    });
 });
+
+function validarfecha(index){
+    var fecha=new Date($(`[name="productos[${index}][fecha_v]"]`).val());
+    var actual=new Date();
+    actual.setHours(0, 0, 0, 0);
+    if(fecha<=actual){
+        showError(`#fecha-v${index}`, 'La fecha debe ser futura');
+    } else{
+        hideError(`#fecha-v${index}`);
+    }
+
+}
 
 
 function calcularMontos(index) {

@@ -9,12 +9,6 @@ require_once 'controlador/reportec.php';
                 <div class="col-sm-6">
                     <h1>Reporte De Clientes </h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-
-                        <li class="breadcrumb-item active">Reporte De Clientes</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
@@ -53,9 +47,9 @@ require_once 'controlador/reportec.php';
                                                     <td> <?php echo $datos["nombre"] ?></td>
                                                     <td> <?php echo $datos["apellido"] ?></td>
                                                     <td> <?php echo $datos["cedula_rif"] ?></td>
-                                                    <td> <?php echo $datos["telefono"] ?></td>
-                                                    <td> <?php echo $datos["email"] ?></td>
-                                                    <td> <?php echo $datos["direccion"] ?></td>
+                                                    <td> <?php echo $datos["telefono"] ? $datos["telefono"] : 'No disponible' ?></td>
+                                                    <td> <?php echo $datos["email"] ? $datos["email"] : 'No disponible' ?></td>
+                                                    <td> <?php echo $datos["direccion"] ?  $datos["direccion"] : 'No disponible' ?></td>
                                                 </tr>
                                             <?php endif; ?>
                                         <?php } ?>

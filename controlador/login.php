@@ -25,8 +25,9 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
+			$_SESSION["cod_usuario"]=$respuesta["cod_usuario"];
 		// Para acceder al nombre del rol y guardarlo en una variable SESSION
-			$rol = $objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
+			$rol=$objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
 			$_SESSION["rol"] = $rol["rol"];
 
 			$_SESSION["producto"] = 0;

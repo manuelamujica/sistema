@@ -77,7 +77,9 @@ require_once "controlador/productos.php";
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
-                                                data-codigo="<?php echo $producto["cod_presentacion"];?>">
+                                                data-codigo="<?php echo $producto["cod_presentacion"];?>"
+                                                data-presentp="<?php echo $producto["presentacion_concat"];?>"
+                                                data-nombrep="<?php echo $producto["nombre"];?>">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                                 
@@ -165,6 +167,15 @@ require_once "controlador/productos.php";
 
                                             <div class="col-6">
                                                 <label for="exento">Impuesto IVA<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                                <!-- TOOLTIPS-->
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Selecciona si el producto es exento (tiene IVA) o gravable (No tiene IVA). El IVA es el 16%">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
                                                         <option value="1">Exento</option>
@@ -551,6 +562,22 @@ require_once "controlador/productos.php";
                                 </div>
                                 <div class="modal-body">
                                     <div class="card">
+                                        <div class="card-header">
+                                            <div class="form-row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nro_venta">Nombre del producto</label>
+                                                        <input type="text" class="form-control" id="nombreproducto" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nombre_cliente">Presentación</label>
+                                                        <input type="text" class="form-control" id="presentproducto" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
                                                 <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">

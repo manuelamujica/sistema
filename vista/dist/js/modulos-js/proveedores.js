@@ -183,12 +183,12 @@ $('#myModalt').on('show.bs.modal', function (event) {
 //ELIMINAR PROVEEDOR
 $('#Modale').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
-
     var codigo = button.data('codigo');
+    var np = button.data('nombreproveedor');
 
     var modal = $(this);
-
     modal.find('.modal-body #provCodigo').val(codigo);
+    modal.find('.modal-body #nombreprove').text(np);
 });
 
 
@@ -425,10 +425,7 @@ $(document).ready(function() {
     });
 });
 
-
-
     //validar  telefono de proveedor   -->
-
 
 //validar  editar proveedor   -->
 $(document).ready(function() {

@@ -181,7 +181,7 @@ class Descarga extends Conexion{
         }
     }
 
-    //Buscar productos para seleccionar
+    //Para el reporte todos
     public function consultardescargapdf(){
         $sql="SELECT
         de.descripcion,
@@ -207,6 +207,7 @@ class Descarga extends Conexion{
         }
     }
 
+    //Datatable para reporte
     public function consultardescargar(){
         $sql="SELECT
         de.cod_descarga,
@@ -226,6 +227,24 @@ class Descarga extends Conexion{
 
         if($r){
             return $array;
+        }else{
+            return [];
+        }
+    }
+
+    public function descargafecha($fi, $ff){
+        $sql="SELECT c.nombre, c.apellido, v.*
+    FROM clientes c
+    INNER JOIN ventas v ON c.cod_cliente = v.cod_cliente
+    WHERE v.fecha BETWEEN :fechainicio AND :fechafin
+    ORDER BY v.cod_venta ASC;";
+        $stmt = $this->conex->prepare($sql);
+        $stmt->bindParam(':fechainicio', $fi);
+        $stmt->bindParam(':fechafin', $ff);
+        $resul=$stmt->execute();
+        $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
         }else{
             return [];
         }

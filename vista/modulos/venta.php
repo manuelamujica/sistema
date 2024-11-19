@@ -44,7 +44,7 @@
                                                 <td><?php echo $venta['total'] ?></td>
                                                 <td>
                                                     <?php if ($venta['status']==1):?>
-                                                        <span class="badge bg-default">Pendiente</span>
+                                                        <span class="badge bg-secondary">Pendiente</span>
                                                         <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
                                                             data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                             data-totalv="<?php echo $venta["total"]; ?>" 
@@ -329,7 +329,7 @@ MODAL REGISTRAR PAGO
                                         <div class="input-group-append">
                                             <span class="input-group-text">Bs</span>
                                         </div>
-                                        <input type="number" step="0.001" class="form-control" id="monto_pagar"  name="monto_pagar">
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagar"  name="monto_pagar" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -496,7 +496,7 @@ MODAL ABONAR PAGO
                                         <div class="input-group-append">
                                             <span class="input-group-text">Bs</span>
                                         </div>
-                                        <input type="number" step="0.001" class="form-control" id="monto_pagar1"  name="monto_pagar">
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagar1"  name="monto_pagar" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -621,7 +621,11 @@ MODAL REGISTRAR CLIENTES
         var buscar=$('#cedula_rif').val();
         $.post('index.php?pagina=clientes', {buscar}, function(response){
             if(response != ''){
-                alert('El cliente ya se encuentra registrado');
+                Swal.fire({
+                    title: 'Esta cedula ya se encuentra registrada',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                });
             }
         },'json');
     });
@@ -643,22 +647,22 @@ MODAL CONFIRMAR ELIMINAR
 <div class="modal fade" id="anularventa" tabindex="-1" aria-labelledby="anularventaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="anularventaLabel">Confirmar Eliminación</h5>
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title" id="anularventaLabel">Confirmar Anulación</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
             <form id="anumodal" method="post"> 
-                <p>¿Está seguro que desea eliminar la venta nro: <span id="codv"></span>?</p>
+                <p>¿Está seguro que desea anular la venta nro: <span id="codv"></span>?</p>
                 <input type="hidden" id="cventa" name="cventa"> 
                 <input type="hidden" id="statusv" name="statusv">
             </form>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button type="submit" form="anumodal" class="btn btn-danger" id="confirmDelete" name="anular">Eliminar</button>
+            <button type="submit" form="anumodal" class="btn btn-danger" id="confirmDelete" name="anular">Anular</button>
         </div>
         </div>
     </div>

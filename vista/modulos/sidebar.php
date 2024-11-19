@@ -13,7 +13,7 @@
 <!--=================
     MENU / sidebar
 =====================-->
-<?php if(isset($_SESSION["rif"])): ?>
+<?php if(isset($_SESSION["rif"]) || $_SESSION["cod_usuario"] == 1): ?>
 <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">

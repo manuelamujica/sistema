@@ -34,15 +34,15 @@ if (isset($registro)) {
     <tr>
         <td style="text-align:left; border: none";>';
     if (isset($_SESSION["logo"])) {
-        $html .= '<img src="' . $_SESSION["logo"] . '" style="width:100px; max-width:200px;">'; //ajustar el tama;o
+        $html .= '<img src="' . $_SESSION["logo"] . '" style="width:100px; max-width:200px;">';
     } else {
-        $html .= '<img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro" style="width:100%; max-width:200px;">';
+        $html .= '<img src="vista/dist/img/logo_generico.png" alt="SAVYC system" style="width:100%; max-width:200px;">';
     }
     $html .= '
         </td>
             <td style="text-align:rigth; border: none;">';
     $html .= '  
-                <h3 style="margin-bottom: 5px;">' . $_SESSION["nombre"] . '</h3>
+                <h3 style="margin-bottom: 5px;">' . $_SESSION["n_empresa"] . '</h3>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["rif"] . '</p>
                 <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["telefono"] . '</p>
                 <p style="margin-top: 0;">' . $_SESSION["email"] . '</p>
@@ -67,9 +67,9 @@ if (isset($registro)) {
     </thead>
     <tbody>';
     foreach ($registro as $datos) {
-        if ($datos["status"] == 1) {
+        if ($datos["proveedor_status"] == 1) {
             $status = 'Activo';
-        } elseif ($datos["status"] == 0) {
+        } elseif ($datos["proveedor_status"] == 0) {
             $status = 'Inactivo';
         }
         $html .= '
