@@ -71,7 +71,7 @@ $(document).ready(function () {
             <input type="text" class="form-control" id="codigoProducto${index}" name="productos[${index}][codigo1]" placeholder="Código del producto" readonly>
             
         </td>
-             <td>
+            <td>
             <div class="input-group">
                 <input type="text" class="form-control" id="nombreProducto${index}" name="productos[${index}][nombre]" placeholder="Nombre del producto" maxlength="30">
                 <div id="lista-productos${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
@@ -81,7 +81,7 @@ $(document).ready(function () {
             </div>
         </td>
             <td>
-                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" required min="1" placeholder="Cantidad">
+                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" required min="1" step="0.001" placeholder="Cantidad">
             </td>
             <td>
                 <button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(${index})">&times;</button>

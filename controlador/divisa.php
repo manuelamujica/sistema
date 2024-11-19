@@ -76,6 +76,23 @@ if(isset($_POST['buscar'])){
             ];
         }
     }
+}else if(isset($_POST['r_tasa'])){
+    if(isset($_POST['tasa'])){
+        $resul=$obj->tasa($_POST['tasa']);
+        if($resul==true){
+            $editar = [
+                "title" => "Actualizado con éxito",
+                "message" => "La tasa de cambio ha sido actualizada",
+                "icon" => "success"
+            ];
+        }else {
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al actualizar la tasa",
+                "icon" => "error"
+            ];
+        }
+    }
 }
 
 $consulta=$obj->consultar();

@@ -21,9 +21,6 @@
                                 <li class="nav-item">
                                     <a class="nav-link active" id="producto-tab" data-toggle="tab" href="#compraf" role="tab">Por fecha</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="carga-tab" data-toggle="tab" href="#cliente" role="tab">Por cliente</a>
-                                </li>
                             </ul>
                         </div>
                         <div class="card-body">

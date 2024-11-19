@@ -25,7 +25,7 @@ function crearfila(index) {
             <td>
                 <input type="hidden" class="form-control" id="stockproducto${index}" step="0.001">
                 <div class="input-group">
-                    <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidadProducto${index}" min="0" step="0.001" onchange="calcularTotal(${index})" required>
+                    <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidadProducto${index}" min="0" step="0.001" onchange="calcularTotal(${index})" oninput="calcularTotal(${index})" required>
                     <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
                     <div class="input-group-append">
                         <span id="unidadm${index}" class="input-group-text" value=" "></span>

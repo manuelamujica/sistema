@@ -329,7 +329,7 @@ MODAL REGISTRAR PAGO
                                         <div class="input-group-append">
                                             <span class="input-group-text">Bs</span>
                                         </div>
-                                        <input type="number" step="0.001" class="form-control" id="monto_pagar"  name="monto_pagar">
+                                        <input type="number" step="0.001" class="form-control" id="monto_pagar"  name="monto_pagar" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -621,7 +621,11 @@ MODAL REGISTRAR CLIENTES
         var buscar=$('#cedula_rif').val();
         $.post('index.php?pagina=clientes', {buscar}, function(response){
             if(response != ''){
-                alert('El cliente ya se encuentra registrado');
+                Swal.fire({
+                    title: 'Esta cedula ya se encuentra registrada',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                });
             }
         },'json');
     });
