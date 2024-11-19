@@ -15,7 +15,6 @@ if (isset($listado)) { //&& $listado != []
     $html2pdf = new Html2Pdf('P', 'LETTER', 'es'); 
     $fechaHoraGeneracion = date('d-m-Y');
     $html = '
-    
     <style>
     #t{
         width: 100%;
@@ -30,38 +29,30 @@ if (isset($listado)) { //&& $listado != []
     th {
         background-color: #db6a00;
     }
-        .fecha-generacion {
-        text-align: right; /* Alinear a la izquierda */
-        margin-top: 10px; /* Espaciado superior */
-    }
-    .info-empresa {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0; /* Sin margen para alineación a la izquierda */
-    }
-    .info-empresa td {
-        border: none; /* Sin bordes en las celdas */
-        text-align: left; /* Alinear el texto a la izquierda */
-    }
 </style>
+    
 <page backtop="7mm" backbottom="10mm">
-    <table class="info-empresa">
-        <tr>
-            <td style="width:150px; border:none;">
-                <img src="' . $_SESSION["logo"] . '" style="width:110px; height:auto;">
-            </td>
-            <td style="text-align:center; font-size:12px; width:360px; border:none;">
-                <strong style="color:red; font-size:15px;">' . $_SESSION["n_empresa"] . '</strong><br>
-                <b>Rif: ' . $_SESSION["rif"] . '</b><br>
-                <b>Domicilio Fiscal: </b> ' . $_SESSION["direccion"] . '.<br>
-                Barquisimeto Lara - <b>Teléfono: </b>' . $_SESSION["telefono"] . '<br>
-                <b>Email: </b>' . $_SESSION["email"] . '
-            </td>
+    <table id="membrete" style="width:100%; border:none;">
+    <tr>
+        <td style="text-align:left; border: none";>';
+    if (isset($_SESSION["logo"])) {
+        $html .= '<img src="' . $_SESSION["logo"] . '" style="width:100px; max-width:200px;">'; //ajustar el tama;o
+    } else {
+        $html .= '<img src="vista/dist/img/logo_generico.png" alt="Quesera Don Pedro" style="width:100%; max-width:200px;">';
+    }
+    $html .= '
+        </td>
+            <td style="text-align:rigth; border: none;">';
+    $html .= '  
+                <h3 style="margin-bottom: 5px;">' . $_SESSION["n_empresa"] . '</h3>
+                <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["rif"] . '</p>
+                <p style="margin-top: 0; margin-bottom: 5px;">' . $_SESSION["telefono"] . '</p>
+                <p style="margin-top: 0;">' . $_SESSION["email"] . '</p>
+                </td>
         </tr>
     </table>
-    <!-- Tabla de datos -->
+    <p><i>  Fecha de generación:'.$fechaHoraGeneracion.'</i> </p>
     <br>
-    <p><i>Fecha de generación: ' . $fechaHoraGeneracion . '</i></p>
     <hr style="border=0.5px;">
     <br>
     <h1 style="text-align:center;">Listado de Clientes</h1>
@@ -85,9 +76,9 @@ if (isset($listado)) { //&& $listado != []
                     <td>' . $cliente["nombre"] . '</td>
                     <td>' . $cliente["apellido"] . '</td>
                     <td>' . $cliente["cedula_rif"] . '</td>
-                    <td>' . $cliente["telefono"] . '</td>
-                    <td>' .  $cliente["email"] . '</td>
-                    <td>' . $cliente["direccion"] . '</td>
+                    <td>' . (!empty($cliente['telefono']) ? $cliente['telefono'] : 'No disponible') . '</td>
+                    <td>' .  (!empty($cliente['email']) ? $cliente['email'] : 'No disponible')  . '</td>
+                    <td>' . (!empty($cliente['direccion']) ? $cliente['direccion'] : 'No disponible') . '</td>
                 </tr>';
     }
     $html .= '

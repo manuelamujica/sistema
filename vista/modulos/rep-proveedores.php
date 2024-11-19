@@ -9,11 +9,6 @@ require_once 'controlador/reportep.php';
                 <div class="col-sm-6">
                     <h1>Reporte De Proveedores </h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">Reporte De Proveedores</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
@@ -23,22 +18,11 @@ require_once 'controlador/reportep.php';
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <ul class="nav nav-tabs" id="tabContent" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="proveedores-tab" data-toggle="tab" href="#" role="tab">proveedores</a>
-                                </li>
-
-                            </ul>
+                        <form action="index.php?pagina=proveedorespdf" method="post" target="_blank">
+                            <button class="btn btn-danger" name="pdf" alt="Generar pdf" id="pdf">Generar PDF</button>
+                        </form>
                         </div>
                         <div class="card-body">
-                            <td>
-                                <form action="index.php?pagina=proveedorespdf" method="post" target="_blank">
-                                    <button class="btn btn-danger" name="pdf" alt="Generar pdf" id="pdf">PDF</button>
-                                </form>
-
-
-                            </td>
-                            <!-- Tabla de proveedores -->
                             <div class="table-responsive">
                                 <table id="proveedores" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                     <thead>
@@ -70,7 +54,7 @@ require_once 'controlador/reportep.php';
                                                             <span class="badge bg-danger">Inactivo</span>
                                                         <?php endif; ?>
                                                     </td>
-                                                    <td><?php echo !empty($dato["nombre"]) ? $dato["nombre"] : 'No disponible'; ?></td>
+                                                    <td><?php echo !empty($datos["nombre"]) ? $datos["nombre"] : 'No disponible'; ?></td>
                                                 </tr>
                                         <?php } ?>
                                     </tbody>

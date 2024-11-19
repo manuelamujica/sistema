@@ -63,7 +63,7 @@ require_once "controlador/usuarios.php";
                                                 <i class="fas fa-pencil-alt"></i></button>
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
-                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>"data-nombre="<?php echo $usuario["nombre"]; ?>">
+                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>"data-nombre="<?php echo $usuario["user"]; ?>">
                                                 <i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
@@ -92,7 +92,16 @@ require_once "controlador/usuarios.php";
                 <form id="formregistrarusuario" method="post">
                     <div class="form-group">
                         <label for="nombre">Nombre<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre y apellido" required>
+                        <!-- TOOLTIPS-->
+                        <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa el nombre de quién usará el usuario. Ej: Daniel Rojas.">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        <script>
+                            $(function () {
+                                $('[data-toggle="tooltip"]').tooltip();
+                            });
+                        </script>
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
                         <div class="invalid-feedback" style="display: none;"></div>
                     </div>
                     <div class="form-group">
@@ -247,7 +256,7 @@ if (isset($editar)): ?>
                         <div class="modal-body">
                             <form id="eliminarForm" method="post">
                                 <div class="form-group">
-                                    <p>¿Estás seguro que deseas eliminar a <b><span id="username"></b></span>?</p>
+                                    <p>¿Estás seguro que deseas eliminar al usuario: <b><span id="username"></b></span>?</p>
                                     <input type="hidden" id="usercode" name="usercode">
                                 </div>
                             </form>

@@ -100,19 +100,21 @@ MODAL REGISTRAR CLIENTES
                     <form id="formRegistrarClientes" method="post">
                         <div class="form-group">
                             <label for="cedula_rif">Cédula o Rif:<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                            <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" placeholder="Ingrese la cédula" required>
+                            <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" placeholder="Ej: 12345678" required>
                             <div class="invalid-feedback"></div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="nombre">Nombre:<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                            <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="apellido">Apellido:<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                            <input type="text" class="form-control" name="apellido" id="apellido" placeholder="Ingrese el apellido" required>
-                            <div class="invalid-feedback"></div>
+                        <div class="form-group row">
+                            <div class="col-6">
+                                <label for="nombre">Nombre:<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-6">
+                                <label for="apellido">Apellido:<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <input type="text" class="form-control" name="apellido" id="apellido" placeholder="Ingrese el apellido" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="telefono">Teléfono:</label>
@@ -178,15 +180,17 @@ MODAL EDITAR CLIENTES
                         <label for="codigo">Código</label>
                         <input type="text" class="form-control" id="codigo" name="codigo" readonly>
                     </div>
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" class="form-control" id="nombre1" name="nombre" required>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="apellido">Apellido</label>
-                        <input type="text" class="form-control" id="apellido1" name="apellido" required>
-                        <div class="invalid-feedback"></div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre1" name="nombre" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-6">
+                            <label for="apellido">Apellido</label>
+                            <input type="text" class="form-control" id="apellido1" name="apellido" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="cedula_rif">Cédula-Rif</label>
@@ -246,7 +250,7 @@ MODAL CONFIRMAR ELIMINAR
     <div class="modal fade" id="eliminarcliente" tabindex="-1" aria-labelledby="eliminarclienteLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-danger">
                     <h5 class="modal-title" id="eliminarclienteLabel">Confirmar Eliminación</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>

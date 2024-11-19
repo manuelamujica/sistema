@@ -205,7 +205,7 @@ MODAL CONFIRMAR ELIMINAR
 <div class="modal fade" id="eliminartpago" tabindex="-1" aria-labelledby="eliminartpagoLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-danger">
                 <h5 class="modal-title" id="eliminartpagoLabel">Confirmar Eliminación</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -213,7 +213,7 @@ MODAL CONFIRMAR ELIMINAR
             </div>
             <div class="modal-body">
             <form id="elimodal" method="post"> 
-                <p>¿Está seguro que desea eliminar a <span id="tpagonombre"></span>?</p>
+                <p>¿Está seguro que desea eliminar a <b><span id="tpagonombre"></span>?</b></p>
                 <input type="hidden" id="tpagoCodigo" name="tpagoCodigo"> 
             </form>
         </div>
