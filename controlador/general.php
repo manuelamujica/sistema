@@ -1,19 +1,9 @@
 <?php
-
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require_once "modelo/general.php"; //requiero al modelo
 $objGeneral= new General();
-
-$datos=$objGeneral->mostrar();
-if(!empty($datos)){
-    if(!isset($_SESSION["logo"])){
-        $_SESSION["logo"]=$datos[0]["logo"];
-        $_SESSION["n_empresa"]=$datos[0]["nombre"];
-        $_SESSION["rif"]=$datos[0]["rif"];
-        $_SESSION["telefono"] = $datos[0]["telefono"];
-        $_SESSION["email"] = $datos[0]["email"];
-        $_SESSION["direccion"] = $datos[0]["direccion"];
-    }
-}
 
 if(isset($_POST['buscar'])){
     $result=$objGeneral->buscar();
@@ -218,10 +208,23 @@ else if (isset($_POST["guardar"])) {
     }
 }
 
-
-
-
+$datos=$objGeneral->mostrar();
+if(!empty($datos)){
+    echo '<script> console.log("paso el condicional"); </script>';
+        $_SESSION["logo"]=$datos[0]["logo"];
+        $_SESSION["n_empresa"]=$datos[0]["nombre"];
+        $_SESSION["rif"]=$datos[0]["rif"];
+        $_SESSION["telefono"] = $datos[0]["telefono"];
+        $_SESSION["email"] = $datos[0]["email"];
+        $_SESSION["direccion"] = $datos[0]["direccion"];
+    echo  '<script> console.log(' . json_encode($_SESSION) . '); </script>';
+    session_write_close();
+}
+if(isset($_POST["inicio"])){
+    $_GET['ruta']=$_POST["inicio"];
+} else {
 $_GET['ruta']='general';
+    }
 require_once 'plantilla.php';
 /*if(!empty($datos)){
 

@@ -108,6 +108,7 @@
                                     <div class="row">
                                         <div class="col-md-11">
                                             <input type="text" class="form-control form-control-sm" id="rif-r" name="rif" placeholder="RIF" required>
+                                            <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
                                             <input type="hidden" id="cod_prov" name="cod_prov" required>
                                         </div>
                                         <div class="col-md-1">

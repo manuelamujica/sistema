@@ -66,9 +66,7 @@ class Divisa extends Conexion{
 
     public function editar($valor){
         $registro="UPDATE divisas SET nombre=:nombre, abreviatura=:abreviatura, status=:status WHERE cod_divisa=$valor";
-    
         $strExec = $this->conex->prepare($registro);
-    
         #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
@@ -112,6 +110,21 @@ class Divisa extends Conexion{
             $r=0;
         }
         return $r;
+    }
+
+    public function tasa($valor){
+        foreach($valor as $divisa){
+            $sql="UPDATE cambio_divisa SET tasa=:tasa, fecha=:fecha WHERE cod_divisa = :cod_divisa";
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':tasa', $divisa['tasa']);
+            $strExec->bindParam(':fecha', $divisa['fecha']);
+            $strExec->bindParam(':cod_divisa', $divisa['cod_divisa']);
+            $resul=$strExec->execute();
+            if(!$resul){
+                return false;
+            }
+        }
+    return true;
     }
 
     public function setnombre($valor){

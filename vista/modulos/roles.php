@@ -47,13 +47,15 @@
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
-                                                        <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarol"
-                                                            data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"
-                                                            data-rol="<?php echo $dato['rol']; ?>"
-                                                            data-status="<?php echo $dato['status']; ?>">
-                                                            <i class="fas fa-pencil-alt"></i>
-                                                        </button>
-                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"><i class="fas fa-trash-alt"></i></button>
+                                                        <?php if($dato['cod_tipo_usuario']!=1): ?>
+                                                            <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarol"
+                                                                data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"
+                                                                data-rol="<?php echo $dato['rol']; ?>"
+                                                                data-status="<?php echo $dato['status']; ?>">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </button>
+                                                            <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"><i class="fas fa-trash-alt"></i></button>
+                                                        <?php endif;?>
                                                     </td>
                                                 </tr>
                                             <?php endif; ?>
