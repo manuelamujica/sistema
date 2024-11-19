@@ -96,7 +96,7 @@
             $sql = "SELECT c.cod_carga, c.status, c.descripcion, 
                     pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
                     pre.cantidad_presentacion, p.cod_producto, p.nombre, 
-                    dp.cod_detallep,dc.cod_det_carga, dc.cantidad
+                    dp.cod_detallep,dp.lote,dp.fecha_vencimiento,dc.cod_det_carga, dc.cantidad
                     FROM detalle_carga dc
                     JOIN carga c ON dc.cod_carga = c.cod_carga
                     JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
