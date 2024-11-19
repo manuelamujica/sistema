@@ -63,12 +63,9 @@ if (isset($_POST['buscar'])) {
 }
 // Manejo de guardar carga
 else if (isset($_POST['guardar'])) {
-    // Inicializar el array de respuesta
-    //$response = [];
-    // Verificar que la fecha y descripción no estén vacías
-    if (!empty($_POST['fecha']) && !empty($_POST['descripcion'])) {
+    if (!empty($_POST['fecha_hora']) && !empty($_POST['descripcion'])) {
         if (preg_match("/^[a-zA-ZÀ-ÿ0-9\s]+$/", $_POST['descripcion'])) {
-            $objcarga->setFecha($_POST['fecha']);
+            $objcarga->setFecha($_POST['fecha_hora']);
             $objcarga->setDes($_POST['descripcion']);
             $resul = $objcarga->getcrear(); // Registrar carga
 
@@ -150,6 +147,5 @@ else if (isset($_POST['guardar'])) {
 $productos = $objcargad->getP();
 $detalles = $objcargad->getmos();
 $carga = $objcarga->getmosc();
-//$datos = $objcargad->gettodoo();
 $_GET['ruta'] = 'carga';
 require_once 'plantilla.php';
