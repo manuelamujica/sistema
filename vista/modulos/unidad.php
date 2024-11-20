@@ -195,7 +195,7 @@ MODAL REGISTRAR Unidades de medida
 <div class="modal fade" id="modaleliminar">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+            <div class="modal-header bg-danger">
                 <h4 class="modal-title">Confirmar Eliminar</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

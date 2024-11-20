@@ -168,7 +168,7 @@ MODAL REGISTRAR CARGA CON EXITO
 
 
 
-        <!-- =============================
+<!-- =============================
     MODAL MOSTRAR DETALLES 
 ================================== -->
         <div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">

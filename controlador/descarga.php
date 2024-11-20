@@ -21,13 +21,13 @@ if(isset($_POST['buscar'])){
 //REGISTRAR
 }else if(isset($_POST['guardar'])){
     if(!empty($_POST['fecha']) && !empty($_POST['descripcion'])){
-        // Validar fecha strtotime(), convierte una fecha y hora a un timestamp (segundos desde la "época Unix").
+        /*Validar fecha strtotime(), convierte una fecha y hora a un timestamp (segundos desde la "época Unix").
         $fechaingresada = $_POST['fecha'];
         $timestamp = strtotime($fechaingresada);
         // Obtener el timestamp de la fecha y hora actual
         $fechaactual = time();
 
-        if ($timestamp < $fechaactual) {
+        if ($timestamp < $fechaactual) {*/
             
             $length = strlen($_POST['descripcion']);
             if(preg_match('/^[a-zA-ZÀ-ÿ0-9!.,\'\s-]+$/', $_POST['descripcion']) && $length < 100){
@@ -82,13 +82,6 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                 ];
             }
-        } else {
-            $r = [
-                "title" => "Error",
-                "message" => "La fecha no puede ser futura.",
-                "icon" => "error"
-            ];
-        }
     } else {
         $registrar = [
             "title" => "Error",

@@ -6,7 +6,7 @@
     <div class="container-fluid">
     <div class="row mb-2">
         <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Gestión de Divisas</h1>
+        <h1>Gestión de Divisas</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -24,74 +24,68 @@
                             Registrar Divisa
                         </button>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="paymentTypesTable" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Codigo</th>
-                                    <th>Nombre</th>
-                                    <th>Símbolo/Abreviatura</th>
-                                    <th>Tasa</th>
-                                    <th>Utima actualizacion</th>
-                                    <th>Status</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Aquí se llenará la tabla dinámicamente con PHP -->
-                                <?php foreach ($consulta as $divisa) { ?>
-                                <?php if ($divisa['divisa_status'] != 2): ?>
-                                <tr>
-                                    <td><?php echo $divisa['cod_divisa']?></td>
-                                    <td><?php echo $divisa['nombre']?></td>
-                                    <td><?php echo $divisa['abreviatura'] ?></td>
-                                    <td><?php echo $divisa['tasa']."  Bs" ?></td>
-                                    <td><?php echo $divisa['fecha'] ?></td>
-                                    <td>
-                                        <?php if ($divisa['divisa_status']==1):?>
-                                            <span class="badge bg-success">Activo</span>
-                                        <?php else:?>
-                                            <span class="badge bg-danger">Inactivo</span>
-                                        <?php endif;?>
-                                    </td>
-                                    <td>
-                                    <?php if($divisa['cod_divisa']==1): ?>
+                        <div class="table-responsive">
+                            <table id="paymentTypesTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Símbolo/Abreviatura</th>
+                                        <th>Tasa</th>
+                                        <th>Última actualización</th>
+                                        <th>Status</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($consulta as $divisa) { ?>
+                                    <?php if ($divisa['divisa_status'] != 2): ?>
+                                    <tr>
+                                        <td><?php echo $divisa['cod_divisa']?></td>
+                                        <td><?php echo $divisa['nombre']?></td>
+                                        <td><?php echo $divisa['abreviatura'] ?></td>
+                                        <td><?php echo $divisa['tasa']."  Bs" ?></td>
+                                        <td><?php echo $divisa['fecha'] ?></td>
+                                        <td>
+                                            <?php if ($divisa['divisa_status']==1):?>
+                                                <span class="badge bg-success">Activo</span>
+                                            <?php else:?>
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            <?php endif;?>
+                                        </td>
+                                        <td>
+                                        <?php if($divisa['cod_divisa']==1): ?>
 
-                                    <?php else:?>
-                                        <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
-                                        data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
-                                        data-nombre="<?php echo $divisa["nombre"]; ?>" 
-                                        data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
-                                        data-tasa="<?php echo $divisa["tasa"]; ?>"
-                                        data-status="<?php echo $divisa["divisa_status"]; ?>" >
-                                        <i class="fas fa-pencil-alt"></i>
-                                        </button>
-                                        <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminardivisa"
-                                        data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
-                                        data-nombre="<?php echo $divisa["nombre"]; ?>" >
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    <?php endif;?>
-                                    </td>
-                                </tr>
-                                <?php endif; ?>
-                                <?php } ?>
-                            </tbody>
-                        </table>
+                                        <?php else:?>
+                                            <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
+                                            data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
+                                            data-nombre="<?php echo $divisa["nombre"]; ?>" 
+                                            data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
+                                            data-tasa="<?php echo $divisa["tasa"]; ?>"
+                                            data-status="<?php echo $divisa["divisa_status"]; ?>" >
+                                            <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminardivisa"
+                                            data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
+                                            data-nombre="<?php echo $divisa["nombre"]; ?>" >
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        <?php endif;?>
+                                        </td>
+                                    </tr>
+                                    <?php endif; ?>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    </div>
-                    <!-- /.card-body -->
                 </div>
-                <!-- /.card -->
             </div>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </section>
-        <!-- /.content -->
 </div>
-<!-- /.content-wrapper -->
     
     <!-- registrar Divisa Modal -->
 <div class="modal fade" id="modalregistrarDivisa">
@@ -106,27 +100,32 @@
         <form role="form" method="post">
         <div class="modal-body">
             <div class="form-group">
-                <label for="nombre">Nombre de la Divisa</label>
+                <label for="nombre">Nombre de la Divisa<span class="text-danger" style="font-size: 15px;"> *</span></label>
                 <input type="text" class="form-control" id="nombre" name="nombre" required>
             </div>
             <div class="form-group">
-                <label for="simbolo">Símbolo o Abreviatura</label>
+                <label for="simbolo">Símbolo o Abreviatura<span class="text-danger" style="font-size: 15px;"> *</span></label>
                 <input type="text" class="form-control" id="simbolo" name="simbolo" required>
             </div>
-        </div>
-        <div class="form-group row justify-content-center">
-            <div class="col-md-6">
-                <label for="tasa">Tasa de la Divisa</label>
-                <div class="input-group">
-                    <input type="number" step="0.01" class="form-control" id="tasa" name="tasa" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text">Bs</span>
+            <div class="form-group row">
+                <div class="col-6">
+                    <label for="tasa">Tasa de la Divisa<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" class="form-control" id="tasa" name="tasa" required>
+                        <div class="input-group-append">
+                            <span class="input-group-text">Bs</span>
+                        </div>
                     </div>
                 </div>
+                <div class="col-6">
+                    <label for="fecha">Fecha<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" required>
+                </div>
             </div>
-            <div class="col-md-5">
-                <label for="fecha">Fecha</label>
-                <input type="date" class="form-control" id="fecha" name="fecha" required>
+            <!-- Alert Message -->
+            <div class="alert alert-light d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span>Todos los campos marcados con (*) son obligatorios</span>
             </div>
         </div>
         <div class="modal-footer justify-content-between">
@@ -237,7 +236,7 @@ MODAL CONFIRMAR ELIMINAR
 <div class="modal fade" id="eliminardivisa" tabindex="-1" aria-labelledby="eliminardivisaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-danger">
                 <h5 class="modal-title" id="eliminardivisaLabel">Confirmar Eliminación</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -245,7 +244,7 @@ MODAL CONFIRMAR ELIMINAR
             </div>
             <div class="modal-body">
             <form id="elimodal" method="post"> 
-                <p>¿Está seguro que desea eliminar a <span id="divisaNombre"></span>?</p>
+                <p>¿Está seguro que desea eliminar la divisa: <b><span id="divisaNombre"></b></span>?</p>
                 <input type="hidden" id="divisaCodigo" name="divisaCodigo"> 
             </form>
         </div>

@@ -102,6 +102,21 @@ function eliminarFila(index) {
         fila.remove();
     }
 }
+$(document).ready(function() {
+    // Obtener la fecha y hora actual
+    var now = new Date();
+    var fecha = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+
+// Formatea la hora en el formato HH:MM:SS
+    var hora=String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
+    
+    var fechaHora = fecha + ' ' + hora;
+    $('#fecha-hora').val(fechaHora);
+});
 
 // Al documentarse, inicializamos la primera fila
 $(document).ready(function() {

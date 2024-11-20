@@ -139,6 +139,9 @@ $(document).ready(function () {
 //ELIMINAR
 $('.eliminar').click(function () {
 
-    var cod = $(this).data('cod'); // Obtener el código de la unidad
-    $('#cod_eliminar').val(cod); // Asignar el valor al campo oculto
+    var cod = $(this).data('cod');
+    var rol = $(this).data('roleliminar');
+
+    $('#cod_eliminar').val(cod); 
+    $('#tipoderol').text(rol); 
 });

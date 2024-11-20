@@ -1,15 +1,14 @@
 <?php require_once 'controlador/tpago.php'; ?>
 
 <div class="content-wrapper">
-<!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1 class="m-0 text-dark">Gestión de Tipos de Pago</h1>
-            </div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+            </div>
+        </div>
+    </div>
 </div>
 
         <!-- Main content -->
@@ -23,7 +22,6 @@
                             Registrar Tipo de Pago
                         </button>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body">
                     <div class="table-responsive">
                         <table id="paymentTypesTable" class="table table-bordered table-striped">
@@ -37,7 +35,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Aquí se llenará la tabla dinámicamente con PHP -->
                                 <?php foreach ($registro as $dato) { ?>
                                 <?php if ($dato['status_pago'] != 2): ?>
                                 <tr>
@@ -67,7 +64,6 @@
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     <?php else: ?>
-
                                     <?php endif; ?>
                                     </td>
                                 </tr>
@@ -102,17 +98,22 @@
                 <form id="addPaymentTypeForm" method="post">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="paymentTypeName">Nombre del Tipo de Pago</label>
-                            <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" required>
+                            <label for="paymentTypeName">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" placeholder="Ej: Transferencia Bs" required>
                         </div>
                         <div class="form-group">
-                            <label for="divisa">Seleccionar Divisa</label>
+                            <label for="divisa">Seleccionar Divisa<span class="text-danger" style="font-size: 15px;"> *</span></label>
                             <select class="form-control" id="divisa" name="divisa" required>
                                 <option value="" disabled selected>Seleccione una divisa</option>
                                 <?php foreach ($divisas as $divisa): ?>
                                     <option value="<?= $divisa['cod_cambio']; ?>"><?= $divisa['nombre']." - ". $divisa['abreviatura']; ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <!-- Alert Message -->
+                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span>Todos los campos marcados con (*) son obligatorios</span>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">

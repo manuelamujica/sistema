@@ -265,7 +265,7 @@ $(document).ready(function () {
                         $.each(data, function (key, producto) {
                             
                             listaProductos.append(
-                                '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
+                                '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333; font-weight:normal;"' +
                                 'data-nombre="' + producto.producto_nombre + '" ' +
                                 'data-tipo="' + producto.excento + '" ' +
                                 'data-codigo="' + producto.cod_presentacion + '" ' +
