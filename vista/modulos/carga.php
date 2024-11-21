@@ -1,5 +1,3 @@
-<!-- EN REVISIOON EN EL CONTROLADOR NO QUIERE REGISTRAR LA CARGA :(  
- COMENTARIO 2/11/2024-->
 <?php require_once 'controlador/carga.php' ?>
 <div class="content-wrapper">
     <section class="content-header">
@@ -9,16 +7,9 @@
                     <!-- MODULO TRANSACIONAL DE CARGA DE PRODUCTOS EN AJUSTE DE INVENTARIO  -->
                     <h1>Carga de productos</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="inicio">Inicio</a></li>
-                        <li class="breadcrumb-item active">Carga de productos</li>
-                    </ol>
-                </div>
             </div>
         </div>
     </section>
-
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -56,7 +47,9 @@
                                                 <td><?php echo $dato['descripcion'] ?></td>
                                                 <td class="text-center">
                                                     <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
-                                                        data-codigo="<?php echo $dato["cod_carga"]; ?>">
+                                                        data-codigo="<?php echo $dato["cod_carga"]; ?>"
+                                                        data-fecha_carga="<?php echo $dato["fecha"]; ?>"
+                                                        data-descrip="<?php echo $dato["descripcion"]; ?>">
                                                         <i class="fas fa-plus"></i>
                                                     </button>
 
@@ -100,20 +93,13 @@ MODAL REGISTRAR CARGA CON EXITO
 
                             <div class="modal-body">
                                 <form id="formregistrarCarga" method="post">
-                                    <!--   FECHA      -->
+                                    <!-- Campo oculto para enviar la fecha y hora al servidor -->
+                                    <input type="hidden" id="fecha-hora" name="fecha_hora">
+
+                                    <!-- Campo de texto para mostrar la fecha y hora al usuario -->
                                     <div class="form-group">
-                                        <label for="fecha">Fecha <span class="text-danger" style="font-size: 20px;"> *</span> </label>
-                                        <!-- TOOLTIPS-->
-                                        <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa Una fecha donde sucedio la carga, por ejemplo: 01/08/2001">
-                                            <i class="fas fa-info-circle"></i>
-                                        </button>
-                                        <script>
-                                            $(function() {
-                                                $('[data-toggle="tooltip"]').tooltip();
-                                            });
-                                        </script>
-                                        <input type="datetime-local" name="fecha" id="fecha" class="form-control">
-                                        <div class="invalid-feedback" style="display: none;"></div>
+                                        <label for="fecha-hora-display">Fecha y Hora</label>
+                                        <input type="text" class="form-control form-control-sm" id="fecha-hora-display" readonly>
                                     </div>
                                     <!--   DESCRIPCIÓN  -->
                                     <div class="form-group">
@@ -146,9 +132,12 @@ MODAL REGISTRAR CARGA CON EXITO
                                             </tbody>
                                         </table>
                                         <button type="button" class="btn btn-secondary" id="add-product">Agregar otro producto</button>
+                                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span>Todos los campos marcados con (*) son obligatorios</span>
+                                        </div>
                                     </div>
                                     <div class="modal-footer justify-content-between">
-                                        <small class="text-danger">Los campos con * son obligatorios.</small>
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                         <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
                                     </div>
@@ -179,35 +168,60 @@ MODAL REGISTRAR CARGA CON EXITO
 
 
 
-        <!-- =============================
+<!-- =============================
     MODAL MOSTRAR DETALLES 
 ================================== -->
         <div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">Detalle de productos</h5>
+                        <h5 class="modal-title" id="editModalLabel">Información de la carga</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>Código</th>
-                                                <th>Presentacion del Producto</th>                                     
-                                                <th>cantidad cargada</th>
-                                                
-                                            </tr>
-                                        </thead>
-                                        <tbody id="detalleBody">
-                                            <!-- Los detalles se cargarán aquí -->
-                                        </tbody>
-                                    </table>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="codigo">Nro de Carga</label>
+                                    <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="descrip">Descripción</label>
+                                    <input type="text" class="form-control" id="descrip" name="descrip" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="fecha_carga">Fecha de la carga</label>
+                                    <input type="text" class="form-control" id="fecha_carga" name="fecha_carga" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Producto</th>
+                                                    <th>Fecha de vencimiento</th>
+                                                    <th>Lote</th>
+                                                    <th>cantidad cargada</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody id="detalleBody">
+                                                <!-- Los detalles se cargarán aquí -->
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

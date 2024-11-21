@@ -1,10 +1,18 @@
-//Modal detalle MUESTRA LOS DETALLES DE UNA CARGA
-$(document).ready(function() {
+//MUESTRA LOS DETALLES DE UNA CARGA
+$(document).ready(function () {
 
     // Evento al abrir el modal
-    $('#detallemodal').on('show.bs.modal', function(event) {
+    $('#detallemodal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Botón que abrió el modal
-        var cod = button.data('codigo'); // Extraer el cod_presentacion
+        var cod = button.data('codigo');
+        var fechaC = button.data('fecha_carga');
+        var descrip = button.data('descrip');
+
+        var modal = $(this);
+        modal.find('.modal-body #codigo').val(cod);
+        modal.find('.modal-body #descrip').val(descrip);
+        modal.find('.modal-body #fecha_carga').val(fechaC);
+
 
         // Limpiar la tabla de detalles antes de cargar nuevos datos
         $('#detalleBody').empty();
@@ -17,7 +25,7 @@ $(document).ready(function() {
                 detalle: cod
             },
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 //console.log(data);
                 // Verificar si hay datos en la respuesta
                 if (data.length === 0) {
@@ -29,18 +37,21 @@ $(document).ready(function() {
                     );
                 } else {
                     // Recorrer los datos devueltos y llenar la tabla
-                    $.each(data, function(index, detalle) {
+                    $.each(data, function (index, detalle) {
                         //console.log(detalle);
 
                         var statusText = detalle.status == '1' //Si el status es 1 mostrar activo sino inactivo
                             ?
                             '<span class="badge badge-success">Activo</span>' :
                             '<span class="badge badge-danger">Inactivo</span>' //NECESITO MEJORAR LA LOGIA Y EL FILTRADO DEL CONSULTAR
-                        
+                            var fecha = detalle.fecha_vencimiento || " ";
+                            var lote = detalle.lote || "No disponible";
                         $('#detalleBody').append(
                             '<tr>' +
                             '<td>' + detalle.cod_det_carga + '</td>' +
                             '<td>' + detalle.nombre + ' x ' + detalle.presentacion + '</td>' +
+                            '<td>' + fecha + '</td>' +
+                            '<td>' + lote + '</td>' +
                             '<td>' + detalle.cantidad + '</td>' +
                             '</tr>'
                         );
@@ -49,7 +60,7 @@ $(document).ready(function() {
                 }
 
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Error al cargar los detalles:', error);
             }
         });
@@ -61,7 +72,7 @@ $(document).ready(function() {
 
 $(document).ready(function () {
 
-    var productoIndex = 1; // Contador para las filas de productos
+    var productoIndex = 0; // Contador para las filas de productos
 
     // Función para crear una nueva fila
     function crearFila(index) {
@@ -69,19 +80,15 @@ $(document).ready(function () {
         <tr id="fila${index}">
         <td>
             <input type="text" class="form-control" id="codigoProducto${index}" name="productos[${index}][codigo1]" placeholder="Código del producto" readonly>
-            
         </td>
-            <td>
+        <td>
             <div class="input-group">
                 <input type="text" class="form-control" id="nombreProducto${index}" name="productos[${index}][nombre]" placeholder="Nombre del producto" maxlength="30">
-                <div id="lista-productos${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos()">+</button>
-                </div>
             </div>
+            <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
         </td>
             <td>
-                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" required min="1" step="0.001" placeholder="Cantidad">
+                <input type="text" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" required min="1" placeholder="Cantidad">
             </td>
             <td>
                 <button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(${index})">&times;</button>
@@ -90,26 +97,26 @@ $(document).ready(function () {
     `;
     }
 
-    //Evento al abrir el modal de registrar carga
+    // Evento al abrir el modal de registrar carga
     $('#modalregistrarCarga').on('show.bs.modal', function (event) {
         // Limpiar la tabla de productos
         $('#productosCarga tbody').empty();  //FUNCIONA
-
-        productoIndex = 1;
+        // Reiniciar el índice de productos
+        productoIndex = 1; // Reiniciar si quieres empezar desde 1 cada vez que abres el modal
 
         // Agregar una fila vacía al abrir el modal
         var nuevaFila = crearFila(productoIndex);
         $('#productosCarga tbody').append(nuevaFila);
     });
 
-     // Función para agregar una nueva fila a la tabla
-    $('#add-product').on('click', function() {
-        productoIndex++;
-        
+    // Función para agregar una nueva fila a la tabla
+    $('#add-product').on('click', function () {
+        productoIndex++; // Incrementar el índice antes de crear la nueva fila
+
         var nuevaFila = crearFila(productoIndex);
         $('#productosCarga tbody').append(nuevaFila);
-        
     });
+
 
 
     // Función para eliminar una fila
@@ -120,30 +127,15 @@ $(document).ready(function () {
     // Manejo del envío del formulario para registrar la carga
     $('#formregistrarCarga').on('submit', function (event) {
 
-
-        // Validar la fecha y hora listo
-        var fechaInput = $('#fecha').val();
-        var fechaSeleccionada = new Date(fechaInput);
-        var fechaActual = new Date();
-
-        // Comparar la fecha y hora seleccionadas con la fecha y hora actuales
-        if (fechaSeleccionada > fechaActual) {
-            Swal.fire({
-                title: 'Fecha y hora no válidas',
-                text: 'La fecha y hora seleccionadas no pueden ser futuras.',
-                icon: 'warning'
-            });
-            event.preventDefault();
-            return; // Salir de la función si la fecha es futura
-        }
-
         var productosTabla = [];
         $('#productosCarga tbody tr').each(function () {
             var codigo = $(this).find('input[name^="productos["][name$="[codigo]"]').val(); // Obtener el código
+            //var nombre = $(this).find('input[name^="productos["][name$="[nombre]"]').val(); // Nombre
             var cantidad = $(this).find('input[name^="productos["][name$="[cantidad]"]').val(); // Obtener la cantidad
             if (codigo && cantidad) {
                 productosTabla.push({
                     codigo: codigo,
+                    //nombre: nombre,
                     cantidad: cantidad
                 });
             }
@@ -265,21 +257,20 @@ $(document).ready(function () {
                 },
                 dataType: 'json',
                 success: function (data) {
-                    var listaProductos = $('#lista-productos' + index);
+                    var listaProductos = $('#lista' + index);
                     listaProductos.empty(); // Limpiar resultados anteriores
 
                     if (data.length > 0) {
                         // Recorrer los productos recibidos y mostrar nombre + código + precio concatenados Solo tome la logica y su funcion de venta para mostrar productos pero al quitar el costo no me muestra los productos
                         $.each(data, function (key, producto) {
-                            var marca = producto.marca || 'Sin marca';
-                            var presentacion =  producto.presentacion || 'sin presentación';
+                            
                             listaProductos.append(
-                                '<a href="#" class="list-group-item list-group-item-action producto-item" ' +
+                                '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333; font-weight:normal;"' +
                                 'data-nombre="' + producto.producto_nombre + '" ' +
                                 'data-tipo="' + producto.excento + '" ' +
                                 'data-codigo="' + producto.cod_presentacion + '" ' +
-                                'data-marca="' + marca + '" ' + '">' +
-                                producto.producto_nombre + ' - ' + marca + ' - ' + presentacion + '</a>'
+                                'data-marca="' + producto.marca +'">' +
+                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.presentacion + '</a>'
                             );
                         });
                         listaProductos.fadeIn();
@@ -289,7 +280,7 @@ $(document).ready(function () {
                 }
             });
         } else {
-            $('#lista-productos' + index).fadeOut(); // Ocultar la lista si no hay suficientes caracteres
+            $('#lista' + index).fadeOut(); // Ocultar la lista si no hay suficientes caracteres
         }
     });
 
@@ -300,10 +291,11 @@ $(document).ready(function () {
         var tipo = $(this).data('tipo');
         var cant = 1;
 
-        var inputId = $(this).closest('.list-group').prev('input').attr('id');
-        var index = inputId.replace('nombreProducto', ''); // Extrae el índice del campo
+        var inputId = $(this).closest('.list-group').attr('id');
+        var index = inputId.replace('lista', ''); // Extrae el índice del campo
         $('#' + inputId).val(selectedProduct);
 
+        $('#nombreProducto' + index).val(selectedProduct);  
         $('#codigoProducto' + index).val(codigo);
         $('#tipoProducto' + index).val(tipo);
         $('#cantidadProducto' + index).val(cant).trigger('change');
@@ -312,7 +304,6 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    // Manejo del evento blur para los campos de código de producto NOTA: HOY 6/11/2024 YA FUNCIONA EL CODIGO CON LA VERIFICACION DE DETALLE DE PRODUCTO Y SU REGISTRO... DEJO TODO COMO ESTA YA ME DA MIEDO MOVER LAS COSAS JAJSJASJA
 
     $(document).on('blur', '.producto-item', function (e) {
         var codigo = $(this).data('codigo');
@@ -398,22 +389,22 @@ $(document).ready(function () {
         $(selector).next('.invalid-feedback').css('display', 'none');
     }
 });
-/*
 
-//NO TOCAR
-// Agregar más campos
-document.getElementById('add-product').addEventListener('click', function () {
-    // Clonamos la entrada de producto
-    const productEntry = document.querySelector('.product-entry').cloneNode(true);
+$(document).ready(function () {
+    // Evento al abrir el modal de registrar carga
+    $('#modalregistrarCarga').on('show.bs.modal', function (event) {
 
-    // Limpiamos los valores de los campos clonados
-    const inputs = productEntry.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        input.value = '';
+        var now = new Date();
+        var fecha = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+        // Formatea la hora en el formato HH:MM:SS
+        var hora = String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0');
+
+        var fechaHora = fecha + ' ' + hora;
+        $('#fecha-hora').val(fechaHora); // Guardar en el campo oculto
+        $('#fecha-hora-display').val(now.toLocaleString()); // Mostrar en un campo de texto
     });
-
-    // Agregamos el nuevo conjunto de campos al contenedor
-    document.getElementById('product-container').appendChild(productEntry);
-});*/
-
-
+});

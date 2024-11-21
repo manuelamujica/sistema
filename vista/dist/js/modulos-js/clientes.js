@@ -6,7 +6,7 @@ $('#cedula_rif').blur(function (e){
     $.post('index.php?pagina=clientes', {buscar}, function(response){
         if(response != ''){
             Swal.fire({
-                title: 'Error',
+                title: 'Advertencia',
                 text: 'El cliente ya se encuentra registrado',
                 icon: 'warning'
             });
@@ -19,7 +19,7 @@ $('#cedularif1').blur(function (e){
     $.post('index.php?pagina=clientes', {buscar}, function(response){
         if(response != ''){
             Swal.fire({
-                title: 'Error',
+                title: 'Advertencia',
                 text: 'El cliente ya se encuentra registrado',
                 icon: 'warning'
             });

@@ -17,82 +17,43 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <ul class="nav nav-tabs" id="tabContent" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="producto-tab" data-toggle="tab" href="#compraf" role="tab">Por fecha</a>
-                                </li>
-                            </ul>
+                        <div class="row mb-2">
+                            <form action="index.php?pagina=comprapdf" method="post" target="_blank" class="d-inline" id="form">
+                            <button class="btn btn-danger mx-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">Generar PDF</button>
+                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                                    <span><i class="fa fa-calendar"></i> Rango de fecha</span>
+                                    <i class="fas fa-caret-down"></i>
+                                </button>
+                            <button type="button" class="btn btn-secondary mx-2" id="reset-btn">Restablecer Rango</button>
+                                <input type="hidden" name="fechaInicio" id="fechaInicio" value="<?php echo date('Y-m-d') ?>">
+                                <input type="hidden" name="fechaFin" id="fechaFin" value="<?php echo date('Y-m-d') ?>">
+                                
+                                
+                                
+                            </form>
                         </div>
-                        <div class="card-body">
-                            <div class="tab-content">
-                                <!-- Productos -->
-                                <div class="tab-pane fade show active" id="compraf" role="tabpanel">
-                                    <!-- Formulario de filtrado -->
-                                    <div class="row mb-2">
-                                        <form action="index.php?pagina=comprapdf" method="post" target="_blank" class="d-inline" id="form">
-                                            <!-- Campos ocultos para las fechas -->
-                                            <input type="hidden" name="fechaInicio" id="fechaInicio" value="<?php echo date('Y-m-d') ?>">
-                                            <input type="hidden" name="fechaFin" id="fechaFin" value="<?php echo date('Y-m-d') ?>">
-                                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
-                                                <span><i class="fa fa-calendar"></i> Rango de fecha</span>
-                                                <i class="fas fa-caret-down"></i>
-                                            </button>
-                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">PDF</button>
-                                            <button type="button" class="btn btn-secondary ml-2" id="reset-btn">Restablecer Rango</button>
-                                        </form>
-                                    </div>
-                                    <table id="compra-table" class="table table-bordered table-striped table-hover datatable1" style="width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>Nro. de Compra</th>
-                                                <th>Proveedor</th>
-                                                <th>Fecha de recepcion</th>
-                                                <th>total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($compra as $compra) { ?>
-                                                <tr>
-                                                    <td><?= $compra['cod_compra']?></td>
-                                                    <td><?= $compra['razon_social'] ?></td>
-                                                    <td><?= $compra['fecha'] ?></td>
-                                                    <td><?= $compra['total'] ?></td>
-                                                </tr>
-                                            <?php } ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="cliente" role="tabpanel">
-                                    <!-- Formulario de filtrado -->
-                                    <div class="row mb-2">
-                                        <form action="index.php?pagina=vclientespdf" method="post" target="_blank" class="d-inline" id="form1">
-                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdf1" type="submit">PDF</button>
-                                        </form>
-                                    </div>
-                                    <table id="carga" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Cedula/Rif</th>
-                                                <th>Telefono</th>
-                                                <th>cantidad de ventas</th>
-                                                <th>Monto total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($datos as $dato) { ?>
-                                                <tr>
-                                                    <td><?= $dato['nombre']." ".$dato['apellido'] ?></td>
-                                                    <td><?= $dato['cedula_rif'] ?></td>
-                                                    <td><?= $dato['telefono'] ?></td>
-                                                    <td><?= $dato['cantidad_ventas'] ?></td>
-                                                    <td><?= $dato['monto_total'] ?></td>
-                                                </tr>
-                                            <?php } ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="card-body">       
+                            <table id="compra-table" class="table table-bordered table-striped table-hover datatable1" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Nro. de Compra</th>
+                                        <th>Proveedor</th>
+                                        <th>Fecha de recepcion</th>
+                                        <th>total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($compra as $compra) { ?>
+                                        <tr>
+                                            <td><?= $compra['cod_compra']?></td>
+                                            <td><?= $compra['razon_social'] ?></td>
+                                            <td><?= $compra['fecha'] ?></td>
+                                            <td><?= $compra['total'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

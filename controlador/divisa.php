@@ -9,55 +9,87 @@ if(isset($_POST['buscar'])){
     exit;
 }else if(isset($_POST['registrar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['simbolo']) && !empty($_POST['tasa']) && !empty($_POST['fecha'])){
-        if(!$obj->buscar($_POST['nombre'])){
-            $obj->setnombre($_POST['nombre']);
-            $obj->setsimbolo($_POST['simbolo']);
-            $obj->set_tasa($_POST['tasa']);
-            $obj->setfecha($_POST['fecha']);
-            $result=$obj->incluir();
-            if($result==1){
-                $registrar = [
-                    "title" => "Registrado con éxito",
-                    "message" => "La divisa ha sido registrada",
-                    "icon" => "success"
-                ];
-            }else {
-                $registrar = [
-                    "title" => "Error",
-                    "message" => "Hubo un problema al registrar la divisa",
-                    "icon" => "error"
-                ];
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s\$\€]+$/',$_POST['simbolo']) && preg_match('/^\d+(\.\d{1,2})?$/',$_POST['tasa'])){
+        
+            if(!$obj->buscar($_POST['nombre'])){
+                $obj->setnombre($_POST['nombre']);
+                $obj->setsimbolo($_POST['simbolo']);
+                $obj->set_tasa($_POST['tasa']);
+                $obj->setfecha($_POST['fecha']);
+                $result=$obj->incluir();
+                if($result==1){
+                    $registrar = [
+                        "title" => "Registrado con éxito",
+                        "message" => "La divisa ha sido registrada",
+                        "icon" => "success"
+                    ];
+                }else {
+                    $registrar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al registrar la divisa",
+                        "icon" => "error"
+                    ];
+                }
             }
+        } else{
+            $registrar = [
+                "title" => "Error",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
+                "icon" => "error"
+            ];
         }
+    } else{
+        $registrar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacíos.",
+            "icon" => "error"
+        ];
     }
 }else if(isset($_POST['actualizar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['abreviatura'])){
-        if($_POST['nombre'] !== $_POST['origin'] && $obj->buscar($_POST['nombre'])){
-            echo "<script>
-                alert('este nombre ya existe');
-                window.location = 'divisa'
-            </script>";
-        }else {
-            $obj->setnombre($_POST['nombre']);
-            $obj->setsimbolo($_POST['abreviatura']);
-            $obj->setstatus($_POST['status']);
-            $obj->set_tasa($_POST['tasa']);
-            $obj->setfecha($_POST['fecha']);
-            $result=$obj->editar($_POST['codigo']);
-            if($result==1){
-                $editar = [
-                    "title" => "Editado con éxito",
-                    "message" => "La divisa ha sido actualizada",
-                    "icon" => "success"
-                ];
-            }else {
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s\$\€]+$/',$_POST['abreviatura']) && preg_match('/^\d+(\.\d{1,2})?$/',$_POST['tasa'])){
+
+            if($_POST['nombre'] !== $_POST['origin'] && $obj->buscar($_POST['nombre'])){ 
                 $editar = [
                     "title" => "Error",
-                    "message" => "Hubo un problema al editar la divisa",
+                    "message" => "La divisa ya se encuentra registrada.",
                     "icon" => "error"
-                ];
+                    ];
+            }else {
+                $obj->setnombre($_POST['nombre']);
+                $obj->setsimbolo($_POST['abreviatura']);
+                $obj->setstatus($_POST['status']);
+                $obj->set_tasa($_POST['tasa']);
+                $obj->setfecha($_POST['fecha']);
+                $result=$obj->editar($_POST['codigo']);
+
+                if($result==1){
+                    $editar = [
+                        "title" => "Editado con éxito",
+                        "message" => "La divisa ha sido actualizada",
+                        "icon" => "success"
+                    ];
+                }else {
+                    $editar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al editar la divisa",
+                        "icon" => "error"
+                    ];
+                }
             }
+        } else{
+            $editar = [
+                "title" => "Error",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
+                "icon" => "error"
+            ];
         }
+    } else{
+        $editar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacíos.",
+            "icon" => "error"
+        ];
     }
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['divisaCodigo'])){

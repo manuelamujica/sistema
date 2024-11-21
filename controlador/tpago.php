@@ -9,35 +9,54 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+
 }else if(isset($_POST['registrar'])){
     if(!empty($_POST['tipo_pago']) && !empty($_POST['divisa'])){
-        if(!$obj->buscar($_POST['tipo_pago'])){
-        $obj->setmetodo($_POST['tipo_pago']);
 
-        $result=$obj->incluir($_POST['divisa']);
-        if($result == 1){
-            $registrar = [
-                "title" => "Registrado con éxito",
-                "message" => "El tipo de pago ha sido registrado",
-                "icon" => "success"
-            ];
+        if (preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['tipo_pago'])){
+
+            if(!$obj->buscar($_POST['tipo_pago'])){
+            $obj->setmetodo($_POST['tipo_pago']);
+
+                $result=$obj->incluir($_POST['divisa']);
+                if($result == 1){
+                    $registrar = [
+                        "title" => "Registrado con éxito",
+                        "message" => "El tipo de pago ha sido registrado",
+                        "icon" => "success"
+                    ];
+                }else{
+                    $registrar = [
+                        "title" => "Error",
+                        "message" => "Hubo un problema al registrar el tipo de pago",
+                        "icon" => "error"
+                    ];
+                }
+            }else{
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "El tipo de pago ya se encuentra registrado",
+                    "icon" => "error"
+                ];
+            }
         }else{
             $registrar = [
                 "title" => "Error",
-                "message" => "Hubo un problema al registrar el tipo de pago",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
                 "icon" => "error"
             ];
         }
-        } else{
-            $registrar = [
-                "title" => "Error",
-                "message" => "El tipo de pago ya se encuentra registrado",
-                "icon" => "error"
-            ];
-        }
+    } else{
+        $registrar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacios.",
+            "icon" => "error"
+        ];
     }
+
 }else if(isset($_POST['editar'])){
     if(!empty($_POST['tpago'])){
+
         if($_POST['tpago'] !== $_POST['origin'] && $obj->buscar($_POST['tpago'])){
             $editar = [
                 "title" => "Error",
@@ -45,7 +64,9 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }else{
-            
+
+            if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['tpago'])){
+                
                 $obj->setmetodo($_POST['tpago']);
                 $obj->setstatus($_POST['status']);
                 $result=$obj->editar($_POST['codigo']);
@@ -62,10 +83,21 @@ if(isset($_POST['buscar'])){
                         "icon" => "error"
                     ];
                 }
+            } else {
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Algunos caracteres ingresados no son permitidos.",
+                    "icon" => "error"
+                ];
             }
         }
-    
-    
+    } else{
+        $editar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacios.",
+            "icon" => "error"
+        ];
+    }
 
 }else if(isset($_POST['borrar'])){
     if(!empty($_POST['tpagoCodigo'])){
