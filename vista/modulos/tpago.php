@@ -1,15 +1,14 @@
 <?php require_once 'controlador/tpago.php'; ?>
 
 <div class="content-wrapper">
-<!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1 class="m-0 text-dark">Gestión de Tipos de Pago</h1>
-            </div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+            </div>
+        </div>
+    </div>
 </div>
 
         <!-- Main content -->
@@ -23,7 +22,6 @@
                             Registrar Tipo de Pago
                         </button>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body">
                     <div class="table-responsive">
                         <table id="paymentTypesTable" class="table table-bordered table-striped">
@@ -37,7 +35,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Aquí se llenará la tabla dinámicamente con PHP -->
                                 <?php foreach ($registro as $dato) { ?>
                                 <?php if ($dato['status_pago'] != 2): ?>
                                 <tr>
@@ -67,7 +64,6 @@
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     <?php else: ?>
-
                                     <?php endif; ?>
                                     </td>
                                 </tr>
@@ -102,17 +98,23 @@
                 <form id="addPaymentTypeForm" method="post">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="paymentTypeName">Nombre del Tipo de Pago</label>
-                            <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" required>
+                            <label for="paymentTypeName">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" placeholder="Ej: Transferencia Bs" required>
+                            <div class="invalid-feedback" style="display: none;"></div>
                         </div>
                         <div class="form-group">
-                            <label for="divisa">Seleccionar Divisa</label>
+                            <label for="divisa">Seleccionar Divisa<span class="text-danger" style="font-size: 15px;"> *</span></label>
                             <select class="form-control" id="divisa" name="divisa" required>
                                 <option value="" disabled selected>Seleccione una divisa</option>
                                 <?php foreach ($divisas as $divisa): ?>
                                     <option value="<?= $divisa['cod_cambio']; ?>"><?= $divisa['nombre']." - ". $divisa['abreviatura']; ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <!-- Alert Message -->
+                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span>Todos los campos marcados con (*) son obligatorios</span>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -161,6 +163,7 @@ MODAL EDITAR TIPO DE PAGO
                     <div class="form-group">
                         <label for="tpago">Tipo de Pago</label>
                         <input type="text" class="form-control" id="tpago" name="tpago" required>
+                        <div class="invalid-feedback" style="display: none;"></div>
                         <input type="hidden" id="origin" name="origin">
                     </div>
                     <div class="form-group">
@@ -239,49 +242,4 @@ MODAL CONFIRMAR ELIMINAR
     </script>
 <?php endif; ?>
 
-<script>
-$('#tipo_pago').blur(function (e){
-    var buscar=$('#tipo_pago').val();
-    $.post('index.php?pagina=tpago', {buscar}, function(response){
-    if(response != ''){
-        alert('Este tipo de pago ya existe');
-    }
-    },'json');
-});
-
-$('#tpago').blur(function (e){
-    var buscar=$('#tpago').val();
-    $.post('index.php?pagina=tpago', {buscar}, function(response){
-    if(response != ''){
-        alert('Este tipo de pago ya existe');
-    }
-    },'json');
-});
-
-$('#editModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var codigo = button.data('codigo');
-    var tpago = button.data('medio');
-    var status = button.data('status');
-    var origin = button.data('medio');
-    var nombre = button.data('nombre')+" - "+button.data('divisa');
-    // Modal
-    var modal = $(this);
-    modal.find('.modal-body #codigo').val(codigo);
-    modal.find('.modal-body #tpago').val(tpago);
-    modal.find('.modal-body #status').val(status);
-    modal.find('.modal-body #divisa1').val(nombre);
-    modal.find('.modal-body #origin').val(origin);
-});
-
-$('#eliminartpago').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); 
-    var medio = button.data('medio');
-    var codigo = button.data('codigo');
-
-    var modal = $(this);
-    modal.find('#tpagonombre').text(medio);
-    modal.find('.modal-body #tpagoCodigo').val(codigo);
-});
-
-</script>
+<script src="vista/dist/js/modulos-js/tpago.js"></script>

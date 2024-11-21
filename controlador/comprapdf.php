@@ -63,7 +63,7 @@ $html = '
     <br>
     <hr style="border: 0.5px solid black;">
     <br>
-    <h1 style="text-align: center; font-size: 18px; color: #db6a00;">Lista de Clientes y sus ventas</h1>
+    <h1 style="text-align: center; font-size: 18px;">Listado de compras a proveedores</h1>
     <table id="t">
     <thead>
             <tr>

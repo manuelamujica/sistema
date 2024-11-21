@@ -69,7 +69,7 @@
                         </div>
                     </div>
 
-                    <!-- =======================
+<!-- =======================
 MODAL REGISTRAR Unidades de medida 
 ============================= -->
 
@@ -189,33 +189,28 @@ MODAL REGISTRAR Unidades de medida
     </section>
 </div>
 
-
-<!--    MODAL DE ADVERTENCIA    -->
 <!-- Confirmar Eliminar Modal -->
 <div class="modal fade" id="modaleliminar">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+            <div class="modal-header bg-danger">
                 <h4 class="modal-title">Confirmar Eliminar</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de eliminar la unidad medida: <b><span id=tipomedidaD></span>?</p></b>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 <form method="post">
-                    <input type="hidden" name="eliminar" id="cod_eliminar" value="">
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <p>¿Estás seguro de eliminar la unidad medida: <b><span id=tipomedidaD></span>?</p></b>
+                    <input type="hidden" name="eliminar" id="cod_eliminar" >
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
                 </form>
-
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
 <?php if (isset($eliminar)): ?>

@@ -227,7 +227,7 @@ MODAL EDITAR INFO GENERAL
                                     <!-- RIF DE LA empresa -->
                                     <div class="form-group">
                                         <label for="rif">Rif de la empresa</label>
-                                        <input type="text" class="form-control" name="rif" id="rifE" readonly>
+                                        <input type="text" class="form-control" name="rif" id="rifE" required>
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                     <!-- NOMBRE DE LA empresa -->

@@ -80,11 +80,13 @@ $(document).ready(function () {
 $('#modaleliminar').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); 
     var codigo = button.data('cod');
+    var status = button.data('status');
     var tipomedida = button.data('tipo');
 
     var modal = $(this);
     modal.find('.modal-body #cod_eliminar').val(codigo);
     modal.find('#tipomedidaD').text(tipomedida);
+    modal.find('.modal-body #status_e').val(codigo);
 
     console.log(tipomedida,codigo);
 });

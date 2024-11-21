@@ -140,7 +140,7 @@ REGISTRAR UNIDAD DE MEDIDA
         $resul = $strExec->fetch(PDO::FETCH_ASSOC);
 
         if($resul){
-            
+
             $registro = "SELECT status FROM unidades_medida WHERE cod_unidad = $valor";
             $strExec = $this->conex->prepare($registro);
             $strExec->execute();

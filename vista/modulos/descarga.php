@@ -81,9 +81,8 @@ require_once "controlador/descarga.php";
                                 <div class="modal-body">
                                     <form id="formRegistrarDescarga" method="post">
                                         <div class="form-group">
-                                            <label for="fecha">Fecha<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                                            <input type="datetime-local" class="form-control" id="fecha" name="fecha" required>
-                                            <div class="invalid-feedback" style="display: none;"></div>
+                                            <label for="fecha-hora">Fecha y Hora</label>
+                                            <input type="text" class="form-control form-control-sm" id="fecha-hora" name="fecha" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="descripcion">Descripcion<span class="text-danger" style="font-size: 15px;"> *</span></label>

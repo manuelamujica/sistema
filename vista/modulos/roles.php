@@ -54,7 +54,10 @@
                                                                 data-status="<?php echo $dato['status']; ?>">
                                                                 <i class="fas fa-pencil-alt"></i>
                                                             </button>
-                                                            <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"><i class="fas fa-trash-alt"></i></button>
+                                                            <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" 
+                                                            data-cod="<?php echo $dato['cod_tipo_usuario']; ?>"
+                                                            data-roleliminar="<?php echo $dato['rol']; ?>"
+                                                            ><i class="fas fa-trash-alt"></i></button>
                                                         <?php endif;?>
                                                     </td>
                                                 </tr>
@@ -221,14 +224,14 @@ if (isset($editar)): ?>
 <div class="modal fade" id="modaleliminar">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+            <div class="modal-header bg-danger">
                 <h4 class="modal-title">Confirmar Eliminar</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de eliminar el tipo de rol?</p>
+                <p>¿Estás seguro de eliminar el rol: <b><span id="tipoderol"></span></b>?</p>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>

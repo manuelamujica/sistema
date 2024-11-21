@@ -61,7 +61,13 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                 ];
             }
-        } 
+        } else {
+            $registrar = [
+                "title" => "Error",
+                "message" => "La cédula ya se encuentra registrada. Intente nuevamente",
+                "icon" => "error"
+            ];
+        }
     }
 }
 else if(isset($_POST['actualizar'])){

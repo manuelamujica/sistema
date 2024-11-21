@@ -1,5 +1,24 @@
-//Modal detalle descarga
+
 console.log('Abrio JS');
+
+//PARA LA FECHA AUTOMATICA DE REGISTRO
+$(document).ready(function() {
+    // Obtener la fecha y hora actual
+    var now = new Date();
+    var fecha = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+
+// Formatea la hora en el formato HH:MM:SS
+    var hora=String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
+    
+    var fechaHora = fecha + ' ' + hora;
+    $('#fecha-hora').val(fechaHora);
+});
+
+//DETALLE MODAL
 $(document).ready(function() {
     $('#detallemodal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Botón que abrió el modal
@@ -195,7 +214,7 @@ $(document).ready(function() {
     }
     //Fin Funciones
 
-    // Fecha y hora
+    /*Fecha y hora
     $('#fecha').on('change', function() {
         const seleccionada = new Date($(this).val()); 
         const actual = new Date(); 
@@ -204,7 +223,7 @@ $(document).ready(function() {
         } else {
             hideError('#fecha'); 
         }
-    }); 
+    }); */
 
     //Descripcion
     $('#descripcion').on('blur', function() {
