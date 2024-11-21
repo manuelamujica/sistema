@@ -54,7 +54,7 @@ function crearfila(index) {
                     <input type="text" class="form-control" name="productos[${index}][nombre_producto]" id="nombreProducto${index}" placeholder="Nombre del producto" required>
                     
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" onclick="mostrarProductos(${index})">+</button>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalRegistrarProducto">+</button>
                     </div>
                 </div>
                 <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
@@ -397,9 +397,7 @@ $(document).ready(function() {
         } else {
             $('#lista-lotes' + index).fadeOut(); // Ocultar la lista si no hay suficientes caracteres
         }
-    });
-
-    // Cuando el usuario selecciona un producto
+         // Cuando el usuario selecciona un producto
     $(document).on('click', '.producto-item', function(){
         var selectedProduct = $(this).data('nombre'); 
         var codigo = $(this).data('codigo'); 
@@ -413,6 +411,7 @@ $(document).ready(function() {
         $('#cod-dp' + index).val(codigo); 
         $('#fecha-v' + index).val(fecha); 
         $(this).closest('.list-group').fadeOut(); 
+    });
     });
 });
 

@@ -28,15 +28,22 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }
+        } else{
+            $registrar = [
+                "title" => "Error",
+                "message" => "El tipo de pago ya se encuentra registrado",
+                "icon" => "error"
+            ];
         }
     }
 }else if(isset($_POST['editar'])){
     if(!empty($_POST['tpago'])){
         if($_POST['tpago'] !== $_POST['origin'] && $obj->buscar($_POST['tpago'])){
-            echo "<script>
-                    alert('el tipo de pago ya existe');
-                    window.location = 'tpago'
-                </script>";
+            $editar = [
+                "title" => "Error",
+                "message" => "El tipo de pago ya se encuentra registrado",
+                "icon" => "error"
+            ];
         }else{
             
                 $obj->setmetodo($_POST['tpago']);
@@ -73,6 +80,12 @@ if(isset($_POST['buscar'])){
             $eliminar = [
                 "title" => "Error",
                 "message" => "Hubo un problema al eliminar el tipo de pago",
+                "icon" => "error"
+            ];
+        }elseif ($result == 'error') {
+            $eliminar = [
+                "title" => "Error",
+                "message" => "No se puede eliminar ya que tiene pagos asociados",
                 "icon" => "error"
             ];
         }

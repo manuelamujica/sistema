@@ -1,6 +1,10 @@
 <?php
 require_once 'modelo/compras.php';
+require_once 'modelo/productos.php';
 $objCompras = new Compra();
+$objProducto = new Productos();
+$categoria = $objProducto->consultarCategoria(); 
+$unidad = $objProducto->consultarUnidad(); 
 
 if (isset($_POST['buscar'])) {
     $resul = $objCompras->getbuscar_p($_POST['buscar']);

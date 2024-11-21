@@ -244,7 +244,12 @@ $('#tipo_pago').blur(function (e){
     var buscar=$('#tipo_pago').val();
     $.post('index.php?pagina=tpago', {buscar}, function(response){
     if(response != ''){
-        alert('Este tipo de pago ya existe');
+        Swal.fire({
+            title: 'Error',
+            text: 'Este tipo de pago ya se encuentra registrado',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
     }
     },'json');
 });
@@ -253,7 +258,12 @@ $('#tpago').blur(function (e){
     var buscar=$('#tpago').val();
     $.post('index.php?pagina=tpago', {buscar}, function(response){
     if(response != ''){
-        alert('Este tipo de pago ya existe');
+        Swal.fire({
+            title: 'Error',
+            text: 'Este tipo de pago ya se encuentra registrado',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
     }
     },'json');
 });
