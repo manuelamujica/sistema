@@ -233,11 +233,23 @@ class Descarga extends Conexion{
     }
 
     public function descargafecha($fi, $ff){
-        $sql="SELECT c.nombre, c.apellido, v.*
-    FROM clientes c
-    INNER JOIN ventas v ON c.cod_cliente = v.cod_cliente
-    WHERE v.fecha BETWEEN :fechainicio AND :fechafin
-    ORDER BY v.cod_venta ASC;";
+        $sql=" SELECT 
+    de.descripcion,
+    de.fecha,
+    detd.cantidad,
+    detp.lote,
+    present.cod_presentacion,
+    CONCAT(pro.nombre, ' x ', present.presentacion, ' ', present.cantidad_presentacion) AS producto_concat,
+    de.* -- Incluye todas las columnas de 'descarga'
+    FROM 
+        descarga AS de
+    JOIN detalle_descarga AS detd ON de.cod_descarga = detd.cod_descarga
+    JOIN detalle_productos AS detp ON detp.cod_detallep = detd.cod_detallep
+    JOIN presentacion_producto AS present ON present.cod_presentacion = detp.cod_presentacion
+    JOIN productos AS pro ON pro.cod_producto = present.cod_producto
+    WHERE de.fecha BETWEEN :fechainicio AND :fechafin
+    ORDER BY de.cod_descarga ASC;";
+
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':fechainicio', $fi);
         $stmt->bindParam(':fechafin', $ff);

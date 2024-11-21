@@ -11,8 +11,9 @@ if (isset($_POST['buscar'])) {
     exit;
 
 } else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
-    if (preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $_POST["tipo_medida"])) {
-        if (!empty($_POST["tipo_medida"])) {
+    if (!empty($_POST["tipo_medida"])) {
+        if (preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $_POST["tipo_medida"])) {
+        
             if (!$objUnidad->getbuscar($_POST['tipo_medida'])) {
                 #Instanciar los setter
                 $objUnidad->setTipo($_POST["tipo_medida"]);
@@ -42,14 +43,14 @@ if (isset($_POST['buscar'])) {
         } else {
             $registrar = [
                 "title" => "Error",
-                "message" => "No se pudo registrar. No se permiten campos vacios.",
+                "message" => "No se pudo registrar. Caracteres no permitidos.",
                 "icon" => "error"
             ];
         }
     } else {
         $registrar = [
             "title" => "Error",
-            "message" => "No se pudo registrar. Caracteres no permitidos.",
+            "message" => "No se pudo registrar. No se permiten campos vacios.",
             "icon" => "error"
         ];
     }
@@ -103,8 +104,9 @@ if (isset($_POST['buscar'])) {
                 "icon" => "error"
             ];
         }
-
+        
 } else if (isset($_POST['eliminar'])) {
+    
     $cod_unidad = $_POST['eliminar'];
     $resul = $objUnidad->geteliminar($cod_unidad);
 
@@ -129,13 +131,13 @@ if (isset($_POST['buscar'])) {
     } else if ($resul == 'error_delete') {
         $editar = [
             "title" => "Error",
-            "message" => "Hubo un problema al eliminar la unidad de medida",
+            "message" => "Hubo un problema al eliminar la unidad de medida error delete",
             "icon" => "error"
         ];
-    } else {
+    } else if($resul == 'error_query'){
         $editar = [
             "title" => "Error",
-            "message" => "Hubo un problema al eliminar la unidad de medida",
+            "message" => "Hubo un problema al eliminar la unidad de medida error",
             "icon" => "error"
         ];
     }

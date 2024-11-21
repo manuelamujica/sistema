@@ -7,7 +7,15 @@ use Spipu\Html2Pdf\Html2Pdf;
 
 $html2pdf = new Html2Pdf('P', 'LETTER', 'es');
 $objDescarga = new Descarga();
-$datos = $objDescarga->consultardescargapdf();
+
+$fechaInicio = $_POST['fechaInicio'] ?? null;
+$fechaFin = $_POST['fechaFin'] ?? null;
+if (!empty($fechaInicio) && !empty($fechaFin)) {
+    $datos=$objDescarga->descargafecha($fechaInicio, $fechaFin);
+} else {
+    $datos=$objDescarga->consultardescargapdf(); // Obtener todos los datos si no hay filtros
+}
+
 $fechaActual = date("d/m/Y");
 
 if (isset($datos)) {

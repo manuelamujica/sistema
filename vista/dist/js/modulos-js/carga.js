@@ -293,10 +293,10 @@ $(document).ready(function () {
 
         var inputId = $(this).closest('.list-group').attr('id');
         var index = inputId.replace('lista', ''); // Extrae el índice del campo
-       $('#' + inputId).val(selectedProduct);
+        $('#' + inputId).val(selectedProduct);
 
-       $('#nombreProducto' + index).val(selectedProduct);  
-       $('#codigoProducto' + index).val(codigo);
+        $('#nombreProducto' + index).val(selectedProduct);  
+        $('#codigoProducto' + index).val(codigo);
         $('#tipoProducto' + index).val(tipo);
         $('#cantidadProducto' + index).val(cant).trigger('change');
         $(this).closest('.list-group').fadeOut();

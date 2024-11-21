@@ -100,6 +100,7 @@
                         <div class="form-group">
                             <label for="paymentTypeName">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
                             <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" placeholder="Ej: Transferencia Bs" required>
+                            <div class="invalid-feedback" style="display: none;"></div>
                         </div>
                         <div class="form-group">
                             <label for="divisa">Seleccionar Divisa<span class="text-danger" style="font-size: 15px;"> *</span></label>
@@ -162,6 +163,7 @@ MODAL EDITAR TIPO DE PAGO
                     <div class="form-group">
                         <label for="tpago">Tipo de Pago</label>
                         <input type="text" class="form-control" id="tpago" name="tpago" required>
+                        <div class="invalid-feedback" style="display: none;"></div>
                         <input type="hidden" id="origin" name="origin">
                     </div>
                     <div class="form-group">
@@ -240,49 +242,4 @@ MODAL CONFIRMAR ELIMINAR
     </script>
 <?php endif; ?>
 
-<script>
-$('#tipo_pago').blur(function (e){
-    var buscar=$('#tipo_pago').val();
-    $.post('index.php?pagina=tpago', {buscar}, function(response){
-    if(response != ''){
-        alert('Este tipo de pago ya existe');
-    }
-    },'json');
-});
-
-$('#tpago').blur(function (e){
-    var buscar=$('#tpago').val();
-    $.post('index.php?pagina=tpago', {buscar}, function(response){
-    if(response != ''){
-        alert('Este tipo de pago ya existe');
-    }
-    },'json');
-});
-
-$('#editModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var codigo = button.data('codigo');
-    var tpago = button.data('medio');
-    var status = button.data('status');
-    var origin = button.data('medio');
-    var nombre = button.data('nombre')+" - "+button.data('divisa');
-    // Modal
-    var modal = $(this);
-    modal.find('.modal-body #codigo').val(codigo);
-    modal.find('.modal-body #tpago').val(tpago);
-    modal.find('.modal-body #status').val(status);
-    modal.find('.modal-body #divisa1').val(nombre);
-    modal.find('.modal-body #origin').val(origin);
-});
-
-$('#eliminartpago').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); 
-    var medio = button.data('medio');
-    var codigo = button.data('codigo');
-
-    var modal = $(this);
-    modal.find('#tpagonombre').text(medio);
-    modal.find('.modal-body #tpagoCodigo').val(codigo);
-});
-
-</script>
+<script src="vista/dist/js/modulos-js/tpago.js"></script>
