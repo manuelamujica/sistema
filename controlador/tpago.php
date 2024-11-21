@@ -114,6 +114,12 @@ if(isset($_POST['buscar'])){
                 "message" => "Hubo un problema al eliminar el tipo de pago",
                 "icon" => "error"
             ];
+        }elseif ($result == 'error') {
+            $eliminar = [
+                "title" => "Error",
+                "message" => "No se puede eliminar ya que tiene pagos asociados",
+                "icon" => "error"
+            ];
         }
     }
 }

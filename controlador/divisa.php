@@ -100,6 +100,12 @@ if(isset($_POST['buscar'])){
                 "message" => "La divisa ha sido eliminada",
                 "icon" => "success"
             ];
+        }else if($result == 0){
+            $eliminar = [
+                "title" => "Error",
+                "message" => "La divisa no se puede eliminar ya que tiene tipos de pago asociados",
+                "icon" => "error"
+            ];
         }else{
             $eliminar = [
                 "title" => "Error",

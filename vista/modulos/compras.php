@@ -278,4 +278,180 @@ if (isset($registrar)): ?>
     </div>
 </div>
 
+<!-- =============================
+    MODAL REGISTRAR PRODUCTO 
+================================== -->
+<div class="modal fade" id="modalRegistrarProducto" tabindex="-1" aria-labelledby="modalRegistrarProductoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registrarModalLabel">Registrar producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formRegistrarProducto" action="index.php?pagina=productos" method="post">
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <!-- Campo oculto para el código del producto -->
+                            <input type="hidden" id="cod_productoR" name="cod_productoR">
+                            <input type="hidden" name="compra" value="compras">
+
+                            <label for="nombre">Nombre del producto<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
+                            <div class="invalid-feedback" style="display: none;"></div>
+                            <div id="lista-productos" class="list-group" style="display: none;"></div>
+                            
+                        </div>
+                        <div class="col-6">
+                            <label for="marca">Marca</label>
+                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
+                            <div class="invalid-feedback" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                            <div class="col-6">
+                                <label for="categoria">Categoría de producto<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <div class="input-group">
+                                    <select class="form-control" id="categoria" name="categoria" required>
+                                        <option value="" selected disabled>Seleccione una opción</option>
+                                            <?php foreach($categoria as $cate): ?>
+                                                <option value="<?php echo $cate['cod_categoria']; ?>">
+                                                    <?php echo $cate['nombre']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaCategoria">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <div class="col-6">
+                            <label for="exento">Impuesto IVA<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <!-- TOOLTIPS-->
+                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Selecciona si el producto es exento (tiene IVA) o gravable (No tiene IVA). El IVA es el 16%">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <script>
+                                $(function () {
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                });
+                            </script>
+                                <select class="form-control" id="iva" name="iva" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="1">Exento</option>
+                                    <option value="2">Gravable</option>
+                                </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="unidad">Unidad de medida<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                        <!-- TOOLTIPS-->
+                        <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Selecciona la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <script>
+                                $(function () {
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                });
+                            </script>
+                        <div class="input-group">
+                            <select class="form-control" id="unidad" name="unidad" required>
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                    <?php foreach($unidad as $u): ?>
+                                        <option value="<?php echo $u['cod_unidad']; ?>">
+                                            <?php echo $u['tipo_medida']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaUnidad">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="presentacion">Presentación</label>
+                            <!-- TOOLTIPS-->
+                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la presentación de como viene el producto. Ej: Pieza.">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <script>
+                                $(function () {
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                });
+                            </script>
+                            <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ej: Pieza.">
+                            <div class="invalid-feedback" style="display: none;"></div>
+                        </div>
+                        <div class="col-6">
+                            <label for="cant_presentacion">Cantidad de presentación</label>
+                            <!-- TOOLTIPS-->
+                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la cantidad de presentación de como viene el producto. Ej: 250gr.">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <script>
+                                $(function () {
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                });
+                            </script>
+                            <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ej: 1.5kg">
+                            <div class="invalid-feedback" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="costo">Costo</label>
+                            <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra en Bs" >
+                            <div class="invalid-feedback" style="display: none;"></div>
+                        </div>
+                        <div class="col-6">
+                            <label for="precio">Precio</label>
+                            <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta en Bs" readonly >
+                            <div class="invalid-feedback" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="number" class="form-control nuevoPorcentaje" min="0" step="1" placeholder="Porcentaje de ganancia" id="porcen" name="porcen">
+                        <div class="invalid-feedback" style="display: none;"></div>
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-percent"></i></span>
+                        </div>
+                    </div>
+                    <!-- Alert Message -->
+                    <div class="alert alert-light d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>Todos los campos marcados con (*) son obligatorios</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-secondary" name="deshacer" id="deshacer">Deshacer</button>
+                        <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<?php if (isset($registrarp)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrarp["title"]; ?>',
+            text: '<?php echo $registrarp["message"]; ?>',
+            icon: '<?php echo $registrarp["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'compras';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+
 <script src="vista/dist/js/modulos-js/compras.js"></script>
+<script src="vista/dist/js/modulos-js/productos.js"></script>

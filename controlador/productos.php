@@ -246,7 +246,10 @@ else if(isset($_POST['codigo'])){
     exit;
 }*/
 
-
 $registro = $objProducto->getmostrar();
-$_GET['ruta'] = 'productos';
+if(isset($_POST['compra'])){
+    $_GET['ruta']=$_POST['compra'];
+}else {
+    $_GET['ruta'] = 'productos';
+}
 require_once 'plantilla.php';

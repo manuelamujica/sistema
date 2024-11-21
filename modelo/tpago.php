@@ -80,15 +80,14 @@ class Tpago extends Conexion{
         if($resul){
             $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
             if ($resultado['v_count']>0){
-                $logico="UPDATE tipo_pago SET status=2 WHERE cod_tipo_pago=$valor";
-                $strExec=$this->conex->prepare($logico);
-                $strExec->execute();
+                $r='error';
             }else{
                 $fisico="DELETE FROM tipo_pago WHERE cod_tipo_pago=$valor";
                 $strExec=$this->conex->prepare($fisico);
                 $strExec->execute();
+                $r='success';
             }
-            $r='success';
+            
         }else {
             $r='error_delete';
         }

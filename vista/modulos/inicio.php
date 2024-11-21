@@ -273,3 +273,5 @@ if (isset($editar)): ?>
     </script>
 <?php   endif; 
     endif; ?>
+
+<script src="vista/dist/js/modulos-js/general.js"></script>

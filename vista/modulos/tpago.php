@@ -242,4 +242,6 @@ MODAL CONFIRMAR ELIMINAR
     </script>
 <?php endif; ?>
 
+
 <script src="vista/dist/js/modulos-js/tpago.js"></script>
+
