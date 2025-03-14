@@ -30,6 +30,60 @@ if(isset($_POST['buscar'])){
         $presentacion = '';
         $cant_presentacion = '';
 
+        $imagenTemp = "";
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK)  {
+            $imagen = $_FILES['imagen'];
+            $tipoImagen = $imagen['type'];
+            $tamanoImagen = $imagen['size'];
+            $imagenTemp = $imagen['tmp_name'];
+            $imagenNombre = $imagen['name'];
+
+            // Verificar si el archivo es una imagen válida
+            $infoImagen = getimagesize($imagenTemp);
+            if ($infoImagen === false) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "El archivo no es una imagen válida",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+
+            list($ancho, $alto) = $infoImagen;
+
+            if ($ancho > 600 || $alto > 600) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "Las dimensiones de la imagen deben ser como máximo 600px de ancho y 600px de alto",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+
+            if ($tamanoImagen > 1024 * 1024 * 5) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "El tamaño de la imagen es demasiado grande",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+
+            $tiposPermitidos = array('image/jpeg', 'image/png', 'image/gif');
+            if (!in_array($tipoImagen, $tiposPermitidos)) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "El tipo de imagen no es permitido",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+            $objProducto->subirImagen($_FILES['imagen']);
+        } else {
+            // Set default image if no image is uploaded
+            $objProducto->setImagen('vista/dist/img/productos/default.png');
+        }
+
         // Validación de marca
         if (!empty($_POST['marca'])){
             if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){

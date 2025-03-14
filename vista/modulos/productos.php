@@ -29,6 +29,7 @@ require_once "controlador/productos.php";
                             <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
+                                        <th>Imagen</th>
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Marca</th>
@@ -48,6 +49,13 @@ require_once "controlador/productos.php";
                                     foreach ($registro as $producto){
                                         ?>
                                         <tr>
+                                            <td>
+                                                <?php if (!empty($producto['imagen'])): ?>
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Logo" style="width: 100px; height: auto;">
+                                                <?php else: ?>
+                                                    <span>No disponible</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td> <?php echo $producto["cod_presentacion"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
                                             <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
@@ -87,6 +95,7 @@ require_once "controlador/productos.php";
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
+                                                data-imagen="<?php echo $producto["imagen"];?>"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
                                                 data-producto="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
@@ -128,7 +137,7 @@ require_once "controlador/productos.php";
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="formRegistrarProducto" method="post">
+                                    <form id="formRegistrarProducto" method="post" enctype="multipart/form-data">
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <!-- Campo oculto para el código del producto -->
@@ -257,6 +266,21 @@ require_once "controlador/productos.php";
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="imagen">Ingrese la imagen<span class="text-danger" style="font-size: 20px;">
+                                                 *</span>
+                                            </label>
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function() {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="file" class="form-control" name="imagen" id="imagen">
+                                            <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <!-- Alert Message -->
                                         <div class="alert alert-light d-flex align-items-center" role="alert">

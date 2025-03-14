@@ -6,6 +6,7 @@ require_once 'conexion.php';
 class Productos extends Conexion{
     private $conex;
     #producto
+    private $imagen;
     private $nombre;
     private $marca;
 
@@ -24,6 +25,12 @@ class Productos extends Conexion{
 #3) GETTER Y SETTER
 
 #Producto
+    public function getImagen() {
+        return $this->imagen;
+    }
+    public function setImagen($imagen) {
+        $this->imagen = $imagen;
+    }
     public function getNombre(){
         return $this->nombre;
     }
@@ -77,11 +84,12 @@ REGISTRAR PRODUCTO con CATEGORIA + REGISTRAR PRESENTACION con UNIDAD
 ========================================================================*/
 private function registrar($unidad, $categoria){ 
 
-    $registro = "INSERT INTO productos(cod_categoria,nombre,marca) VALUES(:cod_categoria,:nombre, :marca)";
+    $registro = "INSERT INTO productos(cod_categoria,nombre,marca,imagen) VALUES(:cod_categoria,:nombre, :marca, :imagen)";
     $strExec = $this->conex->prepare($registro);
     $strExec->bindParam(':cod_categoria',$categoria);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':marca', $this->marca);
+    $strExec->bindParam(':imagen', $this->imagen);
     $resul = $strExec->execute();
 
     if($resul){
@@ -174,6 +182,7 @@ MOSTRAR PRODUCTO categoria, unidad y su presentación (tabla)
 
 public function mostrar(){
     $sql = "SELECT
+    p.imagen,
     p.cod_producto,
     p.nombre,
     p.marca,
@@ -219,7 +228,8 @@ public  function editar($present,$product,$categoria,$unidad){
     $sql="UPDATE productos SET 
     cod_categoria=:cod_categoria,
     nombre=:nombre,
-    marca=:marca
+    marca=:marca,
+    imagen=:imagen
     WHERE cod_producto=:cod_producto";
 
     $strExec=$this->conex->prepare($sql);
@@ -227,6 +237,7 @@ public  function editar($present,$product,$categoria,$unidad){
     $strExec->bindParam(':cod_categoria', $categoria);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':marca',$this->marca);
+    $strExec->bindParam(':imagen',$this->imagen);
     $strExec->bindParam(':cod_producto',$product);
     
     $result=$strExec->execute();
@@ -252,6 +263,14 @@ public  function editar($present,$product,$categoria,$unidad){
         return $strExec->execute() ? 1 : 0;
     }
     return 0;
+}
+
+public function subirImagen($valor){
+    $nombre_logo = $valor['name'];
+    $tmp_logo = $valor['tmp_name'];
+    $ruta_logo = "vista/dist/img/productos/".$nombre_logo;
+    move_uploaded_file($tmp_logo, $ruta_logo);
+    $this->imagen = $ruta_logo;
 }
 
 /*======================================
