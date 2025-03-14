@@ -84,7 +84,7 @@ REGISTRAR PRODUCTO con CATEGORIA + REGISTRAR PRESENTACION con UNIDAD
 ========================================================================*/
 private function registrar($unidad, $categoria){ 
 
-    $registro = "INSERT INTO productos(cod_categoria,nombre,marca,imagen) VALUES(:cod_categoria,:nombre, :marca, :imagen)";
+    $registro = "INSERT INTO productos(cod_categoria,nombre,cod_marca,imagen) VALUES(:cod_categoria,:nombre, :marca, :imagen)";
     $strExec = $this->conex->prepare($registro);
     $strExec->bindParam(':cod_categoria',$categoria);
     $strExec->bindParam(':nombre', $this->nombre);
@@ -151,6 +151,22 @@ public function consultarCategoria(){
         return $r=0;
     }
 }
+
+
+public function consultarMarca() {
+    $sql = "SELECT * FROM marcas WHERE status=1";
+    $consulta = $this->conex->prepare($sql);
+    $resultado = $consulta->execute();
+
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    if($resultado) {
+        return $datos;
+    } else {
+        return $r=0;
+    }
+}
+
 /*==============================
 REGISTRAR PRESENTACION A UN PRODUCTO EXISTENTE
 ================================*/
@@ -185,7 +201,8 @@ public function mostrar(){
     p.imagen,
     p.cod_producto,
     p.nombre,
-    p.marca,
+    m.nombre AS marca,
+    m.cod_marca AS cod_marca,
     c.nombre AS cat_nombre,
     c.cod_categoria AS cat_codigo,
     present.cod_presentacion,
@@ -199,6 +216,7 @@ public function mostrar(){
     (CONCAT(present.presentacion,'  ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat, #Concatena
     COALESCE(ROUND(SUM(dp.stock), 2), 0) AS stock_total
     FROM productos AS p
+    JOIN marcas as m ON p.cod_marca = m.cod_marca
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
@@ -228,7 +246,7 @@ public  function editar($present,$product,$categoria,$unidad){
     $sql="UPDATE productos SET 
     cod_categoria=:cod_categoria,
     nombre=:nombre,
-    marca=:marca,
+    cod_marca=:marca,
     imagen=:imagen
     WHERE cod_producto=:cod_producto";
 
@@ -331,9 +349,11 @@ public function buscar($nombrep){
     p.cod_producto,
     c.cod_categoria,                                 
     p.nombre AS producto_nombre,                                   
-    p.marca,                                                                        
+    m.nombre AS marca,                                                                        
     c.nombre AS cat_nombre                          
-    FROM productos AS p JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
+    FROM productos AS p
+    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+    JOIN marcas AS m ON p.cod_marca = m.cod_marca
     WHERE p.nombre LIKE ? GROUP BY p.nombre, p.marca LIMIT 5;";
 
     $consulta = $this->conex->prepare($sql);
@@ -406,11 +426,12 @@ public function productocategoria($cod_categoria){
     $sql= "SELECT
 	present.cod_presentacion,
     p.nombre,
-    p.marca,
+    m.nombre AS marca,
     c.cod_categoria,
     c.nombre AS cat_nombre,
     (CONCAT(present.presentacion,' ',present.cantidad_presentacion, ' x ', u.tipo_medida)) AS presentacion_concat
     FROM productos AS p
+    JOIN marcas AS m ON p.cod_marca = c.cod_marca
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad

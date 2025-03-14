@@ -5,7 +5,8 @@ require_once 'modelo/productos.php';
 #Objetos
 $objProducto = new Productos();
 $categoria = $objProducto->consultarCategoria(); 
-$unidad = $objProducto->consultarUnidad(); 
+$unidad = $objProducto->consultarUnidad();
+$marcas = $objProducto->consultarMarca();
 
 //BUSCAR REGISTRAR
 if(isset($_POST['buscar'])){
@@ -85,13 +86,13 @@ if(isset($_POST['buscar'])){
         }
 
         // Validación de marca
-        if (!empty($_POST['marca'])){
+        /*if (!empty($_POST['marca'])){
             if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
                 $errors[] = true;  // Marca no válida
             } else {
                 $marca = $_POST["marca"];
             }
-        }
+        }*/
 
         // Validación de presentación
         if (!empty($_POST['presentacion'])){
@@ -127,6 +128,7 @@ if(isset($_POST['buscar'])){
         } else{
 
             $categoria = $_POST["categoria"];
+            $marca = $_POST["marca"];
             $unidad = $_POST['unidad'];
 
             $objProducto->setNombre($nombre);
@@ -172,17 +174,17 @@ if(isset($_POST['buscar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
             $errors = [];
-            $marca = '';
+            $marca = 0;
             $presentacion = '';
             $cant_presentacion = '';
     
             // Validación de marca
             if (!empty($_POST['marca'])){
-                if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
+                /*if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
                     $errors[] = 1;  // Marca no válida
-                } else {
+                } else {*/
                     $marca = $_POST["marca"];
-                }
+                //}
             }
     
             // Validación de presentación
