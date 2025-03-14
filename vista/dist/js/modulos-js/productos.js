@@ -315,6 +315,30 @@ $(document).ready(function() {
     }
 });
 
+// NUEVA MARCA DESDE PRODUCTO
+//(Validar nombre)
+$('#nombrem').blur(function (e){
+    var buscar=$('#nombrem').val();
+    $.post('index.php?pagina=marcas', {buscar}, function(response){
+        if(response != ''){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'La marca ya se encuentra registrada',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    },'json');
+});
+
+$(document).ready(function() {
+// Verifica si el valor 'categoriaModal' está en localStorage
+if (localStorage.getItem('marcaModal') === 'true') {
+    $('#modalRegistrarProducto').modal('show');
+    localStorage.removeItem('marcaModal');
+}
+});
+
 //NUEVA UNIDAD DESDE PRODUCTO
 //(Validar nombre)
 $('#tipo_medidau').blur(function (e){
@@ -471,6 +495,7 @@ $('#editModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     
     var codigo = button.data('codigo');
+    var imagen = button.data('imagen');
     var nombre = button.data('nombre');
     var marca = button.data('marca');
     var unidad = button.data('unidad');
@@ -481,9 +506,13 @@ $('#editModal').on('show.bs.modal', function (event) {
     var iva = button.data('iva');
     var porcen = button.data('porcen');
 
+
+    console.log(imagen, marca)
+
     // Modal
     var modal = $(this); 
     modal.find('.modal-body #cod_presentacion').val(codigo);
+    modal.find('.modal-body #imagenE').val(imagen);
     modal.find('.modal-body #name').val(nombre);
     modal.find('.modal-body #marcaE').val(marca);
     modal.find('.modal-body #unidadE').val(unidad);
