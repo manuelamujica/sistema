@@ -173,89 +173,143 @@ if(isset($_POST['buscar'])){
 } else if (isset($_POST['editar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
-            $errors = [];
-            $marca = 0;
-            $presentacion = '';
-            $cant_presentacion = '';
-    
-            // Validación de marca
-            if (!empty($_POST['marca'])){
-                /*if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
-                    $errors[] = 1;  // Marca no válida
-                } else {*/
-                    $marca = $_POST["marca"];
-                //}
-            }
-    
-            // Validación de presentación
-            if (!empty($_POST['presentacion'])){
-                if (!preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['presentacion'])){
-                    $errors[] = true;  
-                } else {
-                    $presentacion = $_POST["presentacion"];
-                }
-            }
-    
-            // Validación de cantidad de presentación
-            if (!empty($_POST['cant_presentacion'])){
-                if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s.,]+$/', $_POST['cant_presentacion'])){
-                    $errors[] = true;  
-                } else {
-                    $cant_presentacion = $_POST["cant_presentacion"];
-                }
-            }
-    
-            // Validación del nombre del producto
-            if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s]+$/', $_POST['nombre'])){
-                $errors[] = true;
-            } else {
-                $nombre = $_POST["nombre"];
-            }
+        $errors = [];
+        $marca = 0;
+        $presentacion = '';
+        $cant_presentacion = '';
 
-            if (count($errors) > 0) {
-                $registrarp = [
-                    "title" => "Error",
-                    "message" => "Algunos caracteres ingresados no son permitidos.",
-                    "icon" => "error"
+
+        if (isset($_FILES['imagenE']) && $_FILES['imagenE']['error'] === UPLOAD_ERR_OK) {
+            $imagen = $_FILES['imagenE'];
+            $tipoImagen = $imagen['type'];
+            $tamanoImagen = $imagen['size'];
+            $imagenTemp = $imagen['tmp_name'];
+            $imagenNombre = $imagen['name'];
+
+
+            $infoImagen = getimagesize($imagenTemp);
+            if ($infoImagen === false) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "El archivo no es una imagen válida",
+                    "icon" => "warning",
                 ];
-            } else{
-
-                $cod_producto = $_POST['cod_producto'];
-                $cod_presentacion = $_POST['cod_presentacion'];
-                $cat = $_POST["categoria"];
-                $uni = $_POST['unidad'];
-
-                $objProducto->setNombre($_POST['nombre']);
-                $objProducto->setMarca($_POST['marca']);
-                $objProducto->setCosto($_POST['costo']);
-                $objProducto->setExcento($_POST['iva']);
-                $objProducto->setGanancia($_POST["porcen"]);
-                $objProducto->setPresentacion($_POST['presentacion']);
-                $objProducto->setCantPresentacion($_POST['cant_presentacion']);
-
-                $result=$objProducto->editar($cod_presentacion, $cod_producto, $cat, $uni);
-            
-            if($result == 1){
-                $editar = [
-                "title" => "Editado con éxito",
-                "message" => "El producto ha sido actualizado",
-                "icon" => "success"
-                ];
-            }else{
-                $editar = [
-                    "title" => "Error",
-                    "message" => "Hubo un error al editar el producto",
-                    "icon" => "error"
-                    ];
-                }
+                return;
             }
+
+            list($ancho, $alto) = $infoImagen;
+
+            if ($ancho > 600 || $alto > 600) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "Las dimensiones de la imagen deben ser como máximo 600px de ancho y 600px de alto",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+
+            if ($tamanoImagen > 1024 * 1024 * 5) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "El tamaño de la imagen es demasiado grande",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+
+            $tiposPermitidos = array('image/jpeg', 'image/png', 'image/gif');
+            if (!in_array($tipoImagen, $tiposPermitidos)) {
+                $r = [
+                    "title" => "Advertencia",
+                    "message" => "El tipo de imagen no es permitido",
+                    "icon" => "warning",
+                ];
+                return;
+            }
+            $objProducto->subirImagen($_FILES['imagenE']);
         } else {
-            $editar = [
-            "title" => "Error al editar",
-            "message" => "Completa todos los campos obligatorios",
-            "icon" => "error"
+
+            $objProducto->setImagen($_POST['imagenActual']);
+        }
+
+        // Validación de marca
+        if (!empty($_POST['marca'])){
+            /*if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
+                $errors[] = 1;  // Marca no válida
+            } else {*/
+                $marca = $_POST["marca"];
+            //}
+        }
+
+        // Validación de presentación
+        if (!empty($_POST['presentacion'])){
+            if (!preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['presentacion'])){
+                $errors[] = true;  
+            } else {
+                $presentacion = $_POST["presentacion"];
+            }
+        }
+
+        // Validación de cantidad de presentación
+        if (!empty($_POST['cant_presentacion'])){
+            if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s.,]+$/', $_POST['cant_presentacion'])){
+                $errors[] = true;  
+            } else {
+                $cant_presentacion = $_POST["cant_presentacion"];
+            }
+        }
+
+        // Validación del nombre del producto
+        if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\s]+$/', $_POST['nombre'])){
+            $errors[] = true;
+        } else {
+            $nombre = $_POST["nombre"];
+        }
+
+        if (count($errors) > 0) {
+            $registrarp = [
+                "title" => "Error",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
+                "icon" => "error"
             ];
-    }
+        } else{
+
+            $cod_producto = $_POST['cod_producto'];
+            $cod_presentacion = $_POST['cod_presentacion'];
+            $cat = $_POST["categoria"];
+            $uni = $_POST['unidad'];
+
+            $objProducto->setNombre($_POST['nombre']);
+            $objProducto->setMarca($_POST['marca']);
+            $objProducto->setCosto($_POST['costo']);
+            $objProducto->setExcento($_POST['iva']);
+            $objProducto->setGanancia($_POST["porcen"]);
+            $objProducto->setPresentacion($_POST['presentacion']);
+            $objProducto->setCantPresentacion($_POST['cant_presentacion']);
+
+            $result=$objProducto->editar($cod_presentacion, $cod_producto, $cat, $uni);
+        
+        if($result == 1){
+            $editar = [
+            "title" => "Editado con éxito",
+            "message" => "El producto ha sido actualizado",
+            "icon" => "success"
+            ];
+        }else{
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un error al editar el producto",
+                "icon" => "error"
+                ];
+            }
+        }
+    } else {
+        $editar = [
+        "title" => "Error al editar",
+        "message" => "Completa todos los campos obligatorios",
+        "icon" => "error"
+        ];
+}
 
 //ELIMINAR
 } else if(isset($_POST['borrar'])){

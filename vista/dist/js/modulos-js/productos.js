@@ -494,8 +494,13 @@ $(document).on('click', '.eliminarDetalle', function() {
 $('#editModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     
+    var imagenSrc = button.closest('tr').find('img').attr('src') || 'vista/dist/img/productos/default.png';
+    
+
+    $(this).find('.modal-body img').attr('src', imagenSrc);
+    $(this).find('input[name="imagenActual"]').val(imagenSrc);
+
     var codigo = button.data('codigo');
-    var imagen = button.data('imagen');
     var nombre = button.data('nombre');
     var marca = button.data('marca');
     var unidad = button.data('unidad');
@@ -507,12 +512,11 @@ $('#editModal').on('show.bs.modal', function (event) {
     var porcen = button.data('porcen');
 
 
-    console.log(imagen, marca)
+    console.log(imagenSrc, marca)
 
     // Modal
     var modal = $(this); 
     modal.find('.modal-body #cod_presentacion').val(codigo);
-    modal.find('.modal-body #imagenE').val(imagen);
     modal.find('.modal-body #name').val(nombre);
     modal.find('.modal-body #marcaE').val(marca);
     modal.find('.modal-body #unidadE').val(unidad);
@@ -525,7 +529,22 @@ $('#editModal').on('show.bs.modal', function (event) {
 
     modal.find('.modal-body #cod_producto').val(button.data('producto'));
 
-    calcularPrecioVentaEditar(modal); // Llama a la función para calcular el precio de venta cuando se abre el modal de edición
+    calcularPrecioVentaEditar(modal);
+});
+
+$(document).on('change', '#editModal input[type="file"]', function(e) {
+    var input = e.target;
+    var modal = $(this).closest('.modal');
+    
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            modal.find('.modal-body img').attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
 });
 
 //Eliminar

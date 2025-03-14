@@ -479,7 +479,7 @@ require_once "controlador/productos.php";
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="editForm" method="post">
+                                    <form id="editForm" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                             <label for="codigo">Código</label>
                                             
@@ -573,24 +573,31 @@ require_once "controlador/productos.php";
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
                                     <div class="form-group">
-                                            <?php if (!empty($producto['imagen'])): ?>
-                                                <img src="<?php echo $producto['imagen']; ?>" alt="Logo" style="width: 100px; height: auto;">
-                                            <?php else: ?>
-                                                <span>No disponible</span>
-                                            <?php endif; ?>
-                                            <label for="imagen">Ingrese la imagen<span class="text-danger" style="font-size: 20px;">
-                                                 *</span>
-                                            </label>
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
-                                                <i class="fas fa-info-circle"></i>
-                                            </button>
-                                            <script>
-                                                $(function() {
-                                                    $('[data-toggle="tooltip"]').tooltip();
-                                                });
-                                            </script>
+                                        <div style="display: flex;justify-content:space-between;align-items:center;">
+                                            <div>
+                                                <label for="imagen">Ingrese la nueva imagen<span class="text-danger" style="font-size: 20px;">
+                                                    *</span>
+                                                </label>
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function() {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
+                                            </div>
+                                            <div>
+                                                <?php if (!empty($producto['imagen'])): ?>
+                                                    <label for="">Imagen actual:</label>
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Logo"  style="width: 75px; height: auto;">
+                                                <?php else: ?>
+                                                    <span>No disponible</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
                                             <input type="file" class="form-control" name="imagenE" id="imagen">
-                                            <input type="text" class="form-control hidden" name="imagenActual" value="<?php echo $producto["imagen"];?>">
+                                            <input type="hidden" name="imagenActual" value="<?php echo $producto["imagen"];?>">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     <div class="modal-footer justify-content-between">
