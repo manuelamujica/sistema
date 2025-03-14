@@ -31,8 +31,10 @@ if(isset($_POST['buscar'])){
         $presentacion = '';
         $cant_presentacion = '';
 
-        $imagenTemp = "";
-        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK)  {
+        $imageValid = true;
+        $validationPassed = true;
+
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
             $imagen = $_FILES['imagen'];
             $tipoImagen = $imagen['type'];
             $tamanoImagen = $imagen['size'];
@@ -42,47 +44,50 @@ if(isset($_POST['buscar'])){
             // Verificar si el archivo es una imagen válida
             $infoImagen = getimagesize($imagenTemp);
             if ($infoImagen === false) {
-                $r = [
+                $error = [
                     "title" => "Advertencia",
                     "message" => "El archivo no es una imagen válida",
-                    "icon" => "warning",
+                    "icon" => "warning"
                 ];
-                return;
-            }
+                $imageValid = false;
+            } else {
+                list($ancho, $alto) = $infoImagen;
 
-            list($ancho, $alto) = $infoImagen;
+                if ($ancho > 600 || $alto > 600) {
+                    $error = [
+                        "title" => "Advertencia",
+                        "message" => "Las dimensiones de la imagen deben ser como máximo 600px de ancho y 600px de alto",
+                        "icon" => "warning"
+                    ];
+                    $imageValid = false;
+                }
 
-            if ($ancho > 600 || $alto > 600) {
-                $r = [
-                    "title" => "Advertencia",
-                    "message" => "Las dimensiones de la imagen deben ser como máximo 600px de ancho y 600px de alto",
-                    "icon" => "warning",
-                ];
-                return;
-            }
+                if ($tamanoImagen > 1024 * 1024 * 5) {
+                    $error = [
+                        "title" => "Advertencia",
+                        "message" => "El tamaño de la imagen es demasiado grande",
+                        "icon" => "warning"
+                    ];
+                    $imageValid = false;
+                }
 
-            if ($tamanoImagen > 1024 * 1024 * 5) {
-                $r = [
-                    "title" => "Advertencia",
-                    "message" => "El tamaño de la imagen es demasiado grande",
-                    "icon" => "warning",
-                ];
-                return;
-            }
+                $tiposPermitidos = array('image/jpeg', 'image/png', 'image/gif');
+                if (!in_array($tipoImagen, $tiposPermitidos)) {
+                    $error = [
+                        "title" => "Advertencia",
+                        "message" => "El tipo de imagen no es permitido",
+                        "icon" => "warning"
+                    ];
+                    $imageValid = false;
+                }
 
-            $tiposPermitidos = array('image/jpeg', 'image/png', 'image/gif');
-            if (!in_array($tipoImagen, $tiposPermitidos)) {
-                $r = [
-                    "title" => "Advertencia",
-                    "message" => "El tipo de imagen no es permitido",
-                    "icon" => "warning",
-                ];
-                return;
+                if (!$imageValid) {
+                    $validationPassed = false;
+                }
             }
-            $objProducto->subirImagen($_FILES['imagen']);
         } else {
-            // Set default image if no image is uploaded
             $objProducto->setImagen('vista/dist/img/productos/default.png');
+            $imageValid = false;
         }
 
         // Validación de marca
@@ -119,14 +124,7 @@ if(isset($_POST['buscar'])){
             $nombre = $_POST["nombre"];
         }
 
-        if (count($errors) > 0) {
-            $registrarp = [
-                "title" => "Error",
-                "message" => "Algunos caracteres ingresados no son permitidos.",
-                "icon" => "error"
-            ];
-        } else{
-
+        if ($validationPassed && count($errors) === 0) {
             $categoria = $_POST["categoria"];
             $marca = $_POST["marca"];
             $unidad = $_POST['unidad'];
@@ -161,6 +159,14 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                 ];
             }
+        } else if (!$validationPassed) {
+            $registrarp = $error;
+        } else {
+            $registrarp = [
+                "title" => "Error",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
+                "icon" => "error"
+            ];
         }
     } else {
         $registrarp = [
@@ -178,6 +184,8 @@ if(isset($_POST['buscar'])){
         $presentacion = '';
         $cant_presentacion = '';
 
+        $imageValid = true;
+        $validationPassed = true;
 
         if (isset($_FILES['imagenE']) && $_FILES['imagenE']['error'] === UPLOAD_ERR_OK) {
             $imagen = $_FILES['imagenE'];
@@ -186,49 +194,59 @@ if(isset($_POST['buscar'])){
             $imagenTemp = $imagen['tmp_name'];
             $imagenNombre = $imagen['name'];
 
-
+            // Verificar si el archivo es una imagen válida
             $infoImagen = getimagesize($imagenTemp);
             if ($infoImagen === false) {
-                $r = [
+                $error = [
                     "title" => "Advertencia",
                     "message" => "El archivo no es una imagen válida",
-                    "icon" => "warning",
+                    "icon" => "warning"
                 ];
-                return;
-            }
+                $imageValid = false;
+            } else {
+                list($ancho, $alto) = $infoImagen;
 
-            list($ancho, $alto) = $infoImagen;
+                if ($ancho > 600 || $alto > 600) {
+                    $error = [
+                        "title" => "Advertencia",
+                        "message" => "Las dimensiones de la imagen deben ser como máximo 600px de ancho y 600px de alto",
+                        "icon" => "warning"
+                    ];
+                    $imageValid = false;
+                }
 
-            if ($ancho > 600 || $alto > 600) {
-                $r = [
-                    "title" => "Advertencia",
-                    "message" => "Las dimensiones de la imagen deben ser como máximo 600px de ancho y 600px de alto",
-                    "icon" => "warning",
-                ];
-                return;
-            }
+                if ($tamanoImagen > 1024 * 1024 * 5) {
+                    $error = [
+                        "title" => "Advertencia",
+                        "message" => "El tamaño de la imagen es demasiado grande",
+                        "icon" => "warning"
+                    ];
+                    $imageValid = false;
+                }
 
-            if ($tamanoImagen > 1024 * 1024 * 5) {
-                $r = [
-                    "title" => "Advertencia",
-                    "message" => "El tamaño de la imagen es demasiado grande",
-                    "icon" => "warning",
-                ];
-                return;
-            }
+                $tiposPermitidos = array('image/jpeg', 'image/png', 'image/gif');
+                if (!in_array($tipoImagen, $tiposPermitidos)) {
+                    $error = [
+                        "title" => "Advertencia",
+                        "message" => "El tipo de imagen no es permitido",
+                        "icon" => "warning"
+                    ];
+                    $imageValid = false;
+                }
 
-            $tiposPermitidos = array('image/jpeg', 'image/png', 'image/gif');
-            if (!in_array($tipoImagen, $tiposPermitidos)) {
-                $r = [
-                    "title" => "Advertencia",
-                    "message" => "El tipo de imagen no es permitido",
-                    "icon" => "warning",
-                ];
-                return;
+                if (!$imageValid) {
+                    $validationPassed = false;
+                }
             }
+        } else {
+            // Keep existing image if no new image is uploaded
+            $objProducto->setImagen($_POST['imagenActual']);
+        }
+
+        if ($imageValid) {
             $objProducto->subirImagen($_FILES['imagenE']);
         } else {
-
+            // Use existing image if validation fails
             $objProducto->setImagen($_POST['imagenActual']);
         }
 
@@ -266,14 +284,7 @@ if(isset($_POST['buscar'])){
             $nombre = $_POST["nombre"];
         }
 
-        if (count($errors) > 0) {
-            $registrarp = [
-                "title" => "Error",
-                "message" => "Algunos caracteres ingresados no son permitidos.",
-                "icon" => "error"
-            ];
-        } else{
-
+        if ($validationPassed && count($errors) === 0) {
             $cod_producto = $_POST['cod_producto'];
             $cod_presentacion = $_POST['cod_presentacion'];
             $cat = $_POST["categoria"];
@@ -302,6 +313,14 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
                 ];
             }
+        } else if (!$validationPassed) {
+            $editar = $error;
+        } else {
+            $editar = [
+                "title" => "Error",
+                "message" => "Algunos caracteres ingresados no son permitidos.",
+                "icon" => "error"
+            ];
         }
     } else {
         $editar = [

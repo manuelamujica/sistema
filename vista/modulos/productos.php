@@ -1,6 +1,16 @@
 <?php 
 #Requerir al controlador
 require_once "controlador/productos.php";
+
+if (isset($error)): ?>
+    <script>
+        Swal.fire({
+            title: '<?= $error["title"] ?>',
+            text: '<?= $error["message"] ?>',
+            icon: '<?= $error["icon"] ?>'
+        });
+    </script>
+<?php endif; ?>
 ?>
 
 <div class="content-wrapper">
