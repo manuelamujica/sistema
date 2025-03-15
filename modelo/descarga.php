@@ -160,12 +160,13 @@ class Descarga extends Conexion{
         u.tipo_medida,
         present.cod_unidad,                             
         pro.nombre AS producto_nombre, 
-        pro.marca AS producto_marca,
+        m.nombre AS producto_marca,
         (CONCAT(present.presentacion,' x ',present.cantidad_presentacion, ' ', u.tipo_medida)) AS presentacion_concat, #Concatena                                                                                                         
         present.cod_producto               
         FROM detalle_productos AS det JOIN presentacion_producto AS present ON det.cod_presentacion = present.cod_presentacion      
         JOIN productos AS pro ON pro.cod_producto=present.cod_producto 
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+        JOIN marcas AS m ON pro.cod_marca = m.cod_marca
         WHERE pro.nombre LIKE ? AND det.stock != 0 GROUP BY det.cod_detallep LIMIT 7;";
 
         $consulta = $this->conex->prepare($sql);
