@@ -63,6 +63,7 @@ require_once 'controlador/reporte.php';
                                         <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                             <thead>
                                                 <tr>
+                                                    <th>Imagen</th>
                                                     <th>Código</th>
                                                     <th>Nombre</th>
                                                     <th>Marca</th>
@@ -80,6 +81,13 @@ require_once 'controlador/reporte.php';
                                                 foreach ($productos as $producto){
                                                     ?>
                                                     <tr>
+                                                        <td>
+                                                            <?php if (!empty($producto['imagen'])): ?>
+                                                                <img src="<?php echo $producto['imagen']; ?>" alt="Logo" style="width: 100px; height: auto;">
+                                                            <?php else: ?>
+                                                                <span>No disponible</span>
+                                                            <?php endif; ?>
+                                                        </td>
                                                         <td> <?php echo $producto["cod_presentacion"] ?></td>
                                                         <td> <?php echo $producto["nombre"] ?></td>
                                                         <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
