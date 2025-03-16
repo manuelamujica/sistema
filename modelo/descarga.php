@@ -114,7 +114,8 @@ class Descarga extends Conexion{
         detp.lote,
         present.cod_producto,
         (CONCAT(present.presentacion, " x ",present.cantidad_presentacion, " x ", u.tipo_medida)) AS presentacion_concat,
-        pro.nombre
+        pro.nombre,
+        pro.imagen
         FROM descarga AS de 
         JOIN detalle_descarga AS dd ON de.cod_descarga = dd.cod_descarga
         JOIN detalle_productos AS detp ON detp.cod_detallep = dd.cod_detallep

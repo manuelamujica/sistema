@@ -61,7 +61,7 @@ if (isset($error)): ?>
                                         <tr>
                                             <td>
                                                 <?php if (!empty($producto['imagen'])): ?>
-                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Logo" style="width: 100px; height: auto;">
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Imagen producto" style="width: 100px; height: auto;">
                                                 <?php else: ?>
                                                     <span>No disponible</span>
                                                 <?php endif; ?>

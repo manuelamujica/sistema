@@ -12,7 +12,7 @@ $(document).ready(function () {
         modal.find('.modal-body #codigo').val(cod);
         modal.find('.modal-body #descrip').val(descrip);
         modal.find('.modal-body #fecha_carga').val(fechaC);
-
+        //console.log(cod);
 
         // Limpiar la tabla de detalles antes de cargar nuevos datos
         $('#detalleBody').empty();
@@ -44,15 +44,18 @@ $(document).ready(function () {
                             ?
                             '<span class="badge badge-success">Activo</span>' :
                             '<span class="badge badge-danger">Inactivo</span>' //NECESITO MEJORAR LA LOGIA Y EL FILTRADO DEL CONSULTAR
-                            var fecha = detalle.fecha_vencimiento || " ";
-                            var lote = detalle.lote || "No disponible";
+                        var fecha = detalle.fecha_vencimiento || " ";
+                        var lote = detalle.lote || "No disponible";
                         $('#detalleBody').append(
                             '<tr>' +
-                            '<td>' + detalle.cod_det_carga + '</td>' +
-                            '<td>' + detalle.nombre + ' x ' + detalle.presentacion + '</td>' +
-                            '<td>' + fecha + '</td>' +
-                            '<td>' + lote + '</td>' +
-                            '<td>' + detalle.cantidad + '</td>' +
+                                '<td>' + 
+                                    '<img src='+detalle.imagen+' alt="Imagen producto" style="width: 100px; height: auto;">' + 
+                                '</td>' +
+                                '<td>' + detalle.cod_det_carga + '</td>' +
+                                '<td>' + detalle.nombre + ' x ' + detalle.presentacion + '</td>' +
+                                '<td>' + fecha + '</td>' +
+                                '<td>' + lote + '</td>' +
+                                '<td>' + detalle.cantidad + '</td>' +
                             '</tr>'
                         );
 
