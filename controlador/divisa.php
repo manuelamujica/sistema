@@ -1,6 +1,8 @@
 <?php
 require_once 'modelo/divisa.php';
+require_once 'modelo/bitacora.php';
 $obj=new Divisa();
+$objbitacora = new Bitacora();
 
 if(isset($_POST['buscar'])){
     $result=$obj->buscar($_POST['buscar']);
@@ -23,6 +25,7 @@ if(isset($_POST['buscar'])){
                         "message" => "La divisa ha sido registrada",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de divisa', $_POST["nombre"], 'Divisas');
                 }else {
                     $registrar = [
                         "title" => "Error",
@@ -69,6 +72,7 @@ if(isset($_POST['buscar'])){
                         "message" => "La divisa ha sido actualizada",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar divisa', $_POST["nombre"], 'Divisas');
                 }else {
                     $editar = [
                         "title" => "Error",
@@ -100,6 +104,7 @@ if(isset($_POST['buscar'])){
                 "message" => "La divisa ha sido eliminada",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar divisa',"Eliminada la Divisa con Codigo". $_POST["divisaCodigo"], 'Divisas');
         }else if($result == 0){
             $eliminar = [
                 "title" => "Error",

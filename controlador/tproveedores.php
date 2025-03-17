@@ -1,6 +1,8 @@
 <?php
 require_once 'modelo/tlf_proveedor.php';
+require_once 'modelo/bitacora.php'; 
 
+$objbitacora =new Bitacora();
 $objTlfroveedores = new Tproveedor();
 
 if (isset($_POST['buscar'])) {
@@ -26,6 +28,7 @@ if (isset($_POST['buscar'])) {
                         "message" => "El teléfono ha sido registrado.",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de teléfono', $_POST["telefono"], 'Teléfonos de proveedores');
                 } else {
                     $registrar = [
                         "title" => "Error",

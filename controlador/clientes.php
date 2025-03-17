@@ -10,6 +10,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar cliente', $cedula, 'Clientes');
     
 }else if (isset($_POST['guardar'])) { 
     $errores = [];
@@ -54,6 +55,7 @@ if(isset($_POST['buscar'])){
                     "message" => "El cliente ha sido registrado",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de cliente', $_POST["nombre"], 'Clientes');
             } else {
                 $registrar = [
                     "title" => "Error",
@@ -78,6 +80,7 @@ else if(isset($_POST['actualizar'])){
                 "message" => "la cedula del cliente ya existe",
                 "icon" => "error"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar cliente', "Editado el cliente con el código ".$_POST["codigo"], 'Clientes');
         }else {
             $errores = [];
             if (empty($_POST["nombre"]) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $_POST["nombre"])) {
@@ -136,6 +139,7 @@ else if(isset($_POST['actualizar'])){
             "message" => "El cliente ha sido eliminado",
             "icon" => "success"
         ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar cliente', "Eliminado el cliente con el código ".$_POST["clienteCodigo"], 'Clientes');
     } elseif ($result == 'error_delete') {
         $editar = [
             "title" => "Error",
