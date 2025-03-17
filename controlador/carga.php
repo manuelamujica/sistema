@@ -1,8 +1,10 @@
 <?php
 require_once "modelo/carga.php";
 require_once "modelo/dcarga.php";
+require_once "modelo/bitacora.php";
 
 $objcarga = new Carga();
+$objbitacora = new Bitacora();
 $objcargad = new Dcarga();
 
 
@@ -12,6 +14,7 @@ if (isset($_POST['buscar'])) {
     header('Content-type: application/json');
     echo json_encode($resul);
     exit;
+
 }else if (isset($_POST['detalle'])) {
     $detalle = $objcargad->gettodoo($_POST['detalle']);
     header('Content-type: application/json');
@@ -68,6 +71,8 @@ else if (isset($_POST['guardar'])) {
             $objcarga->setFecha($_POST['fecha_hora']);
             $objcarga->setDes($_POST['descripcion']);
             $resul = $objcarga->getcrear(); // Registrar carga
+
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de carga', $_POST["descripcion"], 'Carga');
 
             if ($resul == 1) {
                 // Cambiar a la forma correcta de acceder a los productos

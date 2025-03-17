@@ -1,9 +1,11 @@
 <?php
 #1) Requerir los modelos
 require_once 'modelo/productos.php';
+require_once 'modelo/bitacora.php';
 
 #Objetos
 $objProducto = new Productos();
+$objbitacora = new Bitacora();
 $categoria = $objProducto->consultarCategoria(); 
 $unidad = $objProducto->consultarUnidad();
 $marcas = $objProducto->consultarMarca();
@@ -14,6 +16,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
 
 //CONSULTAR DETALLE DEPENDIENDO DEL PRODUCTO(PRESENTACION)
 }else if(isset($_POST['detallep'])){
@@ -150,6 +153,7 @@ if(isset($_POST['buscar'])){
                 "message" => "El producto ha sido registrado",
                 "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de producto', $_POST["nombre"], 'Productos');
             } else {
                 $registrarp = [
                     "title" => "Error",
@@ -302,6 +306,7 @@ if(isset($_POST['buscar'])){
             "message" => "El producto ha sido actualizado",
             "icon" => "success"
             ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar producto', $_POST["nombre"], 'Productos');
         }else{
             $editar = [
                 "title" => "Error",
@@ -341,6 +346,7 @@ if(isset($_POST['buscar'])){
                 "message" => "La presentacion ha sido eliminado",
                 "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar producto', "Eliminada la presentacion con el código ".$_POST["present_codigo"], 'Productos');
         } elseif ($result == 'error_stock') {
             $eliminar = [
                 "title" => "Error",
@@ -359,6 +365,7 @@ if(isset($_POST['buscar'])){
                 "message" => "El producto ha sido eliminado",
                 "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar producto', "Eliminado el producto con el código ".$_POST["p_codigo"], 'Productos');
         }
     } 
 }

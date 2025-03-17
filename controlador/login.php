@@ -3,10 +3,12 @@
 require_once "modelo/usuarios.php";
 require_once "modelo/general.php";
 require_once "modelo/roles.php";
+require_once "modelo/bitacora.php";
 
 $obj = new General();
 $objuser= new Usuario();
 $objRol= new Rol();
+$objbitacora = new Bitacora();
 
 if (isset($_POST["ingresar"])) {
 
@@ -15,6 +17,7 @@ if (isset($_POST["ingresar"])) {
 
 		$valor = $_POST["ingUsuario"];
 		$respuesta = $objuser->mostrar($valor);
+	
 	}
 
 	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
@@ -41,6 +44,8 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
 
+
+
 			//Obtenemos los permisos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
 			foreach ($accesos as $cod_permiso) {
@@ -65,6 +70,8 @@ if (isset($_POST["ingresar"])) {
 				} else if ($cod_permiso["cod_permiso"] == 10) {
 					$_SESSION["configuracion"] = 1;
 				}
+
+			
 			}
 
 			//Obtenemos la informacion de la empresa
@@ -81,6 +88,7 @@ if (isset($_POST["ingresar"])) {
 			echo '<script>
 			window.location="inicio";
 			</script>';
+			$objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Acceso al sistema', $_POST["ingUsuario"], 'Inicio');
 		} else {
 			$login = [
                 "title" => "Error",
