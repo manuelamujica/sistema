@@ -1,7 +1,9 @@
 <?php
 
 require_once "modelo/unidad.php"; //requiero al modelo
+require_once "modelo/bitacora.php";
 $objUnidad = new Unidad;
+$objbitacora = new Bitacora();
 
 if (isset($_POST['buscar'])) {
     $tipo_medida = $_POST['buscar'];
@@ -9,6 +11,7 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar unidad de medida', $_POST['buscar'], 'Unidad de medida');
 
 } else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
     if (!empty($_POST["tipo_medida"])) {
@@ -26,6 +29,7 @@ if (isset($_POST['buscar'])) {
                         "message" => "¡Registro exitoso!",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de unidad de medida', $_POST["tipo_medida"], 'Unidad de medida');
                 } else {
                     $registrar = [
                         "title" => "Error",
@@ -83,6 +87,7 @@ if (isset($_POST['buscar'])) {
                         "message" => "La unidad ha sido actualizada",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar unidad de medida', $_POST["tipo_medida"], 'Unidad de medida');
                 } else {
                     $editar = [
                         "title" => "Error",
@@ -116,6 +121,7 @@ if (isset($_POST['buscar'])) {
             "message" => "La unidad de medida ha sido eliminada",
             "icon" => "success"
         ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar unidad de medida', "Eliminado la unidad de medida con el código ".$_POST["eliminar"], 'Unidad de medida');
     } else if ($resul == 'error_status') {
         $eliminar = [
             "title" => "Error",

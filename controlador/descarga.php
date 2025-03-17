@@ -1,7 +1,9 @@
 <?php
 require_once 'modelo/descarga.php';
+require_once 'modelo/bitacora.php';
 
 $objDescarga = new Descarga();
+$objbitacora = new Bitacora();
 
 //BUSCAR DETALLE PRODUCTOS (LISTADO)
 if(isset($_POST['buscar'])){
@@ -9,6 +11,7 @@ if(isset($_POST['buscar'])){
     header('Content-type: application/json');
     echo json_encode($resul);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
 
 //CONSULTAR DETALLE DESCARGA
 }else if(isset($_POST['detalled'])){
@@ -67,12 +70,15 @@ if(isset($_POST['buscar'])){
                             "message" => "La descarga ha sido registrada",
                             "icon" => "success"
                         ];
+                        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de descarga', $_POST["descripcion"], 'Descarga');
+
                     } else {
                         $registrar = [
                             "title" => "Error",
                             "message" => "Hubo un problema al registrar la descarga",
                             "icon" => "error"
                         ];
+                      
                     }
                 }
             } else {
@@ -81,6 +87,7 @@ if(isset($_POST['buscar'])){
                     "message" => "No se pudo registrar. Descripcion no valida.",
                     "icon" => "error"
                 ];
+                
             }
     } else {
         $registrar = [

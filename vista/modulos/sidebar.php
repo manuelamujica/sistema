@@ -212,6 +212,14 @@
                                     </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="bitacora" class="nav-link">
+                                <i class="fas fa-calendar nav-icon"></i>
+                                    <p>
+                                       Bitacora
+                                    </p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <?php endif;?>
@@ -417,6 +425,14 @@
                                 <i class="fas fa-user-cog nav-icon"></i>
                                     <p>
                                         Ajuste de roles
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="bitacora" class="nav-link ">
+                                <i class="fas fa-calendar nav-icon"></i>
+                                    <p>
+                                       Bitacora
                                     </p>
                             </a>
                         </li>

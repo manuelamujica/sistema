@@ -105,6 +105,7 @@ private function registrar($rol){
 
 public function getregistrar($rol){
     return $this->registrar($rol);
+    
 }
 
 /*==============================
