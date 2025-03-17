@@ -24,7 +24,7 @@ if(isset($_POST['buscar'])){
 
 //REGISTRAR
 }elseif (isset($_POST['guardar'])){
-    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["marca"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
         $errors = [];
         $marca = '';
@@ -91,13 +91,11 @@ if(isset($_POST['buscar'])){
         }
 
         // Validación de marca
-        /*if (!empty($_POST['marca'])){
-            if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
-                $errors[] = true;  // Marca no válida
-            } else {
-                $marca = $_POST["marca"];
-            }
-        }*/
+        if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
+               $errors[] = true;  // Marca no válida
+        } else {
+            $marca = $_POST["marca"];
+        }
 
         // Validación de presentación
         if (!empty($_POST['presentacion'])){
@@ -177,7 +175,7 @@ if(isset($_POST['buscar'])){
 }
 //EDITAR
 } else if (isset($_POST['editar'])){
-    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
+    if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["marca"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
         $errors = [];
         $marca = 0;
@@ -251,12 +249,10 @@ if(isset($_POST['buscar'])){
         }
 
         // Validación de marca
-        if (!empty($_POST['marca'])){
-            /*if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
-                $errors[] = 1;  // Marca no válida
-            } else {*/
-                $marca = $_POST["marca"];
-            //}
+        if (!preg_match('/^[a-zA-ZÀ-ÿ0-9\-\s]+$/', $_POST['marca'])){
+            $errors[] = 1;  // Marca no válida
+        } else {
+            $marca = $_POST["marca"];
         }
 
         // Validación de presentación
