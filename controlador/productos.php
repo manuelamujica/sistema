@@ -15,8 +15,8 @@ if(isset($_POST['buscar'])){
     $result=$objProducto->buscar($_POST['buscar']);
     header('Content-Type: application/json');
     echo json_encode($result);
-    exit;
     $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
+    exit;
 
 //CONSULTAR DETALLE DEPENDIENDO DEL PRODUCTO(PRESENTACION)
 }else if(isset($_POST['detallep'])){
@@ -91,6 +91,10 @@ if(isset($_POST['buscar'])){
         } else {
             $objProducto->setImagen('vista/dist/img/productos/default.png');
             $imageValid = false;
+        }
+
+        if ($imageValid && isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+            $objProducto->subirImagen($_FILES['imagen']);
         }
 
         // Validación de marca
@@ -239,17 +243,16 @@ if(isset($_POST['buscar'])){
                 if (!$imageValid) {
                     $validationPassed = false;
                 }
+
             }
         } else {
-            // Keep existing image if no new image is uploaded
+            //si no se sube imagen nueva, mantener anterior
+            $imageValid = false;
             $objProducto->setImagen($_POST['imagenActual']);
         }
 
         if ($imageValid) {
             $objProducto->subirImagen($_FILES['imagenE']);
-        } else {
-            // Use existing image if validation fails
-            $objProducto->setImagen($_POST['imagenActual']);
         }
 
         // Validación de marca
@@ -306,7 +309,7 @@ if(isset($_POST['buscar'])){
             "message" => "El producto ha sido actualizado",
             "icon" => "success"
             ];
-                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar producto', $_POST["nombre"], 'Productos');
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar producto', $_POST["nombre"], 'Productos');
         }else{
             $editar = [
                 "title" => "Error",

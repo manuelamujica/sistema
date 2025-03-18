@@ -287,6 +287,7 @@ public function subirImagen($valor){
     $nombre_logo = $valor['name'];
     $tmp_logo = $valor['tmp_name'];
     $ruta_logo = "vista/dist/img/productos/".$nombre_logo;
+    error_log("nombre_logo@@:".$nombre_logo);
     move_uploaded_file($tmp_logo, $ruta_logo);
     $this->imagen = $ruta_logo;
 }
@@ -354,7 +355,7 @@ public function buscar($nombrep){
     FROM productos AS p
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN marcas AS m ON p.cod_marca = m.cod_marca
-    WHERE p.nombre LIKE ? GROUP BY p.nombre, p.marca LIMIT 5;";
+    WHERE p.nombre LIKE ? GROUP BY p.nombre, m.nombre LIMIT 5;";
 
     $consulta = $this->conex->prepare($sql);
     $buscar = '%' . $nombrep. '%';
