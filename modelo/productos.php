@@ -287,7 +287,6 @@ public function subirImagen($valor){
     $nombre_logo = $valor['name'];
     $tmp_logo = $valor['tmp_name'];
     $ruta_logo = "vista/dist/img/productos/".$nombre_logo;
-    error_log("nombre_logo@@:".$nombre_logo);
     move_uploaded_file($tmp_logo, $ruta_logo);
     $this->imagen = $ruta_logo;
 }
