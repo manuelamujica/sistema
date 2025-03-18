@@ -481,9 +481,35 @@ CREATE TABLE `ventas` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+-- --------------------------------------------------------
+
 --
--- Índices para tablas volcadas
+-- Estructura de tabla para la tabla `bitacora`
 --
+
+CREATE TABLE `bitacora` (
+  `id` int(11) NOT NULL,
+  `cod_usuario` int(11) NOT NULL,
+  `accion` varchar(255) NOT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
+  `detalles` text DEFAULT NULL,
+  `modulo` varchar(220) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+--
+-- Indices de la tabla `bitacora`
+--
+ALTER TABLE `bitacora`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de la tabla `bitacora`
+--
+ALTER TABLE `bitacora`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+COMMIT;
+
 
 --
 -- Indices de la tabla `cambio_divisa`
