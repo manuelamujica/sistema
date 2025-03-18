@@ -344,7 +344,7 @@ class Compra extends Conexion
       p.cod_producto,                                  
       p.nombre AS producto_nombre,                     
       present.costo,                                   
-      p.marca,                                         
+      m.nombre AS marca,                                         
       present.excento,                                       
       present.porcen_venta,
       u.cod_unidad,
@@ -355,6 +355,7 @@ class Compra extends Conexion
       JOIN productos AS p ON present.cod_producto = p.cod_producto  
       JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
       JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
+      JOIN marcas AS m ON p.cod_marca = m.cod_marca
       WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
 
          $consulta = $this->conex->prepare($sql);
@@ -393,11 +394,12 @@ class Compra extends Conexion
 
    public function b_detalle($cod){
       $busqueda="SELECT dc.*, dp.*, 
-      CONCAT(prod.nombre,' ', prod.marca, ' - ', p.presentacion, ' x ', p.cantidad_presentacion) AS presentacion FROM detalle_compras dc 
+      CONCAT(prod.nombre,' ', m.nombre, ' - ', p.presentacion, ' x ', p.cantidad_presentacion) AS presentacion FROM detalle_compras dc 
       JOIN compras c ON dc.cod_compra=c.cod_compra 
       JOIN detalle_productos dp ON dc.cod_detallep=dp.cod_detallep
       JOIN presentacion_producto p ON dp.cod_presentacion=p.cod_presentacion
       JOIN productos AS prod ON p.cod_producto = prod.cod_producto
+      JOIN marcas AS m ON prod.cod_marca = m.cod_marca
       WHERE dc.cod_compra=:cod_compra;";
       $consulta = $this->conex->prepare($busqueda);
       $consulta->bindParam(':cod_compra', $cod);
