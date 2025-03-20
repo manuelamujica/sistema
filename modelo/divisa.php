@@ -38,8 +38,16 @@ class Divisa extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha FROM divisas AS d 
-        JOIN cambio_divisa AS c ON d.cod_divisa = c.cod_divisa ORDER BY d.cod_divisa;";
+        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status,c.cod_cambio, c.tasa, c.fecha
+        FROM divisas AS d
+        JOIN cambio_divisa AS c 
+            ON d.cod_divisa = c.cod_divisa
+        JOIN ( SELECT cod_divisa, MAX(fecha) AS ultima_fecha
+            FROM cambio_divisa
+            GROUP BY cod_divisa ) AS ultimos_cambios
+            ON c.cod_divisa = ultimos_cambios.cod_divisa 
+            AND c.fecha = ultimos_cambios.ultima_fecha
+        ORDER BY d.cod_divisa;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -73,11 +81,6 @@ class Divisa extends Conexion{
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
         if($resul){
-            $sql2 = "UPDATE cambio_divisa SET tasa = :tasa, fecha = :fecha WHERE cod_divisa = $valor";
-            $strExec = $this->conex->prepare($sql2);
-            $strExec->bindParam(':tasa', $this->tasa);
-            $strExec->bindParam(':fecha', $this->fecha);
-            $strExec->execute();
             $r = 1;
         }else{
             $r = 0;
@@ -105,7 +108,7 @@ class Divisa extends Conexion{
 
     public function tasa($valor){
         foreach($valor as $divisa){
-            $sql="UPDATE cambio_divisa SET tasa=:tasa, fecha=:fecha WHERE cod_divisa = :cod_divisa";
+            $sql="INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
             $strExec = $this->conex->prepare($sql);
             $strExec->bindParam(':tasa', $divisa['tasa']);
             $strExec->bindParam(':fecha', $divisa['fecha']);
@@ -116,6 +119,18 @@ class Divisa extends Conexion{
             }
         }
     return true;
+    }
+
+    public function historial(){
+        $registro="SELECT * FROM cambio_divisa ORDER BY fecha DESC;";
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
     }
 
     public function setnombre($valor){
