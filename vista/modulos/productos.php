@@ -1,5 +1,4 @@
 <?php 
-#Requerir al controlador
 require_once "controlador/productos.php";
 ?>
 
@@ -18,7 +17,31 @@ require_once "controlador/productos.php";
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
+                <?php foreach ($datos as $v){ ?>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box" style="background-color: #8770fa; color: white;">
+                        <div class="inner">
+                            <p class="mb-1">Valor inventario costo</p>
+                            <h3> <?php echo $v["total_costo"] ?>Bs</h3> 
+                            <p class="badge bg-success">+10%</p> 
+                            <span>esta semana</span> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <p class="mb-1">Valor inventario venta</p>
+                            <h3><?php echo $v["total_venta"] ?>Bs</h3> 
+                            <p class="badge bg-success">+20%</p> 
+                            <span>esta semana</span> 
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
+
+            <div class="row">
                     <div class="card">
                         <div class="card-header">
                             <!-- Boton registrar producto -->

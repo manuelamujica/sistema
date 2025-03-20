@@ -25,8 +25,8 @@
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="paymentTypesTable" class="table table-bordered table-striped">
+                        
+                            <table id="paymentTypesTable" class="table table-bordered table-striped datatable">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
@@ -78,7 +78,6 @@
                                     <?php } ?>
                                 </tbody>
                             </table>
-                        </div>
                     </div>
                 </div>
             </div>

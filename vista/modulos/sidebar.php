@@ -14,53 +14,68 @@
     MENU / sidebar
 =====================-->
 <?php if(isset($_SESSION["rif"]) || $_SESSION["cod_usuario"] == 1): ?>
-<div class="sidebar">
+    <div class="sidebar">
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <?php if ($_SESSION["producto"]==1): ?>
-                <li class="nav-item">
-                    <a href="productos" class="nav-link">
-                        <i class="nav-icon fa fa-shopping-bag"></i>
-                        <p>
-                            Productos
-                        </p>
-                    </a>
-                </li>
-                <?php endif;?>
-                <?php if ($_SESSION["inventario"]==1): ?>
-                <li class="nav-item">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent text-sm" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">PRODUCTOS</li>
+            <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fas fa-dolly-flatbed nav-icon"></i>
                         <p>
-                            Ajuste de Inventario<i class="right fas fa-angle-left nav-icon"></i>
+                            Inventario<i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="carga" class="nav-link">
-                                    <i class="fas fa-sort-amount-up-alt nav-icon"></i>
-                                    <p>Carga de productos</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="descarga" class="nav-link">
-                                    <i class="fas fa-sort-amount-down-alt nav-icon"></i>
-                                    <p>Descarga de productos</p>
-                                </a>
-                            </li>
-                        </ul>
+                    <ul class="nav nav-treeview">
+                    <?php if ($_SESSION["producto"]==1): ?>
+                        <li class="nav-item">
+                            <a href="productos" class="nav-link">
+                                <i class="nav-icon fa fa-shopping-bag"></i>
+                                <p>
+                                    Productos
+                                </p>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if ($_SESSION["categoria"]==1): ?>
+                    <li class="nav-item">
+                        <a href="categorias" class="nav-link">
+                            <i class="nav-icon fa fa-table"></i>
+                                <p>
+                                    Categorías
+                                </p>
+                        </a>
+                    </li>
+                    <?php endif;?>
+
+                    <?php if ($_SESSION["inventario"]==1): ?>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-dolly-flatbed nav-icon"></i>
+                                <p>
+                                    Ajustes<i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="carga" class="nav-link">
+                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
+                                        <p>Carga de productos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="descarga" class="nav-link">
+                                        <i class="fas fa-sort-amount-down-alt nav-icon"></i>
+                                        <p>Descarga de productos</p>
+                                    </a>
+                                </li>
+                                <?php endif;?>
+                            </ul>
+                        </li>
+                    </ul>
                 </li>
-                <?php endif; ?>
-                <?php if ($_SESSION["categoria"]==1): ?>
-                <li class="nav-item">
-                    <a href="categorias" class="nav-link">
-                        <i class="nav-icon fa fa-table"></i>
-                            <p>
-                                Categorías
-                            </p>
-                    </a>
-                </li>
-                <?php endif;?>
+
+                <li class="nav-header">COMERCIO</li>
                 <?php if ($_SESSION["compra"]==1): ?>
                 <li class="nav-item">
                     <a href="compras" class="nav-link">
@@ -81,26 +96,202 @@
                     </a>
                 </li>
                 <?php endif;?>
-                <?php if ($_SESSION["cliente"]==1): ?>
+
                 <li class="nav-item">
-                    <a href="clientes" class="nav-link">
-                        <i class="nav-icon fa fa-users"></i>
-                            <p>
-                                Clientes
-                            </p>
-                    </a>
-                </li>
-                <?php endif; ?>
-                <?php if ($_SESSION["proveedor"]==1): ?>
-                <li class="nav-item">
-                    <a href="proveedores" class="nav-link">
-                        <i class="nav-icon far fa fa-truck"></i>
+                    <a href="#" class="nav-link">
+                    <i class="fas fa-user-circle nav-icon"></i>
                         <p>
-                            Proveedores
+                            Terceros<i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <?php if ($_SESSION["cliente"]==1): ?>
+                        <li class="nav-item">
+                            <a href="clientes" class="nav-link">
+                                <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Clientes
+                                    </p>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                        <?php if ($_SESSION["proveedor"]==1): ?>
+                        <li class="nav-item">
+                            <a href="proveedores" class="nav-link">
+                                <i class="nav-icon far fa fa-truck"></i>
+                                <p>
+                                    Proveedores
+                                </p>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
                 </li>
-                <?php endif; ?>
+                    <li class="nav-header">ADMINISTRACIÓN</li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                            <i class="fas fa-coins nav-icon"></i>
+                                <p>
+                                    Contabilidad<i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="catalogocuentas" class="nav-link">
+                                    <i class="fas fa-wallet nav-icon"></i>
+                                        <p>Catalogo de cuentas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="descarga" class="nav-link">
+                                    <i class="fas fa-cogs nav-icon"></i> 
+                                        <p>Configuración contable</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="descarga" class="nav-link">
+                                    <i class="fas fa-chart-line nav-icon"></i>
+                                        <p>Reportes contables</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-chart-bar nav-icon"></i>
+                                <p>
+                                    Finanzas<i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="carga" class="nav-link">
+                                    <i class="fas fa-chart-pie nav-icon"></i>
+                                        <p>Resumen</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                            <i class="fas fa-university nav-icon"></i>
+                                <p>
+                                    Bancos y Caja <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="carga" class="nav-link">
+                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
+                                        <p>No se</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                            <i class="fas fa-file-invoice-dollar nav-icon"></i>
+                                <p>
+                                    Gastos
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                            <i class="fas fa-wallet nav-icon"></i>                                 
+                            <p>
+                                    Cuentas pendientes <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="carga" class="nav-link">
+                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
+                                        <p>Cuentas por pagar</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="carga" class="nav-link">
+                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
+                                        <p>Cuentas por cobrar</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <li class="nav-header">RRHH</li>    
+                    <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-dolly-flatbed nav-icon"></i>
+                                <p>
+                                    Nómina<i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="carga" class="nav-link">
+                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
+                                        <p>Empleados</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <li class="nav-header">INFORMES</li>
+                    <?php if ($_SESSION["reporte"]==1): ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <p>
+                                Reportes<i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="rep-cliente" class="nav-link">
+                                    <i class="fas fa-user-friends nav-icon"></i>                                        
+                                    <p>
+                                        De clientes
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="rep-proveedores" class="nav-link">
+                                    <i class="fas fa-store nav-icon"></i>                                        
+                                        <p>
+                                            De proveedores
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="rep-inventario" class="nav-link">
+                                    <i class="fas fa-pallet nav-icon"></i>                                        
+                                        <p>
+                                            De inventario
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="rep-venta" class="nav-link">
+                                    <i class="fas fa-file-invoice nav-icon"></i>                                        
+                                        <p>
+                                            De ventas
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="rep-compra" class="nav-link">
+                                    <i class="fas fa-shopping-bag nav-icon"></i>                                       
+                                        <p>
+                                            De compras
+                                        </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif;?>
+
+                <li class="nav-header">CONFIGURACION GENERAL</li>
                 <?php if ($_SESSION["usuario"]==1): ?>
                 <li class="nav-item">
                     <a href="usuarios" class="nav-link">
@@ -111,58 +302,8 @@
                     </a>
                 </li>
                 <?php endif;?>
-                <?php if ($_SESSION["reporte"]==1): ?>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-chart-line nav-icon"></i>
-                        <p>
-                            Reportes<i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="rep-cliente" class="nav-link">
-                                <i class="fas fa-user-friends nav-icon"></i>                                        
-                                <p>
-                                    De clientes
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="rep-proveedores" class="nav-link">
-                                <i class="fas fa-store nav-icon"></i>                                        
-                                    <p>
-                                        De proveedores
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="rep-inventario" class="nav-link">
-                                <i class="fas fa-pallet nav-icon"></i>                                        
-                                    <p>
-                                        De inventario
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="rep-venta" class="nav-link">
-                                <i class="fas fa-file-invoice nav-icon"></i>                                        
-                                    <p>
-                                        De ventas
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="rep-compra" class="nav-link">
-                                <i class="fas fa-shopping-bag nav-icon"></i>                                       
-                                    <p>
-                                        De compras
-                                    </p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <?php endif;?>
+
+
                 <?php if ($_SESSION["configuracion"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">

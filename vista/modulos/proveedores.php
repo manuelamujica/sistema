@@ -37,7 +37,7 @@
 
                                             <th>Representante</th>
 
-                                            <th>Accines</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>

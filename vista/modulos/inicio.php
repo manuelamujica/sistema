@@ -16,23 +16,344 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>BIENVENIDOS</h1>
+                    <h1>INICIO</h1>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
-
     <!-- Main content -->
     <section class="content">
 
-        <!-- Default box -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Sistema para la comercialización de productos</h3>
+            <!-- Widgets del Dashboard -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Caja -->
+                            <div class="col-lg-3 col-6">
+                                <div class="small-box" style="background-color: #8770fa; color: white;">
+                                    <div class="inner">
+                                        <p class="mb-1">Caja 1</p>
+                                        <h3>10.378bs</h3> 
+                                        <p class="badge bg-success">+10%</p> 
+                                        <span>esta semana</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Clientes -->
+                            <div class="col-lg-3 col-6">
+                                <div class="small-box bg-primary">
+                                    <div class="inner">
+                                        <p class="mb-1">Caja 2</p>
+                                        <h3>150$</h3> 
+                                        <p class="badge bg-success">+20%</p> 
+                                        <span>esta semana</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Clientes -->
+                            <div class="col-lg-3 col-6">
+                                <div class="small-box bg-primary">
+                                    <div class="inner">
+                                        <p class="mb-1">Clientes</p>
+                                        <h3>123</h3>
+                                        <p class="badge bg-success">+10%</p> 
+                                        <span>esta semana</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Gastos -->
+                            <div class="col-lg-3 col-6">
+                                <div class="small-box bg-primary">
+                                    <div class="inner">
+                                        <p class="mb-1">Gastos</p>
+                                        <h3>431$</h3>
+                                        <p class="badge bg-danger">-15%</p> 
+                                        <span>esta semana</span> 
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row">
+                    <!-- Gráfico de Ingresos - Egresos -->
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header"><h3>Ingresos vs Gastos</h3></div>
+                                    <div class="card-body">
+                                        <canvas id="graficoIngresos"></canvas>
+                                    </div>
+                            </div>
+                        </div>
+                        <!-- Gráfico de torta -->
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header"><h3>Gastos</h3></div>
+                                    <div class="card-body">
+                                        <canvas id="graficoGastos"></canvas>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tablas de productos más vendidos y alertas de stock -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Productos mas vendidos</h3>
+                                    <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Nombre</th>
+                                                <th>Marca</th>
+                                                <th>Presentación</th>
+                                                <th>Precio</th>
+                                                <th>Stock</th>
+                                            </tr>         
+                                        </thead>
+                                    </table>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Alertas de stock</h3>
+                                    <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Codigo</th>
+                                                <th>Producto</th>
+                                                <th>Stock</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- Tabla de tareas -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                        <div class="card-body">
+                        <h3>No se</h3>
+                            <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Task</th>
+                                <th>Progress</th>
+                                <th style="width: 40px">Label</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>1.</td>
+                                <td>Update software</td>
+                                <td>
+                                    <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-danger">55%</span></td>
+                                </tr>
+                                <tr>
+                                <td>2.</td>
+                                <td>Clean database</td>
+                                <td>
+                                    <div class="progress progress-xs">
+                                    <div class="progress-bar bg-warning" style="width: 70%"></div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-warning">70%</span></td>
+                                </tr>
+                                <tr>
+                                <td>3.</td>
+                                <td>Cron job running</td>
+                                <td>
+                                    <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar bg-primary" style="width: 30%"></div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-primary">30%</span></td>
+                                </tr>
+                                <tr>
+                                <td>4.</td>
+                                <td>Fix and squish bugs</td>
+                                <td>
+                                    <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar bg-success" style="width: 90%"></div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-success">90%</span></td>
+                                </tr>
+                                <tr>
+                                <td>5.</td>
+                                <td>Fix and squish bugs</td>
+                                <td>
+                                    <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar bg-success" style="width: 90%"></div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-success">90%</span></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <!--Reporte ejemplo finanzas-->
+                <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">reporte ej finanzas</h3>
+                            <a href="javascript:void(0);">View Report</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">$18,230.00</span>
+                                <span>Sales Over Time</span>
+                            </p>
+                            <p class="ml-auto d-flex flex-column text-right">
+                                <span class="text-success">
+                                    <i class="fas fa-arrow-up"></i> 33.1%
+                                </span>
+                                <span class="text-muted">Since last month</span>
+                            </p>
+                        </div>
+                        <div class="position-relative mb-4">
+                            <canvas id="sales-chart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
-        <div class="card-body">
-            Esta plataforma te brinda las herramientas necesarias para gestionar tu inventario, controlar las ventas y optimizar la comercialización de tus productos. Simplifica y agiliza tus operaciones en un solo lugar. ¡Empieza a explorar todas sus funciones y lleva tu negocio al siguiente nivel!
-        </div>
+
+                
+        </section>
+        
+    <script>
+    $(document).ready(function() {
+        $('#tablaProductos, #tablaStock').DataTable();
+
+        // Gráfico de Ingresos vs Egresos
+        var ctxIngresos = document.getElementById('graficoIngresos').getContext('2d');
+        new Chart(ctxIngresos, {
+            type: 'line',
+            data: {
+                labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [150, 250, 200, 300, 400, 500, 600],
+                    borderColor: '#5271ff' ,
+                    fill: false
+                }, {
+                    label: 'Gastos',
+                    data: [100, 150, 180, 200, 220, 300, 350],
+                    borderColor: '#ed1c2a',
+                    fill: false
+                }]
+            }
+        });
+        var ctxGastos = document.getElementById('graficoGastos').getContext('2d');
+
+        new Chart(ctxGastos, {
+        type: 'bar',
+        data: {
+            labels: ['Renta', 'Pago proveedores', 'Servicios', 'Publicidad', 'Gastos administrativos'],
+            datasets: [
+                {
+                    label: 'Últimos 3 meses',
+                    data: [1200, 950, 850, 730, 650],
+                    backgroundColor: '#5271FF',
+                    borderRadius: 8
+                },
+                {
+                    label: 'Últimos 6 meses',
+                    data: [2400, 1900, 1700, 1460, 1300],
+                    backgroundColor: '#8770FA',
+                    borderRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#D1D1D1'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#D1D1D1'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: '#D1D1D1',
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            return `${tooltipItem.dataset.label}: $${tooltipItem.raw}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+<script>
+    var ctx = document.getElementById('sales-chart').getContext('2d');
+    var salesChart = new Chart(ctx, {
+        type: 'line', 
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'Sales This Year', // Etiqueta para el gráfico
+                data: [12000, 15000, 18000, 20000, 17000, 22000, 25000, 28000, 20000, 22000, 19000, 22000], // Datos de las ventas
+                borderColor: 'rgba(0, 123, 255, 1)', // Color de la línea
+                backgroundColor: 'rgba(0, 123, 255, 0.2)', // Color de fondo de la línea
+                fill: true, // Rellenar el área debajo de la línea
+                tension: 0.4 // Curvatura de la línea
+            }, {
+                label: 'Sales Last Year', // Etiqueta para el gráfico
+                data: [10000, 13000, 15000, 18000, 16000, 19000, 23000, 21000, 16000, 19000, 18000, 20000, 19000], // Datos de las ventas del año pasado
+                borderColor: 'rgba(169, 169, 169, 1)', // Color de la línea
+                backgroundColor: 'rgba(169, 169, 169, 0.2)', // Color de fondo de la línea
+                fill: true, // Rellenar el área debajo de la línea
+                tension: 0.4 // Curvatura de la línea
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
         </div>
     </section>
     <!-- /.content -->
@@ -40,8 +361,7 @@
 <!-- /.content-wrapper -->
 
 
-
-
+<!-- MODAL REGISTRAR EMPRESA 1ERA VEZ-->
 <div class="modal fade" id="modalregistrarempresa" tabindex="-1" aria-labelledby="modalregistrarempresaLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

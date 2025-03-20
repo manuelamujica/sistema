@@ -71,6 +71,31 @@ class Productos extends Conexion{
 
 
 #4) Metodos CRUD, etc
+/*======================================================
+TOTAL EN COSTO/VENTA DEL INVENTARIO
+========================================================*/
+private function inventario_costo(){
+    $sql="SELECT
+    COALESCE(ROUND(SUM(present.costo * COALESCE(dp.stock, 0)), 2), 0) AS total_costo,
+    COALESCE(ROUND(SUM((present.costo * (1 + present.porcen_venta / 100)) * COALESCE(dp.stock, 0)), 2), 0) AS total_venta
+    FROM productos AS p
+    JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
+    JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
+    JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
+    LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion;";
+    $strExec = $this->conex->prepare($sql);
+    $resul = $strExec->execute();   
+    $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
+    if($resul){
+        return $datos;
+    }else{
+        return $r = 0;
+    }
+}
+
+public function getinventario_costo(){
+    return $this->inventario_costo();
+}
 
 /*======================================================================
 REGISTRAR PRODUCTO con CATEGORIA + REGISTRAR PRESENTACION con UNIDAD

@@ -156,7 +156,7 @@ $(document).ready(function() {
         var porcen = $(this).val();
         if (porcen.trim() === '') {
             hideError('#porcen'); 
-        } else if (!/^\d+$/.test(porcen)) { // Permite números enteros     FUNCIONA PERO MUEVE EL ICONO DE %
+        } else if (!/^\d+$/.test(porcen)) { // Permite números enteros 
             showErrorP('#porcen', 'Solo se permiten números enteros.');
         } else {
             hideError('#porcen'); 

@@ -22,7 +22,7 @@ if(isset($_POST['buscar'])){
     exit;
 
 //REGISTRAR
-}elseif (isset($_POST['guardar'])){
+} else if (isset($_POST['guardar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["categoria"]) && !empty($_POST["unidad"]) && !empty($_POST["iva"])){
 
         $errors = [];
@@ -247,6 +247,7 @@ else if(isset($_POST['codigo'])){
 }*/
 
 $registro = $objProducto->getmostrar();
+$datos = $objProducto->getinventario_costo();
 if(isset($_POST['compra'])){
     $_GET['ruta']=$_POST['compra'];
 }else {
