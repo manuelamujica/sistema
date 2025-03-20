@@ -220,7 +220,7 @@ if (isset($registrar)){ ?>
                         <div class="col-md-7">
                             <label for="tasa">Tasa de la Divisa</label>
                             <div class="input-group">
-                                <input type="number" step="0.01" class="form-control" value="<?= $divisa['tasa'];?>" name="tasa[<?= $index ?>][tasa]" required>
+                                <input type="number" id="tasaactual" step="0.01" class="form-control" value="<?= $divisa['tasa'];?>" name="tasa[<?= $index ?>][tasa]" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text">Bs</span>
                                 </div>
@@ -260,17 +260,59 @@ if (isset($editar)): ?>
     </script>
 <?php endif; ?>
 
+<div class="modal fade" id="loadingModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <h5>Cargando tasas...</h5>
+                <div class="spinner-border text-primary mt-3" role="status">
+                    <span class="sr-only">Cargando...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php 
     $ultimo=end($consulta);
     if($ultimo['cod_divisa']!=1):
         if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): 
 ?>
     <script>
-        console.log("pasa la primera condicion");
-        $(document).ready(function() {           
-                $('#editModal').modal('show');
+    $(document).ready(function() {  
+        var sen = "dolar";
+        var tasaorig = $("#tasaactual").val();
+
+        // Mostrar modal de carga antes de la solicitud
+        $("#loadingModal").modal("show");
+
+        $.post('index.php?pagina=divisa', { sen }, function(response) {
+            console.log("Respuesta del servidor:", response);
+            let tasa = parseFloat(response.replace(',', '.'));
+
+            if (response !== "error") {
+                $('#tasaactual').val(tasa.toFixed(2));
+                var now = new Date();
+                var fecha = now.getFullYear() + '-' +
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(now.getDate()).padStart(2, '0');
+                $('#fecha').val(fecha);
+            } else {
+                console.log("Error en la respuesta.");
+                $('#tasaactual').val(tasaorig);
+            }
+
+            // Ocultar modal de carga y mostrar modal de edición
+            $("#loadingModal").modal("hide");
+            $('#editModal').modal('show');
+            
+        }).fail(function() {
+            console.log("Error en la solicitud AJAX.");
+            $("#loadingModal").modal("hide");
         });
-    </script>
+    });
+</script>
+
 <?php   endif; 
     endif; ?>
 
