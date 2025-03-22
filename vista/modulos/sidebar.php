@@ -161,34 +161,26 @@
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
-                                    Finanzas<i class="right fas fa-angle-left"></i>
+                                    Finanzas
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="carga" class="nav-link">
-                                    <i class="fas fa-chart-pie nav-icon"></i>
-                                        <p>Resumen</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                             <i class="fas fa-university nav-icon"></i>
                                 <p>
-                                    Bancos y Caja <i class="right fas fa-angle-left"></i>
+                                    Bancos y Caja
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="carga" class="nav-link">
-                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
-                                        <p>No se</p>
-                                    </a>
-                                </li>
-                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-dolly-flatbed nav-icon"></i>
+                                <p>
+                                    Nómina
+                                </p>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -201,7 +193,7 @@
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                             <i class="fas fa-wallet nav-icon"></i>                                 
-                            <p>
+                                <p>
                                     Cuentas pendientes <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -220,23 +212,7 @@
                                 </li>
                             </ul>
                         </li>
-                    <li class="nav-header">RRHH</li>    
-                    <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-dolly-flatbed nav-icon"></i>
-                                <p>
-                                    Nómina<i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="carga" class="nav-link">
-                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
-                                        <p>Empleados</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+        
                     <li class="nav-header">INFORMES</li>
                     <?php if ($_SESSION["reporte"]==1): ?>
                     <li class="nav-item">
@@ -291,7 +267,7 @@
                     </li>
                     <?php endif;?>
 
-                <li class="nav-header">CONFIGURACION GENERAL</li>
+                <li class="nav-header">CONFIGURACIÓN</li>
                 <?php if ($_SESSION["usuario"]==1): ?>
                 <li class="nav-item">
                     <a href="usuarios" class="nav-link">
