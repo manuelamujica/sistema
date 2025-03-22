@@ -55,7 +55,7 @@ class Venta extends Conexion{
         p.cod_producto,
         p.nombre AS producto_nombre,
         present.costo,
-        p.marca,
+        m.nombre AS marca,
         present.excento,
         present.porcen_venta,
         u.cod_unidad,
@@ -65,6 +65,7 @@ class Venta extends Conexion{
         COALESCE(ROUND(SUM(dp.stock), 2), 0) AS total_stock 
         FROM presentacion_producto AS present
         JOIN productos AS p ON present.cod_producto = p.cod_producto
+        JOIN marcas AS m ON p.cod_marca = m.cod_marca
         JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
         LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
@@ -237,7 +238,7 @@ class Venta extends Conexion{
         dv.importe,
         p.cod_producto,
         p.nombre AS producto_nombre,
-        p.marca,
+        m.nombre AS marca,
         present.excento,
         present.cod_presentacion,
         present.presentacion,
@@ -250,6 +251,7 @@ class Venta extends Conexion{
     JOIN detalle_productos AS dp ON dv.cod_detallep = dp.cod_detallep
     JOIN presentacion_producto AS present ON dp.cod_presentacion = present.cod_presentacion
     JOIN productos AS p ON present.cod_producto = p.cod_producto
+    JOIN marcas AS m ON p.cod_marca = m.cod_marca
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
     WHERE dv.cod_venta =:cod_venta;";
     $consulta=$this->conex->prepare($sql);
