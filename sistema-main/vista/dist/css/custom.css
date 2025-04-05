@@ -1,0 +1,160 @@
+/* =============================
+CSS PARA CUSTOMIZAR LA PLANTILLA
+===============================*/
+
+/* HEADER */
+.main-header{
+    background-color: #db6a00 ; /* Fondo del header */
+}
+
+.main-header .nav-link {
+    color: white !important; /* Color del texto de los enlaces */
+}
+
+.main-header .nav-link:hover {
+    color: #e2e2e2 !important; /* al pasar el ratón */
+}
+
+.dropdown-item.active, .dropdown-item:active{
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #E89005;
+}
+/* SIDEBAR */
+.main-sidebar{
+    background-color: #252525; /* Fondo del sidebar */
+}
+
+.brand-link,
+.main-sidebar .brand-link {
+    /* background-color: #Ec7507  ; Fondo del sidebar logo */
+    border-bottom: 1px solid #ddcdc0 ; /* Color de la línea divisoria */
+}
+
+.main-sidebar .nav-link{
+    color: white !important ;/* Color del texto de los enlaces */
+}
+
+.main-sidebar .nav-icon{
+    color: white; /* Color de los íconos */
+}
+
+
+/* CONTENIDO*/
+.content-wrapper a{
+    color: #db6a00 ; 
+    font-weight: bold;
+}
+
+.content-wrapper a:hover{
+    color: #E89005 ; 
+}
+
+/* BOTONES*/
+.btn-primary {
+    background-color: #db6a00 !important ;
+    border-color: #db6a00 !important; 
+}
+.btn-primary:hover {
+    background-color: #E89005 !important ;
+    border-color: #E89005 !important; 
+}
+
+/* MODAL-CARD HEADER*/
+.content-wrapper .modal-header{
+    background-color: #db6a00;
+    color: #ffffff;
+}
+
+/* MODAL-CARD HEADER*/
+.modal-header{
+    background-color: #db6a00;
+    color: #ffffff;
+}
+
+
+/* FOOTER*/
+.main-footer {
+    background-color:#252525 ; /* Color de fondo */
+}
+
+.main-footer p, strong{
+    color: #ffffff; 
+}
+
+.main-footer a{
+    color: #E89005; 
+    font-weight: bold;
+}
+
+.card-body a{
+    color: #db6a00; 
+    font-weight: bold;
+}
+.card-body a:hover{
+    color: #E89005; 
+    font-weight: bold;
+}
+.page-item.active .page-link{
+    background-color: #db6a00;
+    border-color: #db6a00;
+}
+
+/* LOGIN*/
+.input-group {
+    position: relative; /* Para que los iconos se posicionen correctamente */
+}
+
+.input-group .icon-password {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+
+
+#passU + .icon-password {
+    position: absolute;
+    right: 70px; /* Ajusta la posición a la derecha solo para #passU */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+
+#passU + .invalid-feedback {
+    position: absolute;
+    top: 100%; /*Coloca el mensaje justo debajo del campo*/
+    left: 0; /*Alinea el mensaje con el campo*/
+    width: 100%; /*Asegura que el mensaje ocupe el ancho del campo*/
+}
+
+#passE + .icon-password {
+    position: absolute;
+    right: 70px; /* Ajusta la posición a la derecha solo para #passU */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+
+#passE + .invalid-feedback {
+    position: absolute;
+    top: 100%; /*Coloca el mensaje justo debajo del campo*/
+    left: 0; /*Alinea el mensaje con el campo*/
+    width: 100%; /*Asegura que el mensaje ocupe el ancho del campo*/
+}
+
+.login-box-msg{
+    color:#6c757d;
+    font-weight: normal;
+}
+
+.login-box{
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+}
