@@ -1,6 +1,8 @@
 <?php
 require_once "conexion.php";
+require_once "validaciones.php";
 class Clientes extends Conexion{
+    use ValidadorTrait; // Usar el trait para validaciones
     private $conex;
     private $nombre;
     private $apellido;
@@ -15,6 +17,42 @@ public function __construct(){
     $this -> conex = new Conexion();
     $this -> conex = $this->conex->conectar();
 }
+
+public function cargarDatosDesdeFormulario(array $post) {
+    $reglas = [
+        'cedula_rif'  => ['tipo' => 'numerico', 'min' => 6, 'max' => 12],
+        'nombre'      => ['tipo' => 'texto', 'min' => 2, 'max' => 50],
+        'apellido'    => ['tipo' => 'texto', 'min' => 2, 'max' => 50],
+        'telefono'    => ['tipo' => 'telefono'],
+        'email'       => ['tipo' => 'email'],
+        'direccion'   => ['tipo' => 'alfanumerico', 'min' => 5, 'max' => 100],
+        //'foto'      => ['tipo' => 'imagen', 'maxSize' => 2, 'formatos' => ['image/jpeg', 'image/png']], // opcional
+    ];
+
+    try {
+        $datosValidados = $this->validarConjunto($post, $reglas);
+        $this->setCedula($datosValidados['cedula_rif']);
+        $this->setNombre($datosValidados['nombre']);
+        $this->setApellido($datosValidados['apellido']);
+       
+        $this->setTelefono($datosValidados['telefono']);
+        $this->setEmail($datosValidados['email']);
+        $this->setDireccion($datosValidados['direccion']);
+        return true;
+
+    } catch (Exception $e) {
+        throw new Exception("Error en validación: " . $e->getMessage());}}
+
+
+
+
+
+
+
+
+
+
+
 
 public function getNombre(){
     return $this->nombre;
