@@ -42,6 +42,7 @@ require_once "controlador/catalogocuentas.php";
                                 </select>
                             </div>
                         </div>
+                        
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped datatable" style="width: 100%;">

@@ -4,16 +4,16 @@ require_once "controlador/productos.php";
 
 <div class="content-wrapper">
     <section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Productos</h1>
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Productos</h1>
+                </div>
             </div>
         </div>
-    </div>
     </section>
 
-<!-- Main content -->
+    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -41,7 +41,6 @@ require_once "controlador/productos.php";
                 <?php } ?>
             </div>
 
-            <div class="row">
                     <div class="card">
                         <div class="card-header">
                             <!-- Boton registrar producto -->
@@ -296,6 +295,7 @@ require_once "controlador/productos.php";
                             </div>
                         </div>
                     </div>
+        
 <?php if (isset($registrarp)): ?>
     <script>
         Swal.fire({
@@ -651,7 +651,7 @@ require_once "controlador/productos.php";
                         </div>
                     </div>
                 </div>-->
-
+                
             </div>
         </div>      
     </section>

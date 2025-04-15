@@ -10,22 +10,14 @@
         <?php endif; ?>
         <span class="brand-text font-weight-bold">SAVYC</span>
     </a>
-<!--=================
+<!--=====================
     MENU / sidebar
 =====================-->
 <?php if(isset($_SESSION["rif"]) || $_SESSION["cod_usuario"] == 1): ?>
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent text-sm" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-header">PRODUCTOS</li>
-            <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-dolly-flatbed nav-icon"></i>
-                        <p>
-                            Inventario<i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
+                <li class="nav-header">INVENTARIO</li>
                     <?php if ($_SESSION["producto"]==1): ?>
                         <li class="nav-item">
                             <a href="productos" class="nav-link">
@@ -36,17 +28,6 @@
                             </a>
                         </li>
                     <?php endif; ?>
-
-                    <?php if ($_SESSION["categoria"]==1): ?>
-                    <li class="nav-item">
-                        <a href="categorias" class="nav-link">
-                            <i class="nav-icon fa fa-table"></i>
-                                <p>
-                                    Categorías
-                                </p>
-                        </a>
-                    </li>
-                    <?php endif;?>
 
                     <?php if ($_SESSION["inventario"]==1): ?>
                         <li class="nav-item">
@@ -72,8 +53,6 @@
                                 <?php endif;?>
                             </ul>
                         </li>
-                    </ul>
-                </li>
 
                 <li class="nav-header">COMERCIO</li>
                 <?php if ($_SESSION["compra"]==1): ?>
@@ -139,13 +118,13 @@
                                 <li class="nav-item">
                                     <a href="catalogocuentas" class="nav-link">
                                     <i class="fas fa-wallet nav-icon"></i>
-                                        <p>Catalogo de cuentas</p>
+                                        <p>Catálogo de cuentas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="descarga" class="nav-link">
+                                    <a href="movimientos" class="nav-link">
                                     <i class="fas fa-cogs nav-icon"></i> 
-                                        <p>Configuración contable</p>
+                                        <p>Gestionar asientos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -165,25 +144,17 @@
                                 </p>
                             </a>
                         </li>
-
+                    <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                            <i class="fas fa-university nav-icon"></i>
+                            <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
                                     Bancos y Caja
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-dolly-flatbed nav-icon"></i>
-                                <p>
-                                    Nómina
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="gastos" class="nav-link">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
                                 <p>
                                     Gastos
@@ -191,26 +162,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="cuentaspend" class="nav-link">
                             <i class="fas fa-wallet nav-icon"></i>                                 
                                 <p>
-                                    Cuentas pendientes <i class="right fas fa-angle-left"></i>
+                                    Cuentas pendientes</i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="carga" class="nav-link">
-                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
-                                        <p>Cuentas por pagar</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="carga" class="nav-link">
-                                        <i class="fas fa-sort-amount-up-alt nav-icon"></i>
-                                        <p>Cuentas por cobrar</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
         
                     <li class="nav-header">INFORMES</li>
@@ -267,19 +224,7 @@
                     </li>
                     <?php endif;?>
 
-                <li class="nav-header">CONFIGURACIÓN</li>
-                <?php if ($_SESSION["usuario"]==1): ?>
-                <li class="nav-item">
-                    <a href="usuarios" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
-                            <p>
-                                Usuarios
-                            </p>
-                    </a>
-                </li>
-                <?php endif;?>
-
-
+                <li class="nav-header">AJUSTES</li>
                 <?php if ($_SESSION["configuracion"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -289,46 +234,97 @@
                             </p>
                     </a>
                     <ul class="nav nav-treeview">
+
+                        <li class="nav-header">GENERAL</li>
                         <li class="nav-item">
-                            <a href="general" class="nav-link">
-                                <i class="fas fa-cogs nav-icon"></i>
+                                <a href="general" class="nav-link">
+                                    <i class="fas fa-cogs nav-icon"></i>
+                                        <p>
+                                            Empresa
+                                        </p>
+                                </a>
+                            </li>
+
+                        <li class="nav-header">SEGURIDAD Y ACCESOS</li>
+                        <?php if ($_SESSION["usuario"]==1): ?>
+                        <li class="nav-item">
+                            <a href="usuarios" class="nav-link">
+                                <i class="nav-icon fas fa-users-cog"></i>
                                     <p>
-                                        Ajuste general
+                                        Usuarios
                                     </p>
                             </a>
                         </li>
+                        <?php endif;?>
                         <li class="nav-item">
-                            <a href="divisa" class="nav-link">
-                                <i class="fas fa-dollar-sign nav-icon"></i>
+                            <a href="roles" class="nav-link">
+                                <i class="nav-icon fas fa-user-tag"></i>
                                     <p>
-                                        Divisas
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="tpago" class="nav-link">
-                                <i class="fas fa-money-bill nav-icon"></i>
-                                    <p>
-                                        Tipos de pago
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="unidad" class="nav-link">
-                                <i class="fas fa-balance-scale nav-icon"></i>
-                                    <p>
-                                        Unidades de medida
+                                        Roles y Permisos
                                     </p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="roles" class="nav-link">
-                                <i class="fas fa-user-cog nav-icon"></i>
+                                <i class="nav-icon fas fa-user-shield"></i>
                                     <p>
-                                        Ajuste de roles
+                                        Bitácora
                                     </p>
                             </a>
                         </li>
+
+                        <li class="nav-header">PRODUCTOS</li>
+                            <li class="nav-item">
+                                <a href="unidad" class="nav-link">
+                                    <i class="fas fa-balance-scale nav-icon"></i>
+                                        <p>
+                                            Unidades de medida
+                                        </p>
+                                </a>
+                            </li>
+                            <?php if ($_SESSION["categoria"]==1): ?>
+                            <li class="nav-item">
+                                <a href="categorias" class="nav-link">
+                                    <i class="nav-icon fa fa-table"></i>
+                                        <p>
+                                            Categorías
+                                        </p>
+                                </a>
+                            </li>
+                            <?php endif;?>
+                            <li class="nav-item">
+                                <a href="marcas" class="nav-link">
+                                    <i class="fas fa-tags nav-icon"></i>
+                                        <p>
+                                            Marcas
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-header">FINANZAS</li>
+                            <li class="nav-item">
+                                <a href="divisa" class="nav-link">
+                                    <i class="fas fa-dollar-sign nav-icon"></i>
+                                        <p>
+                                            Divisas
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="tpago" class="nav-link">
+                                    <i class="fas fa-money-bill nav-icon"></i>
+                                        <p>
+                                            Tipos de pago
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="tpago" class="nav-link">
+                                    <i class="fas fa-university nav-icon"></i>
+                                        <p>
+                                            Bancos
+                                        </p>
+                                </a>
+                            </li>
                     </ul>
                 </li>
                 <?php endif;?>
