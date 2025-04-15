@@ -17,9 +17,17 @@ if(isset($_POST['buscar'])){
 
     // Usamos la función 'cargarDatosDesdeFormulario' para validar y cargar los datos
     try {
-        $objCliente->cargarDatosDesdeFormulario($_POST);
+        $objCliente->setCedula($_POST['cedula_rif']);
+        $objCliente->setNombre($_POST['nombre']);
+        $objCliente->setApellido($_POST['apellido']);
+        $objCliente->setTelefono($_POST['telefono']);
+        $objCliente->setEmail($_POST['email']);
+        $objCliente->setDireccion($_POST['direccion']);
+    
+        $objCliente->check(); // Lanza excepción si hay errores
+        $objCliente->getRegistrar();
+        // Aquí puedes guardar o hacer lo que necesites con el cliente
     } catch (Exception $e) {
-        // Si ocurre un error en la validación, lo capturamos y mostramos
         $errores[] = $e->getMessage();
     }
 
@@ -154,4 +162,3 @@ if(isset($_POST["vista"])){
 }
 require_once 'plantilla.php';
 
-//Lo actualice en manuela branch, no tenia las alertas etc 
