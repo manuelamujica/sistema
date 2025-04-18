@@ -43,6 +43,7 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["usuario"] = 0;
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
+		
 
 
 
@@ -69,7 +70,7 @@ if (isset($_POST["ingresar"])) {
 					$_SESSION["reporte"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 10) {
 					$_SESSION["configuracion"] = 1;
-				}
+				} 
 
 			
 			}

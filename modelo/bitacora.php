@@ -1,4 +1,3 @@
-
 <?php
 require_once 'conexion.php';
 
@@ -42,5 +41,3 @@ function registrarEnBitacora($cod_usuario, $accion, $detalles, $modulo = '')
 
 
 }
-
-
