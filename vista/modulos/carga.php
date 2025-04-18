@@ -6,6 +6,7 @@
                 <div class="col-sm-6">
                     <!-- MODULO TRANSACIONAL DE CARGA DE PRODUCTOS EN AJUSTE DE INVENTARIO  -->
                     <h1>Carga de productos</h1>
+                    <p>En esta sección se puede gestionar cargas al inventario.</p>
                 </div>
             </div>
         </div>

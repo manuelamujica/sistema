@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $pagina = 'plantilla';
 
 if(!empty($_GET['pagina'])){

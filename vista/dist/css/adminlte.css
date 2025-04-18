@@ -10657,7 +10657,7 @@ a.text-dark:hover, a.text-dark:focus {
 .preloader {
   display: -ms-flexbox;
   display: flex;
-  background-color: #f4f6f9;
+  background-color: #edf2f4;
   height: 100vh;
   width: 100%;
   transition: height 200ms linear;
@@ -11752,7 +11752,7 @@ body.sidebar-collapse:not(.sidebar-mini-xs):not(.sidebar-mini-md):not(.sidebar-m
 }
 
 .content-wrapper {
-  background-color: #f4f6f9;
+  background-color: #edf2f4;
 }
 
 .content-wrapper > .content {
@@ -26664,7 +26664,7 @@ body.text-sm .input-group-text {
 }
 
 .card-primary.card-outline {
-  border-top: 3px solid #DB6A00;
+  border-top: 3px solid #8C57FF;
 }
 
 .card-primary.card-outline-tabs > .card-header a:hover {
@@ -34975,7 +34975,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   -ms-flex-align: center;
   align-items: center;
   /*background: linear-gradient(rgba(9, 8, 234), rgba(5, 7, 243));*/
-  background-color: #F4F6F9;
+  background-color: #edf2f4;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -35348,7 +35348,7 @@ body.iframe-mode-fullscreen.layout-navbar-fixed .wrapper .content-wrapper {
   left: 0;
   width: 100%;
   display: none;
-  background-color: #f4f6f9;
+  background-color: #edf2f4;
 }
 
 .content-wrapper.iframe-mode .tab-loading > div {

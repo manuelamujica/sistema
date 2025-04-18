@@ -1,5 +1,6 @@
 <?php
-session_start();
+//session_start(); lo comente para evitar conflictos con el inicio de sesion
+
 require_once "modelo/bitacora.php";
 
 $objbitacora = new Bitacora();

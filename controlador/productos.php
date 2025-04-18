@@ -382,6 +382,7 @@ else if(isset($_POST['codigo'])){
 }*/
 
 $registro = $objProducto->getmostrar();
+$datos = $objProducto->getinventario_costo();
 if(isset($_POST['compra'])){
     $_GET['ruta']=$_POST['compra'];
 }else {

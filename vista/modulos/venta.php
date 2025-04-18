@@ -6,6 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>Ventas</h1>
+                <p>En esta sección se puede gestionar las ventas de productos.</p>
             </div>
         </div>
     </section>
@@ -285,7 +286,7 @@ MODAL REGISTRAR PAGO
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Bs</span>
                                                 </div>
-                                                <input type="number" step="0.01" class="form-control monto-bs" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago()">
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-bs" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago()">
                                             </div>
                                         </div>
                                     </div>
@@ -303,7 +304,7 @@ MODAL REGISTRAR PAGO
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
                                                 </div>
-                                                <input type="number" step="0.01" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
                                                 <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
                                             </div>
                                         </div>
@@ -314,7 +315,7 @@ MODAL REGISTRAR PAGO
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Bs</span>
                                                 </div>
-                                                <input type="number" step="0.01" class="form-control monto-bs monto-con" id="monto-bs-con-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-bs monto-con" id="monto-bs-con-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -452,7 +453,7 @@ MODAL ABONAR PAGO
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Bs</span>
                                                 </div>
-                                                <input type="number" step="0.01" class="form-control monto-bs1" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago1()">
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-bs1" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago1()">
                                             </div>
                                         </div>
                                     </div>
@@ -470,7 +471,7 @@ MODAL ABONAR PAGO
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
                                                 </div>
-                                                <input type="number" step="0.01" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago1(<?= $index; ?>)">
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago1(<?= $index; ?>)">
                                                 <input type="hidden" class="form-control tasa-conversion1" id="tasa-conversion1-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
                                             </div>
                                         </div>
@@ -481,7 +482,7 @@ MODAL ABONAR PAGO
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Bs</span>
                                                 </div>
-                                                <input type="number" step="0.01" class="form-control monto-bs1 monto-con1" id="monto-bs-con-1<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-bs1 monto-con1" id="monto-bs-con-1<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
                                             </div>
                                         </div>
                                     </div>

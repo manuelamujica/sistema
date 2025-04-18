@@ -4,7 +4,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Ajustar información de la empresa</h1>
+                    <h1>Configuración de la empresa</h1>
+                    <p>Gestiona la información de la empresa.</p>
                 </div>
             </div>
         </div>

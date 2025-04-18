@@ -131,8 +131,8 @@ if(isset($_POST['buscar'])){
     }
 }
 
-$registro=$obj->consultar();
-$divisas=$objdivisa->consultar();
+//$registro=$obj->consultar();
+//$divisas=$objdivisa->consultar();
 $_GET['ruta'] = 'tpago';
 require_once 'plantilla.php';
 

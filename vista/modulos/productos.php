@@ -1,5 +1,4 @@
 <?php 
-#Requerir al controlador
 require_once "controlador/productos.php";
 
 if (isset($error)): ?>
@@ -11,24 +10,47 @@ if (isset($error)): ?>
         });
     </script>
 <?php endif; ?>
-?>
 
 <div class="content-wrapper">
     <section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Productos</h1>
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Productos</h1>
+                    <p>En esta sección se puede gestionar los productos.</p>
+                </div>
             </div>
         </div>
-    </div>
     </section>
 
-<!-- Main content -->
+    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
+                <?php foreach ($datos as $v){ ?>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box" style="background-color: #8770fa; color: white;">
+                        <div class="inner">
+                            <p class="mb-1">Valor inventario costo</p>
+                            <h3> <?php echo $v["total_costo"] ?>Bs</h3> 
+                            <p class="badge bg-success">+10%</p> 
+                            <span>esta semana</span> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <p class="mb-1">Valor inventario venta</p>
+                            <h3><?php echo $v["total_venta"] ?>Bs</h3> 
+                            <p class="badge bg-success">+20%</p> 
+                            <span>esta semana</span> 
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
+
                     <div class="card">
                         <div class="card-header">
                             <!-- Boton registrar producto -->
@@ -319,6 +341,7 @@ if (isset($error)): ?>
                             </div>
                         </div>
                     </div>
+        
 <?php if (isset($registrarp)): ?>
     <script>
         Swal.fire({
@@ -756,7 +779,7 @@ if (isset($error)): ?>
                         </div>
                     </div>
                 </div>-->
-
+                
             </div>
         </div>      
     </section>
