@@ -95,7 +95,7 @@
             // Construir la consulta SQL
             $sql = "SELECT c.cod_carga, c.status, c.descripcion, 
                     pre.cod_presentacion, pre.cod_producto, pre.presentacion, 
-                    pre.cantidad_presentacion, p.cod_producto, p.nombre, 
+                    pre.cantidad_presentacion, p.cod_producto, p.imagen, p.nombre, 
                     dp.cod_detallep,dp.lote,dp.fecha_vencimiento,dc.cod_det_carga, dc.cantidad
                     FROM detalle_carga dc
                     JOIN carga c ON dc.cod_carga = c.cod_carga
@@ -150,9 +150,10 @@
         }
 
         private function obtenerP(){
-            $sql = "SELECT pre.cod_presentacion, pre.cod_producto, pre.presentacion, p.cod_producto, p.nombre, p.marca
+            $sql = "SELECT pre.cod_presentacion, pre.cod_producto, pre.presentacion, p.cod_producto, p.nombre, m.nombre
             FROM presentacion_producto pre
-            JOIN productos p ON pre.cod_producto = p.cod_producto";
+            JOIN productos p ON pre.cod_producto = p.cod_producto
+            JOIN marcas m ON p.cod_marca = m.cod_marca";
             $strExec = $this->conex->prepare($sql);
             $resul = $strExec->execute();
             $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
@@ -171,11 +172,12 @@
         present.cod_presentacion,                        
         p.cod_producto,                                  
         p.nombre AS producto_nombre,                                                       
-        p.marca,                                                                                                  
+        m.nombre AS marca,                                                                                                  
         CONCAT(present.presentacion, ' x ', present.cantidad_presentacion, ' ', u.tipo_medida) AS presentacion  
         FROM presentacion_producto AS present                 
         JOIN productos AS p ON present.cod_producto = p.cod_producto      
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
+        JOIN marcas AS m ON p.cod_marca = m.cod_marca
         WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
     
             $consulta = $this->conex->prepare($sql);

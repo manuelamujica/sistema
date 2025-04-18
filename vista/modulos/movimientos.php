@@ -8,7 +8,7 @@ require_once "controlador/movimientos.php";
             <div class="row mb-2">
                 <div class="col-sm-9">
                     <h1>Generar asientos contables</h1>
-                    <p>En esta sección puedes convertir los movimientos de tu empresa en asientos contables.</p>
+                    <p>En esta sección se puede convertir los movimientos de tu empresa en asientos contables.</p>
                 </div>
             </div>
         </div>

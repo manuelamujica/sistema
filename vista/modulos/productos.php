@@ -1,6 +1,15 @@
 <?php 
 require_once "controlador/productos.php";
-?>
+
+if (isset($error)): ?>
+    <script>
+        Swal.fire({
+            title: '<?= $error["title"] ?>',
+            text: '<?= $error["message"] ?>',
+            icon: '<?= $error["icon"] ?>'
+        });
+    </script>
+<?php endif; ?>
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -8,6 +17,7 @@ require_once "controlador/productos.php";
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Productos</h1>
+                    <p>En esta sección se puede gestionar los productos.</p>
                 </div>
             </div>
         </div>
@@ -51,6 +61,7 @@ require_once "controlador/productos.php";
                             <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
+                                        <th>Imagen</th>
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Marca</th>
@@ -70,6 +81,13 @@ require_once "controlador/productos.php";
                                     foreach ($registro as $producto){
                                         ?>
                                         <tr>
+                                            <td>
+                                                <?php if (!empty($producto['imagen'])): ?>
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Imagen producto" style="width: 100px; height: auto;">
+                                                <?php else: ?>
+                                                    <span>No disponible</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td> <?php echo $producto["cod_presentacion"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
                                             <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
@@ -109,10 +127,11 @@ require_once "controlador/productos.php";
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
+                                                data-imagen="<?php echo $producto["imagen"];?>"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
                                                 data-producto="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
-                                                data-marca="<?php echo $producto["marca"]; ?>"
+                                                data-marca="<?php echo $producto["cod_marca"]; ?>"
                                                 data-unidad="<?php echo $producto['cod_unidad']; ?>"
                                                 data-present="<?php echo $producto['presentacion']; ?>" 
                                                 data-cantpresent="<?php echo $producto['cantidad_presentacion'];?>"
@@ -150,7 +169,7 @@ require_once "controlador/productos.php";
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="formRegistrarProducto" method="post">
+                                    <form id="formRegistrarProducto" method="post" enctype="multipart/form-data">
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <!-- Campo oculto para el código del producto -->
@@ -164,7 +183,19 @@ require_once "controlador/productos.php";
                                             </div>
                                             <div class="col-6">
                                                 <label for="marca">Marca</label>
-                                                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
+                                                <div class="input-group">
+                                                        <select class="form-control" id="marca" name="marca" required>
+                                                            <option value="" selected disabled>Seleccione una opción</option>
+                                                            <?php foreach($marcas as $mar): ?>
+                                                                <option value="<?php echo $mar['cod_marca']; ?>">
+                                                                    <?php echo $mar['nombre']; ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaMarca">+</button>
+                                                        </div>
+                                                    </div>
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
@@ -280,6 +311,21 @@ require_once "controlador/productos.php";
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="imagen">Ingrese la imagen<span class="text-danger" style="font-size: 20px;">
+                                                 *</span>
+                                            </label>
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function() {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="file" class="form-control" name="imagen" id="imagen">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
                                         <!-- Alert Message -->
                                         <div class="alert alert-light d-flex align-items-center" role="alert">
                                             <i class="fas fa-exclamation-triangle mr-2"></i>
@@ -356,8 +402,50 @@ require_once "controlador/productos.php";
     });
 </script> 
 <?php endif; ?>
+<!-- =============================
+    MODAL NUEVA MARCA
+================================== -->
+    <div class="modal fade" id="modalNuevaMarca" tabindex="-1" aria-labelledby="modalNuevaMarcaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrarModalLabel">Registrar Marca</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-
+                <div class="modal-body">
+                    <form id="formNuevaMarca" action="index.php?pagina=marcas" method="post">
+                        <div class="form-group">
+                            <label for="nombre">Nombre de la marca</label>
+                            <input type="text" class="form-control" id="nombrem" name="nombre" placeholder="Ingresa el nombre de la marca" required>
+                            <input type="hidden" name="vista" value="marcas">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" form="formNuevaMarca" class="btn btn-primary" name="registrarm">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.setItem('marcaModal', 'true');
+                window.location='productos';
+            }
+    });
+</script> 
+<?php endif; ?>
 <!-- =============================
     MODAL NUEVA UNIDAD DE MEDIDA
 ================================== -->
@@ -424,7 +512,7 @@ require_once "controlador/productos.php";
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="editForm" method="post">
+                                    <form id="editForm" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                             <label for="codigo">Código</label>
                                             
@@ -438,9 +526,21 @@ require_once "controlador/productos.php";
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
-                                            <label for="marca">Marca</label>
-                                            <input type="text" class="form-control" id="marcaE" name="marca" placeholder="Ingresa la marca">
-                                            <div class="invalid-feedback" style="display: none;"></div>
+                                                <label for="marca">Marca</label>
+                                                <div class="input-group">
+                                                        <select class="form-control" id="marcaE" name="marca" required>
+                                                            <option value="" selected disabled>Seleccione una opción</option>
+                                                            <?php foreach($marcas as $mar): ?>
+                                                                <option value="<?php echo $mar['cod_marca']; ?>">
+                                                                    <?php echo $mar['nombre']; ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaMarca">+</button>
+                                                        </div>
+                                                    </div>
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -505,6 +605,34 @@ require_once "controlador/productos.php";
                                         </div>
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
+                                    <div class="form-group">
+                                        <div style="display: flex;justify-content:space-between;align-items:center;">
+                                            <div>
+                                                <label for="imagen">Ingrese la nueva imagen<span class="text-danger" style="font-size: 20px;">
+                                                    *</span>
+                                                </label>
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function() {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
+                                            </div>
+                                            <div>
+                                                <?php if (!empty($producto['imagen'])): ?>
+                                                    <label for="">Imagen actual:</label>
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Logo"  style="width: 75px; height: auto;">
+                                                <?php else: ?>
+                                                    <span>No disponible</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                            <input type="file" class="form-control" name="imagenE" id="imagen">
+                                            <input type="hidden" name="imagenActual" value="<?php echo $producto["imagen"];?>">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
                                     <div class="modal-footer justify-content-between">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                         <button type="submit" class="btn btn-primary" name="editar">Guardar</button>

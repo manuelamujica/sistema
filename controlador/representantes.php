@@ -1,8 +1,10 @@
 <?php
 require_once 'modelo/representantes.php';
+require_once 'modelo/bitacora.php';
 
 
 $objRepresentante = new Representantes();
+$objbitacora = new Bitacora();
 
 if (isset($_POST['buscar'])) {
 
@@ -10,6 +12,7 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($resul);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar representante', $_POST['buscar'], 'Representantes');
 }else if (isset($_POST["ok"])) {
     $errores = []; 
 
@@ -71,6 +74,7 @@ if (isset($_POST['buscar'])) {
                 "message" => "El representante ha sido registrado",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de representante', $_POST["nombre"], 'Representantes');
         } else {
             $registrar = [
                 "title" => "Error",
@@ -122,6 +126,7 @@ else if (isset($_POST['editarr'])) {
                     "message" => "Los datos del representante han sido actualizados.",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar representante', $_POST["nombre"], 'Representantes');
             } else {
                 $editar = [
                     "title" => "Error",
@@ -142,6 +147,7 @@ else if (isset($_POST['editarr'])) {
                 "message" => "El representante ha sido eliminado .",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar representante', "Eliminado el representante con el código ".$_POST["cod_representante"], 'Representantes');
         } else {
             $eliminar = [
                 "title" => "Error",

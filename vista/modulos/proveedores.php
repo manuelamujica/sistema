@@ -7,6 +7,7 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Proveedores</h1>
+                    <p>En esta sección se puede gestionar los proveedores.</p>
                 </div>
             </div>
         </div>

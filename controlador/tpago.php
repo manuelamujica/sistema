@@ -1,6 +1,9 @@
 <?php
 require_once 'modelo/tpago.php';
 require_once 'modelo/divisa.php';
+require_once 'modelo/bitacora.php';
+
+$objbitacora = new Bitacora();
 $objdivisa=new Divisa();
 $obj= new Tpago();
 
@@ -9,6 +12,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar tipo de pago', $_POST['buscar'], 'Tipo de pago');
 
 }else if(isset($_POST['registrar'])){
     if(!empty($_POST['tipo_pago']) && !empty($_POST['divisa'])){
@@ -25,6 +29,7 @@ if(isset($_POST['buscar'])){
                         "message" => "El tipo de pago ha sido registrado",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de tipo de pago', $_POST["tipo_pago"], 'Tipo de pago');
                 }else{
                     $registrar = [
                         "title" => "Error",
@@ -76,6 +81,7 @@ if(isset($_POST['buscar'])){
                         "message" => "El tipo de pago ha sido actualizado",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar tipo de pago', $_POST["tpago"], 'Tipo de pago');
                 }else {
                     $editar = [
                         "title" => "Error",
@@ -108,6 +114,7 @@ if(isset($_POST['buscar'])){
             "message" => "El tipo de pago ha sido eliminado",
             "icon" => "success"
         ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar tipo de pago', "Eliminado el tipo de pago con el código ".$_POST["tpagoCodigo"], 'Tipo de pago');
         }elseif ($result == 'error_delete') {
             $eliminar = [
                 "title" => "Error",
@@ -124,8 +131,8 @@ if(isset($_POST['buscar'])){
     }
 }
 
-$registro=$obj->consultar();
-$divisas=$objdivisa->consultar();
+//$registro=$obj->consultar();
+//$divisas=$objdivisa->consultar();
 $_GET['ruta'] = 'tpago';
 require_once 'plantilla.php';
 

@@ -2,10 +2,11 @@
 
 require_once "modelo/usuarios.php"; 
 require_once "modelo/roles.php"; 
+require_once 'modelo/bitacora.php';
 
 $objuser= new Usuario();
 $objroles = new Rol();
-
+$objbitacora = new Bitacora();
 $roles = $objroles->getconsultarUsuario(); // Obtener los roles para pasarlos a la vista
 
 if(isset($_POST['buscar'])){
@@ -14,6 +15,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json'); 
     echo json_encode($result); 
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar usuario', $_POST['buscar'], 'Usuarios');
 
 }else if (isset($_POST['guardar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['pass']) && !empty($_POST['rol'])){
@@ -45,6 +47,7 @@ if(isset($_POST['buscar'])){
                                     "message" => "El usuario ha sido registrado",
                                     "icon" => "success"
                                 ];
+                                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de usuario', $_POST["user"], 'Usuarios');
                             }else{
                                 $registrar = [
                                     "title" => "Error",
@@ -158,6 +161,7 @@ else if (isset($_POST['actualizar'])) {
                             "message" => "El usuario ha sido actualizado correctamente",
                             "icon" => "success"
                         ];
+                        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar usuario', $_POST["user"], 'Usuarios');
                     } else {
                         $editar = [
                             "title" => "Error",
@@ -204,6 +208,7 @@ else if (isset($_POST['actualizar'])) {
                 "message" => "El usuario ha sido eliminado",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar usuario', "Eliminado el usuario con el código ".$_POST["usercode"], 'Usuarios');
         } elseif ($result == 'error_status') {
             $eliminar = [
                 "title" => "Error",

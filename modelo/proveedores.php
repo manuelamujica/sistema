@@ -175,9 +175,17 @@ public function getedita() {
       return 'error_compra_asociada'; // Por si acaso
   }
   
-  public function geteliminar($valor)
+/*  public function geteliminar($valor)
   {
       return $this->eliminar($valor);
+  }*/
+
+  public function get_eliminar()
+  {
+    if (empty($this->cod_prov)) {
+      return 'error_cod';
+    }
+      return $this->eliminar($this->cod_prov);
   }
 
 /*======================

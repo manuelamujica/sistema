@@ -5,7 +5,7 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Roles y Permisos</h1>
-                    <p> Administra los roles y permisos de usuario.</p>
+                    <p>Configura los roles y permisos de usuario.</p>
                 </div>
             </div>
         </div>

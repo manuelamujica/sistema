@@ -8,6 +8,7 @@ require_once "controlador/descarga.php";
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Descarga de productos</h1>
+                    <p>En esta sección se puede gestionar descargas al inventario.</p>
                 </div>
             </div>
         </div>
@@ -160,6 +161,7 @@ require_once "controlador/descarga.php";
                                                 <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
                                                     <thead>
                                                         <tr>
+                                                            <th>Imagen</th>
                                                             <th>Código</th>
                                                             <th>Producto</th>
                                                             <th>Presentacion</th>

@@ -7,6 +7,7 @@
     <div class="row mb-2">
         <div class="col-sm-6">
         <h1>Gestión de Divisas</h1>
+        <p>En esta sección se puede configurar las divisas.</p>
         </div><!-- /.col -->
     </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -46,7 +47,21 @@
                                         <td><?php echo $divisa['nombre']?></td>
                                         <td><?php echo $divisa['abreviatura'] ?></td>
                                         <td><?php echo $divisa['tasa']."  Bs" ?></td>
-                                        <td><?php echo $divisa['fecha'] ?></td>
+                                        <td><?php echo $divisa['fecha'] ?>
+                                            <?php if($divisa['cod_divisa']==1): ?>
+                                            <?php else:?>
+                                            <div class="float-right">
+                                            <button name="Actualizar" title="Actualizar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#actModal" 
+                                                data-codigo="<?php echo $divisa["cod_divisa"]; ?>" 
+                                                data-nombre="<?php echo $divisa["nombre"]; ?>" 
+                                                data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
+                                                data-tasa="<?php echo $divisa["tasa"]; ?>"
+                                                data-status="<?php echo $divisa["divisa_status"]; ?>" >
+                                                <i class="fa fa-history" aria-hidden="true"></i>
+                                            </button>
+                                            </div>
+                                            <?php endif;?>
+                                        </td>
                                         <td>
                                             <?php if ($divisa['divisa_status']==1):?>
                                                 <span class="badge bg-success">Activo</span>
@@ -197,22 +212,7 @@ MODAL EDITAR DIVISA
                         <input type="text" class="form-control" id="abreviatura" name="abreviatura" required>
                         <div class="invalid-feedback" style="display: none;"></div>
                     </div>
-                    <div class="form-group row justify-content-center">
-                        <div class="col-md-7">
-                            <label for="tasa">Tasa de la Divisa</label>
-                            <div class="input-group">
-                                <input type="number" step="0.01" class="form-control" id="tasa1" name="tasa" required>
-                                <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Bs</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <label for="fecha">Fecha</label>
-                            <input type="date" class="form-control" id="fecha" name="fecha" required>
-                        </div>
-                    </div>
+                    
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" id="status" name="status">
@@ -285,5 +285,118 @@ MODAL CONFIRMAR ELIMINAR
         });
     </script>
 <?php endif; ?>
+
+<!-- =======================
+MODAL ACTUALIZAR TASA DE CAMBIO
+============================= -->
+<div class="modal fade" id="actModal" tabindex="-1" aria-labelledby="actModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="actModalLabel">Tasas de cambio</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="nro_venta">Divisa</label>
+                                        <input type="text" class="form-control" id="nombre2" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="nombre_cliente">Abreviatura</label>
+                                        <input type="text" class="form-control" id="abreviatura2" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="nav nav-tabs" id="tabContent" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="producto-tab" data-toggle="tab" href="#producto" role="tab">actualizacion de tasa</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="carga-tab" data-toggle="tab" href="#carga" role="tab">Historial/variacion</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <!-- ACTUALIZACION DE TASA  -->
+                                <div class="tab-pane fade show active" id="producto" role="tabpanel">
+                                    <form id="actForm" method="post">
+                                        <div class="form-group row justify-content-center">
+                                            <div class="col-md-7">
+                                                <label for="tasa">Tasa de la Divisa</label>
+                                                <div class="input-group">
+                                                    <input type="number" id="tasa2" step="0.01" class="form-control" name="tasa[tasa]" required>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Bs</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <label for="fecha">Fecha</label>
+                                                <input type="date" class="form-control" id="fecha2" name="tasa[fecha]" required>
+                                                <input type="hidden" id="codigo2" name="tasa[cod_divisa]">
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <button type="submit" form="actForm" name="r_tasa" class="btn btn-primary">Guardar cambios</button>
+                                </div>
+                                <!-- HISTORIAL/VARIACION -->
+                                <div class="tab-pane fade" id="carga" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped datatable" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Tasa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach ($historial as $histori) { ?>
+                                    <?php if ($histori['cod_divisa'] == 2): ?>
+                                    <tr>
+                                        <td><?php echo $histori['fecha']?></td>
+                                        <td><?php echo $histori['tasa']?></td>
+                                        <?php endif;
+                                        } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script> 
+//ACTUALIZAR
+$('#actModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codigo');
+    var nombre = button.data('nombre');
+    var origi = button.data('nombre');
+    var abreviatura = button.data('abreviatura');
+    var tasa = button.data('tasa');
+    var status = button.data('status');
+
+    // Modal
+    var modal = $(this);
+    modal.find('.modal-body #codigo2').val(codigo);
+    modal.find('.modal-body #nombre2').val(nombre);
+    modal.find('.modal-body #abreviatura2').val(abreviatura);
+    modal.find('.modal-body #tasa2').val(tasa);
+    modal.find('.modal-body #status').val(status);
+});
+</script>
 
 <script src='vista/dist/js/modulos-js/divisa.js'></script>
