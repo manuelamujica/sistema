@@ -7,7 +7,7 @@ require_once "controlador/login.php";
         <div class="login-box">
             <div class="card card-outline card-primary">
                 <div class="card-header text-center">
-                    <h1 class="h1"><b>SAVYC</h1>
+                    <h1 class="h1"><b>SAVYC+</h1>
                 </div>
                 <div class="card-body">
                     <p class="login-box-msg">Ingresa tus datos para iniciar sesión</p>

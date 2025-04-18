@@ -6,6 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1 class="m-0 text-dark">Gestión de Tipos de Pago</h1>
+                <p>Configura los tipos de pago utilizados en la empresa.</p>
             </div>
         </div>
     </div>

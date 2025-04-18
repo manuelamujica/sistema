@@ -2,8 +2,9 @@
 require_once 'modelo/proveedores.php';
 require_once 'modelo/tlf_proveedor.php';
 require_once 'modelo/representantes.php';
+require_once 'modelo/bitacora.php';
 
-
+$objbitacora = new Bitacora();
 $objRepresentante = new Representantes();
 $objProveedores = new Proveedor();
 $objtProveedor = new TProveedor();
@@ -14,6 +15,7 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($resul);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar proveedor', $_POST['buscar'], 'Proveedores');
 }else if (isset($_POST["guardar"])) {
     $errores = [];
 
@@ -62,6 +64,7 @@ if (isset($_POST['buscar'])) {
                     "message" => "El proveedor ha sido registrado",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de proveedor', $_POST["razon_social"], 'Proveedores');
             } else {
                 $registrar = [
                     "title" => "Error",
@@ -107,6 +110,7 @@ if (isset($_POST['buscar'])) {
                     "message" => "Los datos del proveedor han sido actualizados.",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar proveedor', $_POST["razon_social"], 'Proveedores');
             } else {
                 $editar = [
                     "title" => "Error",
@@ -117,9 +121,17 @@ if (isset($_POST['buscar'])) {
         }
     } 
 } elseif (isset($_POST['eliminar'])) {
-    if (!empty($_POST['provCodigo'])) {
-        $resul = $objProveedores->geteliminar($_POST["provCodigo"]);
+    $objProveedores->setCod($_POST['provCodigo']);
+    $resul = $objProveedores->get_eliminar();
+    if ($resul === 'error_cod') {
+        $eliminar = [
+            "title" => "Error",
+            "message" => "No se puede eliminar el proveedor porque no se ha especificado el código.",
+            "icon" => "error"
+        ];
 
+  
+    }  
         // Mensajes según el resultado de la eliminación
         if ($resul === 'success_eliminado') {
             $eliminar = [
@@ -127,6 +139,7 @@ if (isset($_POST['buscar'])) {
                 "message" => "El proveedor ha sido eliminado.",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar proveedor', "Eliminado el proveedor con el código ".$_POST["provCodigo"], 'Proveedores');
         } elseif ($resul === 'error_compra_asociada') {
             $eliminar = [
                 "title" => "Error",
@@ -135,7 +148,7 @@ if (isset($_POST['buscar'])) {
             ];
         }
     }
-}
+
 $registro = $objProveedores->getconsulta();
 if (isset($_POST["vista"])) {
     $_GET['ruta'] = 'compras';

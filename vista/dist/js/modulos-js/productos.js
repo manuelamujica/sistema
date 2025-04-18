@@ -156,7 +156,7 @@ $(document).ready(function() {
         var porcen = $(this).val();
         if (porcen.trim() === '') {
             hideError('#porcen'); 
-        } else if (!/^\d+$/.test(porcen)) { // Permite números enteros     FUNCIONA PERO MUEVE EL ICONO DE %
+        } else if (!/^\d+$/.test(porcen)) { // Permite números enteros 
             showErrorP('#porcen', 'Solo se permiten números enteros.');
         } else {
             hideError('#porcen'); 
@@ -315,6 +315,30 @@ $(document).ready(function() {
     }
 });
 
+// NUEVA MARCA DESDE PRODUCTO
+//(Validar nombre)
+$('#nombrem').blur(function (e){
+    var buscar=$('#nombrem').val();
+    $.post('index.php?pagina=marcas', {buscar}, function(response){
+        if(response != ''){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'La marca ya se encuentra registrada',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    },'json');
+});
+
+$(document).ready(function() {
+// Verifica si el valor 'categoriaModal' está en localStorage
+if (localStorage.getItem('marcaModal') === 'true') {
+    $('#modalRegistrarProducto').modal('show');
+    localStorage.removeItem('marcaModal');
+}
+});
+
 //NUEVA UNIDAD DESDE PRODUCTO
 //(Validar nombre)
 $('#tipo_medidau').blur(function (e){
@@ -470,6 +494,12 @@ $(document).on('click', '.eliminarDetalle', function() {
 $('#editModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     
+    var imagenSrc = button.closest('tr').find('img').attr('src') || 'vista/dist/img/productos/default.png';
+    
+
+    $(this).find('.modal-body img').attr('src', imagenSrc);
+    $(this).find('input[name="imagenActual"]').val(imagenSrc);
+
     var codigo = button.data('codigo');
     var nombre = button.data('nombre');
     var marca = button.data('marca');
@@ -480,6 +510,9 @@ $('#editModal').on('show.bs.modal', function (event) {
     var costo = button.data('costo');
     var iva = button.data('iva');
     var porcen = button.data('porcen');
+
+
+    console.log(imagenSrc, marca)
 
     // Modal
     var modal = $(this); 
@@ -496,7 +529,22 @@ $('#editModal').on('show.bs.modal', function (event) {
 
     modal.find('.modal-body #cod_producto').val(button.data('producto'));
 
-    calcularPrecioVentaEditar(modal); // Llama a la función para calcular el precio de venta cuando se abre el modal de edición
+    calcularPrecioVentaEditar(modal);
+});
+
+$(document).on('change', '#editModal input[type="file"]', function(e) {
+    var input = e.target;
+    var modal = $(this).closest('.modal');
+    
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            modal.find('.modal-body img').attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
 });
 
 //Eliminar

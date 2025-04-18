@@ -7,6 +7,7 @@
     <div class="row mb-2">
         <div class="col-sm-6">
         <h1>Gestión de Divisas</h1>
+        <p>En esta sección se puede configurar las divisas.</p>
         </div><!-- /.col -->
     </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -25,8 +26,8 @@
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="paymentTypesTable" class="table table-bordered table-striped">
+                        
+                            <table id="paymentTypesTable" class="table table-bordered table-striped datatable">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
@@ -92,7 +93,6 @@
                                     <?php } ?>
                                 </tbody>
                             </table>
-                        </div>
                     </div>
                 </div>
             </div>

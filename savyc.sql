@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-11-2024 a las 05:45:51
+-- Tiempo de generación: 16-03-2025 a las 17:14:11
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -100,6 +100,7 @@ CREATE TABLE `compras` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -112,6 +113,7 @@ CREATE TABLE `descarga` (
   `descripcion` varchar(100) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
 
 -- --------------------------------------------------------
 
@@ -166,6 +168,7 @@ CREATE TABLE `detalle_pagos` (
   `monto` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -180,6 +183,7 @@ CREATE TABLE `detalle_productos` (
   `lote` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -193,6 +197,7 @@ CREATE TABLE `detalle_ventas` (
   `importe` decimal(10,2) NOT NULL,
   `cantidad` float(10,3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
 
 -- --------------------------------------------------------
 
@@ -233,6 +238,19 @@ CREATE TABLE `empresa` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `marcas`
+--
+
+CREATE TABLE `marcas` (
+  `cod_marca` int(11) NOT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `pagos`
 --
 
@@ -241,6 +259,7 @@ CREATE TABLE `pagos` (
   `cod_venta` int(11) NOT NULL,
   `monto_total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
 
 -- --------------------------------------------------------
 
@@ -286,6 +305,7 @@ CREATE TABLE `presentacion_producto` (
   `excento` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -296,8 +316,10 @@ CREATE TABLE `productos` (
   `cod_producto` int(11) NOT NULL,
   `cod_categoria` int(11) NOT NULL,
   `nombre` varchar(40) NOT NULL,
-  `marca` varchar(40) DEFAULT NULL
+  `cod_marca` int(11) NOT NULL,
+  `imagen` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
 
 -- --------------------------------------------------------
 
@@ -314,6 +336,7 @@ CREATE TABLE `proveedores` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -329,6 +352,7 @@ CREATE TABLE `prov_representantes` (
   `telefono` varchar(12) DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
 
 -- --------------------------------------------------------
 
@@ -420,6 +444,7 @@ CREATE TABLE `unidades_medida` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -456,9 +481,35 @@ CREATE TABLE `ventas` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+-- --------------------------------------------------------
+
 --
--- Índices para tablas volcadas
+-- Estructura de tabla para la tabla `bitacora`
 --
+
+CREATE TABLE `bitacora` (
+  `id` int(11) NOT NULL,
+  `cod_usuario` int(11) NOT NULL,
+  `accion` varchar(255) NOT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
+  `detalles` text DEFAULT NULL,
+  `modulo` varchar(220) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+--
+-- Indices de la tabla `bitacora`
+--
+ALTER TABLE `bitacora`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de la tabla `bitacora`
+--
+ALTER TABLE `bitacora`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+COMMIT;
+
 
 --
 -- Indices de la tabla `cambio_divisa`
@@ -558,6 +609,13 @@ ALTER TABLE `empresa`
   ADD PRIMARY KEY (`rif`);
 
 --
+-- Indices de la tabla `marcas`
+--
+ALTER TABLE `marcas`
+  ADD PRIMARY KEY (`cod_marca`),
+  ADD UNIQUE KEY `marca_unica` (`nombre`);
+
+--
 -- Indices de la tabla `pagos`
 --
 ALTER TABLE `pagos`
@@ -583,7 +641,8 @@ ALTER TABLE `presentacion_producto`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`cod_producto`),
-  ADD KEY `productos-categorias` (`cod_categoria`);
+  ADD KEY `productos-categorias` (`cod_categoria`),
+  ADD KEY `productos-marcas` (`cod_marca`);
 
 --
 -- Indices de la tabla `proveedores`
@@ -660,67 +719,67 @@ ALTER TABLE `cambio_divisa`
 -- AUTO_INCREMENT de la tabla `carga`
 --
 ALTER TABLE `carga`
-  MODIFY `cod_carga` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_carga` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `cod_categoria` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `cod_cliente` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `compras`
 --
 ALTER TABLE `compras`
-  MODIFY `cod_compra` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `descarga`
 --
 ALTER TABLE `descarga`
-  MODIFY `cod_descarga` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_descarga` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_carga`
 --
 ALTER TABLE `detalle_carga`
-  MODIFY `cod_det_carga` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_det_carga` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_compras`
 --
 ALTER TABLE `detalle_compras`
-  MODIFY `cod_detallec` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_detallec` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_descarga`
 --
 ALTER TABLE `detalle_descarga`
-  MODIFY `cod_det_descarga` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_det_descarga` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_pagos`
 --
 ALTER TABLE `detalle_pagos`
-  MODIFY `cod_detallepago` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_detallepago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_productos`
 --
 ALTER TABLE `detalle_productos`
-  MODIFY `cod_detallep` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_detallep` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_ventas`
 --
 ALTER TABLE `detalle_ventas`
-  MODIFY `cod_detallev` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_detallev` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `divisas`
@@ -729,10 +788,16 @@ ALTER TABLE `divisas`
   MODIFY `cod_divisa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT de la tabla `marcas`
+--
+ALTER TABLE `marcas`
+  MODIFY `cod_marca` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `cod_pago` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -744,25 +809,25 @@ ALTER TABLE `permisos`
 -- AUTO_INCREMENT de la tabla `presentacion_producto`
 --
 ALTER TABLE `presentacion_producto`
-  MODIFY `cod_presentacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_presentacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `cod_producto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `cod_prov` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_prov` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `prov_representantes`
 --
 ALTER TABLE `prov_representantes`
-  MODIFY `cod_representante` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_representante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_pago`
@@ -780,13 +845,13 @@ ALTER TABLE `tipo_usuario`
 -- AUTO_INCREMENT de la tabla `tlf_proveedores`
 --
 ALTER TABLE `tlf_proveedores`
-  MODIFY `cod_tlf` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_tlf` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `unidades_medida`
 --
 ALTER TABLE `unidades_medida`
-  MODIFY `cod_unidad` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_unidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -798,7 +863,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `cod_venta` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
@@ -874,7 +939,8 @@ ALTER TABLE `presentacion_producto`
 -- Filtros para la tabla `productos`
 --
 ALTER TABLE `productos`
-  ADD CONSTRAINT `productos-categorias` FOREIGN KEY (`cod_categoria`) REFERENCES `categorias` (`cod_categoria`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `productos-categorias` FOREIGN KEY (`cod_categoria`) REFERENCES `categorias` (`cod_categoria`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `productos-marcas` FOREIGN KEY (`cod_marca`) REFERENCES `marcas` (`cod_marca`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `prov_representantes`

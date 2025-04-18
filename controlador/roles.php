@@ -1,5 +1,7 @@
 <?php
 require_once "modelo/roles.php"; //requiero al modelo
+require_once "modelo/bitacora.php"; 
+$objbitacora = new Bitacora(); 
 $objRol = new Rol();
 
 if (isset($_POST['buscar'])) {
@@ -8,6 +10,7 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar rol', $_POST['buscar'], 'Roles');
 
 } else if (isset($_POST["guardar"])) {
     if (!empty($_POST["rol"])) {
@@ -27,6 +30,7 @@ if (isset($_POST['buscar'])) {
                                 "message" => "El rol ha sido registrado",
                                 "icon" => "success"
                             ];
+                            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de rol', $_POST["rol"], 'Roles');
                         } else {
                             $registrar = [
                                 "title" => "Error",
@@ -91,6 +95,7 @@ if (isset($_POST['buscar'])) {
                                     "message" => "El rol ha sido actualizado",
                                     "icon" => "success"
                                 ];
+                                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar rol', $_POST["rol"], 'Roles');
                             } else {
                                 $editar = [
                                     "title" => "Error",
@@ -132,6 +137,7 @@ if (isset($_POST['buscar'])) {
                 "message" => "El rol ha sido eliminado",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar rol', "Eliminado el rol con el código ".$_POST["eliminar"], 'Roles');
         } else if ($resul == 'error_associated') {
             $eliminar = [
                 "title" => "Error",

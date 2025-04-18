@@ -1,9 +1,11 @@
 <?php
 
 require_once "modelo/categorias.php"; 
+require_once "modelo/bitacora.php";
 
+$objbitacora = new Bitacora();
 $objCategoria= new Categoria();
-
+//$objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Acceso a Categoria','', 'Categorias');
 if(isset($_POST['buscar'])){
     $nombre = $_POST['buscar']; #Se asigna el valor de buscar a la variable nombre
     $result = $objCategoria->getbuscar($nombre); #Se instancia al metodo buscar y le enviamos por parametro el nombre
@@ -26,8 +28,12 @@ if(isset($_POST['buscar'])){
                     "message" => "La categoría ha sido registrada",
                     "icon" => "success"
                 ];
+
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de categoría', $_POST["nombre"], 'Categorias');
+
                 
-            }else{
+            }
+            else{
                 $registrar = [
                     "title" => "Error",
                     "message" => "Hubo un problema al registrar la categoría",
@@ -48,6 +54,7 @@ if(isset($_POST['buscar'])){
         "icon" => "error"
         ];
     }
+
 }else if (isset($_POST['actualizar'])) {
 
         $nombre = $_POST['nombre']; 
@@ -66,6 +73,7 @@ if(isset($_POST['buscar'])){
                         "message" => "La categoría ha sido actualizada",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar categoría', $_POST["nombre"], 'Categorias');
                 } else {
                     $editar = [
                         "title" => "Error",
@@ -120,6 +128,8 @@ if(isset($_POST['buscar'])){
             "message" => "La categoría ha sido eliminada",
             "icon" => "success"
         ];
+
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar categoría', "Eliminada la categoría con el código ".$_POST["catcodigo"], 'Categorias');
     } elseif ($result == 'error_associated') {
         $eliminar = [
             "title" => "Error",

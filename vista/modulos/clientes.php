@@ -6,6 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>Clientes</h1>
+                <p>En esta sección se puede gestionar los clientes.</p>
             </div>
         </div>
     </div>

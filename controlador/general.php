@@ -3,7 +3,10 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once "modelo/general.php"; //requiero al modelo
+require_once "modelo/bitacora.php";
+
 $objGeneral= new General();
+$objBitacora = new Bitacora();
 
 if(isset($_POST['buscar'])){
     $result=$objGeneral->buscar();
@@ -83,6 +86,7 @@ else if (isset($_POST["guardar"])) {
                             "message" => "La informacion de la empresa ha sido registrada",
                             "icon" => "success"
                         ];
+                        $objBitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de empresa', $_POST["nombre"], 'Empresas');
                     } else {
                         $registrar = [
                             "title" => "Error",
@@ -192,6 +196,7 @@ else if (isset($_POST["guardar"])) {
                 "message" => "Información actualizada con éxito",
                 "icon" => "success"
             ];
+            $objBitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar empresa', $_POST["nombre"], 'Empresas');
         } else {
             $editar = [
                 "title" => "Error",

@@ -1,16 +1,21 @@
 <?php
 require_once 'modelo/compras.php';
-require_once 'modelo/productos.php';
+require_once 'modelo/productos.php';    
+require_once 'modelo/bitacora.php';
+
+$objbitacora = new Bitacora();
 $objCompras = new Compra();
 $objProducto = new Productos();
 $categoria = $objProducto->consultarCategoria(); 
 $unidad = $objProducto->consultarUnidad(); 
+
 
 if (isset($_POST['buscar'])) {
     $resul = $objCompras->getbuscar_p($_POST['buscar']);
     header('Content-Type: application/json');
     echo json_encode($resul);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
 } else if(isset($_POST['b_lotes']) && isset($_POST['cod'])){
     $re = $objCompras->buscar_l($_POST['b_lotes'], $_POST['cod']);
     header('Content-Type: application/json');
@@ -36,6 +41,7 @@ if (isset($_POST['buscar'])) {
                 "title" => "La compra ha sido registrada exitosamente.",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de compra', $_POST["subtotal"], 'Compras');
         }else{
             $registrar = [
                 "title" => "Error al registrar la compra.",
@@ -64,6 +70,7 @@ if (isset($_POST['buscar'])) {
                 "message" => "la  compra ha sido eliminada",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Anulación de compra', $_POST["codcom"], 'Compras');
         } elseif ($resul==0) {
             $eliminar = [
                 "title" => "Error",

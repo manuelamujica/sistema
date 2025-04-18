@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,6 +11,8 @@ PLUGINGS DE CSS
 ======================= -->
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="vista/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
@@ -61,6 +60,9 @@ PLUGINGS DE CSS
 <!-- Toastr -->
 <link rel="stylesheet" href="vista/plugins/toastr/toastr.min.css">
 <script src="vista/plugins/toastr/toastr.min.js"></script>
+<!-- ChartJS -->
+<script src="vista/plugins/chart.js/Chart.min.js"></script>
+
 </head>
 <!-- =======================
     BODY
@@ -88,6 +90,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
+    $_GET ["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "tpago" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "divisa" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "proveedores" && $_SESSION["proveedor"]==1 || 
@@ -95,7 +98,12 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "general" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "clientes" && $_SESSION["cliente"]==1 ||
     $_GET["ruta"] == "roles" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "bitacora" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "venta" && $_SESSION["venta"]==1 ||
+    $_GET["ruta"] == "catalogocuentas" ||
+    $_GET["ruta"] == "gastos" ||
+    $_GET["ruta"] == "cuentaspend" ||
+    $_GET["ruta"] == "movimientos" ||
     $_GET["ruta"] == "cerrarsesion"){
       include "modulos/". $_GET["ruta"] . ".php";
     } else {
@@ -105,8 +113,13 @@ PLUGINGS DE CSS
   }else{
       include "modulos/inicio.php";
   } 
-
-  include "modulos/footer.php";
+  ?>
+  <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+  </aside>
+  </div>
+  <?php
+  //include "modulos/footer.php";
   ?>
 </div>
 <?php
