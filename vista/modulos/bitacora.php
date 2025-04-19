@@ -28,7 +28,6 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach ($bitacora as $dato): ?>
-                                            <?php if ($dato['status'] != 2): ?>
                                                 <tr>
                                                     <td><?php echo $dato['nombre']; ?></td>
                                                     <td><?php echo $dato['accion']; ?></td>
@@ -36,7 +35,6 @@
                                                     <td><?php echo $dato['detalles']; ?></td>
                                                     <td><?php echo date("d-m-Y H:i:s", strtotime($dato['fecha'])); ?></td>
                                                 </tr>
-                                            <?php endif; ?>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>

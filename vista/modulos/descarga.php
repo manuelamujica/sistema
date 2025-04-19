@@ -160,6 +160,7 @@ require_once "controlador/descarga.php";
                                                 <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
                                                     <thead>
                                                         <tr>
+                                                            <th>Imagen</th>
                                                             <th>Código</th>
                                                             <th>Producto</th>
                                                             <th>Presentacion</th>

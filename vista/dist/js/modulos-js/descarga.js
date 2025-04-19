@@ -56,6 +56,9 @@ $(document).ready(function() {
                     let lote = detalle.lote || 'No disponible';
                         $('#detalleBody').append(
                             '<tr>' +
+                                '<td>' +
+                                    '<img src='+detalle.imagen+' alt="Imagen producto" style="width: 100px; height: auto;">' +
+                                '</td>' +
                                 '<td>' + detalle.cod_det_descarga + '</td>' +
                                 '<td>' + detalle.nombre + '</td>' +
                                 '<td>' + detalle.presentacion_concat + '</td>' +

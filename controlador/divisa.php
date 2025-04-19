@@ -50,7 +50,7 @@ if(isset($_POST['buscar'])){
     }
 }else if(isset($_POST['actualizar'])){
     if(!empty($_POST['nombre']) && !empty($_POST['abreviatura'])){
-        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s\$\€]+$/',$_POST['abreviatura']) && preg_match('/^\d+(\.\d{1,2})?$/',$_POST['tasa'])){
+        if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s\$\€]+$/',$_POST['abreviatura'])){
 
             if($_POST['nombre'] !== $_POST['origin'] && $obj->buscar($_POST['nombre'])){ 
                 $editar = [
@@ -62,8 +62,6 @@ if(isset($_POST['buscar'])){
                 $obj->setnombre($_POST['nombre']);
                 $obj->setsimbolo($_POST['abreviatura']);
                 $obj->setstatus($_POST['status']);
-                $obj->set_tasa($_POST['tasa']);
-                $obj->setfecha($_POST['fecha']);
                 $result=$obj->editar($_POST['codigo']);
 
                 if($result==1){
@@ -121,7 +119,11 @@ if(isset($_POST['buscar'])){
     }
 }else if(isset($_POST['r_tasa'])){
     if(isset($_POST['tasa'])){
-        $resul=$obj->tasa($_POST['tasa']);
+        $data = $_POST['tasa'];
+        if (isset($data['tasa']) && isset($data['fecha']) && isset($data['cod_divisa'])) {
+            $data = [$data]; // Lo convierte en un array de arrays si es necesario
+        }
+        $resul=$obj->tasa($data);
         if($resul==true){
             $editar = [
                 "title" => "Actualizado con éxito",
@@ -136,8 +138,26 @@ if(isset($_POST['buscar'])){
             ];
         }
     }
+}else if (isset($_POST['sen'])) {
+    set_time_limit(20); // Aumenta el límite de tiempo si el script es lento
+
+    $python = "python C:\\xampp\\htdocs\\SAVYCG\\sistema\\dolarbcv.py"; // Ajusta la ruta
+    
+    $dolar = shell_exec($python); // Ejecuta el script y captura la salida
+    
+    // Log para depuración
+    error_log("Salida del script Python: " . $dolar);
+
+    header('Content-Type: application/json');
+    if (trim($dolar) === "") { // Si la salida está vacía o da error
+        echo json_encode("error");
+    } else {
+        echo json_encode(trim($dolar)); // Devuelve el resultado limpio
+    }
+    exit();
 }
 
+$historial=$obj->historial();
 $consulta=$obj->consultar();
 $_GET['ruta']='divisa';
 require_once 'plantilla.php';
