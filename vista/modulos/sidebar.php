@@ -197,6 +197,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="caja" class="nav-link bitacora-link" data-modulo="Caja">
+                                <i class="fas fa-money-bill nav-icon"></i>
+                                    <p>
+                                        Caja
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
                                 <i class="fas fa-balance-scale nav-icon"></i>
                                     <p>
@@ -429,6 +437,15 @@
                                 <i class="fas fa-money-bill nav-icon"></i>
                                     <p>
                                         Tipos de pago
+                                    </p>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="caja" class="nav-link disabled bitacora-link" data-modulo="Caja">
+                                <i class="fas fa-money-bill nav-icon"></i>
+                                    <p>
+                                        Caja
                                     </p>
                             </a>
                         </li>
