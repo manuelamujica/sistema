@@ -4,7 +4,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Ajustar Roles</h1>
+                    <h1>Roles y Permisos</h1>
+                    <p>Configura los roles y permisos de usuario.</p>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>Banco</h1>
+                <p>En esta sección se puede configurar los bancos.</p>
             </div>
         </div>
     </div>
@@ -30,7 +31,6 @@
                         <tr>
                             <th>Codigo</th>
                             <th>Nombre de la entidad bancaria</th>
-
                             <th>Acciones</th>
                         </tr>
                 </thead>

@@ -5,6 +5,7 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Bitacora</h1>
+                    <p>En esta sección se puede ver la actividad de los usuarios en el sistema</p>
                 </div>
             </div>
         </div>

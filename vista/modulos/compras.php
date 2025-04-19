@@ -8,6 +8,7 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1 class="m-0">Compras</h1>
+                    <p>En esta sección se puede gestionar las compras de productos.</p>
                 </div>
             </div>
         </div>
@@ -111,9 +112,9 @@
                                             <div class="invalid-feedback" style="display: none; position: absolute; top: 100%; margin-top: 2px; width: calc(100% - 2px); font-size: 0.875em; text-align: left;"></div>
                                             <input type="hidden" id="cod_prov" name="cod_prov" required>
                                         </div>
-                                        <div class="col-md-1">
+                                        <!--<div class="col-md-1">
                                             <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#modalProv">+</button>
-                                        </div>
+                                        </div>-->
                                     </div>
                                 </div>
                                 <div class="form-group">

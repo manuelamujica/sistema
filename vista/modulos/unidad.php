@@ -3,8 +3,9 @@
     <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-sm-9">
                 <h1>Unidades de medida</h1>
+                <p>En esta sección se puede gestionar las unidades de medida para los productos.</p>
             </div>
         </div>
     </section>
