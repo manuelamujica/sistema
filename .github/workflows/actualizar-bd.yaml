@@ -41,7 +41,7 @@ jobs:
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
         run: |
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/brian/sql/
 
       - name: Conectar al VPS y actualizar MySQL
         env:
