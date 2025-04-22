@@ -294,7 +294,7 @@
                             <?php endif;?>
 
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="marcas" class="nav-link">
                                     <i class="fas fa-tags nav-icon"></i>
                                         <p>
                                             Marcas
