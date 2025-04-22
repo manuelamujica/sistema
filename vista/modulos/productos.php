@@ -1,24 +1,56 @@
 <?php 
-#Requerir al controlador
 require_once "controlador/productos.php";
-?>
+
+if (isset($error)): ?>
+    <script>
+        Swal.fire({
+            title: '<?= $error["title"] ?>',
+            text: '<?= $error["message"] ?>',
+            icon: '<?= $error["icon"] ?>'
+        });
+    </script>
+<?php endif; ?>
 
 <div class="content-wrapper">
     <section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Productos</h1>
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Productos</h1>
+                    <p>En esta sección se puede gestionar los productos.</p>
+                </div>
             </div>
         </div>
-    </div>
     </section>
 
-<!-- Main content -->
+    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
+                <?php foreach ($datos as $v){ ?>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box" style="background-color: #8770fa; color: white;">
+                        <div class="inner">
+                            <p class="mb-1">Valor inventario costo</p>
+                            <h3> <?php echo $v["total_costo"] ?>Bs</h3> 
+                            <p class="badge bg-success">+10%</p> 
+                            <span>esta semana</span> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <p class="mb-1">Valor inventario venta</p>
+                            <h3><?php echo $v["total_venta"] ?>Bs</h3> 
+                            <p class="badge bg-success">+20%</p> 
+                            <span>esta semana</span> 
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
+
                     <div class="card">
                         <div class="card-header">
                             <!-- Boton registrar producto -->
@@ -29,10 +61,11 @@ require_once "controlador/productos.php";
                             <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
+                                        <th>Imagen</th>
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Marca</th>
-                                        <th>Presentacion</th>
+                                        <th>Presentación</th>
                                         <th>Categoría</th>
                                         <th>Costo</th>
                                         <th>IVA</th>
@@ -48,12 +81,19 @@ require_once "controlador/productos.php";
                                     foreach ($registro as $producto){
                                         ?>
                                         <tr>
+                                            <td>
+                                                <?php if (!empty($producto['imagen'])): ?>
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Imagen producto" style="width: 100px; height: auto;">
+                                                <?php else: ?>
+                                                    <span>No disponible</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td> <?php echo $producto["cod_presentacion"] ?></td>
                                             <td> <?php echo $producto["nombre"] ?></td>
-                                            <td> <?php echo $producto["marca"] ?></td>
-                                            <td> <?php echo $producto["presentacion_concat"] ?></td>
+                                            <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
+                                            <td> <?php echo $producto["presentacion_concat"] ? $producto["presentacion_concat"] : 'No disponible' ?></td>
                                             <td> <?php echo $producto["cat_nombre"] ?></td>
-                                            <td> <?php echo $producto["costo"] ?></td>
+                                            <td> <?php echo $producto["costo"] ?> Bs</td>
                                             <td> <?php if($producto["excento"] == 1){
                                                 echo 'E';
                                             }  else{
@@ -63,15 +103,23 @@ require_once "controlador/productos.php";
                                             </td>
                                             <td>
                                             <?php 
-                                            $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"]; 
-                                            echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea
+                                            if($producto["excento"] == 1){
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }  else{
+                                                $costoiva = $producto["costo"] * 1.16;
+                                                $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $costoiva;
+                                                echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                            }
                                             ?>
                                         </td>
-                                            <td>Stock total</td>
+                                            <td><?php echo $producto["stock_total"] ?></td>
                                             <!-- Detalle de producto -->
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" style="position: center;" data-toggle="modal" data-target="#detallemodal" title="Ver detalle"
-                                                data-codigo="<?php echo $producto["cod_presentacion"];?>">
+                                                data-codigo="<?php echo $producto["cod_presentacion"];?>"
+                                                data-presentp="<?php echo $producto["presentacion_concat"];?>"
+                                                data-nombrep="<?php echo $producto["nombre"];?>">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                                 
@@ -79,10 +127,11 @@ require_once "controlador/productos.php";
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
+                                                data-imagen="<?php echo $producto["imagen"];?>"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
                                                 data-producto="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
-                                                data-marca="<?php echo $producto["marca"]; ?>"
+                                                data-marca="<?php echo $producto["cod_marca"]; ?>"
                                                 data-unidad="<?php echo $producto['cod_unidad']; ?>"
                                                 data-present="<?php echo $producto['presentacion']; ?>" 
                                                 data-cantpresent="<?php echo $producto['cantidad_presentacion'];?>"
@@ -119,15 +168,14 @@ require_once "controlador/productos.php";
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-
                                 <div class="modal-body">
-                                    <form id="formRegistrarProducto" method="post">
+                                    <form id="formRegistrarProducto" method="post" enctype="multipart/form-data">
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <!-- Campo oculto para el código del producto -->
                                                 <input type="hidden" id="cod_productoR" name="cod_productoR">
 
-                                                <label for="nombre">Nombre del producto</label>
+                                                <label for="nombre">Nombre del producto<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre" required>
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                                 <div id="lista-productos" class="list-group" style="display: none;"></div>
@@ -135,14 +183,26 @@ require_once "controlador/productos.php";
                                             </div>
                                             <div class="col-6">
                                                 <label for="marca">Marca</label>
-                                                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingresa la marca">
+                                                <div class="input-group">
+                                                        <select class="form-control" id="marca" name="marca" required>
+                                                            <option value="" selected disabled>Seleccione una opción</option>
+                                                            <?php foreach($marcas as $mar): ?>
+                                                                <option value="<?php echo $mar['cod_marca']; ?>">
+                                                                    <?php echo $mar['nombre']; ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaMarca">+</button>
+                                                        </div>
+                                                    </div>
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
 
                                         <div class="form-group row">
                                                 <div class="col-6">
-                                                    <label for="categoria">Categoría</label>
+                                                    <label for="categoria">Categoría de producto<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                                     <div class="input-group">
                                                         <select class="form-control" id="categoria" name="categoria" required>
                                                             <option value="" selected disabled>Seleccione una opción</option>
@@ -159,16 +219,34 @@ require_once "controlador/productos.php";
                                                 </div>
 
                                             <div class="col-6">
-                                                <label for="excento">Impuesto IVA</label>
+                                                <label for="exento">Impuesto IVA<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                                <!-- TOOLTIPS-->
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Selecciona si el producto es exento (tiene IVA) o gravable (No tiene IVA). El IVA es el 16%">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
                                                     <select class="form-control" id="iva" name="iva" required>
                                                         <option value="" selected disabled>Seleccione una opción</option>
-                                                        <option value="1">Excento</option>
+                                                        <option value="1">Exento</option>
                                                         <option value="2">Gravable</option>
                                                     </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="unidad">Unidad de medida</label>
+                                            <label for="unidad">Unidad de medida<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Selecciona la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
                                             <div class="input-group">
                                                 <select class="form-control" id="unidad" name="unidad" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
@@ -187,7 +265,7 @@ require_once "controlador/productos.php";
                                             <div class="col-6">
                                                 <label for="presentacion">Presentación</label>
                                                 <!-- TOOLTIPS-->
-                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Como usar presentacion? no sabemos">
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la presentación de como viene el producto. Ej: Pieza.">
                                                     <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <script>
@@ -195,13 +273,13 @@ require_once "controlador/productos.php";
                                                         $('[data-toggle="tooltip"]').tooltip();
                                                     });
                                                 </script>
-                                                <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ingresa la presentación">
+                                                <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ej: Pieza.">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                             <div class="col-6">
-                                                <label for="cant_presentacion">Cantidad de presentación</label><!-- Botón de información pequeño con estilos personalizados -->
+                                                <label for="cant_presentacion">Cantidad de presentación</label>
                                                 <!-- TOOLTIPS-->
-                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Como usar cantidad de presentacion? no sabemos">
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la cantidad de presentación de como viene el producto. Ej: 250gr.">
                                                     <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <script>
@@ -209,7 +287,7 @@ require_once "controlador/productos.php";
                                                         $('[data-toggle="tooltip"]').tooltip();
                                                     });
                                                 </script>
-                                                <input type="number" class="form-control" id="cant_presentacion" name="cant_presentacion" step="0.001" placeholder="Ingresa la cantidad">
+                                                <input type="text" class="form-control" id="cant_presentacion" name="cant_presentacion" placeholder="Ej: 1.5kg">
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
@@ -217,21 +295,41 @@ require_once "controlador/productos.php";
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="costo">Costo</label>
-                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra" required>
+                                                <input type="number" class="form-control" step="0.01" min="0" id="costo" name="costo" placeholder="Precio de compra en Bs" >
                                                 <div class="invalid-feedback" style="display: none;"></div>
-                                            <div class="invalid-feedback" style="display: none;"></div></div>
+                                            </div>
                                             <div class="col-6">
                                                 <label for="precio">Precio</label>
-                                                <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta" readonly >
+                                                <input type="number" class="form-control" min="0" id="precio" placeholder="Precio de venta en Bs" readonly >
                                                 <div class="invalid-feedback" style="display: none;"></div>
                                             </div>
                                         </div>
                                         <div class="input-group mb-2">
-                                            <input type="number" class="form-control nuevoPorcentaje" min="0" step="1" placeholder="Porcentaje de ganancia" id="porcen" name="porcen" required>
+                                            <input type="number" class="form-control nuevoPorcentaje" min="0" step="1" placeholder="Porcentaje de ganancia" id="porcen" name="porcen">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                             </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="imagen">Ingrese la imagen<span class="text-danger" style="font-size: 20px;">
+                                                 *</span>
+                                            </label>
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function() {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="file" class="form-control" name="imagen" id="imagen">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+                                        <!-- Alert Message -->
+                                        <div class="alert alert-light d-flex align-items-center" role="alert">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span>Todos los campos marcados con (*) son obligatorios</span>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -243,6 +341,7 @@ require_once "controlador/productos.php";
                             </div>
                         </div>
                     </div>
+        
 <?php if (isset($registrarp)): ?>
     <script>
         Swal.fire({
@@ -303,15 +402,50 @@ require_once "controlador/productos.php";
     });
 </script> 
 <?php endif; ?>
+<!-- =============================
+    MODAL NUEVA MARCA
+================================== -->
+    <div class="modal fade" id="modalNuevaMarca" tabindex="-1" aria-labelledby="modalNuevaMarcaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrarModalLabel">Registrar Marca</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-<script>
-<?php if (isset($_GET['categoriaModal']) && $_GET['categoriaModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#modalRegistrarProducto').modal('show');
-        });
-    <?php endif; ?>
-</script>
-
+                <div class="modal-body">
+                    <form id="formNuevaMarca" action="index.php?pagina=marcas" method="post">
+                        <div class="form-group">
+                            <label for="nombre">Nombre de la marca</label>
+                            <input type="text" class="form-control" id="nombrem" name="nombre" placeholder="Ingresa el nombre de la marca" required>
+                            <input type="hidden" name="vista" value="marcas">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" form="formNuevaMarca" class="btn btn-primary" name="registrarm">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if (isset($registrar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrar["title"]; ?>',
+            text: '<?php echo $registrar["message"]; ?>',
+            icon: '<?php echo $registrar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.setItem('marcaModal', 'true');
+                window.location='productos';
+            }
+    });
+</script> 
+<?php endif; ?>
 <!-- =============================
     MODAL NUEVA UNIDAD DE MEDIDA
 ================================== -->
@@ -328,7 +462,16 @@ require_once "controlador/productos.php";
                         <form id="formregistrarUnidad" action="index.php?pagina=unidad" method="post">
                             <div class="form-group">
                                 <label for="tipo_medida">Tipo de medida</label>
-                                <input type="text" class="form-control" name="tipo_medida" id="tipo_medidau" placeholder="Ingrese unidad de medida" required>
+                                <!-- TOOLTIPS-->
+                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                                <script>
+                                    $(function () {
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                    });
+                                </script>
+                                <input type="text" class="form-control" name="tipo_medida" id="tipo_medidau" placeholder="Ej: Kg" required>
                                 <input type="hidden" name="vista" value="unidad">
                             </div>
                         </div>
@@ -356,15 +499,6 @@ require_once "controlador/productos.php";
 </script> 
 <?php endif; ?> 
 
-<script>
-    <?php if (isset($_GET['unidadModal']) && $_GET['unidadModal'] == 1): ?>
-        $(document).ready(function(){
-            $('#modalRegistrarProducto').modal('show');
-        });
-    <?php endif; ?>
-</script>
-
-
 <!-- =============================
     MODAL EDITAR PRODUCTO 
 ================================== -->
@@ -378,7 +512,7 @@ require_once "controlador/productos.php";
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="editForm" method="post">
+                                    <form id="editForm" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                             <label for="codigo">Código</label>
                                             
@@ -392,9 +526,21 @@ require_once "controlador/productos.php";
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
-                                            <label for="marca">Marca</label>
-                                            <input type="text" class="form-control" id="marcaE" name="marca" placeholder="Ingresa la marca">
-                                            <div class="invalid-feedback" style="display: none;"></div>
+                                                <label for="marca">Marca</label>
+                                                <div class="input-group">
+                                                        <select class="form-control" id="marcaE" name="marca" required>
+                                                            <option value="" selected disabled>Seleccione una opción</option>
+                                                            <?php foreach($marcas as $mar): ?>
+                                                                <option value="<?php echo $mar['cod_marca']; ?>">
+                                                                    <?php echo $mar['nombre']; ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalNuevaMarca">+</button>
+                                                        </div>
+                                                    </div>
+                                                <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -409,10 +555,10 @@ require_once "controlador/productos.php";
                                                 </select>
                                         </div>
                                         <div class="col-6">
-                                            <label for="excento">¿Tiene IVA?</label>
+                                            <label for="exento">¿Tiene IVA?</label>
                                                 <select class="form-control" id="ivaE" name="iva" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
-                                                    <option value="1">Excento</option>
+                                                    <option value="1">Exento</option>
                                                     <option value="2">Gravable</option>
                                                 </select>
                                         </div>
@@ -459,6 +605,34 @@ require_once "controlador/productos.php";
                                         </div>
                                         <div class="invalid-feedback" style="display: none;"></div>
                                     </div>
+                                    <div class="form-group">
+                                        <div style="display: flex;justify-content:space-between;align-items:center;">
+                                            <div>
+                                                <label for="imagen">Ingrese la nueva imagen<span class="text-danger" style="font-size: 20px;">
+                                                    *</span>
+                                                </label>
+                                                <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la imagen representativa del producto">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                                <script>
+                                                    $(function() {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
+                                                </script>
+                                            </div>
+                                            <div>
+                                                <?php if (!empty($producto['imagen'])): ?>
+                                                    <label for="">Imagen actual:</label>
+                                                    <img src="<?php echo $producto['imagen']; ?>" alt="Logo"  style="width: 75px; height: auto;">
+                                                <?php else: ?>
+                                                    <span>No disponible</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                            <input type="file" class="form-control" name="imagenE" id="imagen">
+                                            <input type="hidden" name="imagenActual" value="<?php echo $producto["imagen"];?>">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
                                     <div class="modal-footer justify-content-between">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                         <button type="submit" class="btn btn-primary" name="editar">Guardar</button>
@@ -532,13 +706,29 @@ require_once "controlador/productos.php";
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editModalLabel">Detalle de productos</h5>
+                                    <h5 class="modal-title" id="detalleModalLabel">Detalle de productos</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="card">
+                                        <div class="card-header">
+                                            <div class="form-row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nro_venta">Nombre del producto</label>
+                                                        <input type="text" class="form-control" id="nombreproducto" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nombre_cliente">Presentación</label>
+                                                        <input type="text" class="form-control" id="presentproducto" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
                                                 <table id="productos" class="table table-bordered table-striped table-hover" style="width: 100%;">
@@ -547,9 +737,7 @@ require_once "controlador/productos.php";
                                                             <th>Código</th>
                                                             <th>Lote</th>
                                                             <th>Fecha de vencimiento</th>
-                                                            <th>Status</th>
                                                             <th>Stock</th>
-                                                            <th>Acciones</th>
                                                         </tr>         
                                                     </thead>
                                                     <tbody id="detalleBody">
@@ -566,7 +754,7 @@ require_once "controlador/productos.php";
 
 <!-- ====================================
     MODAL CONFIRMAR ELIMINAR DETALLE 
-========================================= -->
+========================================= 
                 <div class="modal fade" id="eliminarDetalleModal" tabindex="-1" aria-labelledby="eliminarDetalleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -590,8 +778,8 @@ require_once "controlador/productos.php";
                             </div>
                         </div>
                     </div>
-                </div>
-
+                </div>-->
+                
             </div>
         </div>      
     </section>

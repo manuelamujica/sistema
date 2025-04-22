@@ -6,6 +6,9 @@
     private $fecha;
     private $descripcion;
     private $status;
+    private $lote;
+    private $fecha_vencimiento;
+    private $cod_presentacion;
     private $conex;
 
     public function __construct(){
@@ -31,6 +34,25 @@
     }
     public function getFecha(){
         return $this->fecha;
+    }
+    public function setCodp($cod_presentacion){
+        $this->cod_presentacion = $cod_presentacion;
+    }
+    public function setFechaV($fecha_vencimiento){
+        $this->fecha_vencimiento = $fecha_vencimiento;
+    }
+    public function setlote($lote){
+        $this->lote = $lote;
+    }
+    
+    public function getCodp(){
+        return $this->cod_presentacion;
+    }
+    public function getFechaV(){
+        return $this->fecha_vencimiento;
+    }
+    public function getlote(){
+        return $this->lote;
     }
     public function getDes(){
         return $this->descripcion;
@@ -100,62 +122,6 @@
     public function getmosc(){
         return $this->mostrarc();
     }
-    
-
-    private function editar(){
-        $sql = "UPDATE carga SET fecha = :fecha, descripcion = :descripcion, status = :status WHERE cod_carga = :cod_carga";
-
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_carga', $this->codigo);
-        $strExec->bindParam('fecha',$this->fecha);
-        $strExec->bindParam(':descripcion',$this->descripcion);
-        $strExec->bindParam(':status', $this->status);
-        $resul = $strExec->execute();
-
-        if($resul){
-            $r = 1;
-        }else{
-            $r = 0;
-        }
-
-        return $r;
-
-    }
-
-    public function geteditar(){
-        return $this->editar();
-    }
-
-    /**
-     *  #########
-     *  ELIMINAR CARGA
-     *  #########
-     */
-    private function eliminar($valor){
-        $registro = "SELECT COUNT(*) AS n_dcarga FROM detalle_carga WHERE cod_carga = $valor";
-        $strExec = $this->conex->prepare($registro);
-        $result = $strExec->execute();
-        if($result){
-            $resul = $strExec->fetch(PDO::FETCH_ASSOC);
-            if($resul['n_dcarga'] > 0){
-                $l = "UPDATE carga SET status = 2 WHERE cod_carga = $valor";
-                $strExec = $this->conex->prepare($l);
-                $strExec->execute();
-            }else{
-                $f = "DELETE FROM carga WHERE cod_carga = $valor";
-                $strExec = $this->conex->prepare($f);
-                $strExec->execute();
-            }
-            $res = 1;
-        }else{
-            $res = 0;
-        }
-        return $res;
-    }
-
-    public function geteliminar($valor){
-        return $this->eliminar($valor);
-    }
 
     public function producto($valor){
         //$this->fecha=$valor;
@@ -172,6 +138,32 @@
             }
     
     }
+       
+
+        //METODO REGISTRAR
+        private function registrarPro(){
+            $registro = "INSERT INTO detalle_productos(cod_presentacion,stock, fecha_vencimiento, lote) VALUES(:cod_presentacion,0, :fecha_vencimiento, :lote)";
+    
+            $strExec= $this->conex->prepare($registro);
+            $strExec->bindParam('cod_presentacion', $this->cod_presentacion);
+            $strExec->bindParam(':fecha_vencimiento',$this->fecha_vencimiento);
+            $strExec->bindParam(':lote', $this->lote);
+    
+            $result = $strExec->execute();
+    
+            if($result){
+                $r = 1;
+            }else{
+                $r = 0;
+            }
+    
+            return $r;
+    
+        }
+    
+        public function getcrearPro(){
+           return $this->registrarPro();
+        }
 
    }
 ?>

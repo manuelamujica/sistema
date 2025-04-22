@@ -1,17 +1,24 @@
 <?php
 require_once "modelo/carga.php";
 require_once "modelo/dcarga.php";
-require_once "modelo/detallep.php"; //AQUI DEBERIA LLAMAR AL MODELO DE PRODUCTO
+require_once "modelo/bitacora.php";
 
 $objcarga = new Carga();
+$objbitacora = new Bitacora();
 $objcargad = new Dcarga();
-$objprod = new Detallep();
+
 
 // Manejo de búsqueda de carga
 if (isset($_POST['buscar'])) {
     $resul = $objcargad->b_productos($_POST['buscar']);
     header('Content-type: application/json');
     echo json_encode($resul);
+    exit;
+
+}else if (isset($_POST['detalle'])) {
+    $detalle = $objcargad->gettodoo($_POST['detalle']);
+    header('Content-type: application/json');
+    echo json_encode($detalle);
     exit;
 } else if (isset($_POST['registrarD'])) {
     // Inicializar el array de respuesta
@@ -20,10 +27,10 @@ if (isset($_POST['buscar'])) {
         $cod_producto = $_POST['cod_presentacion'];
         $fecha = $_POST['fecha_vencimiento'];
         $lote = $_POST['lote'];
-        $objprod->setCodp($cod_producto);
-        $objprod->setlote($lote);
-        $objprod->setFecha($fecha);
-        $res = $objprod->getcrear();
+        $objcarga->setCodp($cod_producto);
+        $objcarga->setlote($lote);
+        $objcarga->setFechaV($fecha);
+        $res = $objcarga->getcrearPro();
 
         if ($res == 1) {
             $response['status'] = 'success';
@@ -33,13 +40,15 @@ if (isset($_POST['buscar'])) {
                 "icon" => "success"
             ];
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'No se pudo registrar el producto']);
+            $response['status'] = 'error';
+            $response['message'] = 'No se pudo registrar el producto';
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'El código del producto está vacío']);
+        $response['status'] = 'error';
+        $response['message'] = 'El código del producto está vacío';
     }
     // Enviar la respuesta como JSON
-    //header('Content-Type: application/json');
+    header('Content-Type: application/json');
     echo json_encode($response);
     exit();
 } else if (isset($_POST['verificarDetalle'])) {
@@ -57,13 +66,13 @@ if (isset($_POST['buscar'])) {
 }
 // Manejo de guardar carga
 else if (isset($_POST['guardar'])) {
-
-    // Verificar que la fecha y descripción no estén vacías
-    if (!empty($_POST['fecha']) && !empty($_POST['descripcion'])) {
-        if (preg_match("/^[a-zA-Z0-9\.,\s]+$/", $_POST['descripcion'])) {
-            $objcarga->setFecha($_POST['fecha']);
+    if (!empty($_POST['fecha_hora']) && !empty($_POST['descripcion'])) {
+        if (preg_match("/^[a-zA-ZÀ-ÿ0-9\s]+$/", $_POST['descripcion'])) {
+            $objcarga->setFecha($_POST['fecha_hora']);
             $objcarga->setDes($_POST['descripcion']);
             $resul = $objcarga->getcrear(); // Registrar carga
+
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de carga', $_POST["descripcion"], 'Carga');
 
             if ($resul == 1) {
                 // Cambiar a la forma correcta de acceder a los productos
@@ -99,7 +108,7 @@ else if (isset($_POST['guardar'])) {
                             $cargaExitosa = false;
                             $registrar = [
                                 "title" => "Error",
-                                "message" => "El producto manuela no tiene detalle",
+                                "message" => "El producto " . $codigo . " no tiene detalle",
                                 "icon" => "error"
                             ];
                         }
@@ -139,26 +148,9 @@ else if (isset($_POST['guardar'])) {
 
 }
 
-
-
-// Manejo de edición de carga
-else if (isset($_POST['editar'])) {
-    $cod_carga = $_POST['cod_carga'];
-    $des = $_POST['descripcion'];
-    $objcarga->setCod($cod_carga);
-    $objcarga->setDes($des);
-    $res = $objcarga->geteditar();
-    if ($res == 1) {
-        echo "<script>alert('Carga actualizada con éxito'); window.location.href='?pagina=carga'; </script>";
-    } else {
-        echo "<script>alert('No se pudo actualizar'); window.location.href='?pagina=carga'; </script>";
-    }
-}
-
 // Código adicional para manejar otras operaciones
 $productos = $objcargad->getP();
 $detalles = $objcargad->getmos();
 $carga = $objcarga->getmosc();
-$datos = $objcargad->gettodo();
 $_GET['ruta'] = 'carga';
 require_once 'plantilla.php';

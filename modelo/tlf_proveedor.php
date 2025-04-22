@@ -8,7 +8,6 @@ class Tproveedor extends Conexion
     private $cod_tlf;
     private $cod_prov;
     private $telefono;
-    private  $status;
 
 
 
@@ -51,23 +50,9 @@ class Tproveedor extends Conexion
     }
 
 
-
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-
-
-
-
      // registrar
     private function registra() {
-        $sql = "INSERT INTO tlf_proveedores (cod_prov, cod_tlf, telefono, status) VALUES (:cod_prov, :cod_tlf, :telefono, 1)";
+        $sql = "INSERT INTO tlf_proveedores (cod_prov, cod_tlf, telefono) VALUES (:cod_prov, :cod_tlf, :telefono)";
         
         $strExec = $this->conex->prepare($sql);
     
@@ -76,7 +61,6 @@ class Tproveedor extends Conexion
         $strExec->bindParam(':cod_tlf', $this->cod_tlf); 
         $strExec->bindParam(':telefono', $this->telefono);
     
-       
         // Ejecuta la consulta  
         $resul = $strExec->execute();
 
@@ -105,8 +89,6 @@ class Tproveedor extends Conexion
 
         $strExec->bindParam(':cod_tlf', $this->cod_tlf);
         $strExec->bindParam(':telefono', $this->telefono);
-
-        $strExec->bindParam(':status', $this->status);
 
         // Ejecuta la consulta  
         $resul = $strExec->execute();

@@ -125,33 +125,45 @@ REGISTRAR UNIDAD DE MEDIDA
             $r = 0;
         }
         return $r;
-      }
+    }
 
-      public function geteditar(){
+    public function geteditar(){
         return $this->editar();
-      }
+    }
 
     
 
-      private function eliminar($valor){ 
+    private function eliminar($valor){ 
         $registro = "SELECT COUNT(*) AS n_p FROM presentacion_producto WHERE cod_unidad = $valor";
         $strExec = $this->conex->prepare($registro);
         $strExec->execute();
         $resul = $strExec->fetch(PDO::FETCH_ASSOC);
+
         if($resul){
-            if($resul['n_p'] == 0){
-                $f = "DELETE FROM unidades_medida WHERE cod_unidad = $valor";
-                $strExec = $this->conex->prepare($f);
-                $ress=$strExec->execute();
-                if($ress){
-                    $r='success';
-                    return $r;
-                }else{
-                    $r='error_delete';
-                    return $r;
-                }
-            }else{
+
+            $registro = "SELECT status FROM unidades_medida WHERE cod_unidad = $valor";
+            $strExec = $this->conex->prepare($registro);
+            $strExec->execute();
+            $resu = $strExec->fetch(PDO::FETCH_ASSOC);
+
+            if($resu['status'] != 0){ // Si esta inactivo
+                $r = 'error_status';
+                return $r;
+            }
+
+            if($resul['n_p'] != 0){ //Si tiene productos
                 $r='error_associated';
+                return $r;
+            }
+
+            $f = "DELETE FROM unidades_medida WHERE cod_unidad = $valor";
+            $strExec = $this->conex->prepare($f);
+            $ress=$strExec->execute();
+            if($ress){
+                $r='success';
+                return $r;
+            }else{
+                $r='error_delete';
                 return $r;
             }
         } else{

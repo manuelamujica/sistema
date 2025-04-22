@@ -1,16 +1,6 @@
 //Si ya existe un producto, tener la opcion de asignarle una presentacion
 $(document).ready(function() {
-    // Estils de la lista
-    $('#lista-productos').css({
-        'position': 'absolute', 
-        'z-index': '1000',
-        'width': '100%',
-        'max-height': '200px',
-        'overflow-y': 'auto',
-        'border': '1px solid #ddd',
-        'box-shadow': '0px 4px 8px rgba(0, 0, 0, 0.1)'
-    });
-    
+
     $(document).on('input', '#nombre', function() {
         var query = $(this).val(); // Valor ingresado por el usuario
 
@@ -27,16 +17,18 @@ $(document).ready(function() {
                     //console.log("Data recibida:", data);
 
                     if (data.length > 0) {
-                        $.each(data, function(key, producto) {
+                        $.each(data, function(key, producto) { //Necesario para que reconozca las variables!
                             // Crea un nuevo elemento de lista para cada producto
+
+                            let marca = producto.marca || 'No disponible'; 
                             listaProductos.append(
-                                '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333;"' +
+                                '<a href="#" class="list-group-item list-group-item-action producto-item" style="color:#333333; font-weight:normal;"' +
                                 'data-codigo="'+ producto.cod_producto +'" '+
                                 'data-nombre="'+ producto.producto_nombre +'" ' +
-                                'data-marca="'+ producto.marca +'" ' +
+                                'data-marca="'+ marca +'" ' +
                                 'data-categoria="'+ producto.cod_categoria +'" ' + 
                                 'data-cat-nombre="'+ producto.cat_nombre +'">' + 
-                                producto.producto_nombre + ' - ' + producto.marca + ' - ' + producto.cat_nombre + '</a>'
+                                producto.producto_nombre + ' - ' + marca + ' - ' + producto.cat_nombre + '</a>'
                             );
                         });
                         listaProductos.fadeIn(); // Muestra la lista de productos
@@ -92,14 +84,6 @@ $(document).ready(function() {
         });
     }
 
-    function showErrorP(selector, message) {
-        $(selector).addClass('is-invalid');
-        $(selector).next('.invalid-feedback').html(message.toUpperCase()).css({
-            'display': 'block',
-            'color': 'red',
-        });
-    }
-
     function hideError(selector) {
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display', 'none');
@@ -113,8 +97,8 @@ $(document).ready(function() {
             hideError('#nombre');
         }else if (nombre.length > 40) {
             showError('#nombre', 'El texto no debe exceder los 40 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nombre)) {
-            showError('#nombre', 'Solo se permiten letras');
+        } else if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(nombre)) {
+            showError('#nombre', 'Solo se permiten letras y números');
         } else {
             hideError('#nombre');
         }
@@ -147,9 +131,11 @@ $(document).ready(function() {
     $('#cant_presentacion').on('input', function() {
         var cant_presentacion = $(this).val();
         if (cant_presentacion.trim() === '') {
-            hideError('#cant_presentacion'); 
-        } else if (!/^\d+(\.\d{1,2})?$/.test(cant_presentacion)) { // Permite números y un máximo de 2 decimales
-            showError('#cant_presentacion', 'Solo se permiten números y 2 decimales opcional.');
+            hideError('#cant_presentacion');
+        } else if (cant_presentacion.length > 20) {
+            showError('#cant_presentacion', 'El texto no debe exceder los 20 caracteres'); // Validar longitud máxima
+        } else if (!/^[a-zA-ZÀ-ÿ0-9\s.,]+$/.test(cant_presentacion)) { 
+            showError('#cant_presentacion', 'Solo se permiten letras, números, punto (.) y coma (,)');
         } else {
             hideError('#cant_presentacion'); 
         }
@@ -170,7 +156,7 @@ $(document).ready(function() {
         var porcen = $(this).val();
         if (porcen.trim() === '') {
             hideError('#porcen'); 
-        } else if (!/^\d+$/.test(porcen)) { // Permite números enteros     FUNCIONA PERO MUEVE EL ICONO DE %
+        } else if (!/^\d+$/.test(porcen)) { // Permite números enteros 
             showErrorP('#porcen', 'Solo se permiten números enteros.');
         } else {
             hideError('#porcen'); 
@@ -185,8 +171,8 @@ $(document).ready(function() {
             hideError('#name');
         }else if (name.length > 40) {
             showError('#name', 'El texto no debe exceder los 40 caracteres'); 
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) {
-            showError('#name', 'Solo se permiten letras');
+        } else if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(name)) {
+            showError('#name', 'Solo se permiten letras y números');
         } else {
             hideError('#name');
         }
@@ -219,9 +205,11 @@ $(document).ready(function() {
     $('#cant_presentacionE').on('input', function() {
         var cant_presentacionE = $(this).val();
         if (cant_presentacionE.trim() === '') {
-            hideError('#cant_presentacionE'); 
-        } else if (!/^\d+(\.\d{1,2})?$/.test(cant_presentacionE)) { // Permite números y un máximo de 2 decimales
-            showError('#cant_presentacionE', 'Solo se permiten números y 2 decimales opcional.');
+            hideError('#cant_presentacionE');
+        } else if (cant_presentacionE.length > 20) {
+            showError('#cant_presentacionE', 'El texto no debe exceder los 20 caracteres'); // Validar longitud máxima
+        } else if (!/^[a-zA-ZÀ-ÿ0-9\s.,]+$/.test(cant_presentacionE)) { 
+            showError('#cant_presentacionE', 'Solo se permiten letras, números, punto (.) y coma (,)');
         } else {
             hideError('#cant_presentacionE'); 
         }
@@ -253,7 +241,7 @@ $(document).ready(function() {
 });
 
 
-// Función general para calcular el precio de venta
+// Función para calcular el precio de venta REGISTRAR
 function calcularPrecioVenta(modal) {
     var valorPorcentaje = Number(modal.find('#porcen').val());
     var costo = Number(modal.find('#costo').val());
@@ -273,12 +261,35 @@ function calcularPrecioVenta(modal) {
     }
 }
 
-// Asigna la lógica de cálculo a los inputs de los modales
+// Llama a la funcion de calcular para el modal de registro
 $(document).on('input', '#costo, #porcen, #iva', function() {
-    var modal = $(this).closest('.modal'); // Detecta en qué modal estás trabajando (registro o edición)
-    calcularPrecioVenta(modal); 
+    calcularPrecioVenta($('#modalRegistrarProducto')); 
 });
 
+// Función para calcular el precio de venta EDITAR
+function calcularPrecioVentaEditar(modal) {
+    var valorPorcentaje = Number(modal.find('#porcenE').val());
+    var costo = Number(modal.find('#costoE').val());
+    var iva = Number(modal.find('#ivaE').val());
+
+    if (!isNaN(costo) && !isNaN(valorPorcentaje)) {
+        if(iva == 2){
+            var costoiva = costo * 1.16;
+            //console.log(costoiva);
+            var precioVenta = (valorPorcentaje / 100 + 1) * costoiva;
+        }else{
+            var precioVenta = (valorPorcentaje / 100 + 1) * costo;
+        }
+        modal.find('#precioE').val(precioVenta.toFixed(2)); // Mostrar en el id precio el resultado obtenido con dos decimales
+    } else {
+        modal.find('#precioE').val('0'); // Si es NaN, el precio es 0
+    }
+}
+
+// Llamar a la funcion de calcular para el modal de edicion
+$(document).on('input', '#costoE, #porcenE, #ivaE', function() {
+    calcularPrecioVentaEditar($('#editModal')); 
+});
 
 // NUEVA CATEGORIA DESDE PRODUCTO
 //(Validar nombre)
@@ -286,7 +297,12 @@ $(document).on('input', '#costo, #porcen, #iva', function() {
         var buscar=$('#nombrec').val();
         $.post('index.php?pagina=categorias', {buscar}, function(response){
             if(response != ''){
-                alert('La categoria ya se encuentra registrada');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: 'La categoria ya se encuentra registrada',
+                    confirmButtonText: 'Aceptar'
+                });
             }
         },'json');
     });
@@ -299,13 +315,42 @@ $(document).ready(function() {
     }
 });
 
+// NUEVA MARCA DESDE PRODUCTO
+//(Validar nombre)
+$('#nombrem').blur(function (e){
+    var buscar=$('#nombrem').val();
+    $.post('index.php?pagina=marcas', {buscar}, function(response){
+        if(response != ''){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'La marca ya se encuentra registrada',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    },'json');
+});
+
+$(document).ready(function() {
+// Verifica si el valor 'categoriaModal' está en localStorage
+if (localStorage.getItem('marcaModal') === 'true') {
+    $('#modalRegistrarProducto').modal('show');
+    localStorage.removeItem('marcaModal');
+}
+});
+
 //NUEVA UNIDAD DESDE PRODUCTO
 //(Validar nombre)
 $('#tipo_medidau').blur(function (e){
     var buscar=$('#tipo_medidau').val();
     $.post('index.php?pagina=unidad', {buscar}, function(response){
         if(response != ''){
-            alert('La unidad ya se encuentra registrada');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'La unidad de medida ya se encuentra registrada',
+                confirmButtonText: 'Aceptar'
+            });
         }
     },'json');
 });
@@ -324,7 +369,14 @@ $(document).ready(function() {
     $('#detallemodal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Botón que abrió el modal
         var codigoProducto = button.data('codigo'); // Extraer el cod_presentacion
+        var np = button.data('nombrep');
+        var pp = button.data('presentp');
 
+        var modal = $(this);
+        modal.find('.modal-body #nombreproducto').val(np);
+        modal.find('.modal-body #presentproducto').val(pp);
+        
+        console.log(codigoProducto);
         // Limpiar la tabla de detalles antes de cargar nuevos datos
         $('#detalleBody').empty();
 
@@ -335,38 +387,32 @@ $(document).ready(function() {
             data: { detallep: codigoProducto },
             dataType: 'json',
             success: function(data) {
-                //console.log(data);
+                
                 // Verificar si hay datos en la respuesta
+                console.log(data);
                 if (data.length === 0) {
                     // Si no hay detalles mostrar un mensaje 
                     $('#detalleBody').append(
                         '<tr>' +
-                        '<td colspan="6" class="text-center">No hay detalles disponibles para este producto</td>' +
+                            '<td colspan="5" class="text-center">No hay detalles disponibles para este producto</td>' +
                         '</tr>'
                     );
                 } else {
                 // Recorrer los datos devueltos y llenar la tabla
                 $.each(data, function(index, detalle) {
+                    let lote = detalle.lote || 'No disponible';
+                    let fechaVencimiento = detalle.fecha_vencimiento; //No esta funcionando  || 'No disponible'
 
-                    var statusText = detalle.status == '1' //Si el status es 1 mostrar activo sino inactivo
-                    ? '<span class="badge badge-success">Activo</span>' 
-                    : '<span class="badge badge-danger">Inactivo</span>'                   
-                    
-                    $('#detalleBody').append(
-                        '<tr>' +
-                        '<td>' + detalle.cod_detallep + '</td>' +
-                        '<td>' + detalle.lote + '</td>' +
-                        '<td>' + detalle.fecha_vencimiento + '</td>' +
-                        '<td class="status" data-status="' + detalle.status + '">' + statusText + '</td>' +
-                        '<td class="stock">' + detalle.stock + '</td>' +
-                        '<td>' + '<button class="btn btn-danger btn-sm eliminarDetalle" title="Eliminar" data-codigo="' + detalle.cod_detallep + '">' +
-                        '<i class="fas fa-trash-alt"></i>' +
-                        '</button>' + 
-                        '</td>' +
-                        '</tr>'
-                    );
-                });
-            }
+                        $('#detalleBody').append(
+                            '<tr>' +
+                                '<td>' + detalle.cod_detallep + '</td>' +
+                                '<td>' + lote + '</td>' +
+                                '<td>' + fechaVencimiento + '</td>' +
+                                '<td>' + detalle.stock + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                }
             },
             error: function(xhr, status, error) {
                 console.error('Error al cargar los detalles:', error);
@@ -375,7 +421,7 @@ $(document).ready(function() {
     });
 });
 
-// Botón de eliminar detalle
+/*Botón de eliminar detalle
 $(document).on('click', '.eliminarDetalle', function() {
     var codigoDetalle = $(this).data('codigo');
     var statusDetalle = $(this).closest('tr').find('.status').data('status');  
@@ -443,11 +489,17 @@ $(document).on('click', '.eliminarDetalle', function() {
             });
         }
     });
-
+*/
 //Editar modal
 $('#editModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     
+    var imagenSrc = button.closest('tr').find('img').attr('src') || 'vista/dist/img/productos/default.png';
+    
+
+    $(this).find('.modal-body img').attr('src', imagenSrc);
+    $(this).find('input[name="imagenActual"]').val(imagenSrc);
+
     var codigo = button.data('codigo');
     var nombre = button.data('nombre');
     var marca = button.data('marca');
@@ -458,6 +510,9 @@ $('#editModal').on('show.bs.modal', function (event) {
     var costo = button.data('costo');
     var iva = button.data('iva');
     var porcen = button.data('porcen');
+
+
+    console.log(imagenSrc, marca)
 
     // Modal
     var modal = $(this); 
@@ -474,7 +529,22 @@ $('#editModal').on('show.bs.modal', function (event) {
 
     modal.find('.modal-body #cod_producto').val(button.data('producto'));
 
-    calcularPrecioVenta(modal); // Llama a la función para calcular el precio de venta cuando se abre el modal de edición
+    calcularPrecioVentaEditar(modal);
+});
+
+$(document).on('change', '#editModal input[type="file"]', function(e) {
+    var input = e.target;
+    var modal = $(this).closest('.modal');
+    
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            modal.find('.modal-body img').attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
 });
 
 //Eliminar

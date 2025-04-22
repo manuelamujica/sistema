@@ -7,8 +7,9 @@ require_once "controlador/categorias.php";
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-sm-9">
                     <h1>Categorías</h1>
+                    <p>En esta sección se puede gestionar las categorías para clasificar los productos.</p>
                 </div>
             </div>
         </div>
@@ -88,7 +89,16 @@ require_once "controlador/categorias.php";
                                     <form id="formRegistrarCategoria" method="post">
                                         <div class="form-group">
                                             <label for="nombre">Nombre de la categoría</label>
-                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre de la categoría" required>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa el nombre de una categoría para productos, por ejemplo: Charcutería">
+                                                    <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Charcutería" required>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                 </div>

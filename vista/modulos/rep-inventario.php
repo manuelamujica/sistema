@@ -32,79 +32,95 @@ require_once 'controlador/reporte.php';
                             </ul>
                         </div>
                         <div class="card-body">
-
                             <div class="tab-content">
-                                <!-- Productos -->
+                                <!--===========  PRODUCTOS  ==============-->
                                 <div class="tab-pane fade show active" id="producto" role="tabpanel">
-
                                     <div class="row mb-2">
                                         <form action="index.php?pagina=productoexcel" method="post" target="_blank" class="d-inline">
-                                            <button class="btn btn-success ml-2" name="excel" title="Generar excel" id="excel">Excel</button>
+                                            <button class="btn btn-success ml-2" name="excel" title="Generar excel" id="excel">Generar Excel</button>
                                         </form>
-                                    </div>
-
-                                    <!-- Formulario de filtrado -->
-                                    <div class="row mb-2">
-                                        <form action="index.php?pagina=productopdf" method="post" target="_blank" class="d-inline" id="form">
-                                            <!-- Campos ocultos para las fechas -->
-                                            <input type="hidden" name="fechaInicio" id="fechaInicio" value="<?php echo date('Y-m-d') ?>">
-                                            <input type="hidden" name="fechaFin" id="fechaFin" value="<?php echo date('Y-m-d') ?>">
-
-                                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
-                                                <span><i class="fa fa-calendar"></i> Rango de fecha</span>
-                                                <i class="fas fa-caret-down"></i>
-                                            </button>
-
-                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">PDF</button>
-                                            <button type="button" class="btn btn-secondary ml-2" id="reset-btn">Restablecer Rango</button>
+                                        <form action="index.php?pagina=productopdf" method="post" target="_blank" class="d-inline">
+                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfc" type="submit">Generar PDF</button>
                                         </form>
-
+                                        <!-- Select de categoría y botón de productos por categoría -->
+                                        <div class="ml-auto d-flex">
+                                            <form action="index.php?pagina=productocat" method="post" target="_blank" class="d-inline">
+                                                <div class="form-group d-flex align-items-center">
+                                                    <select class="form-control mr-2" name="codigocategoria" required>
+                                                        <option value="" selected disabled>Seleccione una categoría</option>
+                                                        <?php foreach($categoria as $cate): ?>
+                                                            <option value="<?php echo $cate['cod_categoria']; ?>">
+                                                                <?php echo $cate['nombre']; ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <button class="btn btn-primary" name="categoria" title="Filtrar por categoría" id="categoria" type="submit">Filtrar</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-
-                                    <table id="producto-table" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>Código</th>
-                                                <th>Nombre</th>
-                                                <th>Marca</th>
-                                                <th>Presentacion</th>
-                                                <th>Categoría</th>
-                                                <th>Costo</th>
-                                                <th>IVA</th>
-                                                <th>Precio de venta</th>
-                                                <th>Stock</th>
-                                                <th>Detalle</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
+                                    <div class="table-responsive">
+                                        <table id="productos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Imagen</th>
+                                                    <th>Código</th>
+                                                    <th>Nombre</th>
+                                                    <th>Marca</th>
+                                                    <th>Presentación</th>
+                                                    <th>Categoría</th>
+                                                    <th>Costo</th>
+                                                    <th>IVA</th>
+                                                    <th>Precio de venta</th>
+                                                    <th>Stock total</th>
+                                                </tr>         
+                                            </thead>
+                                            <tbody>
+                                            <!-- Tabla con los datos que se muestren dinamicamente -->
                                                 <?php
-                                                foreach ($productos as $producto) {
-                                                ?>
-                                                    <td> <?php echo $producto["cod_producto"] ?></td>
-                                                    <td> <?php echo $producto["nombre"] ?></td>
-                                                    <td> <?php echo $producto["marca"] ?></td>
-                                                    <td> <?php echo $producto["presentacion"] ?></td>
-                                                    <td> <?php echo $producto["cat_nombre"] ?></td>
-                                                    <td> <?php echo $producto["costo"] ?></td>
-                                                    <td> <?php echo $producto["excento"] ?></td>
-                                                    <td><?php $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
-                                                        echo $precioVenta ?>
-                                                    </td>
-                                                    <td>Stock total</td>
-                                                    <!-- Detalle de producto -->
-                                                    <td class="text-center">
-                                                        <button class="btn btn-primary btn-sm" style="position: center;">
-                                                            <i class="fas fa-plus"></i>
-                                                        </button>
-                                                    </td>
-                                            </tr>
-                                        <?php } ?>
-                                        </tbody>
-                                    </table>
+                                                foreach ($productos as $producto){
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php if (!empty($producto['imagen'])): ?>
+                                                                <img src="<?php echo $producto['imagen']; ?>" alt="Logo" style="width: 100px; height: auto;">
+                                                            <?php else: ?>
+                                                                <span>No disponible</span>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                        <td> <?php echo $producto["cod_presentacion"] ?></td>
+                                                        <td> <?php echo $producto["nombre"] ?></td>
+                                                        <td> <?php echo $producto["marca"] ?  $producto["marca"] : 'No disponible'?></td>
+                                                        <td> <?php echo $producto["presentacion_concat"] ? $producto["presentacion_concat"] : 'No disponible' ?></td>
+                                                        <td> <?php echo $producto["cat_nombre"] ?></td>
+                                                        <td> <?php echo $producto["costo"] ?></td>
+                                                        <td> <?php if($producto["excento"] == 1){
+                                                            echo 'E';
+                                                        }  else{
+                                                            echo 'G';
+                                                        }
+                                                        ?>
+                                                        </td>
+                                                        <td>
+                                                        <?php 
+                                                        if($producto["excento"] == 1){
+                                                            $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $producto["costo"];
+                                                            echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                                        }  else{
+                                                            $costoiva = $producto["costo"] * 1.16;
+                                                            $precioVenta = ($producto["porcen_venta"] / 100 + 1) * $costoiva;
+                                                            echo number_format($precioVenta, 2, '.', '')." Bs"; //2 decimales . se redondea 
+                                                        }
+                                                        ?>
+                                                        </td>
+                                                        <td><?php echo $producto["stock_total"] ?></td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-
-                                
+                                <!--===========  CARGA  ==============-->
                                 <div class="tab-pane fade" id="carga" role="tabpanel">
                                     <!-- Formulario de filtrado -->
                                     <div class="row mb-2">
@@ -121,199 +137,84 @@ require_once 'controlador/reporte.php';
                                             <button class="btn btn-danger ml-2" name="pdf1" title="Generar PDF" id="pdf1" type="submit">PDF</button>
                                             <button type="button" class="btn btn-secondary ml-2" id="resetc-btn">Restablecer Rango</button>
                                         </form>
-
                                     </div>
-                                    <table id="carga" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>Código</th>
-                                                <th>Fecha</th>
-                                                <th>Descripción</th>
-                                                <th>Producto</th>
-                                                <th>Cantidad cargada</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            foreach ($datos as $dato) {
-                                            ?>
-                                                <td><?php echo $dato['cod_carga'] ?></td>
-                                                <td><?php echo $dato['fecha'] ?></td>
-                                                <td><?php echo $dato['descripcion'] ?></td>
-                                                <td><?php echo $dato['nombre'] . " en " . $dato['presentacion'] ?></td>
-                                                <td><?php echo $dato['cantidad'] ?></td>
-
+                                    <div class="table-responsive">
+                                        <table id="carga" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Fecha</th>
+                                                    <th>Descripción</th>
+                                                    <th>Producto</th>
+                                                    <th>Cantidad cargada</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                foreach ($datos as $dato) {
+                                                ?>
+                                                    <td><?php echo $dato['cod_carga'] ?></td>
+                                                    <td><?php echo $dato['fecha'] ?></td>
+                                                    <td><?php echo $dato['descripcion'] ?></td>
+                                                    <td><?php echo $dato['nombre'] . " en " . $dato['presentacion'] ?></td>
+                                                    <td><?php echo $dato['cantidad'] ?></td>
+                                            
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
-                                </tr>
-                            <?php } ?>
-                            </tbody>
-                            </table>
-                            </div>
-
-                            <!-- Descarga de Productos-->
-                            <div class="tab-pane fade table-responsive" id="descarga" role="tabpanel">
-                            <div class="row mb-2">
-                                        <form action="index.php?pagina=descargapdf" method="post" target="_blank" class="d-inline" id="form1"> <!--  AL ESTAR TERMINADO  -->
+                                <!--===========  DESCARGA  ==============-->
+                                <div class="tab-pane fade table-responsive" id="descarga" role="tabpanel">
+                                    <div class="row mb-2">
+                                        <form action="index.php?pagina=descargapdf" method="post" target="_blank" class="d-inline" id="form1"> 
                                             <!-- Campos ocultos para las fechas -->
                                             <input type="hidden" name="fechaInicio" id="fechaInicio" value="<?php echo date('Y-m-d') ?>">
                                             <input type="hidden" name="fechaFin" id="fechaFin" value="<?php echo date('Y-m-d') ?>">
-
-                                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                                            <button type="button" class="btn btn-default ml-2" id="daterange-btn">
                                                 <span><i class="fa fa-calendar"></i> Rango de fecha</span>
                                                 <i class="fas fa-caret-down"></i>
                                             </button>
-
-                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdf" type="submit">PDF</button>
-                                            <button type="button" class="btn btn-secondary ml-2" id="reset-btn">Restablecer Rango</button>
+                                            <button type="button" class="btn btn-secondary ml-2" id="reset-btn">Restablecer fecha</button>
+                                            <button class="btn btn-danger ml-2" name="pdf" title="Generar PDF" id="pdfD" type="submit">Generar PDF</button>
                                         </form>
-
                                     </div>
-                                <table id="descarga-table" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Producto</th>
-                                            <th>Cantidad Descargada</th>
-                                            <th>Fecha</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Aquí van los datos de descarga de productos -->
-                                    </tbody>
-                                </table>
+                                    <div class="table-responsive">
+                                        <table id="descarga-table" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Descripcion</th>
+                                                    <th>Fecha</th>
+                                                    <th>Producto</th> 
+                                                    <th>Lote</th>
+                                                    <th>Cantidad descargada</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($descarga as $d){?>
+                                                    <tr>
+                                                        <td> <?php echo $d["cod_descarga"] ?></td>
+                                                        <td> <?php echo $d["descripcion"] ?></td>
+                                                        <td> <?php echo $d["fecha"] ?></td>
+                                                        <td> <?php echo $d["producto_concat"] ?></td>
+                                                        <td> <?php echo $d["lote"] ?></td>
+                                                        <td><?php echo $d["cantidad"] ?></td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 </div>
-</section>
-</div>
-<script>
-    $(document).ready(function() {
-        $('#daterange-btn').daterangepicker({
-            locale: {
-                format: 'YYYY-MM-DD',
-                applyLabel: 'Aplicar',
-                cancelLabel: 'Cancelar',
-                fromLabel: 'Desde',
-                toLabel: 'Hasta',
-                customRangeLabel: 'Rango Personalizado', // Cambia el texto aquí
-                weekLabel: 'S',
-                firstDay: 1
-            },
-            ranges: {
-                'Hoy': [moment(), moment()],
-                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-                'Este mes': [moment().startOf('month'), moment().endOf('month')],
-                'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            startDate: moment().subtract(29, 'days'),
-            endDate: moment()
-        }, function(start, end) {
-            $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            // Guardar fechas en campos ocultos
-            $('#fechaInicio').val(start.format('YYYY-MM-DD'));
-            $('#fechaFin').val(end.format('YYYY-MM-DD'));
-        });
-        // Restablecer el rango de fechas al hacer clic en el botón
-
-        $('#form').on('submit', function(e) {
-            const fechaInicio = $('#fechaInicio').val();
-            const fechaFin = $('#fechaFin').val();
-
-            // Convertir las fechas a objetos Date para comparación
-            const inicio = new Date(fechaInicio);
-            const fin = new Date(fechaFin);
-            // Validar que la fecha de inicio no sea posterior a la fecha de fin
-            if (inicio > fin) {
-                Swal.fire({
-                        title: 'Error',
-                        text: 'La fecha de inicio no puede ser posterior a la fecha de fin.',
-                        icon: 'warning'
-                    });
-                e.preventDefault(); // Evitar que el formulario se envíe
-                return;
-            }else{
-                Swal.fire({
-                        title: 'Exito',
-                        text: 'Reporte Generado.',
-                        icon: 'success'
-                    });
-            }
-        });
-        // Restablecer el rango de fechas al hacer clic en el botón
-        $('#reset-btn').on('click', function() {
-            $('#fechaInicio').val('');
-            $('#fechaFin').val('');
-            $('#daterange-btn span').html('Rango de fecha'); // Cambia el texto del botón
-        });
-
-        $('#daterangec-btn').daterangepicker({
-            locale: {
-                format: 'YYYY-MM-DD',
-                applyLabel: 'Aplicar',
-                cancelLabel: 'Cancelar',
-                fromLabel: 'Desde',
-                toLabel: 'Hasta',
-                customRangeLabel: 'Rango Personalizado', // Cambia el texto aquí
-                weekLabel: 'S',
-                firstDay: 1
-            },
-            ranges: {
-                'Hoy': [moment(), moment()],
-                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-                'Este mes': [moment().startOf('month'), moment().endOf('month')],
-                'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            startDate: moment().subtract(29, 'days'),
-            endDate: moment()
-        }, function(start, end) {
-            $('#daterangec-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            // Guardar fechas en campos ocultos
-            $('#fechaInicio1').val(start.format('YYYY-MM-DD'));
-            $('#fechaFin1').val(end.format('YYYY-MM-DD'));
-        });
-
-        $('#form1').on('submit', function(e) {
-            const fechaInicio = $('#fechaInicio1').val();
-            const fechaFin = $('#fechaFin1').val();
-
-            // Convertir las fechas a objetos Date para comparación
-            const inicio = new Date(fechaInicio);
-            const fin = new Date(fechaFin);
-            // Validar que la fecha de inicio no sea posterior a la fecha de fin
-            if (inicio > fin) {
-                Swal.fire({
-                        title: 'Error',
-                        text: 'La fecha de inicio no puede ser posterior a la fecha de fin.',
-                        icon: 'warning'
-                    });
-                e.preventDefault(); // Evitar que el formulario se envíe
-                return;
-            }else{
-                Swal.fire({
-                        title: 'Exito',
-                        text: 'Reporte Generado.',
-                        icon: 'success'
-                    });
-            }
-        });
-       
-        // Restablecer el rango de fechas al hacer clic en el botón
-        $('#resetc-btn').on('click', function() {
-            $('#fechaInicio1').val('');
-            $('#fechaFin1').val('');
-            $('#daterangec-btn span').html('Rango de fecha'); // Cambia el texto del botón
-        });
-        
-    });
-</script>
-
+    
 <script src="vista/dist/js/modulos-js/rep-inventario.js"></script>

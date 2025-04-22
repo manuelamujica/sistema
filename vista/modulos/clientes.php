@@ -6,6 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>Clientes</h1>
+                <p>En esta sección se puede gestionar los clientes.</p>
             </div>
         </div>
     </div>
@@ -47,9 +48,9 @@
                             <td> <?php echo $datos["nombre"] ?></td>
                             <td> <?php echo $datos["apellido"] ?></td>
                             <td> <?php echo $datos["cedula_rif"] ?></td>
-                            <td> <?php echo $datos["telefono"] ?></td>
-                            <td> <?php echo $datos["email"] ?></td>
-                            <td> <?php echo $datos["direccion"] ?></td>
+                            <td> <?php echo $datos["telefono"] ? $datos["telefono"] : 'No disponible'?></td>
+                            <td> <?php echo $datos["email"] ? $datos["email"] : 'No disponible' ?></td>
+                            <td> <?php echo $datos["direccion"] ? $datos["direccion"] : 'No disponible' ?></td>
                             <td>
                                 <?php if ($datos['status']==1):?>
                                 <span class="badge bg-success">Activo</span>
@@ -63,7 +64,7 @@
                             data-codigo="<?php echo $datos["cod_cliente"]; ?>" 
                             data-nombre="<?php echo $datos["nombre"]; ?>" 
                             data-apellido="<?php echo $datos["apellido"]; ?>" 
-                            data-telefono="<?php echo $datos["telefono"]; ?>" 
+                            data-telefono="<?php echo $datos["telefono"];  ?>" 
                             data-email="<?php echo $datos["email"]; ?>"
                             data-direccion="<?php echo $datos["direccion"]; ?>" 
                             data-status="<?php echo $datos["status"]; ?>">
@@ -87,51 +88,64 @@
 <!-- =======================
 MODAL REGISTRAR CLIENTES 
 ============================= -->
-<div class="modal fade" id="modalRegistrarClientes" tabindex="-1" aria-labelledby="modalRegistrarClientesLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="clientesModalLabel">Registrar cliente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <form id="formRegistrarClientes" method="post">
-                    <div class="form-group">
-                        <label for="cedula_rif">Cédula o Rif:</label>
-                        <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" placeholder="Ingrese la cédula" required>
-                        <div class="invalid-feedback"></div>
-
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
-                        <div class="invalid-feedback"></div>
-
-                        <label for="apellido">Apellido:</label>
-                        <input type="text" class="form-control" name="apellido" id="apellido" placeholder="Ingrese el apellido" required>
-                        <div class="invalid-feedback"></div>
-
-                        <label for="telefono">Teléfono:</label>
-                        <input type="tel" class="form-control" name="telefono" id="telefono" placeholder="Ingrese el teléfono">
-                        <div class="invalid-feedback"></div>
-
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Ingrese el correo electrónico">
-
-                        <label for="direccion">Dirección:</label>
-                        <textarea class="form-control" name="direccion" placeholder="Ingrese la dirección de vivienda"></textarea>
+    <div class="modal fade" id="modalRegistrarClientes" tabindex="-1" aria-labelledby="modalRegistrarClientesLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientesModalLabel">Registrar cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRegistrarClientes" method="post">
+                        <div class="form-group">
+                            <label for="cedula_rif">Cédula o Rif:<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <input type="text" class="form-control" name="cedula_rif" id="cedula_rif" placeholder="Ej: 12345678" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <div class="col-6">
+                                <label for="nombre">Nombre:<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-6">
+                                <label for="apellido">Apellido:<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <input type="text" class="form-control" name="apellido" id="apellido" placeholder="Ingrese el apellido" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono:</label>
+                            <input type="tel" class="form-control" name="telefono" id="telefono" placeholder="Ingrese el teléfono">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email" placeholder="Ingrese el correo electrónico">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion">Dirección:</label>
+                            <textarea class="form-control" name="direccion" placeholder="Ingrese la dirección de vivienda"></textarea>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </form>
+                    <!-- Alert Message -->
+                    <div class="alert alert-light d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>Todos los campos marcados con (*) son obligatorios</span>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" name="guardar" form="formRegistrarClientes">Guardar</button>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="guardar" form="formRegistrarClientes">Guardar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <?php 
 if (isset($registrar)): ?>
     <script>
@@ -167,15 +181,17 @@ MODAL EDITAR CLIENTES
                         <label for="codigo">Código</label>
                         <input type="text" class="form-control" id="codigo" name="codigo" readonly>
                     </div>
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" class="form-control" id="nombre1" name="nombre" required>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="apellido">Apellido</label>
-                        <input type="text" class="form-control" id="apellido1" name="apellido" required>
-                        <div class="invalid-feedback"></div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre1" name="nombre" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-6">
+                            <label for="apellido">Apellido</label>
+                            <input type="text" class="form-control" id="apellido1" name="apellido" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="cedula_rif">Cédula-Rif</label>
@@ -235,7 +251,7 @@ MODAL CONFIRMAR ELIMINAR
     <div class="modal fade" id="eliminarcliente" tabindex="-1" aria-labelledby="eliminarclienteLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-danger">
                     <h5 class="modal-title" id="eliminarclienteLabel">Confirmar Eliminación</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -268,7 +284,7 @@ MODAL CONFIRMAR ELIMINAR
     });
 </script>
 <?php endif; ?>
+<script src="vista/dist/js/modulos-js/clientes.js"> </script>
 </section>
 </div>
 
-<script src="vista/dist/js/modulos-js/clientes.js"> </script>

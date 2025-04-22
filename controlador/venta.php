@@ -2,7 +2,10 @@
 require_once 'modelo/venta.php'; 
 require_once 'modelo/tpago.php';
 require_once 'modelo/pago.php';
+require_once 'modelo/bitacora.php';
+
 $obj=new Venta();
+$objbitacora = new Bitacora();
 $objpago=new Tpago();
 $objp=new Pago();
 if(isset($_POST['buscar'])){
@@ -10,6 +13,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
 }else if(isset($_POST['registrarv'])){
     if(!empty($_POST['cod_cliente']) && !empty($_POST['total_general']) && !empty($_POST['fecha_hora'])){
         if(isset($_POST['productos'])){
@@ -18,7 +22,7 @@ if(isset($_POST['buscar'])){
             $resul=$obj->registrar($_POST['cod_cliente'], $_POST['productos']);
             error_log($resul);
             header('Content-Type: application/json');
-            if($resul){
+            if($resul>0){
                 echo json_encode([
                     'success'=>true,
                     'cod_venta'=>$resul,
@@ -27,6 +31,7 @@ if(isset($_POST['buscar'])){
                     'cliente'=>$_POST['nombre-cliente'],
                     'message' => 'Venta registrada exitosamente'
                 ]);
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de venta', $_POST["total_general"], 'Venta');
             }else{
                 echo json_encode([
                     'success' => false,
@@ -44,7 +49,7 @@ if(isset($_POST['buscar'])){
     }else{
         echo json_encode([
             'success' => false,
-            'message' => 'Faltan campos obligatorios: cod_cliente, total_general o fecha_hora'
+            'message' => 'Faltan campos obligatorios'
         ]);
         exit;
     }
@@ -62,12 +67,14 @@ if(isset($_POST['buscar'])){
                         "message" => "La venta se ha completado en su totalidad.",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago', $_POST["monto_pagado"], 'Pago');
                 }else if($resul>0){
                     $registrarp = [
                         "title" => "Se ha registrado un pago parcial.",
                         "message" => "El monto pendiente es de ".$resul."Bs.",
                         "icon" => "success"
                     ];
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial', $_POST["monto_pagar"], 'Pago');
                 }
             }
         //}
@@ -86,12 +93,14 @@ if(isset($_POST['buscar'])){
                     "message" => "La venta se ha completado en su totalidad.",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial completado', $_POST["pago"], 'Pago');
             }else if($resul>0){
                 $registrarpp = [
                     "title" => "Se ha registrado un pago parcial.",
                     "message" => "El monto pendiente es de ".$resul."Bs.",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial', $_POST["pago"], 'Pago');
             }
         }
     }
@@ -104,6 +113,7 @@ if(isset($_POST['buscar'])){
                 "message" => "Todos los registros asociados han sido actualizados.",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Anulación de venta', $_POST["cventa"], 'Venta');
         }else{
             $anular = [
                 "title" => "Ocurrió un error al intentar anular la venta.",
@@ -114,8 +124,9 @@ if(isset($_POST['buscar'])){
     }
 }
 
-$opciones=$objpago->consultar();
-$consulta=$obj->consultar();
+//$datos=$obj->v_cliente();
+//$opciones=$objpago->consultar();
+//$consulta=$obj->consultar();
 $_GET['ruta']='venta';
 require_once 'plantilla.php';
 

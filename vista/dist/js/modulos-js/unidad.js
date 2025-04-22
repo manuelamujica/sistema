@@ -1,17 +1,67 @@
-//BUSCAR
-$('#tipo_medida').blur(function (e){
-    var buscar=$('#tipo_medida').val();
-    $.post('index.php?pagina=unidad', {buscar}, function(response){
-    if(response != ''){
-        alert('La unidad de medida ya se encuentra registrada');
-    }
-    },'json');
+//Validar registrar
+$('#tipo_medida1').blur(function (e) {
+    var buscar = $('#tipo_medida1').val();
+    $.post('index.php?pagina=unidad', { buscar }, function (response) {
+        if (response != '') {
+            Swal.fire({
+                title: 'Error',
+                text: 'La unidad de medida ya se encuentra registrada.',
+                icon: 'warning'
+            });
+        }
+    }, 'json');
 });
+
+
+//VALIDACIÓN
+$(document).ready(function () {
+    // FUNCIONES
+    function showError(selector, message) {
+        $(selector).addClass('is-invalid');
+        $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
+            'display': 'block',
+            'color': 'red',
+        });
+    }
+
+    function hideError(selector) {
+        $(selector).removeClass('is-invalid');
+        $(selector).next('.invalid-feedback').css('display', 'none');
+    }
+    // FIN FUNCIONES
+
+
+    $('#tipo_medida1').on('blur', function() {
+        var tipo_medida1 = $(this).val();
+        if(tipo_medida1.trim() === ''){
+            hideError('#tipo_medida1');
+        }else if (tipo_medida1.length > 10) {
+            showError('#tipo_medida1', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
+        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida1)) {
+            showError('#tipo_medida1', 'Solo se permiten letras');
+        } else {
+            hideError('#tipo_medida1');
+        }
+    });
+
+    $('#tipo_medida').on('blur', function() {
+        var tipo_medida = $(this).val();
+        if(tipo_medida.trim() === ''){
+            hideError('#tipo_medida');
+        }else if (tipo_medida.length > 10) {
+            showError('#tipo_medida', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
+        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida)) {
+            showError('#tipo_medida', 'Solo se permiten letras');
+        } else {
+            hideError('#tipo_medida');
+        }
+    });
+});
+
 //EDITAR
-$(document).ready(function() {
+$(document).ready(function () {
     // Cuando se hace clic en el botón de editar
-    $('.editar').click(function() {
-        // Obtener los datos del botón
+    $('.editar').click(function () {
         var cod = $(this).data('cod');
         var tipo = $(this).data('tipo');
         var status = $(this).data('status');
@@ -19,70 +69,28 @@ $(document).ready(function() {
         // Asignar los valores al formulario del modal
         $('#cod_unidad').val(cod);
         $('#cod_unidad_oculto').val(cod);
-        $('#tipo_medida').val(tipo).data('tipoOriginal', tipo); // Guardar el tipo original
+        $('#tipo_medida').val(tipo);
         $('#status').val(status);
+        $('#origin').val(tipo);   
     });
 
-    // Validación al enviar el formulario de edición
-    $('#form-editar-unidad').submit(function(e) {
-        const tipoMedidaActual = $('#tipo_medida').val();
-        const tipoMedidaOriginal = $('#tipo_medida').data('tipoOriginal');
 
-        // Validaciones                                                                    NO ENTIENDO !?
-        if (tipoMedidaActual !== tipoMedidaOriginal) {
-            alert('No puedes cambiar el nombre de la unidad de medida.');
-            e.preventDefault(); // Evitar el envío del formulario
-            return false;
-        }
-
-        // Validación adicional para el campo 'Tipo de Medida'
-        if (!tipoMedidaActual || /^\s*$/.test(tipoMedidaActual)) {
-            alert("El campo 'Tipo de Medida' es obligatorio y no puede estar vacío.");
-            e.preventDefault(); // Evitar el envío del formulario
-            return false; // Evitar el envío del formulario
-        }
-
-        if (/\d/.test(tipoMedidaActual)) {
-            alert("El campo 'Tipo de Medida' no puede contener números.");
-            e.preventDefault(); // Evitar el envío del formulario
-            return false; // Evitar el envío del formulario
-        }
-
-        // Verificar si el valor contiene solo caracteres especiales
-        if (/^[^a-zA-Z0-9\s]+$/.test(tipoMedidaActual)) {
-            alert("El campo 'Tipo de Medida' no puede contener solo caracteres especiales.");
-            e.preventDefault(); // Evitar el envío del formulario
-            return false; // Evitar el envío del formulario
-        }
-
-        // Si todas las validaciones pasan, permitir el envío del formulario
-        return true;
-    });
 });
 //ELIMINAR
-$('.eliminar').click(function(){
-    var codUnidad = $(this).data('cod'); // Obtener el código de la unidad
-    $('#cod_eliminar').val(codUnidad); // Asignar el valor al campo oculto
+$('#modaleliminar').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); 
+    var codigo = button.data('cod');
+    var status = button.data('status');
+    var tipomedida = button.data('tipo');
+
+    var modal = $(this);
+    modal.find('.modal-body #cod_eliminar').val(codigo);
+    modal.find('#tipomedidaD').text(tipomedida);
+    modal.find('.modal-body #status_e').val(codigo);
+
+    console.log(tipomedida,codigo);
 });
 
-//VALIDACIÓN
-function validacion(){
-    
-    const valor = document.getElementById("tipo_medida1").value;
-    if (valor == null || valor.length === 0 || /^\s+$/.test(valor)) {
-        alert("El campo 'Tipo de Medida' es obligatorio y no puede estar vacío.");
-        return false; // Evita el envío del formulario
-    }
-    if (/\d/.test(valor)) {
-        alert("El campo 'Tipo de Medida' no puede contener números.");
-        return false; // Evita el envío del formulario
-    }
 
-    // Verificar si el valor contiene solo caracteres especiales
-    if (/^[^a-zA-Z0-9\s]+$/.test(valor)) {
-        alert("El campo 'Tipo de Medida' no puede contener solo caracteres especiales.");
-        return false; // Evita el envío del formulario
-    }
-    return true; // Permite el envío del formulario
-    
-};
+
+

@@ -5,42 +5,31 @@ require_once 'modelo/clientes.php';
 $objCliente = new Clientes(); 
 
 if(isset($_POST['buscar'])){
-    
     $cedula=$_POST['buscar'];
-
     $result=$objCliente->buscar($cedula);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-}else if (isset($_POST['guardar'])) { 
-    $errores = []; // Array para almacenar los mensajes de error
+    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar cliente', $cedula, 'Clientes');
+    
+} else if (isset($_POST['guardar'])) { 
+    $errores = [];
 
-    // Validación del campo nombre
-    if (empty($_POST["nombre"]) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $_POST["nombre"])) {
-        $errores[] = "El nombre solo puede contener letras y espacios.";
+    // Usamos la función 'cargarDatosDesdeFormulario' para validar y cargar los datos
+    try {
+        $objCliente->setCedula($_POST['cedula_rif']);
+        $objCliente->setNombre($_POST['nombre']);
+        $objCliente->setApellido($_POST['apellido']);
+        $objCliente->setTelefono($_POST['telefono']);
+        $objCliente->setEmail($_POST['email']);
+        $objCliente->setDireccion($_POST['direccion']);
+    
+        $objCliente->check(); // Lanza excepción si hay errores
+        $objCliente->getRegistrar();
+        // Aquí puedes guardar o hacer lo que necesites con el cliente
+    } catch (Exception $e) {
+        $errores[] = $e->getMessage();
     }
-
-    // Validación del campo apellido
-    if (empty($_POST["apellido"]) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $_POST["apellido"])) {
-        $errores[] = "El apellido solo puede contener letras .";
-    }
-
-    // Validación del campo cedula_rif
-    if (empty($_POST["cedula_rif"]) || !preg_match("/^[a-zA-Z0-9\-\/]+$/", $_POST["cedula_rif"])) {
-        $errores[] = "La cédula/RIF solo puede contener letras, números .";
-    }
-
-    // Validación del campo teléfono
-    if (!empty($_POST["telefono"]) && !preg_match("/^[0-9\s\-\(\)]+$/", $_POST["telefono"])) {
-        $errores[] = "El teléfono solo puede contener números.";
-    }
-
-    // Validación del campo email
-    if (!empty($_POST["email"]) && !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-        $errores[] = "El email no es válido.";
-    }
-
-    $direccion = $_POST["direccion"]; // Se permite cualquier contenido
 
     // Si hay errores, se muestra el mensaje de error
     if (!empty($errores)) {
@@ -50,16 +39,11 @@ if(isset($_POST['buscar'])){
             "icon" => "error"
         ];
     } else {
+        // Si no hay errores, proceder con el registro
         $cedula = $_POST["cedula_rif"];
         $dato = $objCliente->buscar($cedula);
         if (!$dato) {
-            $objCliente->setNombre($_POST["nombre"]);
-            $objCliente->setApellido($_POST["apellido"]);
-            $objCliente->setCedula($_POST["cedula_rif"]);
-            $objCliente->setTelefono($_POST["telefono"]);
-            $objCliente->setEmail($_POST["email"]);
-            $objCliente->setDireccion($direccion);
-
+            // Registrar los datos del cliente
             $result = $objCliente->getRegistrar();
             if ($result == 1) {
                 $registrar = [
@@ -67,6 +51,7 @@ if(isset($_POST['buscar'])){
                     "message" => "El cliente ha sido registrado",
                     "icon" => "success"
                 ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de cliente', $_POST["nombre"], 'Clientes');
             } else {
                 $registrar = [
                     "title" => "Error",
@@ -74,15 +59,49 @@ if(isset($_POST['buscar'])){
                     "icon" => "error"
                 ];
             }
-        } 
+        } else {
+            $registrar = [
+                "title" => "Error",
+                "message" => "La cédula ya se encuentra registrada. Intente nuevamente",
+                "icon" => "error"
+            ];
+        }
     }
 }
 else if(isset($_POST['actualizar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){
-        
         if($_POST['cedula_rif'] !== $_POST['origin'] && $objCliente->buscar($_POST['cedula_rif'])){
-
+            $editar = [
+                "title" => "Error",
+                "message" => "la cedula del cliente ya existe",
+                "icon" => "error"
+            ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar cliente', "Editado el cliente con el código ".$_POST["codigo"], 'Clientes');
         }else {
+            $errores = [];
+            if (empty($_POST["nombre"]) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $_POST["nombre"])) {
+                $errores[] = "El nombre solo puede contener letras y espacios.";
+            }
+            if (empty($_POST["apellido"]) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $_POST["apellido"])) {
+                $errores[] = "El apellido solo puede contener letras .";
+            }
+            if (empty($_POST["cedula_rif"]) || !preg_match("/^\d+$/", $_POST["cedula_rif"])) {
+                $errores[] = "La cédula/RIF solo puede contener números .";
+            }
+            if (!empty($_POST["telefono"]) && !preg_match("/^[0-9\s\-\(\)]+$/", $_POST["telefono"])) {
+                $errores[] = "El teléfono solo puede contener números.";
+            }
+            if (!empty($_POST["email"]) && !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
+                $errores[] = "El email no es válido.";
+            }
+            // Si hay errores, se muestra el mensaje de error
+            if (!empty($errores)) {
+                $registrar = [
+                    "title" => "Error",
+                    "message" => implode(" ", $errores),
+                    "icon" => "error"
+                ];
+            } else {
             $objCliente->setNombre($_POST["nombre"]);
             $objCliente->setApellido($_POST["apellido"]);
             $objCliente->setCedula($_POST["cedula_rif"]);
@@ -104,6 +123,7 @@ else if(isset($_POST['actualizar'])){
                         "icon" => "error"
                     ];
                 }
+            }
         }
     }
 }else if(isset($_POST['borrar'])){
@@ -115,13 +135,20 @@ else if(isset($_POST['actualizar'])){
             "message" => "El cliente ha sido eliminado",
             "icon" => "success"
         ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar cliente', "Eliminado el cliente con el código ".$_POST["clienteCodigo"], 'Clientes');
     } elseif ($result == 'error_delete') {
         $editar = [
             "title" => "Error",
             "message" => "Hubo un problema al eliminar el cliente",
             "icon" => "error"
         ];
-    }
+    } elseif ($result == 'venta') {
+        $editar = [
+            "title" => "Error",
+            "message" => "El cliente tiene ventas asociadas",
+            "icon" => "error"
+        ];
+        }
     }
 }
 
@@ -135,4 +162,3 @@ if(isset($_POST["vista"])){
 }
 require_once 'plantilla.php';
 
-//Lo actualice en manuela branch, no tenia las alertas etc 

@@ -138,14 +138,6 @@ class Compra extends Conexion
    private function registrar($dproducto){
       try{
          $this->conex->beginTransaction();
-
-         echo'<script>
-         console.log('.$this->cod_prov.');
-         console.log('.$this->subtotal.');
-         console.log('.$this->impuesto_total.');
-         console.log('.$this->total.');
-         console.log('.$this->fecha.');
-         </script>';
       
       $sql = "INSERT INTO compras (cod_prov, subtotal,total, impuesto_total, fecha, status) VALUES (:cod_prov, :subtotal,:total, :impuesto_total, :fecha, 1)";  
       $strExec = $this->conex->prepare($sql);  
@@ -157,25 +149,14 @@ class Compra extends Conexion
       $resul = $strExec->execute();  
       if ($resul) { 
          $cod_c=$this->conex->lastInsertId();
-         echo'<script>
-         console.log('.$resul.');
-         console.log('.$cod_c.');
-         </script>';
          foreach($dproducto as $producto){
-         echo'<script>
-         console.log('.json_encode($producto).');
-         </script>';
          if(!empty($producto['cod-dp'])){
-            echo'<script>
-            console.log('.$producto['cod-dp'].');
-            console.log('.$cod_c.');
-            </script>';
             $dcompra = "INSERT INTO detalle_compras (cod_compra, cod_detallep, cantidad, monto) VALUES (:cod_compra, :cod_detallep, :cantidad, :monto)";
             $strExec = $this->conex->prepare($dcompra);  
             $strExec->bindParam(':cod_compra', $cod_c);  
             $strExec->bindParam(':cod_detallep', $producto['cod-dp']);  
             $strExec->bindParam(':cantidad', $producto['cantidad']);  
-            $strExec->bindParam(':monto', $producto['total']);
+            $strExec->bindParam(':monto', $producto['precio']);
             $dc=$strExec->execute();
 
             $incre="UPDATE detalle_productos SET stock = stock + :cantidad WHERE cod_detallep = :cod_detallep;";
@@ -183,12 +164,16 @@ class Compra extends Conexion
             $str->bindParam(':cod_detallep', $producto['cod-dp']);  
             $str->bindParam(':cantidad', $producto['cantidad']);
             $dp=$str->execute();
-            echo'<script>
-            console.log('.json_encode($dc).');
-            console.log('.json_encode($dp).');
-            </script>';
+
+            $costo="UPDATE presentacion_producto SET costo= :costo, excento=:excento WHERE cod_presentacion=:cod_presentacion;";
+            $sentencia=$this->conex->prepare($costo);
+            $sentencia->bindParam(':costo', $producto['precio']);
+            $sentencia->bindParam(':cod_presentacion', $producto['cod_presentacion']);
+            $sentencia->bindParam(':excento', $producto['iva']);
+            $sentencia->execute();
+            
          }else{
-               $dproducto = "INSERT INTO detalle_productos (cod_presentacion, stock, fecha_vencimiento, lote, status) VALUES (:cod_presentacion, :stock, :fecha_vencimiento, :lote, 1)";
+               $dproducto = "INSERT INTO detalle_productos (cod_presentacion, stock, fecha_vencimiento, lote) VALUES (:cod_presentacion, :stock, :fecha_vencimiento, :lote)";
                $strExec = $this->conex->prepare($dproducto);  
                $strExec->bindParam(':cod_presentacion', $producto['cod_presentacion']);  
                $strExec->bindParam(':stock', $producto['cantidad']);  
@@ -203,8 +188,15 @@ class Compra extends Conexion
                $strExec->bindParam(':cod_compra', $cod_c);  
                $strExec->bindParam(':cod_detallep', $codp);  
                $strExec->bindParam(':cantidad', $producto['cantidad']);  
-               $strExec->bindParam(':monto', $producto['total']);
+               $strExec->bindParam(':monto', $producto['precio']);
                $dc=$strExec->execute();
+
+               $costo="UPDATE presentacion_producto SET costo= :costo, excento=:excento WHERE cod_presentacion=:cod_presentacion;";
+               $sentencia=$this->conex->prepare($costo);
+               $sentencia->bindParam(':costo', $producto['precio']);
+               $sentencia->bindParam(':cod_presentacion', $producto['cod_presentacion']);
+               $sentencia->bindParam(':excento', $producto['iva']);
+               $sentencia->execute();
          }
          }
          $res = 1;  
@@ -215,7 +207,7 @@ class Compra extends Conexion
          return $res;
       }catch(Exception $e){
          $this->conex->rollBack();
-
+         
       }
    }
    
@@ -352,7 +344,7 @@ class Compra extends Conexion
       p.cod_producto,                                  
       p.nombre AS producto_nombre,                     
       present.costo,                                   
-      p.marca,                                         
+      m.nombre AS marca,                                         
       present.excento,                                       
       present.porcen_venta,
       u.cod_unidad,
@@ -363,6 +355,7 @@ class Compra extends Conexion
       JOIN productos AS p ON present.cod_producto = p.cod_producto  
       JOIN categorias AS c ON p.cod_categoria = c.cod_categoria      
       JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
+      JOIN marcas AS m ON p.cod_marca = m.cod_marca
       WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
 
          $consulta = $this->conex->prepare($sql);
@@ -383,7 +376,7 @@ class Compra extends Conexion
    }
 
    public function buscar_l($lot, $cod){
-      $busqueda="SELECT dp.*, dp.status AS detalle_status, pp.*
+      $busqueda="SELECT dp.*, pp.*
       FROM detalle_productos AS dp
       JOIN presentacion_producto AS pp ON dp.cod_presentacion = pp.cod_presentacion WHERE pp.cod_presentacion = :cod_presentacion AND dp.lote LIKE :lote;";
       $consulta = $this->conex->prepare($busqueda);
@@ -399,6 +392,41 @@ class Compra extends Conexion
       }
    }
 
+   public function b_detalle($cod){
+      $busqueda="SELECT dc.*, dp.*, 
+      CONCAT(prod.nombre,' ', m.nombre, ' - ', p.presentacion, ' x ', p.cantidad_presentacion) AS presentacion FROM detalle_compras dc 
+      JOIN compras c ON dc.cod_compra=c.cod_compra 
+      JOIN detalle_productos dp ON dc.cod_detallep=dp.cod_detallep
+      JOIN presentacion_producto p ON dp.cod_presentacion=p.cod_presentacion
+      JOIN productos AS prod ON p.cod_producto = prod.cod_producto
+      JOIN marcas AS m ON prod.cod_marca = m.cod_marca
+      WHERE dc.cod_compra=:cod_compra;";
+      $consulta = $this->conex->prepare($busqueda);
+      $consulta->bindParam(':cod_compra', $cod);
+      $resul = $consulta->execute();
+      $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+      if($resul){
+         return $datos;
+      }else{
+         return [];
+      }
+   }
 
-
+   public function compra_f($fi, $ff){
+      $sql="SELECT p.razon_social, c.*
+   FROM compras c
+   INNER JOIN proveedores p ON c.cod_prov = p.cod_prov
+   WHERE c.fecha BETWEEN :fechainicio AND :fechafin
+   ORDER BY c.cod_compra ASC;";
+      $stmt = $this->conex->prepare($sql);
+      $stmt->bindParam(':fechainicio', $fi);
+      $stmt->bindParam(':fechafin', $ff);
+      $resul=$stmt->execute();
+      $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+      if($resul){
+         return $datos;
+      }else{
+         return [];
+      }
+   }
 }

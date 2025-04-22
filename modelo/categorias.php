@@ -56,9 +56,9 @@ REGISTRAR CATEGORIA
 /*==============================
 VALIDAR CATEGORIAS
 ================================*/
-public function buscar($valor){
+private function buscar($valor){
     $this->nombre=$valor;
-    $registro = "select * from categorias where nombre='".$this->nombre."'";
+    $registro = "SELECT * FROM categorias WHERE nombre='".$this->nombre."'";
     $resultado= "";
         $dato=$this->conex->prepare($registro);
         $resul=$dato->execute();
@@ -77,7 +77,7 @@ public function getbuscar($valor){
 /*==============================
 MOSTRAR CATEGORIAS
 ================================*/
-    public function mostrar(){
+    private function mostrar(){
         $registro = "select * from categorias";
         $consulta = $this->conex->prepare($registro);
         $resul = $consulta->execute();
@@ -97,7 +97,7 @@ MOSTRAR CATEGORIAS
 /*==============================
 EDITAR CATEGORIAS
 ================================*/
-    public function editar($valor){
+    private function editar($valor){
         $sql="UPDATE categorias SET nombre=:nombre, status=:status WHERE cod_categoria=$valor";
         $strExec = $this->conex->prepare($sql);
 
@@ -120,7 +120,7 @@ EDITAR CATEGORIAS
 /*==============================
 ELIMINAR CATEGORIAS
 ================================*/
-    public function eliminar($valor){
+    private function eliminar($valor){
         $sql="SELECT COUNT(*) AS count FROM categorias c JOIN productos p ON c.cod_categoria = p.cod_categoria WHERE c.cod_categoria=$valor";
         $strExec = $this->conex->prepare($sql);
         $resul = $strExec->execute();

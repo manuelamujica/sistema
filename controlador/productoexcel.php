@@ -2,9 +2,6 @@
 session_start();
 require_once "./vendor/autoload.php";
 require_once 'modelo/productos.php';
-require_once 'modelo/categorias.php';
-require_once 'modelo/unidad.php';
-require_once "modelo/general.php";
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -17,17 +14,6 @@ use PhpOffice\PhpSpreadsheet\Style\Style; // Importar la clase Style
 // Objetos
 $objProducto = new Productos();
 $datos = $objProducto->getmostrar();
-$general = new General();
-$logo = $general->mostrar();
-
-if (!empty($logo)) {
-    $_SESSION["logo"] = $logo[0]["logo"];
-    $_SESSION["n_empresa"] = $logo[0]["nombre"];
-    $_SESSION["rif"] = $logo[0]["rif"];
-    $_SESSION["telefono"] = $logo[0]["telefono"];
-    $_SESSION["email"] = $logo[0]["email"];
-    $_SESSION["direccion"] = $logo[0]["direccion"];
-}
 
 // Crear un nuevo objeto Spreadsheet
 $spreadsheet = new Spreadsheet();
@@ -38,9 +24,9 @@ if (!empty($_SESSION["logo"])) {
     $drawing = new Drawing();
     $drawing->setName('Logo');
     $drawing->setDescription('Logo de la empresa');
-    $drawing->setPath($_SESSION["logo"]); // Ruta del logo
-    $drawing->setHeight(50); // Altura del logo
-    $drawing->setCoordinates('A1'); // Coordenadas donde se insertará el logo
+    $drawing->setPath($_SESSION["logo"]);
+    $drawing->setHeight(50); 
+    $drawing->setCoordinates('A1'); 
     $drawing->setWorksheet($sheet);
 }
 
@@ -56,8 +42,8 @@ $sheet->getStyle('B1:O5')->getFont()->setBold(true)->setSize(14);
 $sheet->getStyle('B1:O5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
 // Establecer color de fondo para el encabezado
-$sheet->getStyle('A1:J5')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-$sheet->getStyle('A1:J5')->getFill()->getStartColor()->setARGB('DB6A00'); // Color de fondo
+$sheet->getStyle('A1:I7')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+$sheet->getStyle('A1:I7')->getFill()->getStartColor()->setARGB('F4F6F9');
 
 // Ajustar el ancho de las columnas
 $sheet->getColumnDimension('A')->setWidth(15);
@@ -69,10 +55,12 @@ $sheet->getColumnDimension('F')->setWidth(15);
 $sheet->getColumnDimension('G')->setWidth(15);
 $sheet->getColumnDimension('H')->setWidth(20);
 $sheet->getColumnDimension('I')->setWidth(15);
-$sheet->getColumnDimension('J')->setWidth(20);
+
+// Agregar la fecha de generación
+$sheet->setCellValue('A7', 'Fecha de generación: ' . date("d-m-Y"));
 
 // Dejar una fila en blanco antes de los encabezados de la tabla
-$row = 7;
+$row = 8;
 
 // Establecer los encabezados de la tabla
 $sheet->setCellValue('A' . $row, 'Código');
@@ -84,19 +72,17 @@ $sheet->setCellValue('F' . $row, 'Costo');
 $sheet->setCellValue('G' . $row, 'IVA');
 $sheet->setCellValue('H' . $row, 'Precio de venta');
 $sheet->setCellValue('I' . $row, 'Stock');
-$sheet->setCellValue('J' . $row, 'Detalle');
 
 // Establecer formato para el encabezado de la tabla
-$sheet->getStyle('A' . $row . ':J' . $row)->getFont()->setBold(true);
-$sheet->getStyle('A' . $row . ':J' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+$sheet->getStyle('A' . $row . ':I' . $row)->getFont()->setBold(true);
+$sheet->getStyle('A' . $row . ':I' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
 // Establecer color de fondo para el encabezado de la tabla de productos
-$sheet->getStyle('A' . $row . ':J' . $row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-$sheet->getStyle('A' . $row . ':J' . $row)->getFill()->getStartColor()->setARGB('D9EAD3'); // Color de fondo verde claro
+$sheet->getStyle('A' . $row . ':I' . $row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+$sheet->getStyle('A' . $row . ':I' . $row)->getFill()->getStartColor()->setARGB('DB6A00'); 
 
 // Aplicar bordes al encabezado de la tabla de productos
-// Aplicar bordes al encabezado de la tabla de productos
-$sheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
+$sheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
     'borders' => [
         'allBorders' => [
             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -112,25 +98,25 @@ foreach ($datos as $producto) {
     
     $sheet->setCellValue('A' . $row, $producto["cod_producto"]);
     $sheet->setCellValue('B' . $row, $producto["nombre"]);
-    $sheet->setCellValue('C' . $row, $producto["marca"]);
-    $sheet->setCellValue('D' . $row, $producto["presentacion"]);
+    $sheet->setCellValue('C' . $row, ($producto["marca"]) ? $producto["marca"] : 'No disponible');
+    $sheet->setCellValue('D' . $row, ($producto["presentacion"]) ? $producto["presentacion"] : 'No disponible');
     $sheet->setCellValue('E' . $row, $producto["cat_nombre"]);
     $sheet->setCellValue('F' . $row, $producto["costo"]);
-    $sheet->setCellValue('G' . $row, $producto["excento"]);
+    $sheet->setCellValue('G' . $row, ($producto["excento"] == 1 ? 'E' : 'G'));
     $sheet->setCellValue('H' . $row, $precioVenta);
-    $sheet->setCellValue('I' . $row, 'Stock total'); // Aquí puedes agregar el stock real si lo tienes
-    $sheet->setCellValue('J' . $row, 'Detalle'); // Aquí puedes agregar el detalle real si lo tienes
+    $sheet->setCellValue('I' . $row, $producto['stock_total']); // Aquí puedes agregar el stock real si lo tienes
+    //$sheet->setCellValue('J' . $row, 'Detalle'); // Aquí puedes agregar el detalle real si lo tienes
 
    // Aplicar sombreado de fondo a la fila de datos (más claro)
-   $sheet->getStyle('A' . $row . ':J' . $row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-   $sheet->getStyle('A' . $row . ':J' . $row)->getFill()->getStartColor()->setARGB('F0F0F0'); // Color de fondo gris claro
+   $sheet->getStyle('A' . $row . ':I' . $row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+   $sheet->getStyle('A' . $row . ':I' . $row)->getFill()->getStartColor()->setARGB('F4F6F9'); // Color de fondo gris claro
 
    // Aplicar bordes a las filas de datos
-   $sheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
-       'borders' => [
-           'allBorders' => [
-               'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-               'color' => ['argb' => '000000'], // Color de los bordes
+   $sheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
+    'borders' => [
+        'allBorders' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            'color' => ['argb' => '000000'], // Color de los bordes
            ],
        ],
    ]);

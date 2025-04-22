@@ -24,7 +24,7 @@ class Divisa extends Conexion{
         $resul=$strExec->execute();
         if ($resul){
             $ultimo_cod= $this->conex->lastInsertId();
-            $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha, status) VALUES (:cod_divisa, :tasa, :fecha, 1)";
+            $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
             $strExec=$this->conex->prepare($sqlCambio);
             $strExec->bindParam(':cod_divisa', $ultimo_cod);
             $strExec->bindParam(':tasa', $this->tasa);
@@ -38,8 +38,16 @@ class Divisa extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status, c.cod_cambio, c.tasa, c.fecha, c.status AS cambio_status FROM divisas AS d 
-        JOIN cambio_divisa AS c ON d.cod_divisa = c.cod_divisa ORDER BY d.cod_divisa;";
+        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status,c.cod_cambio, c.tasa, c.fecha
+        FROM divisas AS d
+        JOIN cambio_divisa AS c 
+            ON d.cod_divisa = c.cod_divisa
+        JOIN ( SELECT cod_divisa, MAX(fecha) AS ultima_fecha
+            FROM cambio_divisa
+            GROUP BY cod_divisa ) AS ultimos_cambios
+            ON c.cod_divisa = ultimos_cambios.cod_divisa 
+            AND c.fecha = ultimos_cambios.ultima_fecha
+        ORDER BY d.cod_divisa;";
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -66,20 +74,13 @@ class Divisa extends Conexion{
 
     public function editar($valor){
         $registro="UPDATE divisas SET nombre=:nombre, abreviatura=:abreviatura, status=:status WHERE cod_divisa=$valor";
-    
         $strExec = $this->conex->prepare($registro);
-    
         #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
         if($resul){
-            $sql2 = "UPDATE cambio_divisa SET tasa = :tasa, fecha = :fecha WHERE cod_divisa = $valor";
-            $strExec = $this->conex->prepare($sql2);
-            $strExec->bindParam(':tasa', $this->tasa);
-            $strExec->bindParam(':fecha', $this->fecha);
-            $strExec->execute();
             $r = 1;
         }else{
             $r = 0;
@@ -94,24 +95,42 @@ class Divisa extends Conexion{
         if($resul){
             $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
             if ($resultado['v_count']>0){
-                $logico="UPDATE divisas SET status=2 WHERE cod_divisa=$valor";
-                $strExec=$this->conex->prepare($logico);
-                $strExec->execute();
-                $r=1;
+                $r=0;
             }else{
-                if($valor==1){
-                    $r=0;
-                }else{
                 $fisico="DELETE FROM divisas WHERE cod_divisa=$valor";
                 $strExec=$this->conex->prepare($fisico);
                 $strExec->execute();
                 $r=1;
                 }
             }
-        }else {
-            $r=0;
-        }
         return $r;
+    }
+
+    public function tasa($valor){
+        foreach($valor as $divisa){
+            $sql="INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':tasa', $divisa['tasa']);
+            $strExec->bindParam(':fecha', $divisa['fecha']);
+            $strExec->bindParam(':cod_divisa', $divisa['cod_divisa']);
+            $resul=$strExec->execute();
+            if(!$resul){
+                return false;
+            }
+        }
+    return true;
+    }
+
+    public function historial(){
+        $registro="SELECT * FROM cambio_divisa ORDER BY fecha DESC;";
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
     }
 
     public function setnombre($valor){

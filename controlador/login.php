@@ -3,20 +3,21 @@
 require_once "modelo/usuarios.php";
 require_once "modelo/general.php";
 require_once "modelo/roles.php";
+require_once "modelo/bitacora.php";
 
 $obj = new General();
 $objuser= new Usuario();
 $objRol= new Rol();
+$objbitacora = new Bitacora();
 
 if (isset($_POST["ingresar"])) {
 
 	if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"]) &&
 	preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/', $_POST["ingPassword"])){ 
 
-		$item = "user";
 		$valor = $_POST["ingUsuario"];
-
-		$respuesta = $objuser->mostrar($item, $valor);
+		$respuesta = $objuser->mostrar($valor);
+	
 	}
 
 	if (!empty($respuesta) && isset($respuesta["user"]) && $respuesta["status"] == 1) {
@@ -27,8 +28,9 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["iniciarsesion"] = "ok";
 			$_SESSION["user"] = $respuesta["user"];
 			$_SESSION["nombre"] = $respuesta["nombre"];
+			$_SESSION["cod_usuario"]=$respuesta["cod_usuario"];
 		// Para acceder al nombre del rol y guardarlo en una variable SESSION
-			$rol = $objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
+			$rol=$objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
 			$_SESSION["rol"] = $rol["rol"];
 
 			$_SESSION["producto"] = 0;
@@ -41,6 +43,9 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["usuario"] = 0;
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
+		
+
+
 
 			//Obtenemos los permisos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
@@ -65,10 +70,12 @@ if (isset($_POST["ingresar"])) {
 					$_SESSION["reporte"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 10) {
 					$_SESSION["configuracion"] = 1;
-				}
+				} 
+
+			
 			}
 
-			//obtenemos el logo de la empresa
+			//Obtenemos la informacion de la empresa
 			$logo = $obj->mostrar();
 			if(!empty($logo)){
 			$_SESSION["logo"] = $logo[0]["logo"];
@@ -82,6 +89,7 @@ if (isset($_POST["ingresar"])) {
 			echo '<script>
 			window.location="inicio";
 			</script>';
+			$objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Acceso al sistema', $_POST["ingUsuario"], 'Inicio');
 		} else {
 			$login = [
                 "title" => "Error",

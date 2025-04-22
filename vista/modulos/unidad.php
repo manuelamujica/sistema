@@ -3,8 +3,9 @@
     <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-sm-9">
                 <h1>Unidades de medida</h1>
+                <p>En esta sección se puede gestionar las unidades de medida para los productos.</p>
             </div>
         </div>
     </section>
@@ -22,7 +23,7 @@
                         <div class="card-body">
                             <!-- MOSTRAR EL REGISTRO DE UNIDADES DE MEDIDA -->
                             <div class="table-responsive">
-                                <table id="unidad" class="table table-bordered table-striped">
+                                <table id="unidad" class="table table-bordered table-striped datatable" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Código</th>
@@ -53,7 +54,11 @@
                                                             data-status="<?php echo $dato['status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
-                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar" data-cod="<?php echo $dato['cod_unidad']; ?>"><i class="fas fa-trash-alt"></i></button>
+                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
+                                                        data-cod="<?php echo $dato['cod_unidad']; ?>"
+                                                        data-tipo="<?php echo $dato['tipo_medida']; ?>">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
                                                     </td>
                                                 </tr>
                                         <?php
@@ -65,7 +70,7 @@
                         </div>
                     </div>
 
-                    <!-- =======================
+<!-- =======================
 MODAL REGISTRAR Unidades de medida 
 ============================= -->
 
@@ -84,7 +89,16 @@ MODAL REGISTRAR Unidades de medida
                                         <!--   TIPO DE MEDIDA      -->
                                         <div class="form-group">
                                             <label for="tipo_medida">Tipo de medida</label>
-                                            <input type="text" class="form-control" name="tipo_medida" placeholder="Ingrese Tipo de Medida" id="tipo_medida1" maxlength="10">
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kg">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" name="tipo_medida" placeholder="Ej: Kg." id="tipo_medida1" maxlength="10">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                 </div>
@@ -176,36 +190,28 @@ MODAL REGISTRAR Unidades de medida
     </section>
 </div>
 
-
-
-<!--    MODAL DE ADVERTENCIA    -->
 <!-- Confirmar Eliminar Modal -->
 <div class="modal fade" id="modaleliminar">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+            <div class="modal-header bg-danger">
                 <h4 class="modal-title">Confirmar Eliminar</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de eliminar la unidad medida?</p>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 <form method="post">
-
-                    <!--   YA ELIMINA!!!!! BUAJAJAJA  -->
-                    <input type="hidden" name="eliminar" id="cod_eliminar" value="">
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <p>¿Estás seguro de eliminar la unidad medida: <b><span id=tipomedidaD></span>?</p></b>
+                    <input type="hidden" name="eliminar" id="cod_eliminar" >
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
                 </form>
-
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
 <?php if (isset($eliminar)): ?>
@@ -223,50 +229,8 @@ MODAL REGISTRAR Unidades de medida
     </script>
 <?php endif; ?>
 
-</section>
-</div>
+
 <script src="vista/dist/js/modulos-js/unidad.js"></script>
 
-<script>
-    //VALIDACIONES JS
-    $(document).ready(function() {
-        // Validación por cada campo cuando se pierde el foco
-
-        $('#tipo_medida1').on('blur', function() {
-            var tipo_medida1 = $(this).val();
-            if (tipo_medida1.trim() === '') {
-                showError('#tipo_medida1', 'el campo unidad de medida no puede estar vacío');
-            } else if (!/^[a-zA-Z\s]+$/.test(rol1)) {
-                showError('#tipo_medida1', 'solo letras');
-            } else {
-                hideError('#tipo_medida1');
-            }
-        });
-
-        $('#tipo_medida').on('blur', function() {
-            var tipo_medida = $(this).val();
-            if (tipo_medida.trim() === '') {
-                showError('#tipo_medida', 'el campo unidad de medida no puede estar vacío');
-            } else if (!/^[a-zA-Z\s]+$/.test(tipo_medida)) {
-                showError('#tipo_medida', 'solo letras');
-            } else {
-                hideError('#tipo_medida');
-            }
-        });
-
-
-        function showError(selector, message) {
-            $(selector).addClass('is-invalid');
-            $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message).css({
-                'display': 'block',
-                'color': 'red',
-                'background-color': 'white'
-            });
-        }
-
-        function hideError(selector) {
-            $(selector).removeClass('is-invalid');
-            $(selector).next('.invalid-feedback').css('display', 'none');
-        }
-    });
-</script>
+</section>
+</div>
