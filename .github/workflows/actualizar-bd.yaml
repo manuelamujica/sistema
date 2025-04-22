@@ -15,7 +15,13 @@ jobs:
     steps:
       - name: Checkout del repo
         uses: actions/checkout@v4
+        
+      - name: List repository contents (again)
+        run: ls -al
 
+      - name: Print current working directory
+        run: pwd
+        
       - name: Configurar SSH key
         env:
           SSH_KEY: ${{ secrets.TRAYECTO3_KEY }}
