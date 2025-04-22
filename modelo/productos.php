@@ -1,9 +1,11 @@
 <?php
 #1) Requiero conexion 
 require_once 'conexion.php';
+require_once 'validaciones.php';
 
 #2) Class + inicializador
 class Productos extends Conexion{
+    use ValidadorTrait;
     private $conex;
     #producto
     private $imagen;
@@ -17,9 +19,19 @@ class Productos extends Conexion{
     private $ganancia;
     private $excento;
 
+    private $errores = [];
+
     public function __construct(){
         $this -> conex = new Conexion();
         $this -> conex = $this->conex->conectar();
+    }
+
+#ERROR
+    public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
     }
 
 #3) GETTER Y SETTER

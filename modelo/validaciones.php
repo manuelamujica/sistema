@@ -45,4 +45,11 @@ trait ValidadorTrait {
         }
         return true;
     }
+
+    public function validarStatus($valor) {
+        if($valor > 1 || $valor < 0) {
+            return "El campo status es incorrecto";
+        }
+        return true;
+    }
 }
