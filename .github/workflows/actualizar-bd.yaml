@@ -36,13 +36,27 @@ jobs:
         run: |
           ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l /home/brian/sql/"
 
+      - name: Verify SQL file exists
+        run: |
+          ls -l *.sql
+          pwd
+          find . -name "*.sql" -type f
+
       - name: Subir archivo SQL al VPS
         env:
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
         run: |
+          # First ensure local file exists
+          if [ ! -f "savyc.sql" ]; then
+            echo "Error: savyc.sql not found in current directory!"
+            ls -l
+            exit 1
+          fi
+    
+          # Then copy with verbose output
           scp -v -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql
-
+            
       - name: Conectar al VPS y actualizar MySQL
         env:
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
