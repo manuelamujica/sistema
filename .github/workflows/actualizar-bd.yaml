@@ -28,6 +28,13 @@ jobs:
         run: |
           echo "$SSH_KEY" > private_key.pem
           chmod 600 private_key.pem
+          
+      - name: Test SSH Connection
+        env:
+          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
+          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l /home/brian/sql/"
 
       - name: Subir archivo SQL al VPS
         env:
