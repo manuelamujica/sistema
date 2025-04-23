@@ -1,12 +1,15 @@
 <?php 
 require_once "conexion.php";
+require_once "validaciones.php";
 class Unidad extends Conexion{
 
+    use ValidadorTrait; // Usar el trait para validaciones
     private $conex;
     private $tipo_medida;
     private $status;
 
     private $cod_unidad;
+    
 
 
     public function __construct(){
@@ -14,11 +17,19 @@ class Unidad extends Conexion{
         $this->conex = $this->conex->conectar();
     }
 
+    private $errores = [];
+
 #GETTER Y SETTER
     public function getTipo(){
         return $this->tipo_medida;
     }
     public function setTipo($tipo_medida){
+        $resultado = $this->validarTexto($tipo_medida, 'tipo_medida', 2, 50);
+        if ($resultado === true) {
+            $this->tipo_medida = $tipo_medida;
+        } else {
+            $this->errores['tipo_medida'] = $resultado;
+        }
         $this->tipo_medida = $tipo_medida;
     }
     public function getStatus(){
@@ -35,6 +46,15 @@ class Unidad extends Conexion{
     public function getCod(){
         return $this->cod_unidad;
     }
+
+     // Chequear si hay errores
+     public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
 
 /*==============================
 REGISTRAR UNIDAD DE MEDIDA
