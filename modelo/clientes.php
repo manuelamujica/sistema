@@ -80,10 +80,6 @@ class Clientes extends Conexion{
         }
     }
 
-    // Si quieres acceder a los errores individualmente
-    public function getErrores() {
-        return $this->errores;
-    }
 
 
     public function setstatus($valor){
@@ -168,7 +164,7 @@ class Clientes extends Conexion{
     public function buscar($valor){
         $this->cedula=$valor;
         $registro = "select * from clientes where cedula_rif='".$this->cedula."'";
-        $resutado= "";
+        $resultado= "";
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);

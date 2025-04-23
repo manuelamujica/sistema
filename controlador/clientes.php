@@ -14,37 +14,32 @@ if(isset($_POST['buscar'])){
     
 } else if (isset($_POST['guardar'])) { 
     $errores = [];
-
-    // Usamos la función 'cargarDatosDesdeFormulario' para validar y cargar los datos
-    try {
-        $objCliente->setCedula($_POST['cedula_rif']);
-        $objCliente->setNombre($_POST['nombre']);
-        $objCliente->setApellido($_POST['apellido']);
-        $objCliente->setTelefono($_POST['telefono']);
-        $objCliente->setEmail($_POST['email']);
-        $objCliente->setDireccion($_POST['direccion']);
-    
-        $objCliente->check(); // Lanza excepción si hay errores
-        $objCliente->getRegistrar();
-        // Aquí puedes guardar o hacer lo que necesites con el cliente
-    } catch (Exception $e) {
-        $errores[] = $e->getMessage();
-    }
-
-    // Si hay errores, se muestra el mensaje de error
-    if (!empty($errores)) {
-        $registrar = [
-            "title" => "Error",
-            "message" => implode(" ", $errores),
-            "icon" => "error"
-        ];
-    } else {
-        // Si no hay errores, proceder con el registro
-        $cedula = $_POST["cedula_rif"];
-        $dato = $objCliente->buscar($cedula);
+        $dato = $objCliente->buscar($_POST["cedula_rif"]);
         if (!$dato) {
+            try {
+                $objCliente->setCedula($_POST['cedula_rif']);
+                $objCliente->setNombre($_POST['nombre']);
+                $objCliente->setApellido($_POST['apellido']);
+                $objCliente->setTelefono($_POST['telefono']);
+                $objCliente->setEmail($_POST['email']);
+                $objCliente->setDireccion($_POST['direccion']);
+            
+                $objCliente->check(); // Lanza excepción si hay errores
+                $objCliente->getRegistrar();
+                // Aquí puedes guardar o hacer lo que necesites con el cliente
+            } catch (Exception $e) {
+                $errores[] = $e->getMessage();
+            }
+        
+            // Si hay errores, se muestra el mensaje de error
+            if (!empty($errores)) {
+                $registrar = [
+                    "title" => "Error",
+                    "message" => implode(" ", $errores),
+                    "icon" => "error"
+                ];
+            }
             // Registrar los datos del cliente
-            $result = $objCliente->getRegistrar();
             if ($result == 1) {
                 $registrar = [
                     "title" => "Registrado con éxito",
@@ -66,7 +61,6 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }
-    }
 }
 else if(isset($_POST['actualizar'])){
     if(!empty($_POST["nombre"]) && !empty($_POST["apellido"]) && !empty($_POST["cedula_rif"])){

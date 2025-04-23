@@ -100,9 +100,11 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "roles" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "bitacora" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "caja" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "cuentabancaria" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "venta" && $_SESSION["venta"]==1 ||
     $_GET["ruta"] == "catalogocuentas" ||
     $_GET["ruta"] == "gastos" ||
+  
     $_GET["ruta"] == "cuentaspend" ||
     $_GET["ruta"] == "movimientos" ||
     $_GET["ruta"] == "cerrarsesion"){

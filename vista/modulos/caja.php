@@ -1,5 +1,4 @@
 
-<?php require_once 'controlador/caja.php'; ?>
 
 <div class="content-wrapper">
     <section class="content-header">

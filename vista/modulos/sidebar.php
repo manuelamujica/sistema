@@ -33,7 +33,7 @@
 
                     <?php if ($_SESSION["inventario"]==1): ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link bitacora-link" data-modulo="Ajuste de INventario">
+                            <a href="#" class="nav-link bitacora-link" data-modulo="Ajuste de Inventario">
                                 <i class="fas fa-dolly-flatbed nav-icon"></i>
                                 <p>
                                     Ajustes<i class="right fas fa-angle-left nav-icon"></i>
@@ -150,10 +150,18 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="caja" class="nav-link">
                             <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
-                                    Bancos y Caja
+                                    Caja
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="cuentabancaria"  class="nav-link" >
+                            <i class="fas fa-credit-card nav-icon"></i>
+                                <p>
+                                    Cuenta Bancaria
                                 </p>
                             </a>
                         </li>
@@ -258,7 +266,6 @@
                             <a href="roles" class="nav-link bitacora-link" data-modulo="Ajuste de roles">
                                 <i class="nav-icon fas fa-user-tag"></i>
                                     <p>
-<<<<<<< HEAD
                                         Ajuste general
                                     </p>
                             </a>
@@ -279,14 +286,7 @@
                                     </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="caja" class="nav-link bitacora-link" data-modulo="Caja">
-                                <i class="fas fa-money-bill nav-icon"></i>
-                                    <p>
-                                        Caja
-                                    </p>
-                            </a>
-                        </li>
+                    
                         <li class="nav-item">
                             <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
                                 <i class="fas fa-balance-scale nav-icon"></i>
@@ -308,9 +308,6 @@
                                 <i class="fas fa-user-cog nav-icon"></i>
                                     <p>
                                         Ajuste de roles
-=======
-                                        Roles y Permisos
->>>>>>> origin/main
                                     </p>
                             </a>
                         </li>
@@ -522,10 +519,18 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="caja" class="nav-link">
                             <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
-                                    Bancos y Caja
+                                   Caja
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="cuentabancaria"  class="nav-link" >
+                            <i class="fas fa-credit-card nav-icon"></i>
+                                <p>
+                                    Cuenta Bancaria
                                 </p>
                             </a>
                         </li>
@@ -601,7 +606,6 @@
                             Configuración<i class="right fas fa-angle-left"></i>
                             </p>
                     </a>
-<<<<<<< HEAD
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="general" class="nav-link bitacora-link" data-modulo="Ajuste general">
@@ -629,14 +633,7 @@
                             </a>
                         </li>
                         
-                        <li class="nav-item">
-                            <a href="caja" class="nav-link disabled bitacora-link" data-modulo="Caja">
-                                <i class="fas fa-money-bill nav-icon"></i>
-                                    <p>
-                                        Caja
-                                    </p>
-                            </a>
-                        </li>
+                     
                         <li class="nav-item">
                             <a href="unidad" class="nav-link disabled bitacora-link" data-modulo="Unidades de medida">
                                 <i class="fas fa-balance-scale nav-icon"></i>
@@ -653,8 +650,6 @@
                                     </p>
                             </a>
                         </li>
-=======
->>>>>>> origin/main
 
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>

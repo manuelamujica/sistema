@@ -10,7 +10,8 @@ $objBitacora = new Bitacora();
 $obj = new Divisa();
 
 # Obtener divisas para selects
-$obj->consultar();
+$divisas=$obj->consultar();
+
 
 // ABRIR CAJA
 if (isset($_POST['abrir'])) {
