@@ -573,7 +573,7 @@
                             <a href="rep-inventario" class="nav-link disabled bitacora-link" data-modulo="Reporte De inventario">
                                 <i class="fas fa-pallet nav-icon"></i>                                        
                                     <p>
-                                        De inventario
+                                        De Inventario
                                     </p>
                             </a>
                         </li>
