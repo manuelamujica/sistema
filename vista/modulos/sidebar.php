@@ -22,7 +22,7 @@
                 <li class="nav-header">INVENTARIO</li>
                     <?php if ($_SESSION["producto"]==1): ?>
                         <li class="nav-item">
-                            <a href="productos" class="nav-link">
+                            <a href="productos" class="nav-link bitacora-link" data-modulo="Productos">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
                                 <p>
                                     Productos
@@ -91,7 +91,7 @@
                         <?php if ($_SESSION["cliente"]==1): ?>
                         <li class="nav-item">
                         
-                            <a href="clientes" class="nav-link">
+                            <a href="clientes" class="nav-link bitacora-link" data-modulo="Clientes">
                                 <i class="nav-icon fa fa-users"></i>
                                     <p>
                                         Clientes
@@ -101,7 +101,7 @@
                         <?php endif; ?>
                         <?php if ($_SESSION["proveedor"]==1): ?>
                         <li class="nav-item">
-                            <a href="proveedores" class="nav-link">
+                            <a href="proveedores" class="nav-link bitacora-link" data-modulo="Proveedores">
                                 <i class="nav-icon far fa fa-truck"></i>
                                 <p>
                                     Proveedores
@@ -121,19 +121,19 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="catalogocuentas" class="nav-link">
+                                    <a href="catalogocuentas" class="nav-link bitacora-link" data-modulo="Catálogo de cuentas">
                                     <i class="fas fa-wallet nav-icon"></i>
                                         <p>Catálogo de cuentas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="movimientos" class="nav-link">
+                                    <a href="movimientos" class="nav-link bitacora-link" data-modulo="Gestionar asientos">
                                     <i class="fas fa-cogs nav-icon"></i> 
                                         <p>Gestionar asientos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="#" class="nav-link bitacora-link" data-modulo="Reportes contables">
                                     <i class="fas fa-chart-line nav-icon"></i>
                                         <p>Reportes contables</p>
                                     </a>
@@ -141,7 +141,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="#" class="nav-link bitacora-link" data-modulo="Finanzas">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas
@@ -150,7 +150,7 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
-                            <a href="caja" class="nav-link">
+                            <a href="caja" class="nav-link bitacora-link" data-modulo="Caja">
                             <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
                                     Caja
@@ -158,7 +158,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="cuentabancaria"  class="nav-link" >
+                            <a href="cuentabancaria"  class="nav-link bitacora-link" data-modulo="Cuenta Bancaria">
                             <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
                                     Cuenta Bancaria
@@ -166,7 +166,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                        <a href="gastos" class="nav-link">
+                        <a href="gastos" class="nav-link bitacora-link" data-modulo="Gastos">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
                                 <p>
                                     Gastos
@@ -174,7 +174,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="cuentaspend" class="nav-link">
+                            <a href="cuentaspend" class="nav-link bitacora-link" data-modulo="Cuentas pendientes">
                             <i class="fas fa-wallet nav-icon"></i>                                 
                                 <p>
                                     Cuentas pendientes</i>
@@ -252,7 +252,7 @@
                         <li class="nav-header">SEGURIDAD Y ACCESOS</li>
                         <?php if ($_SESSION["usuario"]==1): ?>
                             <li class="nav-item">
-                                <a href="usuarios" class="nav-link">
+                                <a href="usuarios" class="nav-link bitacora-link" data-modulo="Usuarios">
                                     <i class="nav-icon fas fa-users-cog"></i>
                                         <p>
                                             Usuarios
@@ -343,7 +343,7 @@
                             <?php endif;?>
 
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="#" class="nav-link bitacora-link" data-modulo="Marcas">
                                     <i class="fas fa-tags nav-icon"></i>
                                         <p>
                                             Marcas
@@ -391,7 +391,7 @@
             <li class="nav-header">INVENTARIO</li>
                     <?php if ($_SESSION["producto"]==1): ?>
                         <li class="nav-item">
-                            <a href="productos" class="nav-link">
+                            <a href="productos" class="nav-link bitacora-link" data-modulo="Productos">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
                                 <p>
                                     Productos
@@ -460,7 +460,7 @@
                         <?php if ($_SESSION["cliente"]==1): ?>
                         <li class="nav-item">
                         
-                            <a href="clientes" class="nav-link">
+                            <a href="clientes" class="nav-link bitacora-link" data-modulo="Clientes">
                                 <i class="nav-icon fa fa-users"></i>
                                     <p>
                                         Clientes
@@ -470,7 +470,7 @@
                         <?php endif; ?>
                         <?php if ($_SESSION["proveedor"]==1): ?>
                         <li class="nav-item">
-                            <a href="proveedores" class="nav-link">
+                            <a href="proveedores" class="nav-link bitacora-link" data-modulo="Proveedores">
                                 <i class="nav-icon far fa fa-truck"></i>
                                 <p>
                                     Proveedores
@@ -490,19 +490,19 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="catalogocuentas" class="nav-link">
+                                    <a href="catalogocuentas" class="nav-link bitacora-link" data-modulo="Catálogo de cuentas">
                                     <i class="fas fa-wallet nav-icon"></i>
                                         <p>Catálogo de cuentas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="movimientos" class="nav-link">
+                                    <a href="movimientos" class="nav-link bitacora-link" data-modulo="Gestionar asientos">
                                     <i class="fas fa-cogs nav-icon"></i> 
                                         <p>Gestionar asientos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="descarga" class="nav-link">
+                                    <a href="descarga" class="nav-link  bitacora-link" data-modulo="Reportes contables">
                                     <i class="fas fa-chart-line nav-icon"></i>
                                         <p>Reportes contables</p>
                                     </a>
@@ -519,7 +519,7 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
-                            <a href="caja" class="nav-link">
+                            <a href="caja" class="nav-link bitacora-link" data-modulo="Caja">
                             <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
                                    Caja
@@ -527,7 +527,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="cuentabancaria"  class="nav-link" >
+                            <a href="cuentabancaria"  class="nav-link bitacora-link" data-modulo="Cuenta Bancaria">
                             <i class="fas fa-credit-card nav-icon"></i>
                                 <p>
                                     Cuenta Bancaria
@@ -535,7 +535,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                        <a href="gastos" class="nav-link">
+                        <a href="gastos" class="nav-link bitacora-link" data-modulo="Gastos">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
                                 <p>
                                     Gastos
@@ -543,7 +543,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="cuentaspend" class="nav-link">
+                            <a href="cuentaspend" class="nav-link bitacora-link" data-modulo="Cuentas pendientes">
                             <i class="fas fa-wallet nav-icon"></i>                                 
                                 <p>
                                     Cuentas pendientes</i>
@@ -665,7 +665,7 @@
                         <li class="nav-header">SEGURIDAD Y ACCESOS</li>
                         <?php if ($_SESSION["usuario"]==1): ?>
                             <li class="nav-item">
-                                <a href="usuarios" class="nav-link">
+                                <a href="usuarios" class="nav-link bitacora-link" data-modulo="Usuarios">
                                     <i class="nav-icon fas fa-users-cog"></i>
                                         <p>
                                             Usuarios
@@ -715,7 +715,7 @@
                             <?php endif;?>
 
                             <li class="nav-item">
-                                <a href="marcas" class="nav-link">
+                                <a href="marcas" class="nav-link bitacora-link" data-modulo="Marcas">
                                     <i class="fas fa-tags nav-icon"></i>
                                         <p>
                                             Marcas
