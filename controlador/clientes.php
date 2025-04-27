@@ -1,8 +1,9 @@
 <?php
-
+require_once 'modelo/bitacora.php';
 require_once 'modelo/clientes.php'; 
 
 $objCliente = new Clientes(); 
+$objbitacora = new Bitacora();
 
 if(isset($_POST['buscar'])){
     $cedula=$_POST['buscar'];

@@ -139,9 +139,9 @@ if(isset($_POST['buscar'])){
         }
     }
 }else if (isset($_POST['sen'])) {
-    set_time_limit(20); // Aumenta el límite de tiempo si el script es lento
+    set_time_limit(5); // Aumenta el límite de tiempo si el script es lento
 
-    $python = "python C:\\xampp\\htdocs\\SAVYCG\\sistema\\dolarbcv.py"; // Ajusta la ruta
+    $python = "python C:\\xampp\\htdocs\\savyc\\dolarbcv.py"; // Ajusta la ruta
     
     $dolar = shell_exec($python); // Ejecuta el script y captura la salida
     
