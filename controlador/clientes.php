@@ -11,7 +11,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar cliente', $cedula, 'Clientes');
+    //$objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar cliente', $cedula, 'Clientes');
     
 } else if (isset($_POST['guardar'])) { 
     $errores = [];
@@ -26,7 +26,7 @@ if(isset($_POST['buscar'])){
         $objCliente->setDireccion($_POST['direccion']);
     
         $objCliente->check(); // Lanza excepción si hay errores
-        $objCliente->getRegistrar();
+        //$objCliente->getRegistrar(); manuela, lo comente porque no es necesario
         // Aquí puedes guardar o hacer lo que necesites con el cliente
     } catch (Exception $e) {
         $errores[] = $e->getMessage();

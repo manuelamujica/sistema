@@ -13,9 +13,11 @@ require_once "controlador/cuentaspend.php";
             </div>
         </div>
     </section>
+
     <section class="content">
-    <div class="container-fluid">
-    <div class="row">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
                         <div class="col-lg-6 col-12">
                             <div class="small-box bg-danger">
                                 <div class="inner">
@@ -39,6 +41,7 @@ require_once "controlador/cuentaspend.php";
                             </div>
                         </div>
                     </div>
+
                     <div class="card">
                         <div class="card-header">
                             <ul class="nav nav-tabs" id="tabCuentas">
@@ -52,28 +55,29 @@ require_once "controlador/cuentaspend.php";
                                 <table id="tablaPagos" class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Asunto</th>
-                                            <th>Facturas Pendientes</th>
-                                            <th>Monto Total</th>
-                                            <th>Días Restantes</th>
-                                            <th>Pago</th>
+                                            <th>Asunto/Proveedor</th>
+                                            <th>Origen</th>
+                                            <th>Monto Pagado</th>
+                                            <th>Importe Total</th>
+                                            <th>Saldo pendiente</th>
+                                            <th>Status</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php foreach ($datos as $pendiente){ ?>
                                         <tr>
-                                            <td>Puro Lomo</td>
-                                            <td>2</td>
-                                            <td>$650.00</td>
-                                            <td>Hoy</td>
-                                            <td><button class="btn btn-danger">Pagar Todo</button></td>
+                                            <td><?php echo $pendiente['asunto']; ?></td>
+                                            <td><?php echo $pendiente['origen']; ?></td>
+                                            <td><?php echo $pendiente['monto_pagado']; ?></td>
+                                            <td><?php echo $pendiente['importe_total']; ?></td>
+                                            <td><?php echo $pendiente['saldo_pendiente']; ?></td>
+                                            <td><span class="badge badge-<?php echo ($pendiente['status'] == '1') ? 'danger' : 'success'; ?>"><?php echo $pendiente['status']; ?></span></td>
+                                            <td><button class="btn btn-primary">Pagar</button>
+                                                <button class="btn btn-primary">Detalles</button>
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td>Distribuidora Quesos</td>
-                                            <td>2</td>
-                                            <td>$18.40</td>
-                                            <td>Hoy</td>
-                                            <td><button class="btn btn-danger">Pagar Todo</button></td>
-                                        </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>
