@@ -65,16 +65,16 @@ require_once "controlador/cuentaspend.php";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($datos as $pendiente){ ?>
+                                    <?php foreach ($datos2 as $p){ ?>
                                         <tr>
-                                            <td><?php echo $pendiente['asunto']; ?></td>
-                                            <td><?php echo $pendiente['origen']; ?></td>
-                                            <td><?php echo $pendiente['monto_pagado']; ?></td>
-                                            <td><?php echo $pendiente['importe_total']; ?></td>
-                                            <td><?php echo $pendiente['saldo_pendiente']; ?></td>
-                                            <td><span class="badge badge-<?php echo ($pendiente['status'] == '1') ? 'danger' : 'success'; ?>"><?php echo $pendiente['status']; ?></span></td>
-                                            <td><button class="btn btn-primary">Pagar</button>
-                                                <button class="btn btn-primary">Detalles</button>
+                                            <td><?php echo $p['proveedor']; ?></td>
+                                            <td><?php echo $p['total']; ?></td>
+                                            <td><?php echo $p['monto_pagado']; ?></td>
+                                            <td><?php echo $p['saldo_pendiente']; ?></td>
+                                            <td><?php echo $p['dias_restantes']; ?></td> <!-- no cuadra los status  -->
+                                            <td><span class="badge bg-<?php echo ($p['estado'] == '1') ? 'danger' : 'warning'; ?>"><?php echo $p['estado']; ?></span></td>
+                                            <td>
+                                                <button class="btn btn-primary"><i class="fas fa-plus"></i></button>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -82,33 +82,35 @@ require_once "controlador/cuentaspend.php";
                                 </table>
                             </div>
                             
-                            <!-- Cuentas por Cobrar -->
+                            <!-- Cuentas por Cobrar (VENTA X CLIENTE) -->
                             <div class="tab-pane fade" id="cobros">
                                 <table id="tablaCobros" class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th>Cliente</th>
-                                            <th>Facturas Pendientes</th>
+                                            <!--<th>Facturas Pendientes</th>-->
                                             <th>Monto Total</th>
+                                            <th>Monto Pagado</th>
+                                            <th>Saldo Pendiente</th>
                                             <th>Días Restantes</th>
+                                            <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php foreach ($datos as $pendiente){ ?>
                                         <tr>
-                                            <td>Cliente A</td>
-                                            <td>3</td>
-                                            <td>$500.75</td>
-                                            <td>3 días</td>
-                                            <td><button class="btn btn-success">Cobrar Todo</button></td>
+                                            <td><?php echo $pendiente['cliente']; ?></td>
+                                            <td><?php echo $pendiente['total']; ?></td>
+                                            <td><?php echo $pendiente['monto_total']; ?></td>
+                                            <td><?php echo $pendiente['saldo_pendiente']; ?></td>
+                                            <td><?php echo $pendiente['dias_restantes']; ?></td> <!-- no cuadra los status  -->
+                                            <td><span class="badge bg-<?php echo ($pendiente['estado'] == '1') ? 'danger' : 'warning'; ?>"><?php echo $pendiente['estado']; ?></span></td>
+                                            <td>
+                                                <button class="btn btn-primary"><i class="fas fa-plus"></i></button>
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td>Cliente B</td>
-                                            <td>2</td>
-                                            <td>$420.00</td>
-                                            <td>5 días</td>
-                                            <td><button class="btn btn-success">Cobrar Todo</button></td>
-                                        </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>

@@ -15,7 +15,6 @@ if(isset($_POST['buscar'])){
     $result=$objProducto->buscar($_POST['buscar']);
     header('Content-Type: application/json');
     echo json_encode($result);
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
     exit;
 
 //CONSULTAR DETALLE DEPENDIENDO DEL PRODUCTO(PRESENTACION)
