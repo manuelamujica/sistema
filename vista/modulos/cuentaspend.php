@@ -19,6 +19,7 @@ require_once "controlador/cuentaspend.php";
                     <!-- Small boxes (Stat box) -->
                     <div class="row">
                         <div class="col-lg-6 col-12">
+                            
                             <div class="small-box bg-danger">
                                 <div class="inner">
                                     <h3 id="totalPagos">$668.40</h3>
@@ -30,9 +31,11 @@ require_once "controlador/cuentaspend.php";
                             </div>
                         </div>
                         <div class="col-lg-6 col-12">
-                            <div class="small-box bg-success">
+                            <div class="small-box bg-success">  
                                 <div class="inner">
-                                    <h3 id="totalCobros">$920.75</h3>
+                                    <?php foreach ($totalcobrar as $tc){ ?>
+                                    <h3 id="totalCobros"><?php echo number_format($tc['total_cobrar'],2,',','.');?>Bs</h3>
+                                    <?php } ?>
                                     <p>Cuentas por Cobrar</p>
                                 </div>
                                 <div class="icon">

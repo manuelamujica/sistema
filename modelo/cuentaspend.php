@@ -10,7 +10,33 @@ class CuentasPendientes extends Conexion{
         $this->conex = $this->conex->conectar();
     }
 
+//BOX CUENTAS X COBRAR
+private function boxcobrar(){
+    $sql = "SELECT 
+    SUM(saldo_pendiente) AS total_cobrar
+    FROM (
+        SELECT 
+            v.cod_venta,
+            (v.total - COALESCE(SUM(pr.monto_total),0)) AS saldo_pendiente
+        FROM ventas v
+        LEFT JOIN pago_recibido pr ON pr.cod_venta = v.cod_venta
+        WHERE v.status IN (1, 2)
+        GROUP BY v.cod_venta
+    ) AS subconsulta
+    WHERE saldo_pendiente > 0;";
+    $consulta = $this->conex->prepare($sql);
+    $resul = $consulta->execute();
+    $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    if($resul){
+        return $datos;
+    }else{
+        return $r=0;
+    }
+}
 
+public function getboxcobrar(){
+    return $this->boxcobrar();
+}
 
 //METODO PARA EL LISTADO DE CUENTAS POR COBRAR: Filtradas por status 1 y 2 (Pendiente y Pago parcial)
 private function mostrar(){
