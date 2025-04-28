@@ -375,6 +375,14 @@
                                         </p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                            <a href="tipocuenta" class="nav-link  bitacora-link" data-modulo="Tipo de cuenta">
+                                <i class="fas fa-balance-scale nav-icon"></i>
+                                    <p>
+                                     Tipo de cuenta
+                                    </p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <?php endif;?>
@@ -642,15 +650,7 @@
                                     </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="banco" class="nav-link disabled bitacora-link" data-modulo="Banco">
-                                <i class="fas fa-balance-scale nav-icon"></i>
-                                    <p>
-                                      Banco
-                                    </p>
-                            </a>
-                        </li>
-
+                     
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">
@@ -744,6 +744,14 @@
                                     <i class="fas fa-university nav-icon"></i>
                                         <p>
                                             Bancos
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="tipocuenta" class="nav-link disabled bitacora-link" data-modulo="Tipo de cuenta">
+                                    <i class="fas fa-university nav-icon"></i>
+                                        <p>
+                                            Tipo de cuenta
                                         </p>
                                 </a>
                             </li>
