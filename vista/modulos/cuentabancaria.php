@@ -1,4 +1,7 @@
-
+<?php 
+#Requerir al controlador
+require_once "controlador/cuentabancaria.php";
+?>
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -18,7 +21,7 @@
                     <div class="card">
                         <div class="card-header">
                             <!-- Botón para ventana modal -->
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarusuario">Registrar Cuenta Bancaria</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarusuario">Registrar usuario</button>
                         </div>
                         <div class="card-body">
                         <div class="table-responsive">
@@ -36,10 +39,10 @@
                                 <tbody>
                                 <!-- Tabla con los datos que se muestren dinamicamente -->
                                     <?php foreach ($registro as $cuenta_bancaria){
-                                            if($cuenta_bancaria["cod_cuenta_bancaria"]!=1):?>
+                                            if(1==1):?>
                                         <tr>
                                             <td> <?php echo $cuenta_bancaria["cod_cuenta_bancaria"] ?></td>
-                                            <td> <?php echo $cuenta_bancaria["cod_tipo_cuenta"] ?></td>
+                                            <td> <?php echo $cuenta_bancaria["nombre_banco"] ?></td>
                                             <td> <?php echo $cuenta_bancaria["numero_cuenta"] ?></td>
                                             <td> <?php echo $cuenta_bancaria["saldo"] ?></td>
                                             <td> <?php echo $cuenta_bancaria["status"] ?></td>
@@ -48,9 +51,9 @@
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
                                                 data-codigo="<?php echo $cuenta_bancaria["cod_cuenta_bancaria"];?>"
                                                 data-nombre="<?php echo $cuenta_bancaria["numero_cuenta"];?>"
-                                                data-user="<?php echo $cuenta_bancaria["cod_tipo_cuenta"];?>"
+                                                data-user="<?php echo $cuenta_bancaria["nombre_banco"];?>"
                                                
-                                                data-rol="<?php echo $cuenta_bancaria["cod_tipo_cuenta"];?>"
+                                                data-rol="<?php echo $cuenta_bancaria["nombre_banco"];?>"
                                             >
                                                 <i class="fas fa-pencil-alt"></i>
                                                 <i class="fas fa-pencil-alt"></i></button>
@@ -123,20 +126,14 @@
 
                     <!-- Seleccionar Divisa -->
                     <div class="form-group">
-                        <label for="divisas">Divisas <span class="text-danger">*</span></label>
-                        <select class="form-control" id="tipo_cuenta" name="divisas" required>
+                        <label for="divisa">Divisa <span class="text-danger">*</span></label>
+                        <select class="form-control" id="divisa" name="cod_divisa" required>
                             <option value="" disabled selected>Seleccione una divisa</option>
-                            <?php foreach($divisas as $divisa): ?>
-                         
-                                <option value="<?php echo $tipo['cod_divisa']; ?>">
-                                    <?php echo $tipo['nombre']; ?>
-                                </option>
-                           
-                            <?php endforeach; ?>
+                            <option value="VES">Bolívares (VES)</option>
+                            <option value="USD">Dólares (USD)</option>
+                            <option value="EUR">Euros (EUR)</option>
                         </select>
                     </div>
-
-    
 
                     <!-- Advertencia de campos obligatorios -->
                     <div class="alert alert-light d-flex align-items-center" role="alert">
@@ -163,7 +160,7 @@ if (isset($registrar)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'cuentabancaria';
+                window.location = 'cuenta_bancaria';
             }
         });
     </script>  
@@ -203,23 +200,14 @@ if (isset($registrar)): ?>
                         <label>Saldo</label>
                         <input type="number" step="0.01" class="form-control" id="saldoE" name="saldoE">
                     </div>
-
                     <div class="form-group">
-                        <label for="divisas">Divisas <span class="text-danger">*</span></label>
-                        <select class="form-control" id="tipo_cuenta" name="divisas" required>
-                            <option value="" disabled selected>Seleccione una divisa</option>
-                            <?php foreach($divisas as $divisa): ?>
-                         
-                                <option value="<?php echo $tipo['cod_divisa']; ?>">
-                                    <?php echo $tipo['nombre']; ?>
-                                </option>
-                           
-                            <?php endforeach; ?>
+                        <label>Divisa</label>
+                        <select class="form-control" id="divisaE" name="divisaE">
+                            <option value="VES">Bolívares</option>
+                            <option value="USD">Dólares</option>
+                            <option value="EUR">Euros</option>
                         </select>
                     </div>
-                 
-
-
                     <div class="form-group">
                         <label>Status</label>
                         <select class="form-control" id="status" name="status">
@@ -246,7 +234,7 @@ if (isset($editar)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'cuentabancaria';
+                window.location = 'cuenta_bancaria';
             }
         });
     </script>
@@ -287,7 +275,7 @@ if (isset($editar)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'cuentabancaria';
+                window.location = 'cuenta_bancaria';
             }
         });
     </script>
