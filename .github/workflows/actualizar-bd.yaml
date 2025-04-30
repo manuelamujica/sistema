@@ -47,15 +47,17 @@ jobs:
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
         run: |
-          # First ensure local file exists
-          if [ ! -f "./savyc.sql" ]; then
-            echo "Error: savyc.sql not found in current directory!"
-            ls -l
+          echo "🔍 Buscando archivo .sql..."
+          SQL_FILE_PATH=$(find . -type f -name "*.sql" | head -n 1)
+          echo "📄 Archivo encontrado: $SQL_FILE_PATH"
+      
+          if [ ! -f "$SQL_FILE_PATH" ]; then
+            echo "❌ Error: archivo .sql no encontrado"
             exit 1
           fi
-    
-          # Then copy with verbose output
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql
+      
+          echo "📤 Subiendo archivo a $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql"
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql
             
       - name: Conectar al VPS y actualizar MySQL
         env:
