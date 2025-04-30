@@ -23,7 +23,7 @@
                                             <th>Usuario</th>
                                             <th>Acción</th>
                                             <th>Modulo</th>
-                                            <th>Detalles</th>
+                                            <th>Descripción</th>
                                             <th>Fecha</th>
                                         </tr>
                                     </thead>

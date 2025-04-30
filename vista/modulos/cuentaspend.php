@@ -22,7 +22,7 @@ require_once "controlador/cuentaspend.php";
                             
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3 id="totalPagos">$668.40</h3>
+                                    <h3 id="totalPagos">$668,40</h3>
                                     <p>Cuentas por Pagar</p>
                                 </div>
                                 <div class="icon">
@@ -68,7 +68,7 @@ require_once "controlador/cuentaspend.php";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <?php foreach ($datos2 as $p){ ?>
+                                    <?php foreach ($pagar as $p){ ?>
                                         <tr>
                                             <td><?php echo $p['proveedor']; ?></td>
                                             <td><?php echo $p['total']; ?></td>
@@ -91,26 +91,25 @@ require_once "controlador/cuentaspend.php";
                                     <thead>
                                         <tr>
                                             <th>Cliente</th>
-                                            <!--<th>Facturas Pendientes</th>-->
-                                            <th>Monto Total</th>
-                                            <th>Monto Pagado</th>
-                                            <th>Saldo Pendiente</th>
-                                            <th>Días Restantes</th>
-                                            <th>Status</th>
+                                            <th>Total Ventas</th>
+                                            <th>Importe Total</th>
+                                            <th>Total Pagado</th>
+                                            <th>Total Pendiente</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($datos as $pendiente){ ?>
+                                        <?php foreach ($cobrar as $pendiente){ ?>
                                         <tr>
                                             <td><?php echo $pendiente['cliente']; ?></td>
+                                            <td><?php echo $pendiente['total_ventas']; ?></td>
                                             <td><?php echo $pendiente['total']; ?></td>
-                                            <td><?php echo $pendiente['monto_total']; ?></td>
-                                            <td><?php echo $pendiente['saldo_pendiente']; ?></td>
-                                            <td><?php echo $pendiente['dias_restantes']; ?></td> <!-- no cuadra los status  -->
-                                            <td><span class="badge bg-<?php echo ($pendiente['estado'] == '1') ? 'danger' : 'warning'; ?>"><?php echo $pendiente['estado']; ?></span></td>
+                                            <td><?php echo $pendiente['total_cobrado']; ?></td>
+                                            <td><?php echo $pendiente['total_pendiente']; ?></td>
                                             <td>
-                                                <button class="btn btn-primary"><i class="fas fa-plus"></i></button>
+                                                <button class="btn btn-primary" data-toggle="modal" data-target="#detallemodal"
+                                                data-cliente="<?php echo $pendiente["cod_cliente"];?>"
+                                                ><i class="fas fa-plus"></i></button>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -119,7 +118,58 @@ require_once "controlador/cuentaspend.php";
                             </div>
                         </div>
                     </div>
+
+
+                    <!-- MODAL DETALLES-->
+                    <div class="modal fade" id="detallemodal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="detalleModalLabel">Cuentas por Cobrar</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Detalles de la cuenta</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <table id="tablaDetalles" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Codigo</th>
+                                                        <th>Fecha</th>
+                                                        <th>Importe Total</th>
+                                                        <th>Monto Pagado</th>
+                                                        <th>Saldo Pendiente</th>
+                                                        <th>Fecha de vencimiento</th>
+                                                        <th>Días Restantes</th>
+                                                        <th>Status</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="detalleBody">
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
                 </div>
             </section>
         </div>
     </div>
+
+    <script src="vista/dist/js/modulos-js/cuentaspend.js"></script>
