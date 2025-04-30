@@ -1,7 +1,9 @@
 <?php
    require_once "conexion.php";
+   require_once "validaciones.php";
 
    class Carga extends Conexion{
+    use ValidadorTrait; // Usar el trait para validaciones
     private $codigo;
     private $fecha;
     private $descripcion;
@@ -10,6 +12,7 @@
     private $fecha_vencimiento;
     private $cod_presentacion;
     private $conex;
+    private $errores = [];
 
     public function __construct(){
         $this->conex = new Conexion();
@@ -24,7 +27,12 @@
         $this->fecha = $fecha;
     }
     public function setDes($descripcion){
-        $this->descripcion = $descripcion;
+        $resultado = $this->validarTexto($descripcion, 'descripcion', 2, 50);
+        if ($resultado === true) {
+            $this->descripcion = $descripcion;
+        } else {
+            $this->errores['descripcion'] = $resultado;
+        }
     }
     public function setStatus($status){
         $this->status = $status;
@@ -61,6 +69,18 @@
         return $this->status;
     }
 
+    public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
+    // Si quieres acceder a los errores individualmente
+    public function getErrores() {
+        return $this->errores;
+    }
+    
     //     Funciones
     /* #######      REGISTRAR CARGA        #######   */
     private function registrar(){

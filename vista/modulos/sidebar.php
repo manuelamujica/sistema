@@ -394,7 +394,24 @@
                                         </p>
                                 </a>
                             </li>
-                      
+
+                            <li class="nav-item">
+                                <a href="banco" class="nav-link bitacora-link" data-modulo="Banco">
+                                    <i class="fas fa-university nav-icon"></i>
+                                        <p>
+                                            Bancos
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="categoriag" class="nav-link bitacora-link" data-modulo="Gastos">
+                                    <i class="fas fa-file-invoice-dollar nav-icon"></i>
+                                        <p>
+                                            Categoría de Gastos
+                                        </p>
+                                </a>
+                            </li>
+
                     </ul>
                 </li>
                 <?php endif;?>
