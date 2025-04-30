@@ -3,7 +3,6 @@ require_once "conexion.php";
 require_once "validaciones.php";
 class Clientes extends Conexion{
     use ValidadorTrait; // Usar el trait para validaciones
-    private $conex;
     private $nombre;
     private $apellido;
     private $cedula;
@@ -11,11 +10,9 @@ class Clientes extends Conexion{
     private $email;
     private $direccion;
     private $status;
-
     private $errores = [];
-
     public function __construct() {
-        $this->conex = (new Conexion())->conectar();
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
     public function setNombre($valor) {
@@ -126,19 +123,16 @@ class Clientes extends Conexion{
     private function registrar(){ 
 
         $registro = "INSERT INTO clientes(nombre,apellido,cedula_rif,telefono,email,direccion,status) VALUES(:nombre, :apellido, :cedula_rif, :telefono,:email,:direccion,1)";
-        
-        #instanciar el metodo PREPARE no la ejecuta, sino que la inicializa
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-
-        #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':apellido', $this->apellido);
         $strExec->bindParam(':cedula_rif', $this->cedula);
         $strExec->bindParam(':telefono', $this->telefono);
         $strExec->bindParam(':email', $this->email);
         $strExec->bindParam(':direccion', $this->direccion);
-
         $resul = $strExec->execute();
+        parent::desconectarBD();
         if($resul){
             $r = 1;
         }else{
@@ -152,12 +146,12 @@ class Clientes extends Conexion{
     }
 
     public function consultar(){
-
         $registro = "select * from clientes";
+        parent::conectarBD();
         $consulta = $this->conex->prepare($registro);
         $resul = $consulta->execute();
-
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -169,9 +163,11 @@ class Clientes extends Conexion{
         $this->cedula=$valor;
         $registro = "select * from clientes where cedula_rif='".$this->cedula."'";
         $resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -186,11 +182,9 @@ class Clientes extends Conexion{
 
     private function actualizar($valor){
         $cod=$valor;
-
         $registro="UPDATE clientes SET nombre=:nombre, apellido=:apellido, cedula_rif=:cedula_rif, telefono=:telefono, email=:email, direccion=:direccion, status=:status WHERE cod_cliente=$cod";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-
         #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':apellido', $this->apellido);
@@ -200,6 +194,7 @@ class Clientes extends Conexion{
         $strExec->bindParam(':direccion', $this->direccion);
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
+        parent::desconectarBD();
         if($resul){
             $r = 1;
         }else{
@@ -214,6 +209,7 @@ class Clientes extends Conexion{
 
     private function eliminar($valor){
         $registro="SELECT COUNT(*) AS n_ventas FROM ventas WHERE cod_cliente =$valor ";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $resul = $strExec->execute();
         if($resul){
@@ -226,9 +222,10 @@ class Clientes extends Conexion{
                 $strExec->execute();
                 $r='success';
             }
-            
+            parent::desconectarBD();
         }else {
             $r='error_delete';
+            parent::desconectarBD();
         }
         return $r;
     }

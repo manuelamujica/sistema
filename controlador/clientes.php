@@ -1,8 +1,9 @@
 <?php
-
+require_once 'modelo/bitacora.php';
 require_once 'modelo/clientes.php'; 
 
 $objCliente = new Clientes(); 
+$objbitacora = new Bitacora();
 
 if(isset($_POST['buscar'])){
     $cedula=$_POST['buscar'];
@@ -25,7 +26,6 @@ if(isset($_POST['buscar'])){
         $objCliente->setDireccion($_POST['direccion']);
     
         $objCliente->check(); // Lanza excepción si hay errores
-        $objCliente->getRegistrar();
         // Aquí puedes guardar o hacer lo que necesites con el cliente
     } catch (Exception $e) {
         $errores[] = $e->getMessage();

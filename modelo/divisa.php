@@ -4,20 +4,18 @@ require_once 'conexion.php';
 class Divisa extends Conexion{
     private $nombre;
     private $simbolo;
-    private $conex;
     private $status;
     private $tasa;
     private $fecha;
 
 
     public function __construct(){
-        $this->conex= new Conexion();
-        $this->conex=$this->conex->conectar();
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
     public function incluir(){
         $registro="INSERT INTO divisas(nombre, abreviatura, status) VALUES(:nombre, :abreviatura, 1)";
-
+        parent::conectarBD();
         $strExec=$this->conex->prepare($registro);
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
@@ -34,6 +32,7 @@ class Divisa extends Conexion{
         }else{
             $res=0;
         }
+        parent::desconectarBD();
         return $res;
     }
 
@@ -48,9 +47,11 @@ class Divisa extends Conexion{
             ON c.cod_divisa = ultimos_cambios.cod_divisa 
             AND c.fecha = ultimos_cambios.ultima_fecha
         ORDER BY d.cod_divisa;";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -62,9 +63,11 @@ class Divisa extends Conexion{
         $this->nombre=$valor;
         $registro = "select * from divisas where nombre='".$this->nombre."'";
         $resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -74,12 +77,14 @@ class Divisa extends Conexion{
 
     public function editar($valor){
         $registro="UPDATE divisas SET nombre=:nombre, abreviatura=:abreviatura, status=:status WHERE cod_divisa=$valor";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
+        parent::desconectarBD();
         if($resul){
             $r = 1;
         }else{
@@ -90,6 +95,7 @@ class Divisa extends Conexion{
 
     public function eliminar($valor){
         $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN tipo_pago tp ON cd.cod_cambio = tp.cod_cambio WHERE cd.cod_divisa = $valor";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $resul = $strExec->execute();
         if($resul){
@@ -103,17 +109,20 @@ class Divisa extends Conexion{
                 $r=1;
                 }
             }
+        parent::desconectarBD();
         return $r;
     }
 
     public function tasa($valor){
         foreach($valor as $divisa){
             $sql="INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
+            parent::conectarBD();
             $strExec = $this->conex->prepare($sql);
             $strExec->bindParam(':tasa', $divisa['tasa']);
             $strExec->bindParam(':fecha', $divisa['fecha']);
             $strExec->bindParam(':cod_divisa', $divisa['cod_divisa']);
             $resul=$strExec->execute();
+            parent::desconectarBD();
             if(!$resul){
                 return false;
             }
@@ -123,9 +132,11 @@ class Divisa extends Conexion{
 
     public function historial(){
         $registro="SELECT * FROM cambio_divisa ORDER BY fecha DESC;";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{

@@ -2,20 +2,16 @@
 
 require_once 'conexion.php';
 class Descarga extends Conexion{
-    private $conex;
+
 
     #Descarga
     private $fecha;
     private $descripcion;
     private $status;
-
-    #Detalle
     private $cantidad;
 
-    public function __construct()
-    {
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
+    public function __construct(){
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
     public function getfecha(){
@@ -43,10 +39,8 @@ class Descarga extends Conexion{
 ===========================*/
     public function registrar($cod_detalle) {
         try {
-
+            parent::conectarBD();
             $this->conex->beginTransaction();
-            
-            // Insertar en la tabla descarga
             $sql = 'INSERT INTO descarga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)';
             $strExec = $this->conex->prepare($sql);
             $strExec->bindParam(':fecha', $this->fecha);
@@ -65,7 +59,6 @@ class Descarga extends Conexion{
                 if (empty($det['cantidad']) || empty($det['cod_detallep'])) {
                     throw new Exception("La cantidad o el código del detalle no son válidos.");
                 }
-    
                 // Insertar en la tabla 'detalle_descarga'
                 $sql2 = "INSERT INTO detalle_descarga(cod_detallep, cod_descarga, cantidad) VALUES(:cod_detallep, :cod_descarga, :cantidad)";
                 $sentencia = $this->conex->prepare($sql2);
@@ -92,10 +85,12 @@ class Descarga extends Conexion{
             
             // Si todo fue exitoso, confirmar la transacción
             $this->conex->commit();
+            parent::desconectarBD();
             return 1; 
         } catch (Exception $e) {
             // Si algo salió mal, revertir los cambios
             $this->conex->rollBack();
+            parent::desconectarBD();
             error_log($e->getMessage()); // Registrar el error
             return 0;
         }
@@ -123,12 +118,12 @@ class Descarga extends Conexion{
         JOIN unidades_medida AS u ON u.cod_unidad = present.cod_unidad
         JOIN productos AS pro ON pro.cod_producto = present.cod_producto
         WHERE de.cod_descarga = :cod_descarga';
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(':cod_descarga', $cod_descarga, PDO::PARAM_INT);
         $resul=$strExec->execute();
         $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
-
+        parent::desconectarBD();
         if($resul){
             return $array;
         }else{
@@ -139,10 +134,11 @@ class Descarga extends Conexion{
     //Mostrar productos en el datatable
     public function consultardescarga(){
         $sql = 'SELECT * FROM descarga';
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $resul = $strExec->execute();
         $array = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
+        parent::desconectarBD();
         if($resul){
             return $array;
         }else{
@@ -152,7 +148,6 @@ class Descarga extends Conexion{
 
     //Buscar productos para seleccionar
     public function buscar($nombrep){
-
         $sql="SELECT                
         det.cod_detallep,
         det.cod_presentacion,
@@ -169,13 +164,13 @@ class Descarga extends Conexion{
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
         JOIN marcas AS m ON pro.cod_marca = m.cod_marca
         WHERE pro.nombre LIKE ? AND det.stock != 0 GROUP BY det.cod_detallep LIMIT 7;";
-
+        parent::conectarBD();
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $nombrep. '%';
         $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
         $resul = $consulta->execute();
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -197,11 +192,11 @@ class Descarga extends Conexion{
         JOIN presentacion_producto AS present ON present.cod_presentacion = detp.cod_presentacion
         JOIN productos AS pro ON pro.cod_producto = present.cod_producto
         GROUP BY detd.cod_det_descarga";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $r = $strExec->execute();
         $array = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
+        parent::desconectarBD();
         if($r){
             return $array;
         }else{
@@ -222,11 +217,11 @@ class Descarga extends Conexion{
         JOIN detalle_productos AS detp ON detp.cod_detallep = detd.cod_detallep
         JOIN presentacion_producto AS present ON present.cod_presentacion = detp.cod_presentacion
         JOIN productos AS pro ON pro.cod_producto = present.cod_producto";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $r = $strExec->execute();
         $array = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
+        parent::desconectarBD();
         if($r){
             return $array;
         }else{
@@ -251,12 +246,13 @@ class Descarga extends Conexion{
     JOIN productos AS pro ON pro.cod_producto = present.cod_producto
     WHERE de.fecha BETWEEN :fechainicio AND :fechafin
     ORDER BY de.cod_descarga ASC;";
-
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':fechainicio', $fi);
         $stmt->bindParam(':fechafin', $ff);
         $resul=$stmt->execute();
         $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{

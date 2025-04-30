@@ -1,8 +1,14 @@
 <?php
-#SON CONSTANTES
-define ('_DB_NAME_', 'savycPLUSv7'); #nombre BD a conectar
-define ('_DB_HOST_', 'localhost'); #servidor local
-define ('_DB_USER_', 'root'); #usuario por defecto
-define ('_DB_PASS_', ''); #password creada cuando se instala MYSQL o vacia
+#BASE DE DATOS SAVYC
+define ('_DB_NAME_', 'savyc+v1'); 
+define ('_DB_HOST_', 'localhost'); 
+define ('_DB_USER_', 'root'); 
+define ('_DB_PASS_', '');
+
+#BASE DE DATOS SEGURIDAD
+define ('_SEC_DB_NAME_', 'seguridad'); 
+define ('_SEC_DB_HOST_', 'localhost'); 
+define ('_SEC_DB_USER_', 'root'); 
+define ('_SEC_DB_PASS_', ''); 
 
 date_default_timezone_set('America/Caracas');
