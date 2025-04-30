@@ -48,20 +48,27 @@ jobs:
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
         run: |
           echo "🔍 Buscando archivo .sql..."
-          SQL_FILE_PATH=$(find . -type f -name "*.sql" | head -n 1)
-          echo "📄 Archivo encontrado: $SQL_FILE_PATH"
+          SQL_FILE_PATH=$(find . -name '*.sql' | head -n 1)
       
-          if [ ! -f "$SQL_FILE_PATH" ]; then
-            echo "❌ Error: archivo .sql no encontrado"
+          if [ -z "$SQL_FILE_PATH" ]; then
+            echo "❌ No se encontró ningún archivo .sql"
             exit 1
           fi
       
-          echo "📁 Verificando existencia del directorio en VPS..."
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p /home/$SSH_USER/sql"
+          echo "📄 Archivo encontrado: $SQL_FILE_PATH"
+          echo "📁 Verificando o creando directorio ~/sql en VPS..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p ~/sql"
+      
+          echo "🔐 Verificando permisos de ~/sql:"
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -ld ~/sql"
+
+          echo "Verificando user:"
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "whoami"
+
       
           echo "📤 Subiendo archivo a VPS..."
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:/home/$SSH_USER/sql/savyc.sql
-            
+          scp -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:~/sql/
+        
       - name: Conectar al VPS y actualizar MySQL
         env:
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
