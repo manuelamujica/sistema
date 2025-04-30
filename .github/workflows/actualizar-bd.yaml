@@ -48,7 +48,7 @@ jobs:
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
         run: |
           # First ensure local file exists
-          if [ ! -f "savyc.sql" ]; then
+          if [ ! -f "./savyc.sql" ]; then
             echo "Error: savyc.sql not found in current directory!"
             ls -l
             exit 1
