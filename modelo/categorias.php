@@ -1,11 +1,15 @@
 <?php 
 require_once "conexion.php";
+require_once "validaciones.php";
 
 class Categoria extends Conexion{
 
+    use ValidadorTrait;
     private $conex;
     private $nombre;
     private $status;
+
+    private $errores = [];
 
     public function __construct(){
         $this->conex = new Conexion();
@@ -13,20 +17,44 @@ class Categoria extends Conexion{
     }
 
 #GETTER Y SETTER
-    public function getNombre(){
-        return $this->nombre;
-    }
-    public function setNombre($nombre){
-        $this->nombre = $nombre;
-    }
+public function getNombre(){
+    return $this->nombre;
+}
+public function setNombre($nombre){
+    $resultado = $this->validarTexto($nombre, 'nombre', 2, 50);
+        if ($resultado === true) {
+            $this->nombre = $nombre;
+        } else {
+            $this->errores['nombre'] = $resultado;
+        }
+}
 
-    public function getStatus(){
-        return $this->status;
-    }
-    public function setStatus($status){
+public function getStatus(){
+    return $this->status;
+}
+public function setStatus($status){
+    $resultado = $this->validarStatusInactivo($status);
+    if ($resultado === true) {
         $this->status = $status;
+    } else {
+        $this->errores['status'] = $resultado;
     }
+}
 
+
+#VALIDACIONES
+
+public function check(){
+    if (!empty($this->errores)) {
+        $mensajes = implode(" | ", $this->errores);
+        throw new Exception("Errores de validación: $mensajes");
+    }
+}
+
+#Acceder a los errores individualmente
+public function getErrores() {
+    return $this->errores;
+}
 
 /*==============================
 REGISTRAR CATEGORIA
