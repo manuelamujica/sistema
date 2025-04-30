@@ -13,48 +13,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout del repositorio
+      - name: Checkout del repo
         uses: actions/checkout@v4
 
-      - name: 📂 Mostrar contenido del repositorio
-        run: ls -al
-
-      - name: 📍 Mostrar directorio actual
-        run: pwd
-
-      - name: 🔐 Configurar clave SSH
+      - name: Configurar clave SSH
         env:
           SSH_KEY: ${{ secrets.TRAYECTO3_KEY }}
         run: |
           echo "$SSH_KEY" > private_key.pem
           chmod 600 private_key.pem
 
-      - name: 🔗 Probar conexión SSH al servidor
-        env:
-          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
+      - name: Verificar existencia de archivo SQL
         run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo '✅ Conexión SSH exitosa'"
-
-      - name: 🔍 Verificar archivo SQL local
-        run: |
-          ls -l *.sql || { echo "❌ No se encontró el archivo savyc.sql"; exit 1; }
+          ls -l *.sql || (echo "❌ Archivo SQL no encontrado" && exit 1)
 
       - name: 📤 Subir archivo SQL al VPS
         env:
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
         run: |
-          SQL_FILE="savyc.sql"
-          REMOTE_DIR="/home/$SSH_USER/sql"
+          echo "📁 Asegurando existencia del directorio remoto /home/$SSH_USER/sql..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p /home/$SSH_USER/sql"
 
-          echo "📁 Asegurando existencia del directorio remoto $REMOTE_DIR..."
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p $REMOTE_DIR"
+          echo "📤 Subiendo savyc.sql al VPS..."
+          scp -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/$SSH_USER/sql/
 
-          echo "📤 Subiendo $SQL_FILE al VPS..."
-          scp -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE" $SSH_USER@$SSH_HOST:$REMOTE_DIR/
-
-      - name: 🛠️ Ejecutar script en MySQL remoto
+      - name: 🧩 Conectar al VPS y actualizar MySQL
         env:
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
           SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
@@ -62,11 +46,12 @@ jobs:
           MYSQL_PASS: ${{ secrets.TRAYECTO3_MYSQL_PASS }}
           MYSQL_DB: ${{ secrets.TRAYECTO3_MYSQL_DB }}
         run: |
-          echo "🧨 Eliminando y recreando la base de datos $MYSQL_DB..."
           ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
+            echo "🗑️  Borrando base de datos si existe..."
             mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "DROP DATABASE IF EXISTS $MYSQL_DB; CREATE DATABASE $MYSQL_DB;"
+            echo "📥 Importando savyc.sql..."
             mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" < /home/$SSH_USER/sql/savyc.sql
           EOF
 
-      - name: 🧹 Limpiar clave privada
+      - name: Limpiar clave privada
         run: rm -f private_key.pem
