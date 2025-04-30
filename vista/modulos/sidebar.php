@@ -22,7 +22,7 @@
                 <li class="nav-header">INVENTARIO</li>
                     <?php if ($_SESSION["producto"]==1): ?>
                         <li class="nav-item">
-                            <a href="productos" class="nav-link">
+                            <a href="productos" class="nav-link ">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
                                 <p>
                                     Productos
@@ -33,7 +33,7 @@
 
                     <?php if ($_SESSION["inventario"]==1): ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link bitacora-link" data-modulo="Ajuste de INventario">
+                            <a href="#" class="nav-link ">
                                 <i class="fas fa-dolly-flatbed nav-icon"></i>
                                 <p>
                                     Ajustes<i class="right fas fa-angle-left nav-icon"></i>
@@ -41,13 +41,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="carga" class="nav-link bitacora-link" data-modulo="Carga de productos">
+                                    <a href="carga" class="nav-link ">
                                         <i class="fas fa-sort-amount-up-alt nav-icon"></i>
                                         <p>Carga de productos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="descarga" class="nav-link bitacora-link" data-modulo="Descarga de productos">
+                                    <a href="descarga" class="nav-link ">
                                         <i class="fas fa-sort-amount-down-alt nav-icon"></i>
                                         <p>Descarga de productos</p>
                                     </a>
@@ -61,7 +61,7 @@
                 <li class="nav-header">COMERCIO</li>
                 <?php if ($_SESSION["compra"]==1): ?>
                 <li class="nav-item">
-                    <a href="compras" class="nav-link bitacora-link" data-modulo="Compras">
+                    <a href="compras" class="nav-link">
                         <i class="nav-icon fa fa-shopping-cart"></i>
                             <p>
                                 Compras
@@ -71,7 +71,7 @@
                 <?php endif; ?>
                 <?php if ($_SESSION["venta"]==1): ?>
                 <li class="nav-item">
-                    <a href="venta" class="nav-link bitacora-link" data-modulo="Ventas">
+                    <a href="venta" class="nav-link ">
                         <i class="nav-icon fa fa-file"></i>
                             <p>
                                 Ventas 
@@ -101,7 +101,7 @@
                         <?php endif; ?>
                         <?php if ($_SESSION["proveedor"]==1): ?>
                         <li class="nav-item">
-                            <a href="proveedores" class="nav-link">
+                            <a href="proveedores" class="nav-link ">
                                 <i class="nav-icon far fa fa-truck"></i>
                                 <p>
                                     Proveedores
@@ -121,19 +121,19 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="catalogocuentas" class="nav-link">
+                                    <a href="catalogocuentas" class="nav-link ">
                                     <i class="fas fa-wallet nav-icon"></i>
                                         <p>Catálogo de cuentas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="movimientos" class="nav-link">
+                                    <a href="movimientos" class="nav-link ">
                                     <i class="fas fa-cogs nav-icon"></i> 
                                         <p>Gestionar asientos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="#" class="nav-link ">
                                     <i class="fas fa-chart-line nav-icon"></i>
                                         <p>Reportes contables</p>
                                     </a>
@@ -141,7 +141,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="#" class="nav-link ">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas
@@ -150,23 +150,44 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                            <i class="fas fa-credit-card nav-icon"></i>
+                            <a href="caja" class="nav-link">
+                            <i class="fas fa-cash-register nav-icon"></i>
+
                                 <p>
-                                    Bancos y Caja
+                                    Caja
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                        <a href="gastos" class="nav-link">
+                            <a href="cuentabancaria"  class="nav-link ">
+                            <i class="fas fa-credit-card nav-icon"></i>
+                                <p>
+                                    Cuenta Bancaria
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="conciliacion" class="nav-link ">
+                            <i class="fas fa-check-circle nav-icon"></i>
+
+
+
+                                    <p>
+                                     Conciliación bancaria
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                        <a href="gastos" class="nav-link ">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
                                 <p>
                                     Gastos
                                 </p>
                             </a>
                         </li>
+                    
                         <li class="nav-item">
-                            <a href="cuentaspend" class="nav-link">
+                            <a href="cuentaspend" class="nav-link ">
                             <i class="fas fa-wallet nav-icon"></i>                                 
                                 <p>
                                     Cuentas pendientes</i>
@@ -185,7 +206,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                    <a href="rep-proveedores" class="nav-link bitacora-link" data-modulo="Reporte De proveedores">
+                                    <a href="rep-proveedores" class="nav-link ">
                                 <i class="fas fa-store nav-icon"></i>                                        
                                     <p>
                                         De proveedores
@@ -193,7 +214,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="rep-inventario" class="nav-link bitacora-link" data-modulo="Reporte De inventario">
+                            <a href="rep-inventario" class="nav-link">
                                 <i class="fas fa-pallet nav-icon"></i>                                        
                                     <p>
                                         De inventario
@@ -201,7 +222,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="rep-venta" class="nav-link bitacora-link" data-modulo="Reporte De ventas">
+                            <a href="rep-venta" class="nav-link">
                                 <i class="fas fa-file-invoice nav-icon"></i>                                        
                                     <p>
                                         De clientes
@@ -209,7 +230,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="rep-compra" class="nav-link bitacora-link" data-modulo="Reporte De compras">
+                            <a href="rep-compra" class="nav-link">
                                 <i class="fas fa-shopping-bag nav-icon"></i>                                       
                                     <p>
                                         De compras
@@ -233,7 +254,7 @@
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">
-                                <a href="general" class="nav-link bitacora-link" data-modulo="Ajuste general">
+                                <a href="general" class="nav-link">
                                     <i class="fas fa-cogs nav-icon"></i>
                                         <p>
                                             Empresa
@@ -244,7 +265,7 @@
                         <li class="nav-header">SEGURIDAD Y ACCESOS</li>
                         <?php if ($_SESSION["usuario"]==1): ?>
                             <li class="nav-item">
-                                <a href="usuarios" class="nav-link">
+                                <a href="usuarios" class="nav-link ">
                                     <i class="nav-icon fas fa-users-cog"></i>
                                         <p>
                                             Usuarios
@@ -255,10 +276,63 @@
                         
                         <!--php... -->
                         <li class="nav-item">
-                            <a href="roles" class="nav-link bitacora-link" data-modulo="Ajuste de roles">
+                            <a href="roles" class="nav-link ">
                                 <i class="nav-icon fas fa-user-tag"></i>
                                     <p>
-                                        Roles y Permisos
+                                        Ajuste general
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="divisa" class="nav-link">
+                                <i class="fas fa-dollar-sign nav-icon"></i>
+                                    <p>
+                                        Divisas
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="tpago" class="nav-link ">
+                                <i class="fas fa-money-bill nav-icon"></i>
+                                    <p>
+                                        Tipos de pago
+                                    </p>
+                            </a>
+                        </li>
+                    
+                        <li class="nav-item">
+                            <a href="unidad" class="nav-link ">
+                                <i class="fas fa-balance-scale nav-icon"></i>
+                                    <p>
+                                        Unidades de medida
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="banco" class="nav-link ">
+                            <i class="fas fa-landmark nav-icon"></i>
+
+                                    <p>
+                                     Banco
+                                    </p>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                                <a href="tipocuenta" class="nav-link ">
+                                <i class="fas fa-money-check-alt nav-icon"></i>
+
+
+                                        <p>
+                                            Tipo de cuenta
+                                        </p>
+                                </a>
+                            </li>
+                        <li class="nav-item">
+                            <a href="roles" class="nav-link "> 
+                                <i class="fas fa-user-cog nav-icon"></i>
+                                    <p>
+                                        Ajuste de roles
                                     </p>
                             </a>
                         </li>
@@ -275,7 +349,7 @@
 
                         <li class="nav-header">PRODUCTOS</li>
                             <li class="nav-item">
-                                <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
+                                <a href="unidad" class="nav-link ">
                                     <i class="fas fa-balance-scale nav-icon"></i>
                                         <p>
                                             Unidades de medida
@@ -284,7 +358,7 @@
                             </li>
                             <?php if ($_SESSION["categoria"]==1): ?>
                             <li class="nav-item">
-                                <a href="categorias" class="nav-link bitacora-link" data-modulo="Categorías">
+                                <a href="categorias" class="nav-link ">
                                     <i class="nav-icon fa fa-table"></i>
                                         <p>
                                             Categorías
@@ -294,7 +368,7 @@
                             <?php endif;?>
 
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="#" class="nav-link ">
                                     <i class="fas fa-tags nav-icon"></i>
                                         <p>
                                             Marcas
@@ -303,7 +377,7 @@
                             </li>
                             <li class="nav-header">FINANZAS</li>
                             <li class="nav-item">
-                                <a href="divisa" class="nav-link bitacora-link" data-modulo="Divisas">
+                                <a href="divisa" class="nav-link ">
                                     <i class="fas fa-dollar-sign nav-icon"></i>
                                         <p>
                                             Divisas
@@ -311,21 +385,14 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="tpago" class="nav-link bitacora-link" data-modulo="Tipos de pago">
+                                <a href="tpago" class="nav-link ">
                                     <i class="fas fa-money-bill nav-icon"></i>
                                         <p>
                                             Tipos de pago
                                         </p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="banco" class="nav-link bitacora-link" data-modulo="Banco">
-                                    <i class="fas fa-university nav-icon"></i>
-                                        <p>
-                                            Bancos
-                                        </p>
-                                </a>
-                            </li>
+                      
                     </ul>
                 </li>
                 <?php endif;?>
@@ -342,7 +409,7 @@
             <li class="nav-header">INVENTARIO</li>
                     <?php if ($_SESSION["producto"]==1): ?>
                         <li class="nav-item">
-                            <a href="productos" class="nav-link">
+                            <a href="productos" class="nav-link ">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
                                 <p>
                                     Productos
@@ -353,7 +420,7 @@
 
                     <?php if ($_SESSION["inventario"]==1): ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link disabled bitacora-link" data-modulo="Ajuste de INventario">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-dolly-flatbed nav-icon"></i>
                                 <p>
                                     Ajustes<i class="right fas fa-angle-left nav-icon"></i>
@@ -361,13 +428,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="carga" class="nav-link disabled bitacora-link" data-modulo="Carga de productos">
+                                    <a href="carga" class="nav-link ">
                                         <i class="fas fa-sort-amount-up-alt nav-icon"></i>
                                         <p>Carga de productos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="descarga" class="nav-link disabled bitacora-link" data-modulo="Descarga de productos">
+                                    <a href="descarga" class="nav-link ">
                                         <i class="fas fa-sort-amount-down-alt nav-icon"></i>
                                         <p>Descarga de productos</p>
                                     </a>
@@ -381,7 +448,7 @@
                 <li class="nav-header">COMERCIO</li>
                 <?php if ($_SESSION["compra"]==1): ?>
                 <li class="nav-item">
-                    <a href="compras" class="nav-link disabled bitacora-link" data-modulo="Compras">
+                    <a href="compras" class="nav-link ">
                         <i class="nav-icon fa fa-shopping-cart"></i>
                             <p>
                                 Compras
@@ -391,7 +458,7 @@
                 <?php endif; ?>
                 <?php if ($_SESSION["venta"]==1): ?>
                 <li class="nav-item">
-                    <a href="venta" class="nav-link disabled bitacora-link" data-modulo="Ventas">
+                    <a href="venta" class="nav-link ">
                         <i class="nav-icon fa fa-file"></i>
                             <p>
                                 Ventas 
@@ -421,7 +488,7 @@
                         <?php endif; ?>
                         <?php if ($_SESSION["proveedor"]==1): ?>
                         <li class="nav-item">
-                            <a href="proveedores" class="nav-link">
+                            <a href="proveedores" class="nav-link ">
                                 <i class="nav-icon far fa fa-truck"></i>
                                 <p>
                                     Proveedores
@@ -447,13 +514,13 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="movimientos" class="nav-link">
+                                    <a href="movimientos" class="nav-link ">
                                     <i class="fas fa-cogs nav-icon"></i> 
                                         <p>Gestionar asientos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="descarga" class="nav-link">
+                                    <a href="descarga" class="nav-link ">
                                     <i class="fas fa-chart-line nav-icon"></i>
                                         <p>Reportes contables</p>
                                     </a>
@@ -470,15 +537,43 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                            <i class="fas fa-credit-card nav-icon"></i>
+                            <a href="caja" class="nav-link ">
+                            <i class="fas fa-cash-register nav-icon"></i>
+
                                 <p>
-                                    Bancos y Caja
+                                   Caja
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                        <a href="gastos" class="nav-link">
+                            <a href="cuentabancaria"  class="nav-link ">
+                            <i class="fas fa-credit-card nav-icon"></i>
+                                <p>
+                                    Cuenta Bancaria
+                                </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="conciliacion" class="nav-link " >
+                            <i class="fas fa-check-circle nav-icon"></i>
+
+                                    <p>
+                                     Conciliación bancaria
+                                    </p>
+                            </a>
+                        </li>
+                      
+                            <li class="nav-item">
+                                <a href="tipocuenta" class="nav-link">
+                                    <i class="fas fa-university nav-icon"></i>
+                                        <p>
+                                            Tipo de cuenta
+                                        </p>
+                                </a>
+                            </li>
+                        <li class="nav-item">
+                        <a href="gastos" class="nav-link ">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
                                 <p>
                                     Gastos
@@ -505,7 +600,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                    <a href="rep-proveedores" class="nav-link disabled bitacora-link" data-modulo="Reporte De proveedores">
+                                    <a href="rep-proveedores" class="nav-link ">
                                 <i class="fas fa-store nav-icon"></i>                                        
                                     <p>
                                         De proveedores
@@ -513,15 +608,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="rep-inventario" class="nav-link disabled bitacora-link" data-modulo="Reporte De inventario">
+                            <a href="rep-inventario" class="nav-link">
                                 <i class="fas fa-pallet nav-icon"></i>                                        
                                     <p>
-                                        De inventario
+                                        De Inventario
                                     </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="rep-venta" class="nav-link disabled bitacora-link" data-modulo="Reporte De ventas">
+                            <a href="rep-venta" class="nav-link ">
                                 <i class="fas fa-file-invoice nav-icon"></i>                                        
                                     <p>
                                         De clientes
@@ -529,7 +624,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="rep-compra" class="nav-link disabled bitacora-link" data-modulo="Reporte De compras">
+                            <a href="rep-compra" class="nav-link">
                                 <i class="fas fa-shopping-bag nav-icon"></i>                                       
                                     <p>
                                         De compras
@@ -549,11 +644,64 @@
                             Configuración<i class="right fas fa-angle-left"></i>
                             </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="general" class="nav-link">
+                                <i class="fas fa-cogs nav-icon"></i>
+                                    <p>
+                                        Ajuste general
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="divisa" class="nav-link">
+                                <i class="fas fa-dollar-sign nav-icon"></i>
+                                    <p>
+                                        Divisas
+                                    </p>
+                            </a>
+                        </li>
+                    
+                        <li class="nav-item">
+                            <a href="tpago" class="nav-link">
+                                <i class="fas fa-money-bill nav-icon"></i>
+                                    <p>
+                                        Tipos de pago
+                                    </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                                <a href="banco" class="nav-link">
+                                <i class="fas fa-landmark nav-icon"></i>
 
+                                        <p>
+                                            Bancos
+                                        </p>
+                                </a>
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a href="tipocuenta" class="nav-link ">
+                                    <i class="fas fa-university nav-icon"></i>
+                                        <p>
+                                            Tipo de cuenta
+                                        </p>
+                                </a>
+                            </li>
+                     
+                        <li class="nav-item">
+                            <a href="unidad" class="nav-link ">
+                                <i class="fas fa-balance-scale nav-icon"></i>
+                                    <p>
+                                        Unidades de medida
+                                    </p>
+                            </a>
+                        </li>
+                     
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">
-                                <a href="general" class="nav-link disabled bitacora-link" data-modulo="Ajuste general">
+                                <a href="general" class="nav-link ">
                                     <i class="fas fa-cogs nav-icon"></i>
                                         <p>
                                             Empresa
@@ -564,7 +712,7 @@
                         <li class="nav-header">SEGURIDAD Y ACCESOS</li>
                         <?php if ($_SESSION["usuario"]==1): ?>
                             <li class="nav-item">
-                                <a href="usuarios" class="nav-link">
+                                <a href="usuarios" class="nav-link ">
                                     <i class="nav-icon fas fa-users-cog"></i>
                                         <p>
                                             Usuarios
@@ -575,7 +723,7 @@
                         
                         <!--php... -->
                         <li class="nav-item">
-                            <a href="roles" class="nav-link disabled bitacora-link" data-modulo="Ajuste de roles">
+                            <a href="roles" class="nav-link ">
                                 <i class="nav-icon fas fa-user-tag"></i>
                                     <p>
                                         Roles y Permisos
@@ -595,7 +743,7 @@
 
                         <li class="nav-header">PRODUCTOS</li>
                             <li class="nav-item">
-                                <a href="unidad" class="nav-link disabled bitacora-link" data-modulo="Unidades de medida">
+                                <a href="unidad" class="nav-link ">
                                     <i class="fas fa-balance-scale nav-icon"></i>
                                         <p>
                                             Unidades de medida
@@ -604,7 +752,7 @@
                             </li>
                             <?php if ($_SESSION["categoria"]==1): ?>
                             <li class="nav-item">
-                                <a href="categorias" class="nav-link disabled bitacora-link" data-modulo="Categorías">
+                                <a href="categorias" class="nav-link ">
                                     <i class="nav-icon fa fa-table"></i>
                                         <p>
                                             Categorías
@@ -614,7 +762,7 @@
                             <?php endif;?>
 
                             <li class="nav-item">
-                                <a href="marcas" class="nav-link">
+                                <a href="marcas" class="nav-link ">
                                     <i class="fas fa-tags nav-icon"></i>
                                         <p>
                                             Marcas
@@ -623,7 +771,7 @@
                             </li>
                             <li class="nav-header">FINANZAS</li>
                             <li class="nav-item">
-                                <a href="divisa" class="nav-link disabled bitacora-link" data-modulo="Divisas">
+                                <a href="divisa" class="nav-link ">
                                     <i class="fas fa-dollar-sign nav-icon"></i>
                                         <p>
                                             Divisas
@@ -631,21 +779,15 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="tpago" class="nav-link disabled bitacora-link" data-modulo="Tipos de pago">
+                                <a href="tpago" class="nav-link ">
                                     <i class="fas fa-money-bill nav-icon"></i>
                                         <p>
                                             Tipos de pago
                                         </p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="banco" class="nav-link disabled bitacora-link" data-modulo="Banco">
-                                    <i class="fas fa-university nav-icon"></i>
-                                        <p>
-                                            Bancos
-                                        </p>
-                                </a>
-                            </li>
+
+                          
                         </ul>
                     </li>
                     <?php endif;?>
@@ -655,18 +797,3 @@
 <?php endif;?>
 
 </aside>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".bitacora-link").forEach(link => {
-        link.addEventListener("click", (e) => {
-            const modulo = link.getAttribute("data-modulo");
-
-            // Enviar la solicitud AJAX sin interrumpir la navegación
-            navigator.sendBeacon("index.php?pagina=bitacora", new URLSearchParams({
-                modulo: modulo
-            }));
-        });
-    });
-});
-</script>

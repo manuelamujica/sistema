@@ -17,17 +17,10 @@ if(isset($_POST['buscar'])){
 
     // Usamos la función 'cargarDatosDesdeFormulario' para validar y cargar los datos
     try {
-        $objCliente->setCedula($_POST['cedula_rif']);
-        $objCliente->setNombre($_POST['nombre']);
-        $objCliente->setApellido($_POST['apellido']);
-        $objCliente->setTelefono($_POST['telefono']);
-        $objCliente->setEmail($_POST['email']);
-        $objCliente->setDireccion($_POST['direccion']);
-    
-        $objCliente->check(); // Lanza excepción si hay errores
-        $objCliente->getRegistrar();
-        // Aquí puedes guardar o hacer lo que necesites con el cliente
+        $objCliente->setData($_POST);
+        $objCliente->check();
     } catch (Exception $e) {
+        // Si ocurre un error en la validación, lo capturamos y mostramos
         $errores[] = $e->getMessage();
     }
 
@@ -102,13 +95,10 @@ else if(isset($_POST['actualizar'])){
                     "icon" => "error"
                 ];
             } else {
-            $objCliente->setNombre($_POST["nombre"]);
-            $objCliente->setApellido($_POST["apellido"]);
-            $objCliente->setCedula($_POST["cedula_rif"]);
-            $objCliente->setTelefono($_POST["telefono"]);
-            $objCliente->setEmail($_POST["email"]);
-            $objCliente->setDireccion($_POST["direccion"]);
-            $objCliente->setstatus($_POST["status"]);
+                // Si no hay errores, proceder con la actualización
+                $objCliente->setData($_POST);
+                $objCliente->check();
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar cliente', "Editado el cliente con el código ".$_POST["codigo"], 'Clientes');
             $result = $objCliente->getactualizar($_POST["codigo"]);
                 if($result == 1){
                     $editar = [
@@ -162,3 +152,4 @@ if(isset($_POST["vista"])){
 }
 require_once 'plantilla.php';
 
+//Lo actualice en manuela branch, no tenia las alertas etc 

@@ -1,0 +1,295 @@
+<?php require_once 'controlador/cuentabancariacopia.php' ?>
+<div class="content-wrapper">
+    <section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-9">
+                <h1>Cuenta Bancaria</h1>
+                <p>En esta sección se puede gestionar las cuentas bancarias.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <!-- Botón para ventana modal -->
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarCuenta">Registrar Cuenta Bancaria</button>
+                        </div>
+                        <div class="card-body">
+                            <!-- MOSTRAR EL REGISTRO DE UNIDADES DE MEDIDA -->
+                            <div class="table-responsive">
+                                <table id="unidad" class="table table-bordered table-striped datatable" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Banco</th>
+                                            <th>Tipo de cuenta</th>
+                                            <th>Numero de cuenta</th>
+                                            <th>Saldo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($datos as $dato) {
+                                            if ($dato['status'] != 2) {
+                                        ?>
+                                                <tr>
+                                                    <td><?php echo $dato['cod_cuenta_bancaria'] ?></td>
+                                                    <td><?php echo $dato['nombre_banco'] ?></td>
+                                                    <td><?php echo $dato['tipo_cuenta'] ?></td>
+                                                    <td><?php echo $dato['numero_cuenta'] ?></td>
+                                                    <td><?php echo $dato['saldo'] ?></td>
+                                                    <td>
+                                                        <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarcuenta"
+                                                            data-cod="<?php echo $dato['cod_cuenta_bancaria']; ?>"
+                                                            data-nombre="<?php echo $dato['nombre']; ?>"
+                                                            data-numero="<?php echo $dato['numero_cuenta']; ?>"
+                                                            data-saldo="<?php echo $dato['saldo']; ?>">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </button>
+                                                        <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
+                                                        data-cod="<?php echo $dato['cod_unidad']; ?>"
+                                                        data-tipo="<?php echo $dato['tipo_medida']; ?>">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                        <?php
+                                            }
+                                        } ?>
+                                    </tbody>
+                            </div>
+                            </table>
+                        </div>
+                    </div>
+
+<!-- =======================
+MODAL REGISTRAR CUENTA BANCARIA
+============================= -->
+
+                    <div class="modal fade" id="modalregistrarCuenta" tabindex="-1" aria-labelledby="modalregistrarCuentaLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background:rgb(35, 102, 245) ;color: #ffffff; ">
+                                    <h5 class="modal-title" id="exampleModalLabel">Registrar Cuenta Bancaria</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form id="formregistrarCuenta" method="post">
+                                        <!--   Banco     -->
+                                        <div class="form-group">
+                                            <label for="banco">Seleccione el Banco</label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Seleccione el Banco">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" name="banco" placeholder="banco." id="banco" maxlength="10">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tipo de cuenta">Seleccione el Tipo de Cuenta</label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Seleccione el Tipo de Cuenta">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" name="tipodecuenta" placeholder="tipo de cuenta" id="tipodecuenta" maxlength="10">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="numero_cuenta">Numero de cuenta</label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingrese el número de cuenta">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" name="numerocuenta" placeholder="Ingrese el numero de cuenta" id="numerocuenta" maxlength="10">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+                                        <div class="form-group">
+                                        <label for="divisa">Divisa</label>
+                                        <select class="form-control" name="divisa" id="divisa" required>
+                                            <?php foreach($divisas as $div): ?>
+                                                <option value="<?php echo $div['cod_divisa']; ?>"><?php echo $div['nombre']; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <div class="invalid-feedback" style="display: none;"></div>
+                                    </div>
+                                    <div class="form-group">
+                                            <label for="saldo">Saldo Inicial en cuenta</label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingrese el saldo inicial en cuenta">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <input type="text" class="form-control" name="saldo" placeholder="Ingrese el saldo inicial en cuenta" id="saldo" maxlength="10">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+
+                                </div>
+
+                                
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary" name="guardar" onclick="return validacion();">Guardar</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php
+                    if (isset($registrar)): ?>
+                        <script>
+                            Swal.fire({
+                                title: '<?php echo $registrar["title"]; ?>',
+                                text: '<?php echo $registrar["message"]; ?>',
+                                icon: '<?php echo $registrar["icon"]; ?>',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location = 'cuentabancariacopia';
+                                }
+                            });
+                        </script>
+                    <?php endif; ?>
+
+                    <!-- MODAL EDITAR -->
+                    <div class="modal fade" id="modalmodificarcuenta">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background: #db6a00; color: #ffffff;">
+                                    <h4 class="modal-title">Editar Cuenta Bancaria</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form role="form" method="post" id="form-editar-unidad">
+
+                                    <!--   CODIGO DE LA UNIDAD    -->
+
+                                    <div class="modal-body">
+                                        <input type="hidden" name="cod_cuenta_bancaria" id="cod_cuenta_bancaria_oculto" value="<?php echo $dato['cod_cuenta_bancaria'] ?>">
+                                        <div class="form-group">
+                                            <label for="cod_unidad">Código</label>
+                                            <input type="text" class="form-control" name="cod_cuenta_bancaria" id="cod_cuenta_bancaria" value="<?php echo $dato['cod_cuenta_bancaria'] ?>" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="numero_cuenta">Número de cuenta</label>
+                                            <input type="text" class="form-control" name="numero_cuenta" id="numero_cuenta" value="<?php echo $dato['numero_cuenta'] ?>" maxlength="20">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                            <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="numero_cuenta">Saldo</label>
+                                            <input type="text" class="form-control" name="saldo" id="saldo" value="<?php echo $dato['numero_cuenta'] ?>" maxlength="20">
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                            <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status">Estatus</label>
+                                            <select name="status" id="status">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-primary" name="editar">Editar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    if (isset($editar)): ?>
+                        <script>
+                            Swal.fire({
+                                title: '<?php echo $editar["title"]; ?>',
+                                text: '<?php echo $editar["message"]; ?>',
+                                icon: '<?php echo $editar["icon"]; ?>',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location = 'cuentabancariacopia';
+                                }
+                            });
+                        </script>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Confirmar Eliminar Modal -->
+<div class="modal fade" id="modaleliminar">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title">Confirmar Eliminar</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <p>¿Estás seguro de eliminar la unidad medida: <b><span id=tipomedidaD></span>?</p></b>
+                    <input type="hidden" name="eliminar" id="cod_eliminar" >
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'cuentabancariacopia';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+
+<script src="vista/dist/js/modulos-js/cuentabancariacopia.js"></script>
+
+</section>
+</div>
