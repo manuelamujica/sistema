@@ -13,74 +13,60 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout del repo
+      - name: 📥 Checkout del repositorio
         uses: actions/checkout@v4
-        
-      - name: List repository contents (again)
+
+      - name: 📂 Mostrar contenido del repositorio
         run: ls -al
 
-      - name: Print current working directory
+      - name: 📍 Mostrar directorio actual
         run: pwd
-        
-      - name: Configurar SSH key
+
+      - name: 🔐 Configurar clave SSH
         env:
           SSH_KEY: ${{ secrets.TRAYECTO3_KEY }}
         run: |
           echo "$SSH_KEY" > private_key.pem
           chmod 600 private_key.pem
-          
-      - name: Test SSH Connection
-        env:
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
-          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
-        run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l /home/brian/sql/"
 
-      - name: Verify SQL file exists
+      - name: 🔗 Probar conexión SSH al servidor
+        env:
+          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
         run: |
-          ls -l *.sql
-          pwd
-          find . -name "*.sql" -type f
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo '✅ Conexión SSH exitosa'"
+
+      - name: 🔍 Verificar archivo SQL local
+        run: |
+          ls -l *.sql || { echo "❌ No se encontró el archivo savyc.sql"; exit 1; }
 
       - name: 📤 Subir archivo SQL al VPS
         env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-        run: |
-          echo "🔍 Buscando archivo .sql..."
-          SQL_FILE_PATH=$(find . -name '*.sql' | head -n 1)
-      
-          if [ -z "$SQL_FILE_PATH" ]; then
-            echo "❌ No se encontró ningún archivo .sql"
-            exit 1
-          fi
-      
-          echo "📄 Archivo encontrado: $SQL_FILE_PATH"
-          
-          REMOTE_DIR="/home/$SSH_USER/sql"
-      
-          echo "📁 Verificando o creando directorio $REMOTE_DIR en VPS..."
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p $REMOTE_DIR"
-      
-          echo "🔐 Verificando permisos de $REMOTE_DIR:"
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -ld $REMOTE_DIR"
-      
-          echo "📤 Subiendo archivo a VPS..."
-          scp -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:$REMOTE_DIR/
-
-        
-      - name: Conectar al VPS y actualizar MySQL
-        env:
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
+        run: |
+          SQL_FILE="savyc.sql"
+          REMOTE_DIR="/home/$SSH_USER/sql"
+
+          echo "📁 Asegurando existencia del directorio remoto $REMOTE_DIR..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p $REMOTE_DIR"
+
+          echo "📤 Subiendo $SQL_FILE al VPS..."
+          scp -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE" $SSH_USER@$SSH_HOST:$REMOTE_DIR/
+
+      - name: 🛠️ Ejecutar script en MySQL remoto
+        env:
+          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           MYSQL_USER: ${{ secrets.TRAYECTO3_MYSQL_USER }}
           MYSQL_PASS: ${{ secrets.TRAYECTO3_MYSQL_PASS }}
           MYSQL_DB: ${{ secrets.TRAYECTO3_MYSQL_DB }}
         run: |
+          echo "🧨 Eliminando y recreando la base de datos $MYSQL_DB..."
           ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
             mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "DROP DATABASE IF EXISTS $MYSQL_DB; CREATE DATABASE $MYSQL_DB;"
-            mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" < /home/brian/sql/savyc.sql
+            mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" < /home/$SSH_USER/sql/savyc.sql
           EOF
 
-      - name: Limpiar clave privada
+      - name: 🧹 Limpiar clave privada
         run: rm -f private_key.pem
