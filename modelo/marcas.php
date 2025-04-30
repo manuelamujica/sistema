@@ -1,15 +1,26 @@
 <?php 
 require_once "conexion.php";
-
+require_once "validaciones.php";
 class Marca extends Conexion{
+    use ValidadorTrait;
 
     private $conex;
     private $nombre;
     private $status;
 
+    private $errores = [];
+
     public function __construct(){
         $this->conex = new Conexion();
         $this->conex = $this->conex->conectar();
+    }
+
+#ERRORCHECK
+    public function check() {
+        if(!empty($this->errores)) {
+            $mensajes = implode(" | ",  $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
     }
 
 #GETTER Y SETTER
@@ -17,14 +28,25 @@ class Marca extends Conexion{
         return $this->nombre;
     }
     public function setNombre($nombre){
-        $this->nombre = $nombre;
+        $resultado = $this->validarTexto($nombre, 'nombre', 2, 50);
+        if($resultado === true) {
+            $this->nombre = $nombre;
+        }
+        else {
+            $this->errores['nombre'] = $resultado;
+        }
     }
 
     public function getStatus(){
         return $this->status;
     }
     public function setStatus($status){
-        $this->status = $status;
+        $resultado = $this->validarStatus($status);
+        if($resultado === true) {
+            $this->status = $status;
+        } else {
+            $this->errores['status'] = $resultado;
+        }
     }
 
 

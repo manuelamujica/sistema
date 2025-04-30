@@ -46,6 +46,15 @@ trait ValidadorTrait {
         }
         return true;
     }
+
+
+    public function validarStatus($valor) {
+        if($valor > 1 || $valor < 0) {
+            return "El campo status es incorrecto";
+        }
+        return true;
+    }
+
    
     public function validarDecimal($valor, $campo, $min = null, $max = null) {
         // Primero validar formato decimal con punto
@@ -66,7 +75,6 @@ trait ValidadorTrait {
     
         return true;
     }
-
 
 
 }

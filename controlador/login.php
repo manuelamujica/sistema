@@ -36,6 +36,7 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["producto"] = 0;
 			$_SESSION["inventario"] = 0;
 			$_SESSION["categoria"] = 0;
+			$_SESSION["marca"] = 0;
 			$_SESSION["venta"] = 0;
 			$_SESSION["compra"] = 0;
 			$_SESSION["cliente"] = 0;
@@ -70,7 +71,9 @@ if (isset($_POST["ingresar"])) {
 					$_SESSION["reporte"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 10) {
 					$_SESSION["configuracion"] = 1;
-				} 
+				} else if ($cod_permiso["cod_permiso"] == 11) {
+					$_SESSION["marca"] = 1;
+				}
 
 			
 			}
