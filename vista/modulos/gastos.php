@@ -2,6 +2,7 @@
 require_once "controlador/gastos.php";
 ?>
 
+<!-- MODificado 29/04/2025 -->
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -284,7 +285,7 @@ require_once "controlador/gastos.php";
                 </div>
 
                 <!-- =============================
-                    MODAL REGISTRAR GASTOS 
+                    MODAL REGISTRAR GASTOS  (ESTO FUE LO QUE MODIFIQUE)
                 ================================== -->
                 <div class="modal fade" id="modalRGasto" tabindex="-1" aria-labelledby="modalRegistrarGastoLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -299,7 +300,7 @@ require_once "controlador/gastos.php";
                                 <form id="formRegistrarGastos" method="post">
                                     <div class="form-group row">
                                         <div class="col-6">
-                                            <label for="descripcionG">Descripción del gasto</label>
+                                            <label for="descripcion">Descripción del gasto</label>
                                             <!-- TOOLTIPS-->
                                             <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Descripción del gasto a registrar, por ejemplo: Compra de papel.">
                                                 <i class="fas fa-info-circle"></i>
@@ -309,7 +310,7 @@ require_once "controlador/gastos.php";
                                                     $('[data-toggle="tooltip"]').tooltip();
                                                 });
                                             </script>
-                                            <input type="text" class="form-control" id="descripcionG" name="descripcionG" placeholder="Ingrese una descripción del gasto" maxlength="45" required>
+                                            <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese una descripción del gasto" maxlength="45" required>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
@@ -324,7 +325,7 @@ require_once "controlador/gastos.php";
                                                 });
                                             </script>
                                             <div class="input-group">
-                                                <select class="form-control" id="categoriaG" name="categoriaG" required>
+                                                <select class="form-control" id="categoriaG" name="cod_cat_gasto" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
                                                     <?php foreach ($categorias as $c): ?>
                                                         <option value="<?php echo $c['cod_cat_gasto']; ?>">
@@ -903,7 +904,7 @@ require_once "controlador/gastos.php";
                     </div>
                 </div>
 
-                <!-- MODAL EDITAR  GASTOS-->
+                <!-- MODAL EDITAR  GASTOS LISTO-->
 
                 <div class="modal fade" id="modificargasto">
                     <div class="modal-dialog">
@@ -922,20 +923,35 @@ require_once "controlador/gastos.php";
                                         <input type="text" class="form-control" name="cod_gastoE" id="cod_gastoE" readonly>
                                     </div>
                                     <div class="form-group">
-                                        <label for="nombreG">Gasto</label>
-                                        <input type="text" class="form-control" name="nombreG" id="nombreG">
+                                        <label for="descripcion">Gasto</label>
+                                        <input type="text" class="form-control" name="descripcion" id="nombreG">
                                         <div class="invalid-feedback" style="display: none;"></div>
                                         <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
                                     </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary" name="editar">Editar</button>
+                                    <button type="submit" class="btn btn-primary" name="editarG">Editar</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+                <?php
+                if (isset($editarG)): ?>
+                    <script>
+                        Swal.fire({
+                            title: '<?php echo $editarG["title"]; ?>',
+                            text: '<?php echo $editarG["message"]; ?>',
+                            icon: '<?php echo $editarG["icon"]; ?>',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location = 'gastos';
+                            }
+                        });
+                    </script>
+                <?php endif; ?>
             </div>
         </div>
     </section>

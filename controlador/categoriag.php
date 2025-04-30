@@ -1,17 +1,39 @@
 <?php
+//MODIFICACIÓN COMPLETA 29/04/2025
 require_once "modelo/bitacora.php";
 require_once "modelo/gasto.php";
 $objbitacora = new Bitacora();
 $objgasto = new Gastos();
 
-if (isset($_POST['guardar_frecuencia'])) {
+if (isset($_POST['buscarC'])) {
+    $objgasto->setDatos($_POST['buscar']);
+    $result = $objgasto->buscarCategoria();
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
+} else if (isset($_POST['buscarF'])) {
+    $objgasto->setDatos($_POST['buscar']);
+    $result = $objgasto->buscarFrecuencia();
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
+} else if (isset($_POST['guardar_frecuencia'])) {
     $errores = [];
     try {
 
-        $objgasto->set_frecuencia($_POST['frecuencia']);
-        $objgasto->set_dias($_POST['dias']);
+        $objgasto->setDatos($_POST);
         $objgasto->check();
-        $resul = $objgasto->publicregistrarf();
+        if ($objgasto->buscarFrecuencia()) {
+            $guardarF = [
+                "title" => "Advertencia",
+                "message" => "Frecuencia de pago ya registrada",
+                "icon" => "warning"
+            ];
+            exit;
+        } else {
+            $resul = $objgasto->publicregistrarf();
+        }
+        
     } catch (Exception $e) {
         $errores[] = $e->getMessage();
     }
@@ -40,12 +62,18 @@ if (isset($_POST['guardar_frecuencia'])) {
 } else if (isset($_POST['guardarC'])) {
     $errores = [];
     try {
-        $objgasto->set_cod_frecuencia($_POST['frecuenciaC']);
-        $objgasto->set_cod_tipo_gasto($_POST['tipogasto']);
-        $objgasto->set_nombreC($_POST['nombre']);
-        $objgasto->set_fecha($_POST['fecha_hora']);
+        $objgasto->setDatos($_POST);
         $objgasto->check();
-        $resul = $objgasto->publicregistrarc();
+        if ($objgasto->buscarCategoria()) {
+            $guardarC = [
+                "title" => "Advertencia",
+                "message" => "Categoría ya registrada",
+                "icon" => "warning"
+            ];
+            exit;
+        } else {
+            $resul = $objgasto->publicregistrarc();
+        }
     } catch (Exception $e) {
         $errores[] = $e->getMessage();
     }
