@@ -56,8 +56,11 @@ jobs:
             exit 1
           fi
       
-          echo "📤 Subiendo archivo a $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql"
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql
+          echo "📁 Verificando existencia del directorio en VPS..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p /home/$SSH_USER/sql"
+      
+          echo "📤 Subiendo archivo a VPS..."
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:/home/$SSH_USER/sql/savyc.sql
             
       - name: Conectar al VPS y actualizar MySQL
         env:
