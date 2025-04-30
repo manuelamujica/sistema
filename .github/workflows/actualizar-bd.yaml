@@ -42,10 +42,10 @@ jobs:
           pwd
           find . -name "*.sql" -type f
 
-      - name: Subir archivo SQL al VPS
+      - name: 📤 Subir archivo SQL al VPS
         env:
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
-          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           echo "🔍 Buscando archivo .sql..."
           SQL_FILE_PATH=$(find . -name '*.sql' | head -n 1)
@@ -56,18 +56,18 @@ jobs:
           fi
       
           echo "📄 Archivo encontrado: $SQL_FILE_PATH"
-          echo "📁 Verificando o creando directorio ~/sql en VPS..."
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p ~/sql"
+          
+          REMOTE_DIR="/home/$SSH_USER/sql"
       
-          echo "🔐 Verificando permisos de ~/sql:"
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -ld ~/sql"
-
-          echo "Verificando user:"
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "whoami"
-
+          echo "📁 Verificando o creando directorio $REMOTE_DIR en VPS..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p $REMOTE_DIR"
+      
+          echo "🔐 Verificando permisos de $REMOTE_DIR:"
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -ld $REMOTE_DIR"
       
           echo "📤 Subiendo archivo a VPS..."
-          scp -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:~/sql/
+          scp -i private_key.pem -o StrictHostKeyChecking=no "$SQL_FILE_PATH" $SSH_USER@$SSH_HOST:$REMOTE_DIR/
+
         
       - name: Conectar al VPS y actualizar MySQL
         env:
