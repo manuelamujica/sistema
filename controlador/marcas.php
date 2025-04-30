@@ -5,19 +5,30 @@ require_once "modelo/marcas.php";
 $objMarca= new Marca();
 
 if(isset($_POST['buscar'])){
-    $nombre = $_POST['buscar']; #Se asigna el valor de buscar a la variable nombre
-    $result = $objMarca->getbuscar($nombre); #Se instancia al metodo buscar y le enviamos por parametro el nombre
-    header('Content-Type: application/json'); #establece el encabezado de la respuesta http, indica que el JSON
-    echo json_encode($result); #Se envia $result como JSON al cliente 
+    $nombre = $_POST['buscar'];
+    $result = $objMarca->getbuscar($nombre);
+    header('Content-Type: application/json');
+    echo json_encode($result);
     exit;
 
-}else if (isset($_POST['guardar']) || isset($_POST['registrarm'])){ #Si viene de productos o de marca
+}else if (isset($_POST['guardar']) || isset($_POST['registrarm'])){
+    $errores = [];
 
-    if(!empty($_POST['nombre']) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && strlen($_POST['nombre']) <= 40) {
+    try {
+        $objMarca->setNombre($_POST["nombre"]);
+        $objMarca->check();
+    } catch (Exception $e) {
+        $errores[] = $e->getMessage();
+    }
 
+    if (!empty($errores)) {
+        $registrar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    } else {
         if (!$objMarca->getbuscar($_POST["nombre"])){ #(Si el metodo buscar no devuelve nada entonces la marca no existe y se puede registrar)
-
-            $objMarca->setNombre($_POST["nombre"]);
             $result=$objMarca->getregistrar();
             
             if($result == 1){
@@ -41,25 +52,53 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }
-    }else {
-        $registrar = [
-        "title" => "Error",
-        "message" => "Hubo un problema al registrar la marca. Intenta nuevamente",
-        "icon" => "error"
-        ];
     }
-}else if (isset($_POST['actualizar'])) {
 
-        $nombre = $_POST['nombre']; 
-        if (!empty($nombre) && preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $nombre) && strlen($nombre) <= 40) {
-            
-            // Si el nombre no ha cambiado, se puede editar el status
-            if ($nombre === $_POST['origin']) {
-                $objMarca->setNombre($nombre);
-                $objMarca->setStatus($_POST['status']);
-    
+
+        
+
+}else if (isset($_POST['actualizar'])) {
+    $errores = [];
+
+    try {
+        $objMarca->setNombre($_POST["nombre"]);
+        $objMarca->setStatus($_POST["status"]);
+        $objMarca->check();
+    } catch (Exception $e) {
+        $errores[] = $e->getMessage();
+    }
+
+    if (!empty($errores)) {
+        $registrar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    } else {
+        // Si el nombre no ha cambiado, se puede editar el status
+        if ($objMarca->getNombre() === $_POST['origin']) {
+
+            $result = $objMarca->geteditar($_POST['codigo']);
+
+            if ($result == 1) {
+                $editar = [
+                    "title" => "Editado con éxito",
+                    "message" => "La marca ha sido actualizada",
+                    "icon" => "success"
+                ];
+            } else {
+                $editar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al editar la marca",
+                    "icon" => "error"
+                ];
+            }
+        } else {
+            // Si el nombre ha cambiado, verificar si ya existe en la base de datos
+            if (!$objMarca->getbuscar($objMarca->getNombre())) {
+
                 $result = $objMarca->geteditar($_POST['codigo']);
-    
+
                 if ($result == 1) {
                     $editar = [
                         "title" => "Editado con éxito",
@@ -74,41 +113,16 @@ if(isset($_POST['buscar'])){
                     ];
                 }
             } else {
-                // Si el nombre ha cambiado, verificar si ya existe en la base de datos
-                if (!$objMarca->getbuscar($nombre)) {
-                    $objMarca->setNombre($nombre);
-                    $objMarca->setStatus($_POST['status']);
-    
-                    $result = $objMarca->geteditar($_POST['codigo']);
-    
-                    if ($result == 1) {
-                        $editar = [
-                            "title" => "Editado con éxito",
-                            "message" => "La marca ha sido actualizada",
-                            "icon" => "success"
-                        ];
-                    } else {
-                        $editar = [
-                            "title" => "Error",
-                            "message" => "Hubo un problema al editar la marca",
-                            "icon" => "error"
-                        ];
-                    }
-                } else {
-                    $editar = [
-                        "title" => "Advertencia",
-                        "message" => "La marca ya está registrada. No se puede cambiar el nombre a uno existente.",
-                        "icon" => "warning"
-                    ];
-                }
+                $editar = [
+                    "title" => "Advertencia",
+                    "message" => "La marca ya está registrada. No se puede cambiar el nombre a uno existente.",
+                    "icon" => "warning"
+                ];
             }
-        } else {
-            $editar = [
-                "title" => "Error",
-                "message" => "Algunos caracteres ingresados no son permitidos.",
-                "icon" => "error"
-            ];
         }
+    }
+    
+            
 
 } else if(isset($_POST['borrar'])){
     if(!empty($_POST['marcacodigo']) && $_POST['statusDelete'] !== '1'){ //Eliminar solo si el status es inactivo

@@ -1,15 +1,14 @@
 <?php 
 #Requerir al controlador
-require_once "controlador/banco.php";
+require_once "controlador/marcas.php";
 ?>
 
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-9">
-                    <h1>Bancos</h1>
-                    <p>En esta sección se pueden registrar las entidades bancarias.</p>
+                <div class="col-sm-6">
+                    <h1>Marcas</h1>
                 </div>
             </div>
         </div>
@@ -22,37 +21,46 @@ require_once "controlador/banco.php";
                     <div class="card">
                         <div class="card-header">
                             <!-- Botón para ventana modal -->
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarbanco">Registrar Entidad Bancaria</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarMarca">Registrar marca</button>
                         </div>
                         <div class="card-body">
                         <div class="table-responsive">
-                            <table id="bancos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                            <table id="marcas" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
-                                        <th>Nombre De La Entidad Bancaria</th>
+                                        <th>Marca</th>
+                                        <th>Status</th>
                                         <th>Acciones</th>
                                     </tr>         
                                 </thead>
                                 <tbody>
                                 <!-- Tabla con los datos que se muestren dinamicamente -->
                                     <?php
-                                    foreach ($registro as $banco){
+                                    foreach ($registro as $marca){
                                         ?>
                                         <tr>
-                                            <td> <?php echo $banco["cod_banco"] ?></td>
-                                            <td> <?php echo $banco["nombre_banco"] ?></td>
-                                        
+                                            <td> <?php echo $marca["cod_marca"] ?></td>
+                                            <td> <?php echo $marca["nombre"] ?></td>
+                                            <td>
+                                                <?php if ($marca['status']==1):?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else:?>
+                                                    <span class="badge bg-danger">Inactivo</span>
+                                                <?php endif;?>
+                                            </td>
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
-                                                data-codigo="<?php echo $banco["cod_banco"]; ?>"
-                                                data-nombre="<?php echo $banco["nombre_banco"]; ?>">
+                                                data-codigo="<?php echo $marca["cod_marca"]; ?>"
+                                                data-nombre="<?php echo $marca["nombre"]; ?>"
+                                                data-status="<?php echo $marca["status"]; ?>">
                                                 <i class="fas fa-pencil-alt"></i></button>
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
-                                                data-codigo="<?php echo $banco["cod_banco"]; ?>"
-                                                data-nombre="<?php echo $banco["nombre_banco"]; ?>">
+                                                data-codigo="<?php echo $marca["cod_marca"]; ?>"
+                                                data-nombre="<?php echo $marca["nombre"]; ?>"
+                                                data-status="<?php echo $marca["status"]; ?>">
                                                 <i class="fas fa-trash-alt"></i></button>
                                                 
                                             </td>
@@ -64,24 +72,24 @@ require_once "controlador/banco.php";
                     </div>
                 </div>
 <!-- =============================
-    MODAL REGISTRAR BANCO 
+    MODAL REGISTRAR MARCA
 ================================== -->
-                    <div class="modal fade" id="modalRegistrarbanco" tabindex="-1" aria-labelledby="modalRegistrarbancoLabel" aria-hidden="true">
+                    <div class="modal fade" id="modalRegistrarMarca" tabindex="-1" aria-labelledby="modalRegistrarMarcaLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="registrarModalLabel">Registrar Entidad Bancaria</h5>
+                                    <h5 class="modal-title" id="registrarModalLabel">Registrar marca</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
 
                                 <div class="modal-body">
-                                    <form id="formRegistrarbanco" method="post">
+                                    <form id="formRegistrarMarca" method="post">
                                         <div class="form-group">
-                                            <label for="nombre">Nombre de la Entidad Bancaria</label>
+                                            <label for="nombre">Nombre de la marca</label>
                                             <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa el nombre de una entidad bancaria (ej Banco de Venezuela).">
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa el nombre de una marca para productos, por ejemplo: Charcutería">
                                                     <i class="fas fa-info-circle"></i>
                                             </button>
                                             <script>
@@ -89,8 +97,7 @@ require_once "controlador/banco.php";
                                                     $('[data-toggle="tooltip"]').tooltip();
                                                 });
                                             </script>
-                                           <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Banco Mercantil">
-
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Polar" required>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                 </div>
@@ -112,13 +119,13 @@ if (isset($registrar)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'banco';
+                window.location = 'marcas';
             }
         });
     </script>
 <?php endif; ?>
 <!-- =============================
-    MODAL EDITAR BANCO
+    MODAL EDITAR MARCA
 ================================== -->
                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -136,10 +143,17 @@ if (isset($registrar)): ?>
                                             <input type="text" class="form-control" id="codigo" name="codigo" readonly>
                                         </div>
                                         <div class="form-group">
-                                            <label for="nombre">Nombre De La Entidad Bancaria</label>
-                                            <input type="text" class="form-control" id="nombre1" name="nombre">
+                                            <label for="codigo">Nombre</label>
+                                            <input type="text" class="form-control" id="name" name="nombre">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                             <input type="hidden" class="form-control" id="origin" name="origin" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
                                         </div>
                                     </form>
                                 </div>
@@ -160,33 +174,33 @@ if (isset($editar)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'banco';
+                window.location = 'marcas';
             }
         });
     </script>
 <?php endif; ?>
 
 <!-- ====================================
-    MODAL CONFIRMAR ELIMINAR BANCO
+    MODAL CONFIRMAR ELIMINAR MARCA
 ========================================= -->
                     <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header bg-danger">
-                                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar banco</h5>
+                                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar marca</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-    <form id="eliminarForm" method="post">
-        <input type="hidden" id="bancoCodigo" name="bancoCodigo">
-        <div class="form-group">
-            <p>¿Estás seguro que deseas eliminar? <b><span id="bancoNombre"></span></b></p>
-        </div>
-    </form>
-</div>
-
+                                    <form id="eliminarForm" method="post">
+                                        <div class="form-group">
+                                            <p>¿Estás seguro que deseas eliminar a <b><span id="catnombre"></b></span>?</p>
+                                            <input type="hidden" id="marcacodigo" name="marcacodigo">
+                                            <input type="hidden" id="statusDelete" name="statusDelete">
+                                        </div>
+                                    </form>
+                                </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                     <button type="submit" form="eliminarForm" class="btn btn-danger" id="confimDelete" name="borrar">Eliminar</button>
@@ -209,7 +223,7 @@ if (isset($editar)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'banco';
+                window.location = 'marcas';
             }
         });
     </script>
@@ -224,10 +238,10 @@ if (isset($advertencia)): ?>
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = 'banco';
+                window.location = 'marcas';
             }
         });
     </script>
 <?php endif; ?>
 
-<script src="vista/dist/js/modulos-js/banco.js"> </script>
+<script src="vista/dist/js/modulos-js/marcas.js"> </script>
