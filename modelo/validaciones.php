@@ -40,6 +40,7 @@ trait ValidadorTrait {
         return true;
     }
 
+
     public function validarAlfanumerico($valor, $campo, $min = 1, $max = 255) {
         $valor = trim($valor);
         if (!preg_match("/^[\p{L}\d\s\.,\-#]+$/u", $valor)) {
@@ -51,6 +52,7 @@ trait ValidadorTrait {
         return true;
     }
 
+
     public function validarStatusInactivo($valor, $campo = 'status') {
         $valor = trim($valor);
         if ($valor == '1') {
@@ -60,5 +62,36 @@ trait ValidadorTrait {
     }
     
     
+}
+
+    public function validarStatus($valor) {
+        if($valor > 1 || $valor < 0) {
+            return "El campo status es incorrecto";
+        }
+        return true;
+    }
+
+   
+    public function validarDecimal($valor, $campo, $min = null, $max = null) {
+        // Primero validar formato decimal con punto
+        if (!preg_match('/^\d+(\.\d+)?$/', $valor)) {
+            return "El campo $campo debe ser un número decimal válido con punto (.) como separador.";
+        }
+    
+        // Convertir a número decimal real
+        $numero = floatval($valor);
+    
+        // Validar rango si se especificó
+        if ($min !== null && $numero < $min) {
+            return "El campo $campo debe ser mayor o igual a $min.";
+        }
+        if ($max !== null && $numero > $max) {
+            return "El campo $campo debe ser menor o igual a $max.";
+        }
+    
+        return true;
+    }
+
+
 }
 

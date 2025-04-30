@@ -1,8 +1,10 @@
 <?php
 
 require_once 'modelo/banco.php'; 
+require_once "modelo/bitacora.php";
 
 $objBanco = new Banco();
+$objbitacora = new Bitacora();
 
 if (isset($_POST['guardar'])) {
     
@@ -44,7 +46,9 @@ if (isset($_POST['guardar'])) {
                     "message" => "El banco ha sido registrado",
                     "icon" => "success"
                 ];
-            } else {
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de banco', $_POST["nombre_banco"], 'Banco');
+            }  
+            else {
                 $registrar = [
                     "title" => "Error",
                     "message" => "Hubo un problema al registrar el banco",
@@ -87,6 +91,7 @@ if (isset($_POST['guardar'])) {
                 "message" => "Los datos del banco han sido actualizados",
                 "icon" => "success"
             ];
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar banco', $_POST["nombre_banco"], 'Banco');
         } else {
             $editar = [
                 "title" => "Error",
@@ -106,6 +111,7 @@ if (isset($_POST['guardar'])) {
             "message" => "El banco ha sido eliminado",
             "icon" => "success"
         ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar Banco', "Eliminado el banco con el código ".$_POST["bancoCodigo"], 'Banco');
     } elseif ($result == 'error_delete') {
         $eliminar = [
             "title" => "Error",

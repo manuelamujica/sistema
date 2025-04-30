@@ -14,8 +14,7 @@ if (isset($_POST['buscar'])) {
     header('Content-type: application/json');
     echo json_encode($resul);
     exit;
-
-}else if (isset($_POST['detalle'])) {
+} else if (isset($_POST['detalle'])) {
     $detalle = $objcargad->gettodoo($_POST['detalle']);
     header('Content-type: application/json');
     echo json_encode($detalle);
@@ -66,86 +65,38 @@ if (isset($_POST['buscar'])) {
 }
 // Manejo de guardar carga
 else if (isset($_POST['guardar'])) {
-    if (!empty($_POST['fecha_hora']) && !empty($_POST['descripcion'])) {
-        if (preg_match("/^[a-zA-ZÀ-ÿ0-9\s]+$/", $_POST['descripcion'])) {
-            $objcarga->setFecha($_POST['fecha_hora']);
-            $objcarga->setDes($_POST['descripcion']);
-            $resul = $objcarga->getcrear(); // Registrar carga
-
-            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de carga', $_POST["descripcion"], 'Carga');
-
-            if ($resul == 1) {
-                // Cambiar a la forma correcta de acceder a los productos
-                $productos = $_POST['productos'];
-                $cargaExitosa = true; // Para verificar si la carga fue exitosa
-
-                foreach ($productos as $producto) {
-                    $codigo1 = $producto['codigo1'];
-                    $cantidad = $producto['cantidad'];
-
-
-                    // Verifica que el código y la cantidad no estén vacíos
-                    if (!empty($codigo1) && !empty($cantidad)) {
-                        $detalle = $objcargad->verificarDetalleProducto($codigo1);
-                        $objcargad->setcodpro($codigo1);
-
-                        if ($detalle && isset($detalle['cod_detallep'])) {
-                            // Si el detalle existe, registrar el producto
-                            $detallep = $detalle['cod_detallep'];
-                            $objcargad->setcodp($detallep);
-                            $objcargad->setcantidad($cantidad);
-                            $regis = $objcargad->getcrear();
-
-                            if ($regis != 1) {
-                                $cargaExitosa = false;
-                                $registrar = [
-                                    "title" => "Error",
-                                    "message" => "El error al registrar el producto: " . $codigo,
-                                    "icon" => "error"
-                                ];
-                            }
-                        } else {
-                            $cargaExitosa = false;
-                            $registrar = [
-                                "title" => "Error",
-                                "message" => "El producto " . $codigo . " no tiene detalle",
-                                "icon" => "error"
-                            ];
-                        }
-                    } else {
-                        $cargaExitosa = false;
-                        $registrar = [
-                            "title" => "Error",
-                            "message" => "Código o cantidad vacía para el producto.",
-                            "icon" => "error"
-                        ];
-                    }
-                }
-
-                if ($cargaExitosa) {
-                    $registrar = [
-                        "title" => "Registrado con éxito",
-                        "message" => "La carga ha sido registrada",
-                        "icon" => "success"
-                    ];
-                    var_dump("paso aqui");
-                }
-            }
-        } else {
-            $registrar = [
-                "title" => "Error",
-                "message" => "La carga ha sido registrada",
-                "icon" => "error"
-            ];
-        }
-    } else {
+    $errores = [];
+    try {
+        $objcargad->setFecha($_POST['fecha_hora']);
+        $objcargad->setDes($_POST['descripcion']);
+        $objcargad->check();
+        $res = $objcargad->getcrear($_POST['productos']);
+        
+    } catch (Exception $e) {
+        $errores[] = $e->getMessage();
+    }
+    if (!empty($errores)) {
         $registrar = [
             "title" => "Error",
-            "message" => "Los campos obligatorios no pueden estar vacíos",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    } else if ($res  > 0) {
+        // Si no hay errores, proceder con el registro
+        $registrar = [
+            "title" => "Registrado con éxito",
+            "message" => "La carga ha sido registrada",
+            "icon" => "success"
+        ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de carga', $_POST["descripcion"], 'Carga');
+    }else {
+        $registrar = [
+            "title" => "Error",
+            "message" => "Hubo un problema al registrar la carga",
             "icon" => "error"
         ];
     }
-
+    
 }
 
 // Código adicional para manejar otras operaciones

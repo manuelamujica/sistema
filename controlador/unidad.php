@@ -13,13 +13,32 @@ if (isset($_POST['buscar'])) {
     exit;
 
 } else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
+  
     if (!empty($_POST["tipo_medida"])) {
-        if (preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $_POST["tipo_medida"])) {
+       
+        $errores = [];
+        try {
+            
+            $objUnidad->setTipo($_POST["tipo_medida"]);
+         
         
+            $objUnidad->check(); // Lanza excepción si hay errores
+          
+           
+        } catch (Exception $e) {
+            $errores[] = $e->getMessage();
+        }
+          // Si hay errores, se muestra el mensaje de error
+    if (!empty($errores)) {
+        $registrar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    } else {
             if (!$objUnidad->getbuscar($_POST['tipo_medida'])) {
-                #Instanciar los setter
-                $objUnidad->setTipo($_POST["tipo_medida"]);
-
+              
+                
                 $resul = $objUnidad->getcrearUnidad();
 
                 if ($resul == 1) {
@@ -43,20 +62,8 @@ if (isset($_POST['buscar'])) {
                     "icon" => "error"
                 ];
             }
-        } else {
-            $registrar = [
-                "title" => "Error",
-                "message" => "No se pudo registrar. Caracteres no permitidos.",
-                "icon" => "error"
-            ];
         }
-    } else {
-        $registrar = [
-            "title" => "Error",
-            "message" => "No se pudo registrar. No se permiten campos vacios.",
-            "icon" => "error"
-        ];
-    }
+    } 
 } else if (isset($_POST['editar'])) {
 
     $tipo_medida = $_POST['tipo_medida'];
@@ -72,13 +79,16 @@ if (isset($_POST['buscar'])) {
                 ];
             }
         }
-
+          // Si hay errores, se muestra el mensaje de error
+          $errores = [];
         // Validaciones
         if (!empty($tipo_medida)){
-            if(preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $tipo_medida)){
+           try {
                 $objUnidad->setCod($_POST["cod_unidad"]);
                 $objUnidad->setTipo($_POST["tipo_medida"]);
                 $objUnidad->setStatus($status);
+                $objUnidad->check(); // Lanza excepción si hay errores
+                
                 $res = $objUnidad->geteditar();
                 if ($res == 1) {
                     $editar = [
@@ -94,13 +104,18 @@ if (isset($_POST['buscar'])) {
                         "icon" => "error"
                     ];
                 }
-            } else {
+            } catch (Exception $e) {
+                $errores[] = $e->getMessage();  
+            }
+            // Si hay errores, se muestra el mensaje de error
+            if (!empty($errores)) {
                 $editar = [
                     "title" => "Error",
-                    "message" => "No se pudo editar. Caracteres no permitidos.",
+                    "message" => implode(" ", $errores),
                     "icon" => "error"
                 ];
             }
+            
         } else {
             $editar = [
                 "title" => "Error",
