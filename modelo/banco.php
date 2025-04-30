@@ -7,7 +7,7 @@ class Banco extends Conexion {
 
     private $conex;
     private $nombre_banco;
-
+    private $cod_banco;
     public function __construct() {
         $this->conex = (new Conexion())->conectar();
     }
@@ -68,6 +68,10 @@ class Banco extends Conexion {
         $stmt->bindParam(':cod_banco', $cod_banco, PDO::PARAM_INT);
 
         return $stmt->execute() ? 'success' : 'error_delete';
+    }
+     
+    public function getEliminar($cod_banco) {
+        return $this->eliminar($cod_banco);
     }
 
     // BUSCAR por nombre (para evitar duplicados)

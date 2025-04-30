@@ -10,67 +10,79 @@ class Clientes extends Conexion{
     private $email;
     private $direccion;
     private $status;
-
     private $errores = [];
 
-    public function __construct() {
-        /*$this->conex = (new Conexion())->conectar();*/
-    }
 
-    public function setNombre($valor) {
-        $resultado = $this->validarTexto($valor, 'nombre', 2, 50);
-        if ($resultado === true) {
-            $this->nombre = $valor;
-        } else {
-            $this->errores['nombre'] = $resultado;
+public function __construct(){
+    $this -> conex = new Conexion();
+    $this -> conex = $this->conex->conectar();
+}
+
+
+    public function setData($datos) {
+        // Limpiar errores anteriores
+        $this->errores = [];
+    
+        // Validar y asignar nombre
+        if (isset($datos['nombre'])) {
+            $resultado = $this->validarTexto($datos['nombre'], 'nombre', 2, 50);
+            if ($resultado === true) {
+                $this->nombre = $datos['nombre'];
+            } else {
+                $this->errores['nombre'] = $resultado;
+            }
+        }
+    
+        // Validar y asignar apellido
+        if (isset($datos['apellido'])) {
+            $resultado = $this->validarTexto($datos['apellido'], 'apellido', 2, 50);
+            if ($resultado === true) {
+                $this->apellido = $datos['apellido'];
+            } else {
+                $this->errores['apellido'] = $resultado;
+            }
+        }
+    
+        // Validar y asignar cedula
+        if (isset($datos['cedula'])) {
+            $resultado = $this->validarNumerico($datos['cedula'], 'cedula', 6, 12);
+            if ($resultado === true) {
+                $this->cedula = $datos['cedula'];
+            } else {
+                $this->errores['cedula'] = $resultado;
+            }
+        }
+    
+        // Validar y asignar telefono
+        if (isset($datos['telefono'])) {
+            $resultado = $this->validarTelefono($datos['telefono']);
+            if ($resultado === true) {
+                $this->telefono = $datos['telefono'];
+            } else {
+                $this->errores['telefono'] = $resultado;
+            }
+        }
+    
+        // Validar y asignar email
+        if (isset($datos['email'])) {
+            $resultado = $this->validarEmail($datos['email']);
+            if ($resultado === true) {
+                $this->email = $datos['email'];
+            } else {
+                $this->errores['email'] = $resultado;
+            }
+        }
+    
+        // Validar y asignar direccion
+        if (isset($datos['direccion'])) {
+            $resultado = $this->validarAlfanumerico($datos['direccion'], 'direccion', 5, 100);
+            if ($resultado === true) {
+                $this->direccion = $datos['direccion'];
+            } else {
+                $this->errores['direccion'] = $resultado;
+            }
         }
     }
-
-    public function setApellido($valor) {
-        $resultado = $this->validarTexto($valor, 'apellido', 2, 50);
-        if ($resultado === true) {
-            $this->apellido = $valor;
-        } else {
-            $this->errores['apellido'] = $resultado;
-        }
-    }
-
-    public function setCedula($valor) {
-        $resultado = $this->validarNumerico($valor, 'cedula', 6, 12);
-        if ($resultado === true) {
-            $this->cedula = $valor;
-        } else {
-            $this->errores['cedula'] = $resultado;
-        }
-    }
-
-    public function setTelefono($valor) {
-        $resultado = $this->validarTelefono($valor);
-        if ($resultado === true) {
-            $this->telefono = $valor;
-        } else {
-            $this->errores['telefono'] = $resultado;
-        }
-    }
-
-    public function setEmail($valor) {
-        $resultado = $this->validarEmail($valor);
-        if ($resultado === true) {
-            $this->email = $valor;
-        } else {
-            $this->errores['email'] = $resultado;
-        }
-    }
-
-    public function setDireccion($valor) {
-        $resultado = $this->validarAlfanumerico($valor, 'direccion', 5, 100);
-        if ($resultado === true) {
-            $this->direccion = $valor;
-        } else {
-            $this->errores['direccion'] = $resultado;
-        }
-    }
-
     // Chequear si hay errores
     public function check() {
         if (!empty($this->errores)) {
@@ -78,6 +90,7 @@ class Clientes extends Conexion{
             throw new Exception("Errores de validación: $mensajes");
         }
     }
+
 
     // Si quieres acceder a los errores individualmente
     public function getErrores() {
@@ -162,9 +175,11 @@ class Clientes extends Conexion{
 
         if($resul){
             return $datos;
+
         }else{
-            return $r=0;
+            return [];
         }
+
     }
 
     public function buscar($valor){
@@ -208,8 +223,12 @@ class Clientes extends Conexion{
         if($resul){
             $r = 1;
         }else{
-            $r = 0;
+            $fisico="DELETE FROM clientes WHERE cod_cliente=$valor";
+            $strExec=$this->conex->prepare($fisico);
+            $strExec->execute();
+            $r='success';
         }
+
         return $r;
     }
 

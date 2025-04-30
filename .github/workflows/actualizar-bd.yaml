@@ -15,59 +15,42 @@ jobs:
     steps:
       - name: Checkout del repo
         uses: actions/checkout@v4
-        
-      - name: List repository contents (again)
-        run: ls -al
 
-      - name: Print current working directory
-        run: pwd
-        
-      - name: Configurar SSH key
+      - name: Configurar clave SSH
         env:
           SSH_KEY: ${{ secrets.TRAYECTO3_KEY }}
         run: |
           echo "$SSH_KEY" > private_key.pem
           chmod 600 private_key.pem
-          
-      - name: Test SSH Connection
-        env:
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
-          SSH_USER: ${{ secrets.TRAYECTO3_USER }}
-        run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l /home/brian/sql/"
 
-      - name: Verify SQL file exists
+      - name: Verificar existencia de archivo SQL
         run: |
-          ls -l *.sql
-          pwd
-          find . -name "*.sql" -type f
+          ls -l *.sql || (echo "❌ Archivo SQL no encontrado" && exit 1)
 
-      - name: Subir archivo SQL al VPS
+      - name: 📤 Subir archivo SQL al VPS
         env:
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
         run: |
-          # First ensure local file exists
-          if [ ! -f "savyc.sql" ]; then
-            echo "Error: savyc.sql not found in current directory!"
-            ls -l
-            exit 1
-          fi
-    
-          # Then copy with verbose output
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/brian/sql/savyc.sql
-            
-      - name: Conectar al VPS y actualizar MySQL
+          echo "📁 Asegurando existencia del directorio remoto /home/$SSH_USER/sql..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p /home/$SSH_USER/sql"
+
+          echo "📤 Subiendo savyc.sql al VPS..."
+          scp -i private_key.pem -o StrictHostKeyChecking=no savyc.sql $SSH_USER@$SSH_HOST:/home/$SSH_USER/sql/
+
+      - name: 🧩 Conectar al VPS y actualizar MySQL
         env:
-          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           SSH_USER: ${{ secrets.TRAYECTO3_USER }}
+          SSH_HOST: ${{ secrets.TRAYECTO3_HOST }}
           MYSQL_USER: ${{ secrets.TRAYECTO3_MYSQL_USER }}
           MYSQL_PASS: ${{ secrets.TRAYECTO3_MYSQL_PASS }}
           MYSQL_DB: ${{ secrets.TRAYECTO3_MYSQL_DB }}
         run: |
           ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
+            echo "🗑️  Borrando base de datos si existe..."
             mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "DROP DATABASE IF EXISTS $MYSQL_DB; CREATE DATABASE $MYSQL_DB;"
-            mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" < /home/brian/sql/savyc.sql
+            echo "📥 Importando savyc.sql..."
+            mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" < /home/$SSH_USER/sql/savyc.sql
           EOF
 
       - name: Limpiar clave privada

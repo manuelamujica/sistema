@@ -37,6 +37,13 @@ class Divisa extends Conexion{
         return $res;
     }
 
+    public function consultarDivisas() {
+        $sql = "SELECT *FROM divisas";
+        $stmt = $this->conex->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function consultar(){
         $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status,c.cod_cambio, c.tasa, c.fecha
         FROM divisas AS d
