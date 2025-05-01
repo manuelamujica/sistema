@@ -73,7 +73,10 @@ if (isset($_POST["ingresar"])) {
 					$_SESSION["configuracion"] = 1;
 				} else if ($cod_permiso["cod_permiso"] == 11) {
 					$_SESSION["marca"] = 1;
+				} else if ($cod_permiso["cod_permiso"] == 12) {
+					$_SESSION["finanzas"] = 1;
 				}
+
 
 			
 			}

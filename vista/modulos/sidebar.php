@@ -141,7 +141,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link ">
+                            <a href="finanzas" class="nav-link">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas

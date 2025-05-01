@@ -3,7 +3,6 @@ require_once "conexion.php";
 
 class CatalogoCuentas extends Conexion{
 
-    private $conex;
     private $codigo_contable;
     private $nombre;
     private $naturaleza;
@@ -12,8 +11,6 @@ class CatalogoCuentas extends Conexion{
 
     public function __construct()
     {
-        $this->conex= new Conexion();
-        $this->conex = $this->conex->conectar();
     }
 
     public function getCodigoContable(){
@@ -51,6 +48,7 @@ class CatalogoCuentas extends Conexion{
     REGISTRAR CUENTA CONTABLE CON STORED PROCEDURE
     ================================*/
     private function registrar(){
+        $this->conectarBD();
         $sql = "CALL(:codigo_contable, :nombre, :naturaleza, :cuenta_padreid, :nivel, 1)";  
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(":codigo_contable", $this->codigo_contable, PDO::PARAM_STR);
@@ -60,7 +58,7 @@ class CatalogoCuentas extends Conexion{
         $strExec->bindParam(":nivel", $this->nivel, PDO::PARAM_INT);
 
         $resul = $strExec->execute();
-
+        $this->desconectarBD();
         return $resul ? 1 : 0;  // Retorna 1 si tuvo éxito, 0 si falló
     }
 
@@ -73,10 +71,18 @@ class CatalogoCuentas extends Conexion{
     ================================*/
 
     private function consultar_cuentas(){
+        $this->conectarBD();
         $sql = "CALL consultar_cuentas_contables()";
         $strExec = $this->conex->prepare($sql);
-        $strExec->execute();
-        return $strExec->fetchAll(PDO::FETCH_ASSOC);
+        $resul = $strExec->execute();
+        $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
+        $this->desconectarBD();
+        
+        if($resul) {
+            return $datos;
+        } else {
+            return [];
+        }
     }
 
     public function getconsultar_cuentas(){

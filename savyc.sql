@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 18-04-2025 a las 23:42:26
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Apr 30, 2025 at 10:52 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,18 +18,18 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `savyc+v1`
+-- Database: `savyc`
 --
 
 DELIMITER $$
 --
--- Procedimientos
+-- Procedures
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `consultar_cuentas_contables` ()   BEGIN
 WITH RECURSIVE CuentasRecursivas AS (
     -- Caso Base: Selecciona las cuentas de nivel 1 (que no tienen padre)
     SELECT 
-        id_cuenta, 
+        cod_cuenta, 
         codigo_contable, 
         nombre_cuenta, 
         naturaleza, 
@@ -43,7 +43,7 @@ WITH RECURSIVE CuentasRecursivas AS (
 
     -- Recursión: Une las cuentas hijas con sus padres
     SELECT 
-        c.id_cuenta, 
+        c.cod_cuenta, 
         c.codigo_contable, 
         c.nombre_cuenta,
     	c.naturaleza,  
@@ -51,9 +51,127 @@ WITH RECURSIVE CuentasRecursivas AS (
         c.nivel,
         cr.profundidad + 1 AS profundidad
     FROM cuentas_contables c
-    INNER JOIN CuentasRecursivas cr ON c.cuenta_padreid = cr.id_cuenta
+    INNER JOIN CuentasRecursivas cr ON c.cuenta_padreid = cr.cod_cuenta
 )
 SELECT * FROM CuentasRecursivas ORDER BY codigo_contable;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generar_stock_mensual` ()   BEGIN
+    DECLARE mes_actual VARCHAR(20);
+    DECLARE anio_actual VARCHAR(20);
+    
+    -- Get current month and year
+    SET mes_actual = MONTH(CURRENT_DATE());
+    SET anio_actual = YEAR(CURRENT_DATE());
+    
+    -- Insert or update stock mensual records
+    INSERT INTO stock_mensual (
+        cod_detallep,
+        mes,
+        ano,
+        stock_inicial,
+        stock_final,
+        ventas_cantidad,
+        rotacion,
+        dias_rotacion
+    )
+    SELECT 
+        dp.cod_detallep,
+        mes_actual,
+        anio_actual,
+        -- Stock inicial (stock from previous month or current stock if no previous record)
+        COALESCE(
+            (SELECT stock_final 
+             FROM stock_mensual 
+             WHERE cod_detallep = dp.cod_detallep 
+             AND mes = IF(mes_actual = 1, 12, mes_actual - 1)
+             AND ano = IF(mes_actual = 1, anio_actual - 1, anio_actual)
+             ORDER BY cod_stock DESC LIMIT 1),
+            dp.stock
+        ) as stock_inicial,
+        -- Stock final (current stock)
+        dp.stock as stock_final,
+        -- Ventas cantidad (sum of sales for the month)
+        COALESCE(
+            (SELECT SUM(dv.cantidad)
+             FROM detalle_ventas dv
+             INNER JOIN ventas v ON dv.cod_venta = v.cod_venta
+             WHERE dv.cod_detallep = dp.cod_detallep
+             AND MONTH(v.fecha) = mes_actual
+             AND YEAR(v.fecha) = anio_actual),
+            0
+        ) as ventas_cantidad,
+        -- Rotación (ventas / promedio de inventario)
+        CASE 
+            WHEN COALESCE(
+                (SELECT stock_final 
+                 FROM stock_mensual 
+                 WHERE cod_detallep = dp.cod_detallep 
+                 AND mes = IF(mes_actual = 1, 12, mes_actual - 1)
+                 AND ano = IF(mes_actual = 1, anio_actual - 1, anio_actual)
+                 ORDER BY cod_stock DESC LIMIT 1),
+                dp.stock
+            ) + dp.stock = 0 THEN 0
+            ELSE (COALESCE(
+                (SELECT SUM(dv.cantidad)
+                 FROM detalle_ventas dv
+                 INNER JOIN ventas v ON dv.cod_venta = v.cod_venta
+                 WHERE dv.cod_detallep = dp.cod_detallep
+                 AND MONTH(v.fecha) = mes_actual
+                 AND YEAR(v.fecha) = anio_actual),
+                0
+            ) * 2) / (
+                COALESCE(
+                    (SELECT stock_final 
+                     FROM stock_mensual 
+                     WHERE cod_detallep = dp.cod_detallep 
+                     AND mes = IF(mes_actual = 1, 12, mes_actual - 1)
+                     AND ano = IF(mes_actual = 1, anio_actual - 1, anio_actual)
+                     ORDER BY cod_stock DESC LIMIT 1),
+                    dp.stock
+                ) + dp.stock
+            )
+        END as rotacion,
+        -- Días de rotación (30 / rotación)
+        CASE 
+            WHEN COALESCE(
+                (SELECT stock_final 
+                 FROM stock_mensual 
+                 WHERE cod_detallep = dp.cod_detallep 
+                 AND mes = IF(mes_actual = 1, 12, mes_actual - 1)
+                 AND ano = IF(mes_actual = 1, anio_actual - 1, anio_actual)
+                 ORDER BY cod_stock DESC LIMIT 1),
+                dp.stock
+            ) + dp.stock = 0 THEN 0
+            ELSE 30 / (
+                (COALESCE(
+                    (SELECT SUM(dv.cantidad)
+                     FROM detalle_ventas dv
+                     INNER JOIN ventas v ON dv.cod_venta = v.cod_venta
+                     WHERE dv.cod_detallep = dp.cod_detallep
+                     AND MONTH(v.fecha) = mes_actual
+                     AND YEAR(v.fecha) = anio_actual),
+                    0
+                ) * 2) / (
+                    COALESCE(
+                        (SELECT stock_final 
+                         FROM stock_mensual 
+                         WHERE cod_detallep = dp.cod_detallep 
+                         AND mes = IF(mes_actual = 1, 12, mes_actual - 1)
+                         AND ano = IF(mes_actual = 1, anio_actual - 1, anio_actual)
+                         ORDER BY cod_stock DESC LIMIT 1),
+                        dp.stock
+                    ) + dp.stock
+                )
+            )
+        END as dias_rotacion
+    FROM detalle_productos dp
+    ON DUPLICATE KEY UPDATE
+        stock_inicial = VALUES(stock_inicial),
+        stock_final = VALUES(stock_final),
+        ventas_cantidad = VALUES(ventas_cantidad),
+        rotacion = VALUES(rotacion),
+        dias_rotacion = VALUES(dias_rotacion);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertar_cuenta_contable` (IN `p_codigo_contable` VARCHAR(20), IN `p_nombre_cuenta` VARCHAR(100), IN `p_naturaleza` ENUM('deudora','acreedora'), IN `p_cuenta_padre_id` INT, IN `p_nivel` INT, IN `p_status` INT)   BEGIN
@@ -103,7 +221,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `analisis_rentabilidad`
+-- Table structure for table `analisis_rentabilidad`
 --
 
 CREATE TABLE `analisis_rentabilidad` (
@@ -123,7 +241,7 @@ CREATE TABLE `analisis_rentabilidad` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `asientos_contables`
+-- Table structure for table `asientos_contables`
 --
 
 CREATE TABLE `asientos_contables` (
@@ -138,7 +256,7 @@ CREATE TABLE `asientos_contables` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `banco`
+-- Table structure for table `banco`
 --
 
 CREATE TABLE `banco` (
@@ -149,7 +267,7 @@ CREATE TABLE `banco` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `bitacora`
+-- Table structure for table `bitacora`
 --
 
 CREATE TABLE `bitacora` (
@@ -161,10 +279,47 @@ CREATE TABLE `bitacora` (
   `modulo` varchar(220) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- -- Dumping data for table `bitacora`
+--
+
+INSERT INTO `bitacora` (`id`, `cod_usuario`, `accion`, `fecha`, `detalles`, `modulo`) VALUES
+(49, 1, 'Acceso al sistema', '2025-04-23 00:00:22', 'admin', 'Inicio'),
+(50, 1, 'Buscar producto', '2025-04-23 00:17:23', 'Brian', 'Productos'),
+(51, 1, 'Buscar producto', '2025-04-23 00:17:30', 'Brian', 'Productos'),
+(52, 1, 'Registro de producto', '2025-04-23 00:17:34', 'Brian', 'Productos'),
+(53, 1, 'Buscar producto', '2025-04-23 00:17:37', 'Brian', 'Productos'),
+(54, 1, 'Registro de producto', '2025-04-23 00:17:47', 'Brian', 'Productos'),
+(55, 1, 'Editar producto', '2025-04-23 00:18:30', 'Brian', 'Productos'),
+(56, 1, 'Editar producto', '2025-04-23 00:18:50', 'Brian', 'Productos'),
+(57, 1, 'Eliminar producto', '2025-04-23 00:18:54', 'Eliminado el producto con el código 3', 'Productos'),
+(58, 1, 'Buscar producto', '2025-04-23 00:38:51', 'Brian', 'Productos'),
+(59, 1, 'Buscar producto', '2025-04-23 00:38:58', 'Brian', 'Productos'),
+(60, 1, 'Registro de producto', '2025-04-23 00:40:30', 'Brian', 'Productos'),
+(61, 1, 'Editar producto', '2025-04-23 00:41:00', 'Brian', 'Productos'),
+(62, 1, 'Editar producto', '2025-04-23 00:42:44', 'Brian', 'Productos'),
+(63, 1, 'Editar producto', '2025-04-23 00:42:53', 'Brian', 'Productos'),
+(64, 1, 'Editar producto', '2025-04-23 00:43:00', 'Brian', 'Productos'),
+(65, 1, 'Eliminar producto', '2025-04-23 00:43:04', 'Eliminado el producto con el código 4', 'Productos'),
+(66, 1, 'Buscar producto', '2025-04-23 00:43:10', '!!!', 'Productos'),
+(67, 1, 'Buscar producto', '2025-04-23 00:43:10', '!!!!', 'Productos'),
+(68, 1, 'Buscar producto', '2025-04-23 00:43:10', '!!!!!', 'Productos'),
+(69, 1, 'Buscar producto', '2025-04-23 00:43:10', '!!!!!!', 'Productos'),
+(70, 1, 'Buscar producto', '2025-04-23 00:43:11', '!!!!!!!', 'Productos'),
+(71, 1, 'Registro de categoría', '2025-04-23 00:45:06', 'aasdasdsad', 'Categorias'),
+(72, 1, 'Editar producto', '2025-04-23 00:45:12', 'Brian', 'Productos'),
+(73, 1, 'Acceso al sistema', '2025-04-25 10:24:22', 'admin', 'Inicio'),
+(74, 1, 'Acceso al sistema', '2025-04-25 10:25:41', 'admin', 'Inicio'),
+(75, 1, 'Eliminar producto', '2025-04-25 10:35:22', 'Eliminado el producto con el código 2', 'Productos'),
+(76, 1, 'Buscar producto', '2025-04-30 12:05:38', 'Brian', 'Productos'),
+(77, 1, 'Registro de producto', '2025-04-30 12:05:46', 'Brian', 'Productos'),
+(78, 1, 'Acceso a Ajuste de INventario', '2025-04-30 12:05:54', '', 'Ajuste de INventario'),
+(79, 1, 'Acceso a Carga de productos', '2025-04-30 12:05:55', '', 'Carga de productos'),
+(80, 1, 'Acceso al sistema', '2025-04-30 20:39:11', 'admin', 'Inicio');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `caja`
+-- Table structure for table `caja`
 --
 
 CREATE TABLE `caja` (
@@ -175,7 +330,7 @@ CREATE TABLE `caja` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cambio_divisa`
+-- Table structure for table `cambio_divisa`
 --
 
 CREATE TABLE `cambio_divisa` (
@@ -185,8 +340,7 @@ CREATE TABLE `cambio_divisa` (
   `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `cambio_divisa`
+-- -- Dumping data for table `cambio_divisa`
 --
 
 INSERT INTO `cambio_divisa` (`cod_cambio`, `cod_divisa`, `tasa`, `fecha`) VALUES
@@ -204,7 +358,7 @@ INSERT INTO `cambio_divisa` (`cod_cambio`, `cod_divisa`, `tasa`, `fecha`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `carga`
+-- Table structure for table `carga`
 --
 
 CREATE TABLE `carga` (
@@ -217,7 +371,7 @@ CREATE TABLE `carga` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categorias`
+-- Table structure for table `categorias`
 --
 
 CREATE TABLE `categorias` (
@@ -226,17 +380,17 @@ CREATE TABLE `categorias` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `categorias`
+-- -- Dumping data for table `categorias`
 --
 
 INSERT INTO `categorias` (`cod_categoria`, `nombre`, `status`) VALUES
-(1, 'queso', 1);
+(1, 'queso', 1),
+(2, 'aasdasdsad', 1);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categoria_gasto`
+-- Table structure for table `categoria_gasto`
 --
 
 CREATE TABLE `categoria_gasto` (
@@ -250,7 +404,7 @@ CREATE TABLE `categoria_gasto` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categoria_movimiento`
+-- Table structure for table `categoria_movimiento`
 --
 
 CREATE TABLE `categoria_movimiento` (
@@ -262,7 +416,7 @@ CREATE TABLE `categoria_movimiento` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `clientes`
+-- Table structure for table `clientes`
 --
 
 CREATE TABLE `clientes` (
@@ -276,17 +430,19 @@ CREATE TABLE `clientes` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `clientes`
+-- -- Dumping data for table `clientes`
 --
 
 INSERT INTO `clientes` (`cod_cliente`, `nombre`, `apellido`, `cedula_rif`, `telefono`, `email`, `direccion`, `status`) VALUES
-(1, 'generico', 'perez', '12345678', '', '', '', 1);
+(1, 'generico', 'perez', '12345678', '', '', '', 1),
+(4, 'adgakj', 'gjfgjgl', '27759223', '04245568013', 'briangonzalez.9406@gmail.com', 'sfsfh', 1),
+(5, 'adgakj', 'gjfgjgl', '37759223', '04245568013', 'briangonzalez.9406@gmail.com', 'afadeag', 1),
+(6, 'adgakj', 'gjfgjgl', '184215013', '04245568013', 'briangonzalez.9406@gmail.com', 'sfsfh', 1);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `compras`
+-- Table structure for table `compras`
 --
 
 CREATE TABLE `compras` (
@@ -305,7 +461,7 @@ CREATE TABLE `compras` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `conciliacion`
+-- Table structure for table `conciliacion`
 --
 
 CREATE TABLE `conciliacion` (
@@ -318,7 +474,7 @@ CREATE TABLE `conciliacion` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cuentas_contables`
+-- Table structure for table `cuentas_contables`
 --
 
 CREATE TABLE `cuentas_contables` (
@@ -334,7 +490,7 @@ CREATE TABLE `cuentas_contables` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cuenta_bancaria`
+-- Table structure for table `cuenta_bancaria`
 --
 
 CREATE TABLE `cuenta_bancaria` (
@@ -350,7 +506,7 @@ CREATE TABLE `cuenta_bancaria` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `descarga`
+-- Table structure for table `descarga`
 --
 
 CREATE TABLE `descarga` (
@@ -363,7 +519,7 @@ CREATE TABLE `descarga` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_asientos`
+-- Table structure for table `detalle_asientos`
 --
 
 CREATE TABLE `detalle_asientos` (
@@ -377,7 +533,7 @@ CREATE TABLE `detalle_asientos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_caja`
+-- Table structure for table `detalle_caja`
 --
 
 CREATE TABLE `detalle_caja` (
@@ -392,7 +548,7 @@ CREATE TABLE `detalle_caja` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_carga`
+-- Table structure for table `detalle_carga`
 --
 
 CREATE TABLE `detalle_carga` (
@@ -405,7 +561,7 @@ CREATE TABLE `detalle_carga` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_compras`
+-- Table structure for table `detalle_compras`
 --
 
 CREATE TABLE `detalle_compras` (
@@ -419,7 +575,7 @@ CREATE TABLE `detalle_compras` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_descarga`
+-- Table structure for table `detalle_descarga`
 --
 
 CREATE TABLE `detalle_descarga` (
@@ -432,7 +588,7 @@ CREATE TABLE `detalle_descarga` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_pago_emitido`
+-- Table structure for table `detalle_pago_emitido`
 --
 
 CREATE TABLE `detalle_pago_emitido` (
@@ -445,7 +601,7 @@ CREATE TABLE `detalle_pago_emitido` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_pago_recibido`
+-- Table structure for table `detalle_pago_recibido`
 --
 
 CREATE TABLE `detalle_pago_recibido` (
@@ -458,7 +614,7 @@ CREATE TABLE `detalle_pago_recibido` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_productos`
+-- Table structure for table `detalle_productos`
 --
 
 CREATE TABLE `detalle_productos` (
@@ -469,8 +625,7 @@ CREATE TABLE `detalle_productos` (
   `lote` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `detalle_productos`
+-- -- Dumping data for table `detalle_productos`
 --
 
 INSERT INTO `detalle_productos` (`cod_detallep`, `cod_presentacion`, `stock`, `fecha_vencimiento`, `lote`) VALUES
@@ -482,7 +637,7 @@ INSERT INTO `detalle_productos` (`cod_detallep`, `cod_presentacion`, `stock`, `f
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_tipo_pago`
+-- Table structure for table `detalle_tipo_pago`
 --
 
 CREATE TABLE `detalle_tipo_pago` (
@@ -496,7 +651,7 @@ CREATE TABLE `detalle_tipo_pago` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_ventas`
+-- Table structure for table `detalle_ventas`
 --
 
 CREATE TABLE `detalle_ventas` (
@@ -507,8 +662,7 @@ CREATE TABLE `detalle_ventas` (
   `cantidad` float(10,3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `detalle_ventas`
+-- -- Dumping data for table `detalle_ventas`
 --
 
 INSERT INTO `detalle_ventas` (`cod_detallev`, `cod_venta`, `cod_detallep`, `importe`, `cantidad`) VALUES
@@ -518,7 +672,7 @@ INSERT INTO `detalle_ventas` (`cod_detallev`, `cod_venta`, `cod_detallep`, `impo
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_vueltoe`
+-- Table structure for table `detalle_vueltoe`
 --
 
 CREATE TABLE `detalle_vueltoe` (
@@ -531,7 +685,7 @@ CREATE TABLE `detalle_vueltoe` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_vueltor`
+-- Table structure for table `detalle_vueltor`
 --
 
 CREATE TABLE `detalle_vueltor` (
@@ -544,7 +698,7 @@ CREATE TABLE `detalle_vueltor` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `divisas`
+-- Table structure for table `divisas`
 --
 
 CREATE TABLE `divisas` (
@@ -554,8 +708,7 @@ CREATE TABLE `divisas` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `divisas`
+-- -- Dumping data for table `divisas`
 --
 
 INSERT INTO `divisas` (`cod_divisa`, `nombre`, `abreviatura`, `status`) VALUES
@@ -566,7 +719,7 @@ INSERT INTO `divisas` (`cod_divisa`, `nombre`, `abreviatura`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empresa`
+-- Table structure for table `empresa`
 --
 
 CREATE TABLE `empresa` (
@@ -579,8 +732,7 @@ CREATE TABLE `empresa` (
   `logo` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `empresa`
+-- -- Dumping data for table `empresa`
 --
 
 INSERT INTO `empresa` (`rif`, `nombre`, `direccion`, `telefono`, `email`, `descripcion`, `logo`) VALUES
@@ -589,7 +741,7 @@ INSERT INTO `empresa` (`rif`, `nombre`, `direccion`, `telefono`, `email`, `descr
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `frecuencia_gasto`
+-- Table structure for table `frecuencia_gasto`
 --
 
 CREATE TABLE `frecuencia_gasto` (
@@ -601,7 +753,7 @@ CREATE TABLE `frecuencia_gasto` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `gasto`
+-- Table structure for table `gasto`
 --
 
 CREATE TABLE `gasto` (
@@ -615,7 +767,7 @@ CREATE TABLE `gasto` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `marcas`
+-- Table structure for table `marcas`
 --
 
 CREATE TABLE `marcas` (
@@ -624,10 +776,17 @@ CREATE TABLE `marcas` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- -- Dumping data for table `marcas`
+--
+
+INSERT INTO `marcas` (`cod_marca`, `nombre`, `status`) VALUES
+(6, 'Polar', 0),
+(7, 'Polara', 1);
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `movimientos`
+-- Table structure for table `movimientos`
 --
 
 CREATE TABLE `movimientos` (
@@ -643,7 +802,7 @@ CREATE TABLE `movimientos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pago_emitido`
+-- Table structure for table `pago_emitido`
 --
 
 CREATE TABLE `pago_emitido` (
@@ -659,7 +818,7 @@ CREATE TABLE `pago_emitido` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pago_recibido`
+-- Table structure for table `pago_recibido`
 --
 
 CREATE TABLE `pago_recibido` (
@@ -673,7 +832,7 @@ CREATE TABLE `pago_recibido` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `permisos`
+-- Table structure for table `permisos`
 --
 
 CREATE TABLE `permisos` (
@@ -681,8 +840,7 @@ CREATE TABLE `permisos` (
   `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `permisos`
+-- -- Dumping data for table `permisos`
 --
 
 INSERT INTO `permisos` (`cod_permiso`, `nombre`) VALUES
@@ -695,12 +853,14 @@ INSERT INTO `permisos` (`cod_permiso`, `nombre`) VALUES
 (7, 'proveedor'),
 (8, 'usuario'),
 (9, 'reporte'),
-(10, 'configuracion');
+(10, 'configuracion'),
+(11, 'marca'),
+(12, 'finanzas');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `presentacion_producto`
+-- Table structure for table `presentacion_producto`
 --
 
 CREATE TABLE `presentacion_producto` (
@@ -714,17 +874,17 @@ CREATE TABLE `presentacion_producto` (
   `excento` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `presentacion_producto`
+-- -- Dumping data for table `presentacion_producto`
 --
 
 INSERT INTO `presentacion_producto` (`cod_presentacion`, `cod_unidad`, `cod_producto`, `presentacion`, `cantidad_presentacion`, `costo`, `porcen_venta`, `excento`) VALUES
-(1, 1, 1, 'pieza', '10', 7.00, 0, 1);
+(1, 1, 1, 'pieza', '10', 7.00, 0, 1),
+(5, 1, 5, 'pieza', '1kg', 11111111.00, 10, 1);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `presupuestos`
+-- Table structure for table `presupuestos`
 --
 
 CREATE TABLE `presupuestos` (
@@ -740,7 +900,7 @@ CREATE TABLE `presupuestos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `productos`
+-- Table structure for table `productos`
 --
 
 CREATE TABLE `productos` (
@@ -751,17 +911,17 @@ CREATE TABLE `productos` (
   `imagen` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `productos`
+-- -- Dumping data for table `productos`
 --
 
 INSERT INTO `productos` (`cod_producto`, `cod_categoria`, `cod_marca`, `nombre`, `imagen`) VALUES
-(1, 1, NULL, 'Queso Duro', NULL);
+(1, 1, NULL, 'Queso Duro', NULL),
+(5, 1, 7, 'Brian', 'vista/dist/img/productos/default.png');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `proveedores`
+-- Table structure for table `proveedores`
 --
 
 CREATE TABLE `proveedores` (
@@ -773,8 +933,7 @@ CREATE TABLE `proveedores` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `proveedores`
+-- -- Dumping data for table `proveedores`
 --
 
 INSERT INTO `proveedores` (`cod_prov`, `rif`, `razon_social`, `email`, `direccion`, `status`) VALUES
@@ -783,7 +942,7 @@ INSERT INTO `proveedores` (`cod_prov`, `rif`, `razon_social`, `email`, `direccio
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `prov_representantes`
+-- Table structure for table `prov_representantes`
 --
 
 CREATE TABLE `prov_representantes` (
@@ -799,7 +958,47 @@ CREATE TABLE `prov_representantes` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `stock_mensual`
+-- Table structure for table `proyecciones_futuras`
+--
+
+CREATE TABLE `proyecciones_futuras` (
+  `cod_proyeccion` int(11) NOT NULL,
+  `cod_producto` int(11) NOT NULL,
+  `fecha_proyeccion` date NOT NULL,
+  `periodo_inicio` date NOT NULL,
+  `periodo_fin` date NOT NULL,
+  `mes` date NOT NULL,
+  `valor_proyectado` decimal(12,2) NOT NULL,
+  `ventana_ma` int(11) NOT NULL COMMENT 'Tamaño de la ventana del promedio móvil en meses',
+  `status` int(11) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `proyecciones_historicas`
+--
+
+CREATE TABLE `proyecciones_historicas` (
+  `cod_historico` int(11) NOT NULL,
+  `cod_producto` int(11) NOT NULL,
+  `fecha_proyeccion` date NOT NULL,
+  `periodo_inicio` date NOT NULL,
+  `periodo_fin` date NOT NULL,
+  `mes` date NOT NULL,
+  `valor_proyectado` decimal(12,2) NOT NULL,
+  `valor_real` decimal(12,2) DEFAULT NULL,
+  `precision_valor` decimal(8,2) DEFAULT NULL,
+  `ventana_ma` int(11) NOT NULL COMMENT 'Tamaño de la ventana del promedio móvil en meses',
+  `status` int(11) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stock_mensual`
 --
 
 CREATE TABLE `stock_mensual` (
@@ -814,10 +1013,19 @@ CREATE TABLE `stock_mensual` (
   `dias_rotacion` decimal(8,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- -- Dumping data for table `stock_mensual`
+--
+
+INSERT INTO `stock_mensual` (`cod_stock`, `cod_detallep`, `mes`, `ano`, `stock_inicial`, `stock_final`, `ventas_cantidad`, `rotacion`, `dias_rotacion`) VALUES
+(1, 1, '4', '2025', 0.00, 0.00, 10.00, 0.00, 0.00),
+(2, 2, '4', '2025', 8.00, 8.00, 4.00, 0.50, 60.00),
+(3, 3, '4', '2025', 67.00, 67.00, 0.00, 0.00, NULL),
+(4, 4, '4', '2025', 23.50, 23.50, 0.00, 0.00, NULL);
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipo_cuenta`
+-- Table structure for table `tipo_cuenta`
 --
 
 CREATE TABLE `tipo_cuenta` (
@@ -825,8 +1033,7 @@ CREATE TABLE `tipo_cuenta` (
   `nombre` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `tipo_cuenta`
+-- -- Dumping data for table `tipo_cuenta`
 --
 
 INSERT INTO `tipo_cuenta` (`cod_tipo_cuenta`, `nombre`) VALUES
@@ -836,7 +1043,7 @@ INSERT INTO `tipo_cuenta` (`cod_tipo_cuenta`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipo_gasto`
+-- Table structure for table `tipo_gasto`
 --
 
 CREATE TABLE `tipo_gasto` (
@@ -847,7 +1054,7 @@ CREATE TABLE `tipo_gasto` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipo_pago`
+-- Table structure for table `tipo_pago`
 --
 
 CREATE TABLE `tipo_pago` (
@@ -856,8 +1063,7 @@ CREATE TABLE `tipo_pago` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `tipo_pago`
+-- -- Dumping data for table `tipo_pago`
 --
 
 INSERT INTO `tipo_pago` (`cod_metodo`, `medio_pago`, `status`) VALUES
@@ -867,7 +1073,7 @@ INSERT INTO `tipo_pago` (`cod_metodo`, `medio_pago`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipo_usuario`
+-- Table structure for table `tipo_usuario`
 --
 
 CREATE TABLE `tipo_usuario` (
@@ -876,8 +1082,7 @@ CREATE TABLE `tipo_usuario` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `tipo_usuario`
+-- -- Dumping data for table `tipo_usuario`
 --
 
 INSERT INTO `tipo_usuario` (`cod_tipo_usuario`, `rol`, `status`) VALUES
@@ -886,7 +1091,7 @@ INSERT INTO `tipo_usuario` (`cod_tipo_usuario`, `rol`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tlf_proveedores`
+-- Table structure for table `tlf_proveedores`
 --
 
 CREATE TABLE `tlf_proveedores` (
@@ -898,7 +1103,7 @@ CREATE TABLE `tlf_proveedores` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tpu_permisos`
+-- Table structure for table `tpu_permisos`
 --
 
 CREATE TABLE `tpu_permisos` (
@@ -906,8 +1111,7 @@ CREATE TABLE `tpu_permisos` (
   `cod_permiso` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `tpu_permisos`
+-- -- Dumping data for table `tpu_permisos`
 --
 
 INSERT INTO `tpu_permisos` (`cod_tipo_usuario`, `cod_permiso`) VALUES
@@ -930,12 +1134,14 @@ INSERT INTO `tpu_permisos` (`cod_tipo_usuario`, `cod_permiso`) VALUES
 (1, 7),
 (1, 8),
 (1, 9),
-(1, 10);
+(1, 10),
+(1, 11),
+(1, 12);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `unidades_medida`
+-- Table structure for table `unidades_medida`
 --
 
 CREATE TABLE `unidades_medida` (
@@ -944,8 +1150,7 @@ CREATE TABLE `unidades_medida` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `unidades_medida`
+-- -- Dumping data for table `unidades_medida`
 --
 
 INSERT INTO `unidades_medida` (`cod_unidad`, `tipo_medida`, `status`) VALUES
@@ -954,7 +1159,7 @@ INSERT INTO `unidades_medida` (`cod_unidad`, `tipo_medida`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `usuarios`
+-- Table structure for table `usuarios`
 --
 
 CREATE TABLE `usuarios` (
@@ -966,8 +1171,7 @@ CREATE TABLE `usuarios` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `usuarios`
+-- -- Dumping data for table `usuarios`
 --
 
 INSERT INTO `usuarios` (`cod_usuario`, `nombre`, `user`, `password`, `cod_tipo_usuario`, `status`) VALUES
@@ -977,7 +1181,7 @@ INSERT INTO `usuarios` (`cod_usuario`, `nombre`, `user`, `password`, `cod_tipo_u
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ventas`
+-- Table structure for table `ventas`
 --
 
 CREATE TABLE `ventas` (
@@ -990,8 +1194,7 @@ CREATE TABLE `ventas` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `ventas`
+-- -- Dumping data for table `ventas`
 --
 
 INSERT INTO `ventas` (`cod_venta`, `cod_cliente`, `condicion_pago`, `fecha_vencimiento`, `total`, `fecha`, `status`) VALUES
@@ -1000,7 +1203,7 @@ INSERT INTO `ventas` (`cod_venta`, `cod_cliente`, `condicion_pago`, `fecha_venci
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `vuelto_emitido`
+-- Table structure for table `vuelto_emitido`
 --
 
 CREATE TABLE `vuelto_emitido` (
@@ -1011,7 +1214,7 @@ CREATE TABLE `vuelto_emitido` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `vuelto_recibido`
+-- Table structure for table `vuelto_recibido`
 --
 
 CREATE TABLE `vuelto_recibido` (
@@ -1020,62 +1223,62 @@ CREATE TABLE `vuelto_recibido` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `analisis_rentabilidad`
+-- Indexes for table `analisis_rentabilidad`
 --
 ALTER TABLE `analisis_rentabilidad`
   ADD PRIMARY KEY (`cod_analisis`),
   ADD KEY `cod_detallep` (`cod_detallep`);
 
 --
--- Indices de la tabla `asientos_contables`
+-- Indexes for table `asientos_contables`
 --
 ALTER TABLE `asientos_contables`
   ADD PRIMARY KEY (`cod_asiento`);
 
 --
--- Indices de la tabla `banco`
+-- Indexes for table `banco`
 --
 ALTER TABLE `banco`
   ADD PRIMARY KEY (`cod_banco`);
 
 --
--- Indices de la tabla `bitacora`
+-- Indexes for table `bitacora`
 --
 ALTER TABLE `bitacora`
   ADD PRIMARY KEY (`id`),
   ADD KEY `cod_usuario` (`cod_usuario`);
 
 --
--- Indices de la tabla `caja`
+-- Indexes for table `caja`
 --
 ALTER TABLE `caja`
   ADD PRIMARY KEY (`cod_caja`);
 
 --
--- Indices de la tabla `cambio_divisa`
+-- Indexes for table `cambio_divisa`
 --
 ALTER TABLE `cambio_divisa`
   ADD PRIMARY KEY (`cod_cambio`),
   ADD KEY `cambiodivisa-divisa` (`cod_divisa`);
 
 --
--- Indices de la tabla `carga`
+-- Indexes for table `carga`
 --
 ALTER TABLE `carga`
   ADD PRIMARY KEY (`cod_carga`);
 
 --
--- Indices de la tabla `categorias`
+-- Indexes for table `categorias`
 --
 ALTER TABLE `categorias`
   ADD PRIMARY KEY (`cod_categoria`);
 
 --
--- Indices de la tabla `categoria_gasto`
+-- Indexes for table `categoria_gasto`
 --
 ALTER TABLE `categoria_gasto`
   ADD PRIMARY KEY (`cod_cat_gasto`),
@@ -1083,32 +1286,32 @@ ALTER TABLE `categoria_gasto`
   ADD KEY `cod_frecuencia` (`cod_frecuencia`);
 
 --
--- Indices de la tabla `categoria_movimiento`
+-- Indexes for table `categoria_movimiento`
 --
 ALTER TABLE `categoria_movimiento`
   ADD PRIMARY KEY (`cod_categoria`);
 
 --
--- Indices de la tabla `clientes`
+-- Indexes for table `clientes`
 --
 ALTER TABLE `clientes`
   ADD PRIMARY KEY (`cod_cliente`);
 
 --
--- Indices de la tabla `compras`
+-- Indexes for table `compras`
 --
 ALTER TABLE `compras`
   ADD PRIMARY KEY (`cod_compra`),
   ADD KEY `compras-proveedores` (`cod_prov`);
 
 --
--- Indices de la tabla `conciliacion`
+-- Indexes for table `conciliacion`
 --
 ALTER TABLE `conciliacion`
   ADD KEY `cod_cuenta_bancaria` (`cod_cuenta_bancaria`);
 
 --
--- Indices de la tabla `cuentas_contables`
+-- Indexes for table `cuentas_contables`
 --
 ALTER TABLE `cuentas_contables`
   ADD PRIMARY KEY (`cod_cuenta`),
@@ -1116,7 +1319,7 @@ ALTER TABLE `cuentas_contables`
   ADD KEY `cuenta_padreid` (`cuenta_padreid`);
 
 --
--- Indices de la tabla `cuenta_bancaria`
+-- Indexes for table `cuenta_bancaria`
 --
 ALTER TABLE `cuenta_bancaria`
   ADD PRIMARY KEY (`cod_cuenta_bancaria`),
@@ -1125,13 +1328,13 @@ ALTER TABLE `cuenta_bancaria`
   ADD KEY `cod_divisa` (`cod_divisa`);
 
 --
--- Indices de la tabla `descarga`
+-- Indexes for table `descarga`
 --
 ALTER TABLE `descarga`
   ADD PRIMARY KEY (`cod_descarga`);
 
 --
--- Indices de la tabla `detalle_asientos`
+-- Indexes for table `detalle_asientos`
 --
 ALTER TABLE `detalle_asientos`
   ADD PRIMARY KEY (`cod_det_asiento`),
@@ -1139,7 +1342,7 @@ ALTER TABLE `detalle_asientos`
   ADD KEY `cuenta_id` (`cod_cuenta`);
 
 --
--- Indices de la tabla `detalle_caja`
+-- Indexes for table `detalle_caja`
 --
 ALTER TABLE `detalle_caja`
   ADD PRIMARY KEY (`cod_detalle_caja`),
@@ -1147,7 +1350,7 @@ ALTER TABLE `detalle_caja`
   ADD KEY `cod_divisas` (`cod_divisas`);
 
 --
--- Indices de la tabla `detalle_carga`
+-- Indexes for table `detalle_carga`
 --
 ALTER TABLE `detalle_carga`
   ADD PRIMARY KEY (`cod_det_carga`),
@@ -1155,7 +1358,7 @@ ALTER TABLE `detalle_carga`
   ADD KEY `detalle_carga-detallep` (`cod_detallep`);
 
 --
--- Indices de la tabla `detalle_compras`
+-- Indexes for table `detalle_compras`
 --
 ALTER TABLE `detalle_compras`
   ADD PRIMARY KEY (`cod_detallec`),
@@ -1163,7 +1366,7 @@ ALTER TABLE `detalle_compras`
   ADD KEY `detalle_compras-detalle_productos` (`cod_detallep`);
 
 --
--- Indices de la tabla `detalle_descarga`
+-- Indexes for table `detalle_descarga`
 --
 ALTER TABLE `detalle_descarga`
   ADD PRIMARY KEY (`cod_det_descarga`),
@@ -1171,7 +1374,7 @@ ALTER TABLE `detalle_descarga`
   ADD KEY `detalle_descarga-descarga` (`cod_descarga`);
 
 --
--- Indices de la tabla `detalle_pago_emitido`
+-- Indexes for table `detalle_pago_emitido`
 --
 ALTER TABLE `detalle_pago_emitido`
   ADD PRIMARY KEY (`cod_detallepagoe`),
@@ -1179,7 +1382,7 @@ ALTER TABLE `detalle_pago_emitido`
   ADD KEY `dtpagoe-tipopagoe` (`cod_tipo_pagoe`);
 
 --
--- Indices de la tabla `detalle_pago_recibido`
+-- Indexes for table `detalle_pago_recibido`
 --
 ALTER TABLE `detalle_pago_recibido`
   ADD PRIMARY KEY (`cod_detallepago`),
@@ -1187,14 +1390,14 @@ ALTER TABLE `detalle_pago_recibido`
   ADD KEY `tipo_pago-detalle_pago` (`cod_tipo_pago`);
 
 --
--- Indices de la tabla `detalle_productos`
+-- Indexes for table `detalle_productos`
 --
 ALTER TABLE `detalle_productos`
   ADD PRIMARY KEY (`cod_detallep`),
   ADD KEY `detalle_producto-productos` (`cod_presentacion`);
 
 --
--- Indices de la tabla `detalle_tipo_pago`
+-- Indexes for table `detalle_tipo_pago`
 --
 ALTER TABLE `detalle_tipo_pago`
   ADD PRIMARY KEY (`cod_tipo_pago`),
@@ -1203,7 +1406,7 @@ ALTER TABLE `detalle_tipo_pago`
   ADD KEY `cod_metodo` (`cod_metodo`);
 
 --
--- Indices de la tabla `detalle_ventas`
+-- Indexes for table `detalle_ventas`
 --
 ALTER TABLE `detalle_ventas`
   ADD PRIMARY KEY (`cod_detallev`),
@@ -1211,7 +1414,7 @@ ALTER TABLE `detalle_ventas`
   ADD KEY `detalle_ventas-detalle_productos` (`cod_detallep`);
 
 --
--- Indices de la tabla `detalle_vueltoe`
+-- Indexes for table `detalle_vueltoe`
 --
 ALTER TABLE `detalle_vueltoe`
   ADD PRIMARY KEY (`cod_detallev`),
@@ -1219,7 +1422,7 @@ ALTER TABLE `detalle_vueltoe`
   ADD KEY `cod_tipo_pago` (`cod_tipo_pago`);
 
 --
--- Indices de la tabla `detalle_vueltor`
+-- Indexes for table `detalle_vueltor`
 --
 ALTER TABLE `detalle_vueltor`
   ADD PRIMARY KEY (`cod_detallev_r`),
@@ -1227,46 +1430,46 @@ ALTER TABLE `detalle_vueltor`
   ADD KEY `cod_tipo_pago` (`cod_tipo_pago`);
 
 --
--- Indices de la tabla `divisas`
+-- Indexes for table `divisas`
 --
 ALTER TABLE `divisas`
   ADD PRIMARY KEY (`cod_divisa`);
 
 --
--- Indices de la tabla `empresa`
+-- Indexes for table `empresa`
 --
 ALTER TABLE `empresa`
   ADD PRIMARY KEY (`rif`);
 
 --
--- Indices de la tabla `frecuencia_gasto`
+-- Indexes for table `frecuencia_gasto`
 --
 ALTER TABLE `frecuencia_gasto`
   ADD PRIMARY KEY (`cod_frecuencia`);
 
 --
--- Indices de la tabla `gasto`
+-- Indexes for table `gasto`
 --
 ALTER TABLE `gasto`
   ADD PRIMARY KEY (`cod_gasto`),
   ADD KEY `cod_cat_gasto` (`cod_cat_gasto`);
 
 --
--- Indices de la tabla `marcas`
+-- Indexes for table `marcas`
 --
 ALTER TABLE `marcas`
   ADD PRIMARY KEY (`cod_marca`),
   ADD UNIQUE KEY `marca_unica` (`nombre`);
 
 --
--- Indices de la tabla `movimientos`
+-- Indexes for table `movimientos`
 --
 ALTER TABLE `movimientos`
   ADD PRIMARY KEY (`cod_mov`),
   ADD KEY `asiento_id` (`cod_asiento`);
 
 --
--- Indices de la tabla `pago_emitido`
+-- Indexes for table `pago_emitido`
 --
 ALTER TABLE `pago_emitido`
   ADD PRIMARY KEY (`cod_pago_emitido`),
@@ -1275,7 +1478,7 @@ ALTER TABLE `pago_emitido`
   ADD KEY `cod_vuelto_r` (`cod_vuelto_r`);
 
 --
--- Indices de la tabla `pago_recibido`
+-- Indexes for table `pago_recibido`
 --
 ALTER TABLE `pago_recibido`
   ADD PRIMARY KEY (`cod_pago`),
@@ -1283,13 +1486,13 @@ ALTER TABLE `pago_recibido`
   ADD KEY `cod_vuelto` (`cod_vuelto`);
 
 --
--- Indices de la tabla `permisos`
+-- Indexes for table `permisos`
 --
 ALTER TABLE `permisos`
   ADD PRIMARY KEY (`cod_permiso`);
 
 --
--- Indices de la tabla `presentacion_producto`
+-- Indexes for table `presentacion_producto`
 --
 ALTER TABLE `presentacion_producto`
   ADD PRIMARY KEY (`cod_presentacion`),
@@ -1297,14 +1500,14 @@ ALTER TABLE `presentacion_producto`
   ADD KEY `cod_unidad` (`cod_unidad`);
 
 --
--- Indices de la tabla `presupuestos`
+-- Indexes for table `presupuestos`
 --
 ALTER TABLE `presupuestos`
   ADD PRIMARY KEY (`cod_presupuesto`),
   ADD KEY `categoria` (`categoria`);
 
 --
--- Indices de la tabla `productos`
+-- Indexes for table `productos`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`cod_producto`),
@@ -1312,71 +1515,86 @@ ALTER TABLE `productos`
   ADD KEY `cod_marca` (`cod_marca`);
 
 --
--- Indices de la tabla `proveedores`
+-- Indexes for table `proveedores`
 --
 ALTER TABLE `proveedores`
   ADD PRIMARY KEY (`cod_prov`);
 
 --
--- Indices de la tabla `prov_representantes`
+-- Indexes for table `prov_representantes`
 --
 ALTER TABLE `prov_representantes`
   ADD PRIMARY KEY (`cod_representante`),
   ADD KEY `prov_representantes_ibfk_1` (`cod_prov`);
 
 --
--- Indices de la tabla `stock_mensual`
+-- Indexes for table `proyecciones_futuras`
+--
+ALTER TABLE `proyecciones_futuras`
+  ADD PRIMARY KEY (`cod_proyeccion`),
+  ADD KEY `fk_proyeccion_producto` (`cod_producto`);
+
+--
+-- Indexes for table `proyecciones_historicas`
+--
+ALTER TABLE `proyecciones_historicas`
+  ADD PRIMARY KEY (`cod_historico`),
+  ADD KEY `fk_historico_producto` (`cod_producto`);
+
+--
+-- Indexes for table `stock_mensual`
 --
 ALTER TABLE `stock_mensual`
   ADD PRIMARY KEY (`cod_stock`),
+  ADD UNIQUE KEY `unique_stock_mensual` (`cod_detallep`,`mes`,`ano`),
   ADD KEY `cod_detallep` (`cod_detallep`);
 
 --
--- Indices de la tabla `tipo_cuenta`
+-- Indexes for table `tipo_cuenta`
 --
 ALTER TABLE `tipo_cuenta`
   ADD PRIMARY KEY (`cod_tipo_cuenta`);
 
 --
--- Indices de la tabla `tipo_gasto`
+-- Indexes for table `tipo_gasto`
 --
 ALTER TABLE `tipo_gasto`
   ADD PRIMARY KEY (`cod_tipo_gasto`);
 
 --
--- Indices de la tabla `tipo_pago`
+-- Indexes for table `tipo_pago`
 --
 ALTER TABLE `tipo_pago`
   ADD PRIMARY KEY (`cod_metodo`);
 
 --
--- Indices de la tabla `tipo_usuario`
+-- Indexes for table `tipo_usuario`
 --
 ALTER TABLE `tipo_usuario`
   ADD PRIMARY KEY (`cod_tipo_usuario`);
 
 --
--- Indices de la tabla `tlf_proveedores`
+-- Indexes for table `tlf_proveedores`
 --
 ALTER TABLE `tlf_proveedores`
   ADD PRIMARY KEY (`cod_tlf`),
   ADD KEY `cod_prov` (`cod_prov`);
 
 --
--- Indices de la tabla `tpu_permisos`
+-- Indexes for table `tpu_permisos`
 --
 ALTER TABLE `tpu_permisos`
   ADD KEY `cod_tipo_usuario` (`cod_tipo_usuario`),
   ADD KEY `cod_permiso` (`cod_permiso`);
 
 --
--- Indices de la tabla `unidades_medida`
+-- Indexes for table `unidades_medida`
 --
 ALTER TABLE `unidades_medida`
   ADD PRIMARY KEY (`cod_unidad`);
 
 --
--- Indices de la tabla `usuarios`
+-- Indexes for table `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`cod_usuario`),
@@ -1384,371 +1602,383 @@ ALTER TABLE `usuarios`
   ADD KEY `usuario-tipousuario` (`cod_tipo_usuario`);
 
 --
--- Indices de la tabla `ventas`
+-- Indexes for table `ventas`
 --
 ALTER TABLE `ventas`
   ADD PRIMARY KEY (`cod_venta`),
   ADD KEY `ventas-clientes` (`cod_cliente`);
 
 --
--- Indices de la tabla `vuelto_emitido`
+-- Indexes for table `vuelto_emitido`
 --
 ALTER TABLE `vuelto_emitido`
   ADD PRIMARY KEY (`cod_vuelto`);
 
 --
--- Indices de la tabla `vuelto_recibido`
+-- Indexes for table `vuelto_recibido`
 --
 ALTER TABLE `vuelto_recibido`
   ADD PRIMARY KEY (`cod_vuelto_r`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de la tabla `analisis_rentabilidad`
+-- AUTO_INCREMENT for table `analisis_rentabilidad`
 --
 ALTER TABLE `analisis_rentabilidad`
   MODIFY `cod_analisis` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `asientos_contables`
+-- AUTO_INCREMENT for table `asientos_contables`
 --
 ALTER TABLE `asientos_contables`
   MODIFY `cod_asiento` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `banco`
+-- AUTO_INCREMENT for table `banco`
 --
 ALTER TABLE `banco`
   MODIFY `cod_banco` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `bitacora`
+-- AUTO_INCREMENT for table `bitacora`
 --
 ALTER TABLE `bitacora`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
--- AUTO_INCREMENT de la tabla `caja`
+-- AUTO_INCREMENT for table `caja`
 --
 ALTER TABLE `caja`
   MODIFY `cod_caja` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `cambio_divisa`
+-- AUTO_INCREMENT for table `cambio_divisa`
 --
 ALTER TABLE `cambio_divisa`
   MODIFY `cod_cambio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT de la tabla `carga`
+-- AUTO_INCREMENT for table `carga`
 --
 ALTER TABLE `carga`
   MODIFY `cod_carga` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `categorias`
+-- AUTO_INCREMENT for table `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `cod_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `categoria_gasto`
+-- AUTO_INCREMENT for table `categoria_gasto`
 --
 ALTER TABLE `categoria_gasto`
   MODIFY `cod_cat_gasto` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `categoria_movimiento`
+-- AUTO_INCREMENT for table `categoria_movimiento`
 --
 ALTER TABLE `categoria_movimiento`
   MODIFY `cod_categoria` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `clientes`
+-- AUTO_INCREMENT for table `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `cod_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT de la tabla `compras`
+-- AUTO_INCREMENT for table `compras`
 --
 ALTER TABLE `compras`
   MODIFY `cod_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `cuentas_contables`
+-- AUTO_INCREMENT for table `cuentas_contables`
 --
 ALTER TABLE `cuentas_contables`
   MODIFY `cod_cuenta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT de la tabla `cuenta_bancaria`
+-- AUTO_INCREMENT for table `cuenta_bancaria`
 --
 ALTER TABLE `cuenta_bancaria`
   MODIFY `cod_cuenta_bancaria` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `descarga`
+-- AUTO_INCREMENT for table `descarga`
 --
 ALTER TABLE `descarga`
   MODIFY `cod_descarga` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_asientos`
+-- AUTO_INCREMENT for table `detalle_asientos`
 --
 ALTER TABLE `detalle_asientos`
   MODIFY `cod_det_asiento` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_caja`
+-- AUTO_INCREMENT for table `detalle_caja`
 --
 ALTER TABLE `detalle_caja`
   MODIFY `cod_detalle_caja` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_carga`
+-- AUTO_INCREMENT for table `detalle_carga`
 --
 ALTER TABLE `detalle_carga`
   MODIFY `cod_det_carga` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_compras`
+-- AUTO_INCREMENT for table `detalle_compras`
 --
 ALTER TABLE `detalle_compras`
   MODIFY `cod_detallec` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_descarga`
+-- AUTO_INCREMENT for table `detalle_descarga`
 --
 ALTER TABLE `detalle_descarga`
   MODIFY `cod_det_descarga` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_pago_emitido`
+-- AUTO_INCREMENT for table `detalle_pago_emitido`
 --
 ALTER TABLE `detalle_pago_emitido`
   MODIFY `cod_detallepagoe` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_pago_recibido`
+-- AUTO_INCREMENT for table `detalle_pago_recibido`
 --
 ALTER TABLE `detalle_pago_recibido`
   MODIFY `cod_detallepago` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_productos`
+-- AUTO_INCREMENT for table `detalle_productos`
 --
 ALTER TABLE `detalle_productos`
   MODIFY `cod_detallep` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_ventas`
+-- AUTO_INCREMENT for table `detalle_ventas`
 --
 ALTER TABLE `detalle_ventas`
   MODIFY `cod_detallev` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_vueltoe`
+-- AUTO_INCREMENT for table `detalle_vueltoe`
 --
 ALTER TABLE `detalle_vueltoe`
   MODIFY `cod_detallev` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_vueltor`
+-- AUTO_INCREMENT for table `detalle_vueltor`
 --
 ALTER TABLE `detalle_vueltor`
   MODIFY `cod_detallev_r` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `divisas`
+-- AUTO_INCREMENT for table `divisas`
 --
 ALTER TABLE `divisas`
   MODIFY `cod_divisa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT de la tabla `frecuencia_gasto`
+-- AUTO_INCREMENT for table `frecuencia_gasto`
 --
 ALTER TABLE `frecuencia_gasto`
   MODIFY `cod_frecuencia` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `gasto`
+-- AUTO_INCREMENT for table `gasto`
 --
 ALTER TABLE `gasto`
   MODIFY `cod_gasto` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `marcas`
+-- AUTO_INCREMENT for table `marcas`
 --
 ALTER TABLE `marcas`
-  MODIFY `cod_marca` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `cod_marca` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT de la tabla `movimientos`
+-- AUTO_INCREMENT for table `movimientos`
 --
 ALTER TABLE `movimientos`
   MODIFY `cod_mov` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `pago_emitido`
+-- AUTO_INCREMENT for table `pago_emitido`
 --
 ALTER TABLE `pago_emitido`
   MODIFY `cod_pago_emitido` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `pago_recibido`
+-- AUTO_INCREMENT for table `pago_recibido`
 --
 ALTER TABLE `pago_recibido`
   MODIFY `cod_pago` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `permisos`
+-- AUTO_INCREMENT for table `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `cod_permiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `cod_permiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT de la tabla `presentacion_producto`
+-- AUTO_INCREMENT for table `presentacion_producto`
 --
 ALTER TABLE `presentacion_producto`
-  MODIFY `cod_presentacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_presentacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `presupuestos`
+-- AUTO_INCREMENT for table `presupuestos`
 --
 ALTER TABLE `presupuestos`
   MODIFY `cod_presupuesto` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `productos`
+-- AUTO_INCREMENT for table `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `cod_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `proveedores`
+-- AUTO_INCREMENT for table `proveedores`
 --
 ALTER TABLE `proveedores`
   MODIFY `cod_prov` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `prov_representantes`
+-- AUTO_INCREMENT for table `prov_representantes`
 --
 ALTER TABLE `prov_representantes`
   MODIFY `cod_representante` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `stock_mensual`
+-- AUTO_INCREMENT for table `proyecciones_futuras`
 --
-ALTER TABLE `stock_mensual`
-  MODIFY `cod_stock` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `proyecciones_futuras`
+  MODIFY `cod_proyeccion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `tipo_gasto`
+-- AUTO_INCREMENT for table `proyecciones_historicas`
+--
+ALTER TABLE `proyecciones_historicas`
+  MODIFY `cod_historico` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `stock_mensual`
+--
+ALTER TABLE `stock_mensual`
+  MODIFY `cod_stock` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `tipo_gasto`
 --
 ALTER TABLE `tipo_gasto`
   MODIFY `cod_tipo_gasto` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `tipo_pago`
+-- AUTO_INCREMENT for table `tipo_pago`
 --
 ALTER TABLE `tipo_pago`
   MODIFY `cod_metodo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `tipo_usuario`
+-- AUTO_INCREMENT for table `tipo_usuario`
 --
 ALTER TABLE `tipo_usuario`
   MODIFY `cod_tipo_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `tlf_proveedores`
+-- AUTO_INCREMENT for table `tlf_proveedores`
 --
 ALTER TABLE `tlf_proveedores`
   MODIFY `cod_tlf` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `unidades_medida`
+-- AUTO_INCREMENT for table `unidades_medida`
 --
 ALTER TABLE `unidades_medida`
   MODIFY `cod_unidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `usuarios`
+-- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `ventas`
+-- AUTO_INCREMENT for table `ventas`
 --
 ALTER TABLE `ventas`
   MODIFY `cod_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT de la tabla `vuelto_emitido`
+-- AUTO_INCREMENT for table `vuelto_emitido`
 --
 ALTER TABLE `vuelto_emitido`
   MODIFY `cod_vuelto` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `vuelto_recibido`
+-- AUTO_INCREMENT for table `vuelto_recibido`
 --
 ALTER TABLE `vuelto_recibido`
   MODIFY `cod_vuelto_r` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Restricciones para tablas volcadas
+-- Constraints for dumped tables
 --
 
 --
--- Filtros para la tabla `analisis_rentabilidad`
+-- Constraints for table `analisis_rentabilidad`
 --
 ALTER TABLE `analisis_rentabilidad`
   ADD CONSTRAINT `analisis_rentabilidad_ibfk_1` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `bitacora`
+-- Constraints for table `bitacora`
 --
 ALTER TABLE `bitacora`
   ADD CONSTRAINT `bitacora_ibfk_1` FOREIGN KEY (`cod_usuario`) REFERENCES `usuarios` (`cod_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `cambio_divisa`
+-- Constraints for table `cambio_divisa`
 --
 ALTER TABLE `cambio_divisa`
   ADD CONSTRAINT `cambiodivisa-divisa` FOREIGN KEY (`cod_divisa`) REFERENCES `divisas` (`cod_divisa`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `categoria_gasto`
+-- Constraints for table `categoria_gasto`
 --
 ALTER TABLE `categoria_gasto`
   ADD CONSTRAINT `categoria_gasto_ibfk_1` FOREIGN KEY (`cod_tipo_gasto`) REFERENCES `tipo_gasto` (`cod_tipo_gasto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `categoria_gasto_ibfk_2` FOREIGN KEY (`cod_frecuencia`) REFERENCES `frecuencia_gasto` (`cod_frecuencia`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `compras`
+-- Constraints for table `compras`
 --
 ALTER TABLE `compras`
   ADD CONSTRAINT `compras-proveedores` FOREIGN KEY (`cod_prov`) REFERENCES `proveedores` (`cod_prov`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `conciliacion`
+-- Constraints for table `conciliacion`
 --
 ALTER TABLE `conciliacion`
   ADD CONSTRAINT `conciliacion_ibfk_1` FOREIGN KEY (`cod_cuenta_bancaria`) REFERENCES `cuenta_bancaria` (`cod_cuenta_bancaria`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `cuentas_contables`
+-- Constraints for table `cuentas_contables`
 --
 ALTER TABLE `cuentas_contables`
   ADD CONSTRAINT `cuentas_contables_ibfk_1` FOREIGN KEY (`cuenta_padreid`) REFERENCES `cuentas_contables` (`cod_cuenta`);
 
 --
--- Filtros para la tabla `cuenta_bancaria`
+-- Constraints for table `cuenta_bancaria`
 --
 ALTER TABLE `cuenta_bancaria`
   ADD CONSTRAINT `cuenta_bancaria_ibfk_1` FOREIGN KEY (`cod_banco`) REFERENCES `banco` (`cod_banco`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1756,62 +1986,62 @@ ALTER TABLE `cuenta_bancaria`
   ADD CONSTRAINT `cuenta_bancaria_ibfk_3` FOREIGN KEY (`cod_divisa`) REFERENCES `cambio_divisa` (`cod_cambio`);
 
 --
--- Filtros para la tabla `detalle_asientos`
+-- Constraints for table `detalle_asientos`
 --
 ALTER TABLE `detalle_asientos`
   ADD CONSTRAINT `detalle_asientos_ibfk_1` FOREIGN KEY (`cod_asiento`) REFERENCES `asientos_contables` (`cod_asiento`) ON DELETE CASCADE,
   ADD CONSTRAINT `detalle_asientos_ibfk_2` FOREIGN KEY (`cod_cuenta`) REFERENCES `cuentas_contables` (`cod_cuenta`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `detalle_caja`
+-- Constraints for table `detalle_caja`
 --
 ALTER TABLE `detalle_caja`
   ADD CONSTRAINT `detalle_caja_ibfk_1` FOREIGN KEY (`cod_caja`) REFERENCES `caja` (`cod_caja`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_caja_ibfk_2` FOREIGN KEY (`cod_divisas`) REFERENCES `cambio_divisa` (`cod_cambio`);
 
 --
--- Filtros para la tabla `detalle_carga`
+-- Constraints for table `detalle_carga`
 --
 ALTER TABLE `detalle_carga`
   ADD CONSTRAINT `detalle_carga-carga` FOREIGN KEY (`cod_carga`) REFERENCES `carga` (`cod_carga`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_carga-detallep` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_compras`
+-- Constraints for table `detalle_compras`
 --
 ALTER TABLE `detalle_compras`
   ADD CONSTRAINT `detalle_compras-compras` FOREIGN KEY (`cod_compra`) REFERENCES `compras` (`cod_compra`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_compras-detalle_productos` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_descarga`
+-- Constraints for table `detalle_descarga`
 --
 ALTER TABLE `detalle_descarga`
   ADD CONSTRAINT `detalle_descarga-descarga` FOREIGN KEY (`cod_descarga`) REFERENCES `descarga` (`cod_descarga`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_descarga-detallep` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_pago_emitido`
+-- Constraints for table `detalle_pago_emitido`
 --
 ALTER TABLE `detalle_pago_emitido`
   ADD CONSTRAINT `detalle_pago_emitido_ibfk_1` FOREIGN KEY (`cod_pago_emitido`) REFERENCES `pago_emitido` (`cod_pago_emitido`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_pago_emitido_ibfk_2` FOREIGN KEY (`cod_tipo_pagoe`) REFERENCES `detalle_tipo_pago` (`cod_tipo_pago`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_pago_recibido`
+-- Constraints for table `detalle_pago_recibido`
 --
 ALTER TABLE `detalle_pago_recibido`
   ADD CONSTRAINT `detalle_pago_recibido_ibfk_1` FOREIGN KEY (`cod_pago`) REFERENCES `pago_recibido` (`cod_pago`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_pago_recibido_ibfk_2` FOREIGN KEY (`cod_tipo_pago`) REFERENCES `detalle_tipo_pago` (`cod_tipo_pago`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_productos`
+-- Constraints for table `detalle_productos`
 --
 ALTER TABLE `detalle_productos`
   ADD CONSTRAINT `detalle_productos_ibfk_1` FOREIGN KEY (`cod_presentacion`) REFERENCES `presentacion_producto` (`cod_presentacion`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_tipo_pago`
+-- Constraints for table `detalle_tipo_pago`
 --
 ALTER TABLE `detalle_tipo_pago`
   ADD CONSTRAINT `detalle_tipo_pago_ibfk_1` FOREIGN KEY (`cod_cuenta_bancaria`) REFERENCES `cuenta_bancaria` (`cod_cuenta_bancaria`),
@@ -1819,40 +2049,40 @@ ALTER TABLE `detalle_tipo_pago`
   ADD CONSTRAINT `detalle_tipo_pago_ibfk_3` FOREIGN KEY (`cod_metodo`) REFERENCES `tipo_pago` (`cod_metodo`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_ventas`
+-- Constraints for table `detalle_ventas`
 --
 ALTER TABLE `detalle_ventas`
   ADD CONSTRAINT `detalle_ventas-detalle_productos` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_ventas_ibfk_1` FOREIGN KEY (`cod_venta`) REFERENCES `ventas` (`cod_venta`);
 
 --
--- Filtros para la tabla `detalle_vueltoe`
+-- Constraints for table `detalle_vueltoe`
 --
 ALTER TABLE `detalle_vueltoe`
   ADD CONSTRAINT `detalle_vueltoe_ibfk_1` FOREIGN KEY (`cod_vuelto`) REFERENCES `vuelto_emitido` (`cod_vuelto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_vueltoe_ibfk_2` FOREIGN KEY (`cod_tipo_pago`) REFERENCES `detalle_tipo_pago` (`cod_tipo_pago`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalle_vueltor`
+-- Constraints for table `detalle_vueltor`
 --
 ALTER TABLE `detalle_vueltor`
   ADD CONSTRAINT `detalle_vueltor_ibfk_1` FOREIGN KEY (`cod_vuelto_r`) REFERENCES `vuelto_recibido` (`cod_vuelto_r`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalle_vueltor_ibfk_2` FOREIGN KEY (`cod_tipo_pago`) REFERENCES `detalle_tipo_pago` (`cod_tipo_pago`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `gasto`
+-- Constraints for table `gasto`
 --
 ALTER TABLE `gasto`
   ADD CONSTRAINT `gasto_ibfk_1` FOREIGN KEY (`cod_cat_gasto`) REFERENCES `categoria_gasto` (`cod_cat_gasto`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `movimientos`
+-- Constraints for table `movimientos`
 --
 ALTER TABLE `movimientos`
   ADD CONSTRAINT `movimientos_ibfk_1` FOREIGN KEY (`cod_asiento`) REFERENCES `asientos_contables` (`cod_asiento`);
 
 --
--- Filtros para la tabla `pago_emitido`
+-- Constraints for table `pago_emitido`
 --
 ALTER TABLE `pago_emitido`
   ADD CONSTRAINT `pago_emitido_ibfk_1` FOREIGN KEY (`cod_compra`) REFERENCES `compras` (`cod_compra`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1860,68 +2090,88 @@ ALTER TABLE `pago_emitido`
   ADD CONSTRAINT `pago_emitido_ibfk_3` FOREIGN KEY (`cod_vuelto_r`) REFERENCES `vuelto_recibido` (`cod_vuelto_r`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `pago_recibido`
+-- Constraints for table `pago_recibido`
 --
 ALTER TABLE `pago_recibido`
   ADD CONSTRAINT `pago_recibido_ibfk_1` FOREIGN KEY (`cod_venta`) REFERENCES `ventas` (`cod_venta`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `pago_recibido_ibfk_2` FOREIGN KEY (`cod_vuelto`) REFERENCES `vuelto_emitido` (`cod_vuelto`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `presentacion_producto`
+-- Constraints for table `presentacion_producto`
 --
 ALTER TABLE `presentacion_producto`
   ADD CONSTRAINT `presentacion_producto_ibfk_1` FOREIGN KEY (`cod_producto`) REFERENCES `productos` (`cod_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `presentacion_producto_ibfk_2` FOREIGN KEY (`cod_unidad`) REFERENCES `unidades_medida` (`cod_unidad`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `presupuestos`
+-- Constraints for table `presupuestos`
 --
 ALTER TABLE `presupuestos`
   ADD CONSTRAINT `presupuestos_ibfk_1` FOREIGN KEY (`categoria`) REFERENCES `categoria_movimiento` (`cod_categoria`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `productos`
+-- Constraints for table `productos`
 --
 ALTER TABLE `productos`
   ADD CONSTRAINT `productos-categorias` FOREIGN KEY (`cod_categoria`) REFERENCES `categorias` (`cod_categoria`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`cod_marca`) REFERENCES `marcas` (`cod_marca`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `prov_representantes`
+-- Constraints for table `prov_representantes`
 --
 ALTER TABLE `prov_representantes`
   ADD CONSTRAINT `prov_representantes_ibfk_1` FOREIGN KEY (`cod_prov`) REFERENCES `proveedores` (`cod_prov`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `stock_mensual`
+-- Constraints for table `proyecciones_futuras`
+--
+ALTER TABLE `proyecciones_futuras`
+  ADD CONSTRAINT `fk_proyeccion_producto` FOREIGN KEY (`cod_producto`) REFERENCES `productos` (`cod_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `proyecciones_historicas`
+--
+ALTER TABLE `proyecciones_historicas`
+  ADD CONSTRAINT `fk_historico_producto` FOREIGN KEY (`cod_producto`) REFERENCES `productos` (`cod_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `stock_mensual`
 --
 ALTER TABLE `stock_mensual`
   ADD CONSTRAINT `stock_mensual_ibfk_1` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `tlf_proveedores`
+-- Constraints for table `tlf_proveedores`
 --
 ALTER TABLE `tlf_proveedores`
   ADD CONSTRAINT `tlf_proveedores_ibfk_1` FOREIGN KEY (`cod_prov`) REFERENCES `proveedores` (`cod_prov`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `tpu_permisos`
+-- Constraints for table `tpu_permisos`
 --
 ALTER TABLE `tpu_permisos`
   ADD CONSTRAINT `tpu_permisos_ibfk_1` FOREIGN KEY (`cod_tipo_usuario`) REFERENCES `tipo_usuario` (`cod_tipo_usuario`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `tpu_permisos_ibfk_2` FOREIGN KEY (`cod_permiso`) REFERENCES `permisos` (`cod_permiso`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `usuarios`
+-- Constraints for table `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `usuario-tipousuario` FOREIGN KEY (`cod_tipo_usuario`) REFERENCES `tipo_usuario` (`cod_tipo_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `ventas`
+-- Constraints for table `ventas`
 --
 ALTER TABLE `ventas`
   ADD CONSTRAINT `ventas-clientes` FOREIGN KEY (`cod_cliente`) REFERENCES `clientes` (`cod_cliente`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `generar_stock_mensual_event` ON SCHEDULE EVERY 1 MONTH STARTS '2025-05-29 23:59:00' ON COMPLETION NOT PRESERVE ENABLE DO CALL generar_stock_mensual()$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

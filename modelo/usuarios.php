@@ -2,16 +2,12 @@
 require_once "conexion.php";
 
 class Usuario extends Conexion{
-
-    private $conex;
     private $nombre;
     private $user;
     private $password;
     private $status;
 
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
     }
 
 /*GETTER Y SETTER*/
@@ -45,12 +41,13 @@ class Usuario extends Conexion{
 //LOGIN
     public function mostrar($valor){
             $resultado = [];
-
+            $this->conectarBD();
             $sql = "SELECT * FROM usuarios WHERE user = :user";
             $stmt = $this->conex->prepare($sql);
             $stmt->bindParam(":user", $valor, PDO::PARAM_STR);
             $stmt->execute();
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->desconectarBD();
             
             if ($resultado === false) {
             return [];
@@ -60,6 +57,7 @@ class Usuario extends Conexion{
     }
 
 public function accesos($valor){
+    $this->conectarBD();
     $sql= "SELECT p.cod_permiso FROM usuarios u
         INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
         INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario
@@ -69,6 +67,7 @@ public function accesos($valor){
     $strExec->bindParam(':valor', $valor, PDO::PARAM_INT); 
     $resul=$strExec->execute();
     $datos=$strExec->fetchAll(PDO::FETCH_ASSOC);
+    $this->desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -82,7 +81,7 @@ public function accesos($valor){
 REGISTRAR USUARIO
 ================================*/
 private function registrar($rol){
-
+    $this->conectarBD();    
     $sql = "INSERT INTO usuarios(nombre,user,password,cod_tipo_usuario,status) VALUES(:nombre,:user,:password,:cod_tipo_usuario,1)";
 
     $strExec = $this->conex->prepare($sql);
@@ -93,6 +92,7 @@ private function registrar($rol){
     $strExec->bindParam(":cod_tipo_usuario", $rol);
 
     $resul = $strExec->execute();
+    $this->desconectarBD();
 
     if($resul){
         $r = 1;
@@ -113,12 +113,14 @@ VALIDAR USUARIO (USER)
 ================================*/
 public function buscar($valor){
     $this->user=$valor;
+    $this->conectarBD();
     $registro = "select * from usuarios where user=:user"; 
     $resultado= "";
         $dato=$this->conex->prepare($registro);
         $dato->bindParam(':user',$this->user); 
         $resul=$dato->execute();
         $resultado=$dato->fetch(PDO::FETCH_ASSOC);  
+    $this->desconectarBD();
         if ($resul) {
             return $resultado;
         }else{
@@ -130,6 +132,7 @@ public function buscar($valor){
 MOSTRAR USUARIOS
 ================================*/
 public function listar(){
+    $this->conectarBD();
     $registro = "SELECT
     u.cod_usuario,
     u.nombre,
@@ -144,6 +147,7 @@ public function listar(){
     $resul = $consulta->execute();
 
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    $this->desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -156,6 +160,7 @@ public function listar(){
 EDITAR USUARIO
 ================================*/
     public function editar($codigo, $rol){
+        $this->conectarBD();
     $sql = "UPDATE usuarios 
         SET nombre=:nombre, user=:user, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
         WHERE cod_usuario=:codigo";
@@ -168,11 +173,12 @@ EDITAR USUARIO
         $strExec->bindParam(':codigo', $codigo, PDO::PARAM_INT);
 
         $resul = $strExec->execute();
-
+        $this->desconectarBD();
         return $resul ? 1 : 0;
     }
     
     public function editar2($codigo, $rol){
+        $this->conectarBD();
     $sql = "UPDATE usuarios 
             SET nombre=:nombre, user=:user, password=:password, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
             WHERE cod_usuario=:codigo";
@@ -187,7 +193,7 @@ EDITAR USUARIO
 
             // Ejecutar la consulta
             $resul = $strExec->execute();
-
+            $this->desconectarBD();
             return $resul ? 1 : 0;
     }
 
@@ -195,7 +201,7 @@ EDITAR USUARIO
 ELIMINAR USUARIO
 ================================*/
 public function eliminar($valor) {
-
+    $this->conectarBD();
     // el usuario a eliminar es administrador?
     $sql = "SELECT cod_tipo_usuario, status FROM usuarios WHERE cod_usuario = :valor";
     $strExec = $this->conex->prepare($sql);
@@ -206,6 +212,7 @@ public function eliminar($valor) {
     if ($usuario) {
         // Si el usuario tiene status activo, mostrar error
         if($usuario['status'] == 1){
+            $this->desconectarBD();
             return 'error_status';
         }
         
@@ -215,8 +222,9 @@ public function eliminar($valor) {
             $strExec = $this->conex->prepare($sql);
             $strExec->execute();
             $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
-
+            
             if ($resultado['total'] == 2) { // 2 porque por defecto, el admin de programadores estará en la bd
+                $this->desconectarBD();
                 return 'error_ultimo';
             }
         }
@@ -226,7 +234,7 @@ public function eliminar($valor) {
         $strExecDelete = $this->conex->prepare($sqlDelete);
         $strExecDelete->bindParam(':valor', $valor, PDO::PARAM_INT);
         $delete = $strExecDelete->execute();
-
+        $this->desconectarBD();
         return $delete ? 'success' : 'error_delete'; 
         }
     }
