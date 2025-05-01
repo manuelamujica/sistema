@@ -5,11 +5,11 @@ require_once "validaciones.php";
 class Banco extends Conexion {
     use ValidadorTrait;
 
-    private $conex;
+    //private $conex;
     private $nombre_banco;
     private $cod_banco;
     public function __construct() {
-        $this->conex = (new Conexion())->conectar();
+        //$this->conex = (new Conexion())->conectar();
     }
 
   
