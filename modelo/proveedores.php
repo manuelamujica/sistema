@@ -5,7 +5,6 @@ require_once 'validaciones.php';
 class Proveedor extends Conexion
 {
   use ValidadorTrait;
-  private $conex;
   private $cod_prov;
   private $rif;
   private $razon_social;
@@ -17,8 +16,7 @@ class Proveedor extends Conexion
 
   public function __construct()
   {
-    $this->conex = new Conexion();
-    $this->conex = $this->conex->conectar();
+    parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
   }
 
   public function check() {
@@ -121,15 +119,14 @@ class Proveedor extends Conexion
   {
 
     $sql = "INSERT INTO proveedores(rif,razon_social,email,direccion,status)  VALUES  (:rif,:razon_social,:email,:direccion,1)";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
-
     $strExec->bindParam(':rif', $this->rif);
     $strExec->bindParam(':razon_social', $this->razon_social);
     $strExec->bindParam(':email', $this->email);
     $strExec->bindParam(':direccion', $this->direccion);
-
     $resul = $strExec->execute();
+    parent::desconectarBD();
     if ($resul) {
       $res = 1;
     } else {
@@ -150,7 +147,7 @@ class Proveedor extends Conexion
   private function editar() {
     
     $sql = "UPDATE proveedores SET rif = :rif, razon_social = :razon_social, email = :email, direccion = :direccion, status = :status WHERE cod_prov = :cod_prov";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':cod_prov', $this->cod_prov);
     $strExec->bindParam(':rif', $this->rif);
@@ -158,10 +155,9 @@ class Proveedor extends Conexion
     $strExec->bindParam(':email', $this->email);
     $strExec->bindParam(':direccion', $this->direccion);
     $strExec->bindParam(':status', $this->status);
-
     // Ejecuta la consulta  
     $resul = $strExec->execute();
-
+    parent::desconectarBD();
     if ($resul == 1) {
       return 1; 
     } else {
@@ -181,16 +177,16 @@ public function getedita() {
   {
       // Verificar si hay compras asociadas
       $sqlCompras = "SELECT COUNT(*) AS n_compras FROM compras WHERE cod_prov = :cod_prov";
+      parent::conectarBD();
       $strExec = $this->conex->prepare($sqlCompras);
       $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
       $strExec->execute();
       $resultadoCompras = $strExec->fetch(PDO::FETCH_ASSOC);
-  
       // Si hay compras asociadas, no se puede eliminar
       if ($resultadoCompras['n_compras'] > 0) {
+          parent::desconectarBD();
           return 'error_compra_asociada';
       }
-  
       // Verificar si hay representantes asociados
       $sqlRepresentantes = "SELECT COUNT(*) AS n_representantes FROM prov_representantes WHERE cod_prov = :cod_prov";
       $strExec = $this->conex->prepare($sqlRepresentantes);
@@ -205,9 +201,10 @@ public function getedita() {
           $strExec = $this->conex->prepare($fisico);
           $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
           $strExec->execute();
+          parent::desconectarBD();
           return 'success_eliminado';
       }
-  
+      parent::desconectarBD();
       return 'error_compra_asociada'; // Por si acaso
   }
   
@@ -254,11 +251,11 @@ public function getedita() {
       p.cod_prov
     ORDER BY 
       p.cod_prov;";
-
+    parent::conectarBD();
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if ($resul) {
       return $datos;
     } else {
@@ -279,9 +276,11 @@ public function getedita() {
     $this->rif = $dato;
     $registro = "select * from proveedores where rif='" . $this->rif . "'";
     $resulado = "";
+    parent::conectarBD();
     $dato = $this->conex->prepare($registro);
     $resul = $dato->execute();
     $resultado = $dato->fetch(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if ($resul) {
       return $resultado;
     } else {

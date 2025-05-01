@@ -2,20 +2,15 @@
 require_once "conexion.php";
 
 class CatalogoCuentas extends Conexion{
-
-    private $conex;
     private $codigo_contable;
     private $nombre;
     private $naturaleza;
     private $cuenta_padreid;
     private $nivel;
-
     public function __construct()
     {
-        $this->conex= new Conexion();
-        $this->conex = $this->conex->conectar();
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
-
     public function getCodigoContable(){
         return $this->codigo_contable;
     }
@@ -45,22 +40,21 @@ class CatalogoCuentas extends Conexion{
     }
     public function setNivel($nivel){
         $this->nivel = $nivel;
-
-}
+    }
     /*==============================
     REGISTRAR CUENTA CONTABLE CON STORED PROCEDURE
     ================================*/
     private function registrar(){
-        $sql = "CALL(:codigo_contable, :nombre, :naturaleza, :cuenta_padreid, :nivel, 1)";  
+        $sql = "CALL(:codigo_contable, :nombre, :naturaleza, :cuenta_padreid, :nivel, 1)";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(":codigo_contable", $this->codigo_contable, PDO::PARAM_STR);
         $strExec->bindParam(":nombre", $this->nombre, PDO::PARAM_STR);
         $strExec->bindParam(":naturaleza", $this->naturaleza);
         $strExec->bindParam(":cuenta_padreid", $this->cuenta_padreid, PDO::PARAM_INT);
         $strExec->bindParam(":nivel", $this->nivel, PDO::PARAM_INT);
-
         $resul = $strExec->execute();
-
+        parent::desconectarBD();
         return $resul ? 1 : 0;  // Retorna 1 si tuvo éxito, 0 si falló
     }
 
@@ -74,9 +68,12 @@ class CatalogoCuentas extends Conexion{
 
     private function consultar_cuentas(){
         $sql = "CALL consultar_cuentas_contables()";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $strExec->execute();
-        return $strExec->fetchAll(PDO::FETCH_ASSOC);
+        $resul=$strExec->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        return $resul;
     }
 
     public function getconsultar_cuentas(){

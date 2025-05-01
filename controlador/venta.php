@@ -126,7 +126,7 @@ if(isset($_POST['buscar'])){
 
 //$datos=$obj->v_cliente();
 //$opciones=$objpago->consultar();
-//$consulta=$obj->consultar();
+$consulta=$obj->consultar();
 $_GET['ruta']='venta';
 require_once 'plantilla.php';
 

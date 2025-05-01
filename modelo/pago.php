@@ -4,14 +4,11 @@ class Pago extends Conexion{
     private $monto_total;
     private $monto_dpago;
     private $cod_venta;
-    private $conex;
     private $cod_pago;
 
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
-
     public function get_montototal(){
         return $this->monto_total;
     }
@@ -39,6 +36,7 @@ class Pago extends Conexion{
 
     public function registrar($pago, $monto_venta){
         $sql="INSERT INTO pagos(cod_venta, monto_total) VALUES(:cod_venta, :monto_total)";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(':cod_venta', $this->cod_venta);
         $strExec->bindParam(':monto_total', $this->monto_total);
@@ -68,10 +66,12 @@ class Pago extends Conexion{
                 $r=0;
             }
         }
+        parent::desconectarBD();
     return $r;
     }
 
     public function parcialp($pago){
+        parent::conectarBD();
         foreach ($pago as $pagos){
             if(!empty($pagos['monto']) && $pagos['monto']>0){
                 $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto) VALUES(:cod_pago, :cod_tipo_pago, :monto)";
@@ -104,16 +104,8 @@ class Pago extends Conexion{
                 
             }
         }
+        parent::desconectarBD();
         return $r;
     }
-
-    
-
-
-
-
-
-
-
 
 }
