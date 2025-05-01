@@ -14,7 +14,7 @@ class Tipo_cuenta extends Conexion {
        $this->conex = $this->conex->conectar();
     }
 
-    public function consultar(){
+    public function consultarTipo(){
         $sql = "select * from tipo_cuenta";
         $consulta = $this->conex->prepare($sql);
         $resul = $consulta->execute();

@@ -9,6 +9,8 @@ class CuentaBancaria extends Conexion{
     private $saldo;
     private $divisa;
     private $status;
+    private $tipo_cuenta;
+    
   
 
     private $cod_cuenta_bancaria;
@@ -30,7 +32,7 @@ class CuentaBancaria extends Conexion{
         return $this->numero_cuenta;
     }
     public function setNumero($numero_cuenta){
-        $resultado = $this->validarTexto($numero_cuenta, 'numero_cuenta', 20, 20);
+        $resultado = $this->validarNumerico($numero_cuenta, 'numero_cuenta', 20, 20);
         if ($resultado === true) {
             $this->numero_cuenta = $numero_cuenta;
         } else {
@@ -53,25 +55,23 @@ public function setBanco($cod_banco){
     if ($resultado === true) {
         $this->cod_banco = $cod_banco;
     } else {
-        $this->errores['cod_banco'] = $resultado;
         
     }
 }
 
 
     public function getTipo(){
-        return $this->cod_tipo_cuenta;
+        return $this->tipo_cuenta;
     }
     public function setTipo($cod_tipo_cuenta){
         $resultado = $this->validarNumerico($cod_tipo_cuenta, 'cod_tipo_cuenta', 1, 50);
         if ($resultado === true) {
             $this->cod_tipo_cuenta = $cod_tipo_cuenta;
         } else {
-            $this->errores['cod_tipo_cuenta'] = $resultado;
+            
         }
-        $this->cod_tipo_cuenta = $cod_tipo_cuenta;
     }
-      
+   
     
 
     public function setSaldo($saldo){
@@ -113,28 +113,30 @@ public function setDivisa($divisa){
 /*==============================
 REGISTRAR CUENTA BANCARIA
 ================================*/
-    private function crearCuenta(){
-
-        $sql = "INSERT INTO cuenta_bancaria (numero_cuenta, saldo, cod_divisas, status, nombre_banco, nombre, cod_tipo_cuenta, cod_banco) VALUES(:numero_cuenta, :saldo, :divisa, :status, :nombre_banco, :nombre, :cod_tipo_cuenta, :cod_banco)";
-
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(":numero_cuenta", $this->numero_cuenta);
-        $strExec->bindParam(":saldo", $this->saldo);
-        $strExec->bindParam(":divisa", $this->cod_divisa);
-        $strExec->bindParam(":status", $this->status);
-        $strExec->bindParam(":cod_tipo_cuenta", $this->cod_tipo_cuenta);
-        $strExec->bindParam(":cod_banco", $this->cod_banco);
-
-        $resul = $strExec->execute();
-
-        if($resul){
-            $r = 1;
-        }else{
-            $r = 0;
-        }
-        return $r;
-
+private function crearCuenta(){
+    // Asignar status por defecto si no está establecido
+    if(!isset($this->status)) {
+        $this->status = 1; // 1 = Activo por defecto
     }
+
+    $sql = "INSERT INTO cuenta_bancaria (numero_cuenta, saldo, cod_divisa, status, cod_tipo_cuenta, cod_banco) 
+            VALUES(:numero_cuenta, :saldo, :cod_divisa, :status, :cod_tipo_cuenta, :cod_banco)";
+
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(":numero_cuenta", $this->numero_cuenta);
+    $strExec->bindParam(":saldo", $this->saldo);
+    $strExec->bindParam(":cod_divisa", $this->cod_divisa);
+    $strExec->bindParam(":status", $this->status);
+    $strExec->bindParam(":cod_tipo_cuenta", $this->cod_tipo_cuenta);
+    $strExec->bindParam(":cod_banco", $this->cod_banco);
+
+    try {
+        return $strExec->execute() ? 1 : 0;
+    } catch (PDOException $e) {
+        error_log("Error al crear cuenta: " . $e->getMessage());
+        return 0;
+    }
+}
     public function getcrearCuenta(){
         return $this->crearCuenta();
     }
@@ -156,42 +158,39 @@ REGISTRAR CUENTA BANCARIA
         }return $r = 0;
     }
 
-    private function buscar($dato){
-        $this->numero_cuenta = $dato;
-        $registro="select * from cuenta_bancaria where numero_cuenta='".$this->numero_cuenta."'";
-        $resultado= "";
-        $dato = $this->conex->prepare($registro);
-        $resul = $dato->execute();
-        $resultado=$dato->fetch(PDO::FETCH_ASSOC);
-        if($resul){
-            return $resultado;
-        }else{
-            return false;
-        }
-    }
 
-    public function getbuscar($dato){
-        return $this->buscar($dato);
+    public function getbuscar($cod_cuenta_bancaria) {
+        $sql = "SELECT * FROM cuenta_bancaria WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
+        $stmt = $this->conex->prepare($sql);
+        $stmt->bindParam(':cod_cuenta_bancaria', $cod_cuenta_bancaria);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
 
 
     private function editar(){
-        $registro = "UPDATE cuenta_bancaria SET numero_cuenta = :numero_cuenta, saldo = :saldo, cod_divisas = :divisa, status = :status, nombre_banco = :nombre_banco, nombre = :nombre, cod_tipo_cuenta = :cod_tipo_cuenta, cod_banco = :cod_banco WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
-
-        $strExec = $this->conex->prepare($registro);
-        $strExec->bindParam(':cod_cuenta_bancaria',$this->cod_cuenta_bancaria);
-        $strExec->bindParam(':numero_cuenta',$this->numero_cuenta);
-        $strExec->bindParam(':saldo',$this->saldo);
-        $strExec->bindParam(':divisa',$this->cod_divisa);
+        $editar = "UPDATE cuenta_bancaria 
+                     SET numero_cuenta = :numero_cuenta, 
+                         saldo = :saldo, 
+                         cod_divisa = :divisa, 
+                         status = :status, 
+                         cod_tipo_cuenta = :cod_tipo_cuenta, 
+                         cod_banco = :cod_banco 
+                     WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
+    
+        $strExec = $this->conex->prepare($editar);
+        $strExec->bindParam(':cod_cuenta_bancaria', $this->cod_cuenta_bancaria);
+        $strExec->bindParam(':numero_cuenta', $this->numero_cuenta);
+        $strExec->bindParam(':saldo', $this->saldo);
+        $strExec->bindParam(':divisa', $this->cod_divisa);
         $strExec->bindParam(':status', $this->status);
-        $resul = $strExec->execute();
-        if($resul == 1){
-            $r = 1;
-        }else{
-            $r = 0;
-        }
-        return $r;
+        $strExec->bindParam(':cod_tipo_cuenta', $this->cod_tipo_cuenta);
+        $strExec->bindParam(':cod_banco', $this->cod_banco);
+    
+        return $strExec->execute() ? 1 : 0;
     }
+    
 
     public function geteditar(){
         return $this->editar();
