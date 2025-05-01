@@ -87,45 +87,74 @@
 <!-- /.content-wrapper -->
 
     <!-- Modal para registrar tipo de pago -->
-    <div class="modal fade" id="addPaymentTypeModal" tabindex="-1" role="dialog" aria-labelledby="addPaymentTypeModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
-                    <h5 class="modal-title" id="addPaymentTypeModalLabel">Registrar Tipo de Pago</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="addPaymentTypeForm" method="post">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="paymentTypeName">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                            <input type="text" class="form-control" id="tipo_pago" name="tipo_pago" placeholder="Ej: Transferencia Bs" required>
-                            <div class="invalid-feedback" style="display: none;"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="divisa">Seleccionar Divisa<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                            <select class="form-control" id="divisa" name="divisa" required>
-                                <option value="" disabled selected>Seleccione una divisa</option>
-                                <?php foreach ($divisas as $divisa): ?>
-                                    <option value="<?= $divisa['cod_cambio']; ?>"><?= $divisa['nombre']." - ". $divisa['abreviatura']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <!-- Alert Message -->
-                        <div class="alert alert-light d-flex align-items-center" role="alert">
-                            <i class="fas fa-exclamation-triangle mr-2"></i>
-                            <span>Todos los campos marcados con (*) son obligatorios</span>
-                        </div>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary" name="registrar">Guardar</button>
-                    </div>
-                </form>
+    <!-- Modal para registrar tipo de pago -->
+<div class="modal fade" id="addPaymentTypeModal" tabindex="-1" role="dialog" aria-labelledby="addPaymentTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+                <h5 class="modal-title" id="addPaymentTypeModalLabel">Registrar Tipo de Pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <form id="addPaymentTypeForm" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="nombre_tipo_pago">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                        <select class="form-control" id="nombre_tipo_pago" name="nombre_tipo_pago" required>
+                            <option value="" disabled selected>Seleccione un tipo de pago</option>
+                            <?php foreach ($tipos_pago_nombres as $tipo): ?>
+                                <option value="<?= $tipo['id']; ?>"><?= $tipo['nombre']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Moneda<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+                            <label class="btn btn-outline-primary active">
+                                <input type="radio" name="tipo_moneda" id="digital" value="1" checked> Digital
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input type="radio" name="tipo_moneda" id="efectivo" value="2"> Efectivo
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group bancos-container">
+                        <label for="banco">Seleccionar Banco<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                        <select class="form-control" id="banco" name="banco">
+                            <option value="" disabled selected>Seleccione un banco</option>
+                            <?php foreach ($bancos as $banco): ?>
+                                <option value="<?= $banco['id']; ?>"><?= $banco['nombre']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group cajas-container" style="display: none;">
+                        <label for="caja">Seleccionar Caja<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                        <select class="form-control" id="caja" name="caja">
+                            <option value="" disabled selected>Seleccione una caja</option>
+                            <?php foreach ($cajas as $caja): ?>
+                                <option value="<?= $caja['id']; ?>"><?= $caja['nombre']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <!-- Alert Message -->
+                    <div class="alert alert-light d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>Todos los campos marcados con (*) son obligatorios</span>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="registrar">Guardar</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
     <?php
 if (isset($registrar)): ?>
     <script>

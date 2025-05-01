@@ -12,12 +12,9 @@ class Clientes extends Conexion{
     private $status;
     private $errores = [];
 
-
-public function __construct(){
-    $this -> conex = new Conexion();
-    $this -> conex = $this->conex->conectar();
-}
-
+    public function __construct() {
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+    }
 
     public function setData($datos) {
         // Limpiar errores anteriores
@@ -138,21 +135,16 @@ public function __construct(){
     private function registrar(){ 
 
         $registro = "INSERT INTO clientes(nombre,apellido,cedula_rif,telefono,email,direccion,status) VALUES(:nombre, :apellido, :cedula_rif, :telefono,:email,:direccion,1)";
-        $this->conectarBD();
-        #instanciar el metodo PREPARE no la ejecuta, sino que la inicializa
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-
-        #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':apellido', $this->apellido);
         $strExec->bindParam(':cedula_rif', $this->cedula);
         $strExec->bindParam(':telefono', $this->telefono);
         $strExec->bindParam(':email', $this->email);
         $strExec->bindParam(':direccion', $this->direccion);
-
         $resul = $strExec->execute();
-
-        $this->desconectarBD();
+        parent::desconectarBD();
         if($resul){
             $r = 1;
         }else{
@@ -166,13 +158,12 @@ public function __construct(){
     }
 
     public function consultar(){
-        $this->conectarBD();
         $registro = "select * from clientes";
+        parent::conectarBD();
         $consulta = $this->conex->prepare($registro);
         $resul = $consulta->execute();
-        $this->desconectarBD();
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+        parent::desconectarBD();
         if($resul){
             return $datos;
 
@@ -186,11 +177,11 @@ public function __construct(){
         $this->cedula=$valor;
         $registro = "select * from clientes where cedula_rif='".$this->cedula."'";
         $resutado= "";
-        $this->conectarBD();
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
-        $this->desconectarBD();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -205,11 +196,9 @@ public function __construct(){
 
     private function actualizar($valor){
         $cod=$valor;
-        $this->conectarBD();
         $registro="UPDATE clientes SET nombre=:nombre, apellido=:apellido, cedula_rif=:cedula_rif, telefono=:telefono, email=:email, direccion=:direccion, status=:status WHERE cod_cliente=$cod";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-
         #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':apellido', $this->apellido);
@@ -219,7 +208,7 @@ public function __construct(){
         $strExec->bindParam(':direccion', $this->direccion);
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
-        $this->desconectarBD();
+        parent::desconectarBD();
         if($resul){
             $r = 1;
         }else{
@@ -239,6 +228,7 @@ public function __construct(){
     private function eliminar($valor){
         $this->conectarBD();
         $registro="SELECT COUNT(*) AS n_ventas FROM ventas WHERE cod_cliente =$valor ";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $resul = $strExec->execute();
         $this->desconectarBD();
@@ -254,9 +244,10 @@ public function __construct(){
                 $this->desconectarBD();
                 $r='success';
             }
-            
+            parent::desconectarBD();
         }else {
             $r='error_delete';
+            parent::desconectarBD();
         }
         return $r;
     }
