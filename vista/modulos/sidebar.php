@@ -20,7 +20,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent text-sm" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-header">INVENTARIO</li>
-                    <?php if ($_SESSION["producto"]==1): ?>
+                    <?php if (!empty($_SESSION["permisos"][1])): ?>
                         <li class="nav-item">
                             <a href="productos" class="nav-link">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
@@ -31,7 +31,8 @@
                         </li>
                     <?php endif; ?>
 
-                    <?php if ($_SESSION["inventario"]==1): ?>
+                    <?php //if (!empty($_SESSION["permisos"][2])):
+                        if ($_SESSION["inventario"]==1): ?>
                         <li class="nav-item">
                             <a href="#" class="nav-link bitacora-link" data-modulo="Ajuste de INventario">
                                 <i class="fas fa-dolly-flatbed nav-icon"></i>
@@ -69,7 +70,7 @@
                     </a>
                 </li>
                 <?php endif; ?>
-                <?php if ($_SESSION["venta"]==1): ?>
+                <?php if (!empty($_SESSION["permisos"][5])): ?>
                 <li class="nav-item">
                     <a href="venta" class="nav-link bitacora-link" data-modulo="Ventas">
                         <i class="nav-icon fa fa-file"></i>
@@ -294,7 +295,7 @@
                             <?php endif;?>
 
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="marcas" class="nav-link">
                                     <i class="fas fa-tags nav-icon"></i>
                                         <p>
                                             Marcas

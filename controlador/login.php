@@ -43,37 +43,47 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["usuario"] = 0;
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
+
+			$_SESSION["permisos"] = []; // Inicializamos el array de permisos
 		
 
-
-
-			//Obtenemos los permisos asociados al usuario
+			//Obtenemos los modulos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
-			foreach ($accesos as $cod_permiso) {
-				if ($cod_permiso["cod_permiso"] == 1) {
+			foreach ($accesos as $permisos) {
+				if ($permisos["permisos"] == 1) {
 					$_SESSION["producto"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 2) {
+				} else if ($permisos["permisos"] == 2) {
 					$_SESSION["inventario"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 3) {
+				} else if ($permisos["permisos"] == 3) {
 					$_SESSION["categoria"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 4) {
+				} else if ($permisos["permisos"] == 4) {
 					$_SESSION["compra"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 5) {
+				} else if ($permisos["permisos"] == 5) {
 					$_SESSION["venta"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 6) {
+				} else if ($permisos["permisos"] == 6) {
 					$_SESSION["cliente"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 7) {
+				} else if ($permisos["permisos"] == 7) {
 					$_SESSION["proveedor"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 8) {
+				} else if ($permisos["permisos"] == 8) {
 					$_SESSION["usuario"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 9) {
+				} else if ($permisos["permisos"] == 9) {
 					$_SESSION["reporte"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 10) {
+				} else if ($permisos["permisos"] == 10) {
 					$_SESSION["configuracion"] = 1;
 				} 
-
+				/*$modulo = $permisos["cod_modulo"];
+				$accion = $permisos["cod_crud"];
+			
+				// Si no existe el módulo aún, lo inicializamos como array vacío
+				if (!isset($_SESSION["permisos"][$modulo])) {
+					$_SESSION["permisos"][$modulo] = [];
+				}
+			
+				// Marcamos la acción permitida con 1
+				$_SESSION["permisos"][$modulo][$accion] = 1;*/
 			
 			}
+			
 
 			//Obtenemos la informacion de la empresa
 			$logo = $obj->mostrar();
