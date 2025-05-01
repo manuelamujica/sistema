@@ -32,8 +32,8 @@ if (isset($error)): ?>
                     <div class="small-box" style="background-color: #8770fa; color: white;">
                         <div class="inner">
                             <p class="mb-1">Valor inventario costo</p>
-                            <h3> <?php echo $v["total_costo"] ?>Bs</h3> 
-                            <p class="badge bg-success">+10%</p> 
+                            <h3> <?php echo number_format($v['total_costo'], 2, ',', '.')?>Bs</h3> 
+                            <p class="badge bg-success">+10%</p>  <!-- HACER DINAMICO -->
                             <span>esta semana</span> 
                         </div>
                     </div>
@@ -42,8 +42,8 @@ if (isset($error)): ?>
                     <div class="small-box bg-primary">
                         <div class="inner">
                             <p class="mb-1">Valor inventario venta</p>
-                            <h3><?php echo $v["total_venta"] ?>Bs</h3> 
-                            <p class="badge bg-success">+20%</p> 
+                            <h3><?php echo number_format($v['total_venta'], 2, ',', '.')?>Bs</h3> 
+                            <p class="badge bg-success">+20%</p>  <!-- HACER DINAMICO -->
                             <span>esta semana</span> 
                         </div>
                     </div>

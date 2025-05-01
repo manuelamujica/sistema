@@ -1,16 +1,97 @@
 <?php
 require_once 'conexion.php';
+require_once 'validaciones.php';
 
-class Divisa extends Conexion{
+class Divisa extends Conexion
+{
+    use ValidadorTrait; // Usar el trait para validaciones
+    private $errores = [];
     private $nombre;
     private $simbolo;
     private $status;
     private $tasa;
     private $fecha;
 
-
     public function __construct(){
         parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+    }
+
+    public function setnombre($valor)
+    {
+        $res = $this->validarTexto($valor, 'nombre', 2, 50);
+        if ($res === true) {
+            $this->nombre = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+    public function setsimbolo($valor)
+    {
+        $res = $this->validarTexto($valor, 'simbolo', 2, 10);
+        if ($res === true) {
+            $this->simbolo = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+    public function setstatus($valor)
+    {
+        $res = $this->validarNumerico($valor, 'status', 1, 1);
+        if ($res === true) {
+            $this->status = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+    public function set_tasa($valor)
+    {
+        $res = $this->validarNumerico($valor, 'tasa', 0, 1000000);
+        if ($res === true) {
+            $this->tasa = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+
+    public function check()
+    {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
+    // Si quieres acceder a los errores individualmente
+    public function getErrores()
+    {
+        return $this->errores;
+    }
+
+
+    public function setfecha($valor)
+    {
+        $this->fecha = $valor;
+    }
+
+    public function getnombre()
+    {
+        return $this->nombre;
+    }
+    public function getsimbolo()
+    {
+        return $this->simbolo;
+    }
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    public function get_tasa()
+    {
+        return $this->tasa;
+    }
+    public function getfecha()
+    {
+        return $this->fecha;
     }
 
     public function incluir(){
@@ -19,21 +100,29 @@ class Divisa extends Conexion{
         $strExec=$this->conex->prepare($registro);
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
-        $resul=$strExec->execute();
-        if ($resul){
-            $ultimo_cod= $this->conex->lastInsertId();
+        $resul = $strExec->execute();
+        if ($resul) {
+            $ultimo_cod = $this->conex->lastInsertId();
             $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
-            $strExec=$this->conex->prepare($sqlCambio);
+            $strExec = $this->conex->prepare($sqlCambio);
             $strExec->bindParam(':cod_divisa', $ultimo_cod);
             $strExec->bindParam(':tasa', $this->tasa);
             $strExec->bindParam(':fecha', $this->fecha);
             $strExec->execute();
-            $res=1;
-        }else{
-            $res=0;
+            $res = 1;
+        } else {
+            $res = 0;
         }
         parent::desconectarBD();
         return $res;
+    }
+
+
+    public function consultarDivisas() {
+        $sql = "SELECT *FROM divisas";
+        $stmt = $this->conex->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function consultar(){
@@ -54,8 +143,8 @@ class Divisa extends Conexion{
         parent::desconectarBD();
         if($resul){
             return $datos;
-        }else{
-            return $res=0;
+        } else {
+            return $res = 0;
         }
     }
 
@@ -87,11 +176,13 @@ class Divisa extends Conexion{
         parent::desconectarBD();
         if($resul){
             $r = 1;
-        }else{
+        } else {
             $r = 0;
         }
+        $this->desconectarBD();
         return $r;
     }
+
 
     public function eliminar($valor){
         $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN tipo_pago tp ON cd.cod_cambio = tp.cod_cambio WHERE cd.cod_divisa = $valor";
@@ -127,7 +218,7 @@ class Divisa extends Conexion{
                 return false;
             }
         }
-    return true;
+        return true;
     }
 
     public function historial(){
@@ -139,40 +230,8 @@ class Divisa extends Conexion{
         parent::desconectarBD();
         if($resul){
             return $datos;
-        }else{
-            return $res=0;
+        } else {
+            return $res = 0;
         }
-    }
-
-    public function setnombre($valor){
-        $this->nombre=$valor;
-    }
-    public function setsimbolo($valor){
-        $this->simbolo=$valor;
-    }
-    public function setstatus($valor){
-        $this->status = $valor;
-    }
-    public function set_tasa($valor){
-        $this->tasa = $valor;
-    }
-    public function setfecha($valor){
-        $this->fecha = $valor;
-    }
-
-    public function getnombre(){
-        return $this->nombre;
-    }
-    public function getsimbolo(){
-        return $this->simbolo;
-    }
-    public function getStatus(){
-        return $this->status;
-    }
-    public function get_tasa(){
-        return $this->tasa;
-    }
-    public function getfecha(){
-        return $this->fecha;
     }
 }

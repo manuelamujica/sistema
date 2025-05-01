@@ -1,6 +1,5 @@
 <?php
-session_status()== PHP_SESSION_NONE ? session_start() : null;
-
+session_status() == PHP_SESSION_NONE ? session_start() : null;
 require_once "./vendor/autoload.php";
 require_once "modelo/venta.php";
 use Spipu\Html2Pdf\Html2Pdf;

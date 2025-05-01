@@ -1,9 +1,10 @@
 <?php
 
 require_once 'conexion.php';
+require_once 'validaciones.php';
 class Descarga extends Conexion{
-
-
+    use ValidadorTrait; // Usar el trait para validaciones
+    private $errores = []; // Arreglo para almacenar errores de validación
     #Descarga
     private $fecha;
     private $descripcion;
@@ -24,15 +25,34 @@ class Descarga extends Conexion{
         return $this->descripcion;
     }
     public function setdescripcion($descripcion){
-        $this->descripcion = $descripcion;
+        $res = $this->validarTexto($descripcion, 'descripcion', 5, 45);
+        if ($res === true) {
+            $this->descripcion = $descripcion;
+        } else {
+            $this->errores['descripcion'] = $res;
+        }
     }
     
     public function getcantidad(){
         return $this->cantidad;
     }
     public function setcantidad($cantidad){
-        $this->cantidad = $cantidad;
+        $res = $this->validarNumerico($cantidad, 'cantidad', 1, 20);
+        if ($res === true) {
+            $this->cantidad = $cantidad;
+        } else {
+            $this->errores['cantidad'] = $res;
+        }
     }
+
+    // Chequear si hay errores
+    public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+    
 
 /*================================
     REGISTRAR DESCARGA (TRANSACCION)

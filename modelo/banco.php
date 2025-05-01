@@ -5,7 +5,7 @@ require_once "validaciones.php";
 class Banco extends Conexion {
     use ValidadorTrait;
     private $nombre_banco;
-
+    private $cod_banco;
     public function __construct() {
         parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
@@ -73,6 +73,10 @@ class Banco extends Conexion {
         $resultado=$stmt->execute() ? 'success' : 'error_delete';
         parent::desconectarBD();
         return $resultado;
+    }
+     
+    public function getEliminar($cod_banco) {
+        return $this->eliminar($cod_banco);
     }
 
     // BUSCAR por nombre (para evitar duplicados)

@@ -1,8 +1,10 @@
 <?php
 
 require_once 'conexion.php';
-
-class Proveedor extends Conexion{
+require_once 'validaciones.php';
+class Proveedor extends Conexion
+{
+  use ValidadorTrait;
   private $cod_prov;
   private $rif;
   private $razon_social;
@@ -10,10 +12,19 @@ class Proveedor extends Conexion{
   private $direccion;
   private $status;
 
+  private $errores = [];
+
   public function __construct()
   {
     parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
   }
+
+  public function check() {
+    if (!empty($this->errores)) {
+        $mensajes = implode(" | ", $this->errores);
+        throw new Exception("Errores de validación: $mensajes");
+    }
+}
 
   public function setCod($cod_prov)
   {
@@ -31,7 +42,13 @@ class Proveedor extends Conexion{
   }
   public function setRif($rif)
   {
-    $this->rif = $rif;
+    $resultado = $this->validarAlfanumerico($rif,"rif", 7,15);
+    if($resultado === true) {
+      $this->rif = $rif;
+    } else {
+      $this->errores['rif'] = $resultado;
+    }
+    
   }
 
   public function getRazon_Social()
@@ -41,7 +58,12 @@ class Proveedor extends Conexion{
 
   public function setRazon_Social($razon_social)
   {
-    $this->razon_social = $razon_social;
+    $resultado = $this->validarTexto($razon_social, 'razonSocial', 2, 50);
+    if ($resultado === true) {
+        $this->razon_social= $razon_social;
+    } else {
+        $this->errores['razonSocial'] = $resultado;
+    }
   }
 
   public function get_Email()
@@ -51,7 +73,12 @@ class Proveedor extends Conexion{
 
   public function setemail($email)
   {
-    $this->email = $email;
+    $resultado = $this->validarEmail($email);
+    if ($resultado === true) {
+      $this->email = $email;
+    } else {
+      $this->errores['email'] = $resultado;
+    }
   }
 
   public function getDireccion()
@@ -61,7 +88,12 @@ class Proveedor extends Conexion{
 
   public function setDireccion($direccion)
   {
-    $this->direccion = $direccion;
+    $resultado = $this->validarAlfanumerico($direccion, 'direccion', 5, 250);
+        if ($resultado === true) {
+            $this->direccion = $direccion;
+        } else {
+            $this->errores['direccion'] = $resultado;
+        }
   }
 
   public function getStatus()
@@ -71,6 +103,12 @@ class Proveedor extends Conexion{
 
   public function setStatus($status)
   {
+    $resultado = $this->validarStatus($status);
+        if($resultado === true) {
+            $this->status = $status;
+        } else {
+            $this->errores['status'] = $resultado;
+        }
     $this->status = $status;
   }
 

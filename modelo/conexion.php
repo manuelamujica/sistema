@@ -16,7 +16,6 @@ class Conexion extends PDO{
 	}
 		
 	public function conectarBD() {
-
 		if(!$this->conexionActiva) {
 			try {
 				$this->conex = new PDO($this->link, $this->user, $this->pass);
@@ -34,5 +33,4 @@ class Conexion extends PDO{
 			$this->conexionActiva = false;
 		}
 	}
-
 }

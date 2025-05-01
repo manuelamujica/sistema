@@ -1,14 +1,16 @@
 <?php
 #1) Requiero conexion 
 require_once 'conexion.php';
+require_once 'imagenes.php';
+require_once 'validaciones.php';
 
 #2) Class + inicializador
 class Productos extends Conexion{
+    use ImagenTrait;
+    use ValidadorTrait;
     #producto
-    private $imagen;
     private $nombre;
     private $marca;
-
     #presentacion
     private $presentacion;
     private $cant_presentacion;
@@ -16,28 +18,45 @@ class Productos extends Conexion{
     private $ganancia;
     private $excento;
 
+    private $errores = [];
+
     public function __construct(){
         parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+        $this->setDirectorioBase('vista/dist/img');
+        $this->setSubcarpeta('productos');
+        $this->setImagenDefault('default.png');
+    }
+
+#ERROR
+    public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
     }
 #3) GETTER Y SETTER
 #Producto
-    public function getImagen() {
-        return $this->imagen;
-    }
-    public function setImagen($imagen) {
-        $this->imagen = $imagen;
-    }
     public function getNombre(){
         return $this->nombre;
     }
     public function setNombre($nombre){
-        $this->nombre = $nombre;
+        $resultado = $this->validarTexto($nombre, 'nombre', 2, 50);
+        if($resultado === true) {
+            $this->nombre = $nombre;
+        } else {
+            $this->errores['nombre'] = $resultado;
+        }
     }
     public function getMarca(){
         return $this->marca;
     }
     public function setMarca($marca){
-        $this->marca = $marca;
+        $resultado = $this->validarNumerico($marca, 'marca', 1, 9999);
+        if($resultado === true) {
+            $this->marca = $marca;
+        } else {
+            $this->errores['marca'] = $resultado;
+        }
     }
 
 #Presentacion
@@ -45,31 +64,62 @@ class Productos extends Conexion{
         return $this->presentacion;
     }
     public function setPresentacion($presentacion){
-        $this->presentacion = $presentacion;
+        $resultado = $this->validarTexto($presentacion, 'presentacion', 2, 50);
+        if($resultado === true) {
+            $this->presentacion = $presentacion;
+        } else {
+            $this->errores['presentacion'] = $resultado;
+        }
     }
     public function getCantPresentacion(){
         return $this->cant_presentacion;
     }
     public function setCantPresentacion($cant_presentacion){
-        $this->cant_presentacion = $cant_presentacion;
+        $resultado = $this->validarAlfanumerico($cant_presentacion, 'cantidad presentacion', 1, 20);
+        if($resultado === true) {
+            $this->cant_presentacion = $cant_presentacion;
+        } else {
+            $this->errores['cant_presentacion'] = $resultado;
+        }
     }
     public function getCosto(){
         return $this->costo;
     }
     public function setCosto($costo){
-        return $this->costo = $costo;
+        // Convert to float and then to string without decimals if they are zero
+        $costo = (float)$costo;
+        $costo = $costo == (int)$costo ? (int)$costo : $costo;
+        $resultado = $this->validarNumerico($costo, 'costo', 1, 20);
+        if($resultado === true) {
+            $this->costo = $costo;
+        } else {
+            $this->errores['costo'] = $resultado;
+        }
     }
     public function getGanancia(){
         return $this->ganancia;
     }
     public function setGanancia($ganancia){
-        $this->ganancia = $ganancia;
+        // Convert to float and then to string without decimals if they are zero
+        $ganancia = (float)$ganancia;
+        $ganancia = $ganancia == (int)$ganancia ? (int)$ganancia : $ganancia;
+        $resultado = $this->validarNumerico($ganancia, 'ganancia', 1, 20);
+        if($resultado === true) {
+            $this->ganancia = $ganancia;
+        } else {
+            $this->errores['ganancia'] = $resultado;
+        }
     }
     public function getExcento(){
         return $this->excento;
     }
     public function setExcento($excento){
-        $this->excento = $excento;
+        $resultado = $this->validarStatus($excento);
+        if($resultado === true) {
+            $this->excento = $excento;
+        } else {
+            $this->errores['excento'] = $resultado;
+        }
     }
 
 
@@ -128,7 +178,6 @@ private function registrar($unidad, $categoria){
                 $strExec->bindParam(':porcen_venta',$this->ganancia);
                 $strExec->bindParam(':excento',$this->excento);
                 $execute = $strExec->execute();
-
                 if($execute){
                 $r=1;
                 }else{
@@ -269,7 +318,6 @@ public function getmostrar(){
 EDITAR PRODUCTO y categoria, unidad y su presentación
 ========================================*/
 public  function editar($present,$product,$categoria,$unidad){
-    
     $sql="UPDATE productos SET 
     cod_categoria=:cod_categoria,
     nombre=:nombre,
@@ -309,20 +357,11 @@ public  function editar($present,$product,$categoria,$unidad){
     return 0;
 }
 
-public function subirImagen($valor){
-    $nombre_logo = $valor['name'];
-    $tmp_logo = $valor['tmp_name'];
-    $ruta_logo = "vista/dist/img/productos/".$nombre_logo;
-    move_uploaded_file($tmp_logo, $ruta_logo);
-    $this->imagen = $ruta_logo;
-}
-
 /*======================================
 ELIMINAR PRODUCTO
 ========================================*/
 
 public function eliminar($p, $pp) {
-
     // Verificar si la presentación tiene algún detalle con stock > 0
     $sqls = "SELECT * FROM detalle_productos WHERE cod_presentacion = :cod_presentacion AND stock > 0";
     parent::conectarBD();
@@ -357,8 +396,22 @@ public function eliminar($p, $pp) {
             $strExec = $this->conex->prepare($sqlp);
             $strExec->bindParam(':cod_producto', $p, PDO::PARAM_INT);
             $deleteproducto = $strExec->execute();
+            if ($deleteproducto) {
+                // Eliminar la imagen del producto si existe y no es la imagen por defecto
+                $sqlImagen = "SELECT imagen FROM productos WHERE cod_producto = :cod_producto";
+                $strExec = $this->conex->prepare($sqlImagen);
+                $strExec->bindParam(':cod_producto', $p, PDO::PARAM_INT);
+                $strExec->execute();
+                $imagen = $strExec->fetch(PDO::FETCH_ASSOC);
+                
+                if ($imagen && $imagen['imagen'] !== $this->directorioBase . $this->subcarpeta . $this->imagenDefault) {
+                    $this->eliminar($imagen['imagen'], true);
+                }
+                parent::desconectarBD();
+                return 'producto';
+            }
             parent::desconectarBD();
-            return $deleteproducto ? 'producto' : 'error_delete';
+            return 'error_delete';
         }
         parent::desconectarBD();
         return 'success';  // Se eliminó la presentación, pero quedan otras asociadas al producto
@@ -372,7 +425,6 @@ BUSCAR PRODUCTO (para que si ya existe asignarle una nueva presentacion)
 ========================================================================*/
 
 public function buscar($nombrep){
-
     $sql="SELECT                
     p.cod_producto,
     c.cod_categoria,                                 
