@@ -60,9 +60,6 @@ trait ValidadorTrait {
         }
         return true;
     }
-    
-    
-}
 
     public function validarStatus($valor) {
         if($valor > 1 || $valor < 0) {
@@ -71,7 +68,7 @@ trait ValidadorTrait {
         return true;
     }
 
-   
+
     public function validarDecimal($valor, $campo, $min = null, $max = null) {
         // Primero validar formato decimal con punto
         if (!preg_match('/^\d+(\.\d+)?$/', $valor)) {
@@ -91,7 +88,6 @@ trait ValidadorTrait {
     
         return true;
     }
-
 
 }
 
