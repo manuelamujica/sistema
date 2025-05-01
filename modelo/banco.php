@@ -4,15 +4,12 @@ require_once "validaciones.php";
 
 class Banco extends Conexion {
     use ValidadorTrait;
-
-    private $conex;
     private $nombre_banco;
     private $cod_banco;
     public function __construct() {
-        $this->conex = (new Conexion())->conectar();
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
-  
     public function setNombre($nombre_banco) {
         $this->nombre_banco = $nombre_banco;
     }
@@ -24,10 +21,12 @@ class Banco extends Conexion {
     // REGISTRAR
     private function registrar() {
         $sql = "INSERT INTO banco (nombre_banco) VALUES (:nombre_banco)";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':nombre_banco', $this->nombre_banco);
-
-        return $stmt->execute() ? 1 : 0;
+        $resul=$stmt->execute() ? 1 : 0;
+        parent::desconectarBD();
+        return $resul;
     }
 
     public function getRegistrar() {
@@ -37,23 +36,27 @@ class Banco extends Conexion {
     // CONSULTAR TODOS
     public function consultar() {
         $sql = "SELECT * FROM banco";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
-
         if ($stmt->execute()) {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resul=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            return $resul;
         }
-
+        parent::desconectarBD();
         return 0;
     }
 
     // ACTUALIZAR
     private function actualizar($cod_banco) {
         $sql = "UPDATE banco SET nombre_banco = :nombre_banco WHERE cod_banco = :cod_banco";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':nombre_banco', $this->nombre_banco);
         $stmt->bindParam(':cod_banco', $cod_banco, PDO::PARAM_INT);
-
-        return $stmt->execute() ? 1 : 0;
+        $resultado=$stmt->execute() ? 1 : 0;
+        parent::desconectarBD();
+        return $resultado;
     }
 
     public function getactualizar($cod_banco) {
@@ -64,10 +67,12 @@ class Banco extends Conexion {
     public function eliminar($cod_banco) {
         // Aquí puedes hacer soft delete si agregas un campo status
         $sql = "DELETE FROM banco WHERE cod_banco = :cod_banco";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':cod_banco', $cod_banco, PDO::PARAM_INT);
-
-        return $stmt->execute() ? 'success' : 'error_delete';
+        $resultado=$stmt->execute() ? 'success' : 'error_delete';
+        parent::desconectarBD();
+        return $resultado;
     }
      
     public function getEliminar($cod_banco) {
@@ -77,11 +82,13 @@ class Banco extends Conexion {
     // BUSCAR por nombre (para evitar duplicados)
     public function buscarPorNombre($nombre) {
         $sql = "SELECT * FROM banco WHERE nombre_banco = :nombre_banco";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':nombre_banco', $nombre);
-
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado=$stmt->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        return $resultado;
     }
 }
 ?>

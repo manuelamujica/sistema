@@ -15,7 +15,6 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($resul);
     exit;
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
 } else if(isset($_POST['b_lotes']) && isset($_POST['cod'])){
     $re = $objCompras->buscar_l($_POST['b_lotes'], $_POST['cod']);
     header('Content-Type: application/json');

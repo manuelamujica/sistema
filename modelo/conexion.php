@@ -4,41 +4,27 @@ require_once "config/config.php";
 
 class Conexion extends PDO{
 	protected $conex;
-	private $conexionActiva = false;
+	private $conexionActiva=false;
+	private $link;
+	private $user;
+	private $pass;
 
-	public function __construct(){
-		/*$link = "mysql:host=" ._DB_HOST_. ";dbname=" ._DB_NAME_. ";charset=utf8";
-
-		try{
-
-			$this->conex = new PDO($link, _DB_USER_, _DB_PASS_);
-			$this->conex->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		}
-		catch(PDOException $e){
-			die("Conexión Fallida" . $e->getMessage());
-		}*/
+	public function __construct($host, $db, $user, $pass){
+		$this->link="mysql:host=" .$host. ";dbname=" .$db. ";charset=utf8";
+		$this->user=$user;
+		$this->pass=$pass;
 	}
 		
-	/*public function conectar(){
-	return $this->conex;
-
-	}*/
-
 	public function conectarBD() {
-
 		if(!$this->conexionActiva) {
-			$link = "mysql:host=" ._DB_HOST_. ";dbname=" ._DB_NAME_. ";charset=utf8";
-
 			try {
-				$this->conex = new PDO($link, _DB_USER_, _DB_PASS_);
+				$this->conex = new PDO($this->link, $this->user, $this->pass);
 				$this->conex->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				$this->conexionActiva = true;
 			} catch (PDOException $e) {
 				die("conexión fallida" . $e->getMessage());
 			}
-			
 		}
-		return $this->conex;
 	}
 
 	public function desconectarBD() {
@@ -47,5 +33,4 @@ class Conexion extends PDO{
 			$this->conexionActiva = false;
 		}
 	}
-
 }

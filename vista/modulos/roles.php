@@ -117,8 +117,8 @@ MODAL REGISTRAR ROLES
                                             <br>
                                             <?php foreach ($permiso as $datos): ?>
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="checkbox" id="campo" name="permisos[]" value="<?php echo $datos['cod_permiso']; ?>" id="categoria<?php echo $datos['cod_permiso']; ?>">
-                                                    <label for="categoria<?php echo $datos['cod_permiso']; ?>">
+                                                    <input type="checkbox" id="campo" name="permisos[]" value="<?php echo $datos['cod_modulo']; ?>" id="categoria<?php echo $datos['cod_modulo']; ?>">
+                                                    <label for="categoria<?php echo $datos['cod_modulo']; ?>">
                                                         <?php echo $datos['nombre'] ?>
                                                     </label>
                                                 </div>
@@ -138,7 +138,7 @@ MODAL REGISTRAR ROLES
                                 </form>
                             </div>
                         </div>
-                    </div>
+                </div>
     </section>
 </div>
 

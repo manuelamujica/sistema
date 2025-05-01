@@ -10,7 +10,6 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar rol', $_POST['buscar'], 'Roles');
 
 } else if (isset($_POST["guardar"])) {
     if (!empty($_POST["rol"])) {

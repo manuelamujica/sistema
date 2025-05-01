@@ -8,9 +8,8 @@ class Rol extends Conexion{
     private $status;
 
     public function __construct(){
-
+        parent::__construct(_SEC_DB_HOST_, _SEC_DB_NAME_, _SEC_DB_USER_, _SEC_DB_PASS_);
     }
-
 #GETTER Y SETTER
     public function getRol(){
         return $this->rol;
@@ -35,25 +34,22 @@ class Rol extends Conexion{
 REGISTRAR TIPOS DE USUARIO
 ================================*/
     private function crearRol($permisos){
-        $this->conectarBD();
+        parent::conectarBD();
         $sql = "INSERT INTO tipo_usuario(rol,status) VALUES(:rol, 1)";
-
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(":rol", $this->rol);
-
         $resul = $strExec->execute();
-
         if($resul){
             $nuevo_cod=$this->conex->lastInsertId();
-
             foreach($permisos as $cod_permisos){
-            $sqlpermiso="INSERT INTO tpu_permisos (cod_tipo_usuario, cod_permiso) VALUES (:cod_tipo_usuario, :cod_permiso)";
+            $sqlpermiso="INSERT INTO tpu_permisos (cod_tipo_usuario, cod_modulo) VALUES (:cod_tipo_usuario, :cod_modulo)";
             $strExec = $this->conex->prepare($sqlpermiso);
             $strExec->bindParam(":cod_tipo_usuario", $nuevo_cod);
-            $strExec->bindParam(":cod_permiso", $cod_permisos);
+            $strExec->bindParam(":cod_modulo", $cod_permisos);
             $strExec->execute();
             
             }
+        parent::desconectarBD();
             $r = 1;
         }else{
             $r = 0;
@@ -71,10 +67,11 @@ REGISTRAR TIPOS DE USUARIO
     public function consultar(){
         $this->conectarBD();
         $registro="select * from tipo_usuario";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
-        $this->desconectarBD();
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -86,10 +83,11 @@ REGISTRAR TIPOS DE USUARIO
     private function consultarUsuario(){
         $this->conectarBD();
         $registro="SELECT * FROM tipo_usuario WHERE status=1";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
-        $this->desconectarBD();
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -105,11 +103,12 @@ REGISTRAR TIPOS DE USUARIO
     public function consultarLogin($cod){
         $this->conectarBD();
         $registro="SELECT rol FROM tipo_usuario WHERE cod_tipo_usuario=:cod_tipo_usuario";
+        parent::conectarBD();
         $resul=$this->conex->prepare($registro);
         $resul->bindParam(':cod_tipo_usuario',$cod);
         $resul->execute();
         $rol=$resul->fetch(PDO::FETCH_ASSOC);
-        $this->desconectarBD();
+        parent::desconectarBD();
         if($resul){
             return $rol;
         }else{
@@ -121,10 +120,12 @@ REGISTRAR TIPOS DE USUARIO
         $this->conectarBD();
         $this->rol=$valor;
         $registro = "select * from tipo_usuario where rol='".$this->rol."'";
+        $resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
-            $this->desconectarBD();
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -138,10 +139,12 @@ REGISTRAR TIPOS DE USUARIO
         $this->rol=$valor;
         $this->conectarBD();
         $registro = "select * from tipo_usuario where rol='".$this->rol."'";
+        $resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
-            $this->desconectarBD();
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -151,13 +154,13 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     public function permisos(){
-        $this->conectarBD();
-        $registro = "select * from permisos";
+        $registro = "select * from modulos";
         $accesos= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $accesos=$dato->fetchAll(PDO::FETCH_ASSOC);
-            $this->desconectarBD();
+        parent::desconectarBD();
             if ($resul) {
                 return $accesos;
             }else{
@@ -168,13 +171,13 @@ REGISTRAR TIPOS DE USUARIO
     private function editar(){
         $this->conectarBD();
         $registro = "UPDATE tipo_usuario SET rol = :rol, status = :status WHERE cod_tipo_usuario = :cod_tipo_usuario";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $strExec->bindParam(':cod_tipo_usuario',$this->codigo);
         $strExec->bindParam(':rol',$this->rol);
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
-        $this->desconectarBD();
+        parent::desconectarBD();
         if($resul == 1){
             $r = 1;
         }else{
@@ -190,15 +193,15 @@ REGISTRAR TIPOS DE USUARIO
     private function eliminar($valor) {
         $this->conectarBD();
         // Verificar el status del rol
+        parent::conectarBD();
         $consultaStatus = "SELECT status FROM tipo_usuario WHERE cod_tipo_usuario = :valor";
         $strExec = $this->conex->prepare($consultaStatus);
         $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
         $strExec->execute();
-        
         $status = $strExec->fetch(PDO::FETCH_ASSOC);
     
         if ($status && $status['status'] == 1) {
-            $this->desconectarBD();
+            parent::desconectarBD();
             return 'error_status'; // El rol tiene status activo, no se puede eliminar
         }
     
@@ -211,7 +214,7 @@ REGISTRAR TIPOS DE USUARIO
         $usuarios = $strExec->fetch(PDO::FETCH_ASSOC);
     
         if ($usuarios && $usuarios['n_usuario'] > 0) {
-            $this->desconectarBD();
+            parent::desconectarBD();
             return 'error_associated'; // Hay usuarios asociados al rol, no se puede eliminar
         }
     
@@ -220,7 +223,7 @@ REGISTRAR TIPOS DE USUARIO
         $strExec = $this->conex->prepare($deleteQuery);
         $strExec->bindParam(':valor', $valor, PDO::PARAM_INT);
         $result = $strExec->execute();
-        $this->desconectarBD();
+        parent::desconectarBD();
         return $result ? 'success' : 'error_delete';
     }
     

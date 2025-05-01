@@ -3,6 +3,7 @@
 trait ValidadorTrait {
 
     public function validarTexto($valor, $campo, $min = 1, $max = 255) {
+        $valor = trim($valor);
         if (!preg_match("/^[\p{L}\s]+$/u", $valor)) {
             return "El campo $campo solo puede contener letras y espacios.";
         }
@@ -13,6 +14,7 @@ trait ValidadorTrait {
     }
 
     public function validarEmail($valor) {
+        $valor = trim($valor);
         if (!filter_var($valor, FILTER_VALIDATE_EMAIL)) {
             return "Correo electrónico no válido.";
         }
@@ -20,6 +22,7 @@ trait ValidadorTrait {
     }
 
     public function validarTelefono($valor) {
+        $valor = trim($valor);
         if (!preg_match("/^[0-9\s\-\(\)]+$/", $valor)) {
             return "Teléfono no válido.";
         }
@@ -27,6 +30,7 @@ trait ValidadorTrait {
     }
 
     public function validarNumerico($valor, $campo,  $min = 1, $max = 20) {
+        $valor = trim($valor);
         if (!preg_match("/^\d+$/", $valor)) {
             return "El campo $campo solo puede contener números.";
         }
@@ -38,6 +42,7 @@ trait ValidadorTrait {
 
 
     public function validarAlfanumerico($valor, $campo, $min = 1, $max = 255) {
+        $valor = trim($valor);
         if (!preg_match("/^[\p{L}\d\s\.,\-#]+$/u", $valor)) {
             return "El campo $campo solo puede contener letras, números y algunos signos (.,-#).";
         }
@@ -46,16 +51,20 @@ trait ValidadorTrait {
         }
         return true;
     }
-
-
+    public function validarStatusInactivo($valor, $campo = 'status') {
+        $valor = trim($valor);
+        if ($valor == '1') {
+            return "El campo $campo debe estar inactivo.";
+        }
+        return true;
+    }
+        
     public function validarStatus($valor) {
         if($valor > 1 || $valor < 0) {
             return "El campo status es incorrecto";
         }
         return true;
     }
-
-   
     public function validarDecimal($valor, $campo, $min = null, $max = null) {
         // Primero validar formato decimal con punto
         if (!preg_match('/^\d+(\.\d+)?$/', $valor)) {
@@ -78,3 +87,4 @@ trait ValidadorTrait {
 
 
 }
+
