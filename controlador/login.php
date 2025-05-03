@@ -11,12 +11,13 @@ $objRol= new Rol();
 $objbitacora = new Bitacora();
 
 
+
 if (isset($_POST["ingresar"])) {
 	
 	if (isset($_POST['captchaCodigo'])) {
         $captchaCodigo = $_POST['captchaCodigo'];
 
-        // Verificamos que el código ingresado sea el mismo que el que se encuentra en la sesión
+        //Verificamos que el código ingresado sea el mismo que el que se encuentra en la sesión
         if ($captchaCodigo != $_SESSION['captcha']) {
             $_SESSION['captcha'] = ''; // Limpiar el código CAPTCHA en la sesión
 			$_SESSION['login'] = [
@@ -26,7 +27,7 @@ if (isset($_POST["ingresar"])) {
 			];
 			header('Location: login');
 			exit;
-	} 
+	}
 	
 	$secret_key = '0x4AAAAAABUTeqxI-BRIgdI3RunK5-wAFfc';
 	$token = $_POST['cf-turnstile-response']; // Token recibido del frontend
@@ -98,12 +99,13 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["usuario"] = 0;
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
+			//$_SESSION["permisos"] = []; // Inicializamos el array de permisos
 			$_SESSION["finanzas"] = 0;
 
 			$_SESSION["permisos"] = []; // Inicializamos el array de permisos
 		
-
 			//Obtenemos los modulos asociados al usuario
+			//Obtenemos los permisos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
 			foreach ($accesos as $permisos) {
 				if ($permisos["cod_modulo"] == 1) {
@@ -126,11 +128,22 @@ if (isset($_POST["ingresar"])) {
 					$_SESSION["reporte"] = 1;
 				} else if ($permisos["cod_modulo"] == 10) {
 					$_SESSION["configuracion"] = 1;
-				} else if ($permisos["cod_modulo"] == 11) {
+				} else if ($cod_permiso["cod_modulo"] == 11) {
 					$_SESSION["marca"] = 1;
 				} else if ($permisos["cod_modulo"] == 12) {
 					$_SESSION["finanzas"] = 1;
 				}
+				/*$modulo = $permisos["cod_modulo"];
+				$accion = $permisos["cod_crud"];
+			
+				// Si no existe el módulo aún, lo inicializamos como array vacío
+				if (!isset($_SESSION["permisos"][$modulo])) {
+					$_SESSION["permisos"][$modulo] = [];
+				}
+			
+				// Marcamos la acción permitida con 1
+				$_SESSION["permisos"][$modulo][$accion] = 1;*/
+				} 
 			}
 			
 
@@ -159,10 +172,10 @@ if (isset($_POST["ingresar"])) {
 	} else {
 		$login = [
 			"title" => "Error",
-			"message" => "Intenta de nuevo.. ",
+			"message" => "Intenta de nuevo. ",
 			"icon" => "error"
 		];
 	}
 	
-	}
 }
+

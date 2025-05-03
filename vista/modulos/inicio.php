@@ -595,6 +595,7 @@ if (isset($editar)): ?>
 
 <?php 
     /*$ultimo=end($consulta);
+    /*$ultimo=end($consulta);
     if($ultimo['cod_divisa']!=1):
         if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): */
 ?>
@@ -604,7 +605,7 @@ if (isset($editar)): ?>
         var sen = "dolar";
         var tasaorig = $("#tasaactual").val();
 
-        // Mostrar modal de carga antes de la solicitud
+        /*Mostrar modal de carga antes de la solicitud
         $("#loadingModal").modal("show");
 
         $.post('index.php?pagina=divisa', { sen: sen }, function(response) {
