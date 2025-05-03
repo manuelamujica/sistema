@@ -58,7 +58,7 @@ $(document).ready(function () {
     // =============================
     // ELIMINAR BANCO
     // =============================
-    $('#eliminarbanco').on('show.bs.modal', function (event) {
+    $('#eliminarModal').on('show.bs.modal', function (event) {
         console.log('ELIMINAR banco');
 
         const button = $(event.relatedTarget);

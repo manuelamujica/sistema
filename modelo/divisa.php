@@ -9,10 +9,11 @@ class Divisa extends Conexion
     private $errores = [];
     private $nombre;
     private $simbolo;
-    private $conex;
+
     private $status;
     private $tasa;
     private $fecha;
+
 
 
     public function __construct()
@@ -119,12 +120,20 @@ class Divisa extends Conexion
         } else {
             $res = 0;
         }
+        $this->desconectarBD();
         return $res;
     }
 
-    public function consultar()
-    {
-        $registro = "SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status,c.cod_cambio, c.tasa, c.fecha
+
+    public function consultarDivisas() {
+        $sql = "SELECT *FROM divisas";
+        $stmt = $this->conex->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function consultar(){
+        $registro="SELECT d.cod_divisa, d.nombre, d.abreviatura, d.status AS divisa_status,c.cod_cambio, c.tasa, c.fecha
         FROM divisas AS d
         JOIN cambio_divisa AS c 
             ON d.cod_divisa = c.cod_divisa
@@ -134,6 +143,7 @@ class Divisa extends Conexion
             ON c.cod_divisa = ultimos_cambios.cod_divisa 
             AND c.fecha = ultimos_cambios.ultima_fecha
         ORDER BY d.cod_divisa;";
+
         $consulta = $this->conex->prepare($registro);
         $resul = $consulta->execute();
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -143,6 +153,7 @@ class Divisa extends Conexion
             return $res = 0;
         }
     }
+
 
     public function buscar($valor)
     {
@@ -173,8 +184,10 @@ class Divisa extends Conexion
         } else {
             $r = 0;
         }
+        $this->desconectarBD();
         return $r;
     }
+
 
     public function eliminar($valor)
     {
@@ -191,6 +204,7 @@ class Divisa extends Conexion
                 $strExec->execute();
                 $r = 1;
             }
+
         }
         return $r;
     }
@@ -203,6 +217,7 @@ class Divisa extends Conexion
             $strExec->bindParam(':tasa', $divisa['tasa']);
             $strExec->bindParam(':fecha', $divisa['fecha']);
             $strExec->bindParam(':cod_divisa', $divisa['cod_divisa']);
+
             $resul = $strExec->execute();
             if (!$resul) {
                 return false;

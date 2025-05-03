@@ -21,7 +21,7 @@ $('#rif1').blur(function (e) {
         if (response != '') {
             Swal.fire({
                 title: 'Error',
-                text: 'El Rif ya  exiate.',
+                text: 'El Rif ya  existe.',
                 icon: 'error'
             });
         }
