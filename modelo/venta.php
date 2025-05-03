@@ -2,14 +2,12 @@
 require_once 'conexion.php';
 class Venta extends Conexion{
     
-    private $conex;
     private $total;
     private $fecha;
     private $descuento;
 
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
     public function get_total(){
@@ -37,11 +35,13 @@ class Venta extends Conexion{
         $registro="SELECT v.*, c.nombre, c.apellido, c.cedula_rif ,c.telefono, c.email, c.direccion, p.cod_pago, p.monto_total, p.cod_venta AS codigov 
     FROM ventas v 
     INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente 
-    LEFT JOIN pagos p ON v.cod_venta = p.cod_venta 
+    LEFT JOIN pago_recibido p ON v.cod_venta = p.cod_venta 
     ORDER BY v.cod_venta;";
+    parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -70,11 +70,13 @@ class Venta extends Conexion{
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
         LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
         WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
+        parent::conectarBD();
         $consulta = $this->conex->prepare($sql);
         $buscar = '%' . $valor . '%';
         $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
         $resul = $consulta->execute();
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -84,6 +86,7 @@ class Venta extends Conexion{
 
     public function registrar($cliente, $productos) {
         try {
+            parent::conectarBD();
             $this->conex->beginTransaction();
             foreach ($productos as $producto) {
                 if ($producto['cantidad']==0) {
@@ -191,13 +194,15 @@ class Venta extends Conexion{
                     throw new Exception("No hay suficiente stock disponible para el producto con código $cod_presentacion");
                 }
             }
-    
+            
             // Confirmar la transacción si todo ha ido bien
             $this->conex->commit();
+            parent::desconectarBD();
             return $nuevo_cod; // Éxito
         } catch (Exception $e) {
             // Revertir todos los cambios si ocurre un error
             $this->conex->rollBack();
+            parent::desconectarBD();
             error_log($e->getMessage()); // Registrar el error
             return 0; // Error
         }
@@ -205,8 +210,8 @@ class Venta extends Conexion{
     
     public function anular($cod_v){
         try{
+            parent::conectarBD();
             $this->conex->beginTransaction();
-
             $sql="UPDATE ventas SET status=0 WHERE cod_venta=:cod_venta;";
             $anu=$this->conex->prepare($sql);
             $anu->bindParam(':cod_venta', $cod_v);
@@ -224,9 +229,11 @@ class Venta extends Conexion{
                 }
             }
             $this->conex->commit();
+            parent::desconectarBD();
             return $res;
         } catch(Exception $e){
             $this->conex->rollBack();
+            parent::desconectarBD();
         }
     }
 
@@ -254,10 +261,12 @@ class Venta extends Conexion{
     JOIN marcas AS m ON p.cod_marca = m.cod_marca
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
     WHERE dv.cod_venta =:cod_venta;";
+    parent::conectarBD();
     $consulta=$this->conex->prepare($sql);
     $consulta->bindParam(':cod_venta', $valor);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -280,9 +289,11 @@ class Venta extends Conexion{
     LEFT JOIN ventas v ON c.cod_cliente = v.cod_cliente
     GROUP BY c.cod_cliente,c.nombre,c.apellido,c.cedula_rif,c.telefono,c.email,c.direccion
     ORDER BY cantidad_ventas DESC;";
+    parent::conectarBD();
     $consulta=$this->conex->prepare($sql);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -296,11 +307,13 @@ class Venta extends Conexion{
     INNER JOIN ventas v ON c.cod_cliente = v.cod_cliente
     WHERE v.fecha BETWEEN :fechainicio AND :fechafin
     ORDER BY v.cod_venta ASC;";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':fechainicio', $fi);
         $stmt->bindParam(':fechafin', $ff);
         $resul=$stmt->execute();
         $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{

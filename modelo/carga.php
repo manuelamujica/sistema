@@ -1,7 +1,9 @@
 <?php
-   require_once "conexion.php";
+    require_once "conexion.php";
+    require_once "validaciones.php";
 
-   class Carga extends Conexion{
+    class Carga extends Conexion{
+    use ValidadorTrait; // Usar el trait para validaciones
     private $codigo;
     private $fecha;
     private $descripcion;
@@ -9,13 +11,11 @@
     private $lote;
     private $fecha_vencimiento;
     private $cod_presentacion;
-    private $conex;
+    private $errores = [];
 
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
-
     // SETTER Y GETTER
     public function setCod($codigo){
         $this->codigo = $codigo;
@@ -24,7 +24,12 @@
         $this->fecha = $fecha;
     }
     public function setDes($descripcion){
-        $this->descripcion = $descripcion;
+        $resultado = $this->validarTexto($descripcion, 'descripcion', 2, 50);
+        if ($resultado === true) {
+            $this->descripcion = $descripcion;
+        } else {
+            $this->errores['descripcion'] = $resultado;
+        }
     }
     public function setStatus($status){
         $this->status = $status;
@@ -61,39 +66,50 @@
         return $this->status;
     }
 
+    public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
+    // Si quieres acceder a los errores individualmente
+    public function getErrores() {
+        return $this->errores;
+    }
+    
     //     Funciones
     /* #######      REGISTRAR CARGA        #######   */
     private function registrar(){
         $registro = "INSERT INTO carga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)";
-
+        parent::conectarBD();
         $strExec= $this->conex->prepare($registro);
         $strExec->bindParam(':fecha',$this->fecha);
         $strExec->bindParam(':descripcion', $this->descripcion);
-
         $result = $strExec->execute();
-
+        parent::desconectarBD();
         if($result){
             $r = 1;
         }else{
             $r = 0;
         }
-
         return $r;
-
     }
 
     public function getcrear(){
-       return $this->registrar();
+        return $this->registrar();
     }
 
     private function buscar($valor){
         //$this->fecha=$valor;
         $registro = "select * from carga where fecha=:fecha";
         //$resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $dato->bindParam('fecha',$valor);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -109,9 +125,11 @@
     /*######### CONSULTAR #########*/
     private function mostrarc(){
         $sql = "select * from carga";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $resul=$strExec->execute();
         $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -127,43 +145,39 @@
         //$this->fecha=$valor;
         $registro = "select * from productos where fecha=:fecha";
         //$resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $dato->bindParam('fecha',$valor);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
                 return false;
             }
-    
     }
-       
+
 
         //METODO REGISTRAR
         private function registrarPro(){
             $registro = "INSERT INTO detalle_productos(cod_presentacion,stock, fecha_vencimiento, lote) VALUES(:cod_presentacion,0, :fecha_vencimiento, :lote)";
-    
+            parent::conectarBD();
             $strExec= $this->conex->prepare($registro);
             $strExec->bindParam('cod_presentacion', $this->cod_presentacion);
             $strExec->bindParam(':fecha_vencimiento',$this->fecha_vencimiento);
             $strExec->bindParam(':lote', $this->lote);
-    
             $result = $strExec->execute();
-    
+            parent::desconectarBD();
             if($result){
                 $r = 1;
             }else{
                 $r = 0;
             }
-    
             return $r;
-    
         }
-    
         public function getcrearPro(){
-           return $this->registrarPro();
+        return $this->registrarPro();
         }
-
-   }
+}
 ?>

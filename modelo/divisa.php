@@ -1,41 +1,122 @@
 <?php
 require_once 'conexion.php';
+require_once 'validaciones.php';
 
-class Divisa extends Conexion{
+class Divisa extends Conexion
+{
+    use ValidadorTrait; // Usar el trait para validaciones
+    private $errores = [];
     private $nombre;
     private $simbolo;
-    private $conex;
     private $status;
     private $tasa;
     private $fecha;
 
-
     public function __construct(){
-        $this->conex= new Conexion();
-        $this->conex=$this->conex->conectar();
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+    }
+
+    public function setnombre($valor)
+    {
+        $res = $this->validarTexto($valor, 'nombre', 2, 50);
+        if ($res === true) {
+            $this->nombre = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+    public function setsimbolo($valor)
+    {
+        $res = $this->validarTexto($valor, 'simbolo', 2, 10);
+        if ($res === true) {
+            $this->simbolo = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+    public function setstatus($valor)
+    {
+        $res = $this->validarNumerico($valor, 'status', 1, 1);
+        if ($res === true) {
+            $this->status = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+    public function set_tasa($valor)
+    {
+        $res = $this->validarNumerico($valor, 'tasa', 0, 1000000);
+        if ($res === true) {
+            $this->tasa = $valor;
+        } else {
+            $this->errores[] = $res;
+        }
+    }
+
+    public function check()
+    {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
+    // Si quieres acceder a los errores individualmente
+    public function getErrores()
+    {
+        return $this->errores;
+    }
+
+
+    public function setfecha($valor)
+    {
+        $this->fecha = $valor;
+    }
+
+    public function getnombre()
+    {
+        return $this->nombre;
+    }
+    public function getsimbolo()
+    {
+        return $this->simbolo;
+    }
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    public function get_tasa()
+    {
+        return $this->tasa;
+    }
+    public function getfecha()
+    {
+        return $this->fecha;
     }
 
     public function incluir(){
         $registro="INSERT INTO divisas(nombre, abreviatura, status) VALUES(:nombre, :abreviatura, 1)";
-
+        parent::conectarBD();
         $strExec=$this->conex->prepare($registro);
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
-        $resul=$strExec->execute();
-        if ($resul){
-            $ultimo_cod= $this->conex->lastInsertId();
+        $resul = $strExec->execute();
+        if ($resul) {
+            $ultimo_cod = $this->conex->lastInsertId();
             $sqlCambio = "INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
-            $strExec=$this->conex->prepare($sqlCambio);
+            $strExec = $this->conex->prepare($sqlCambio);
             $strExec->bindParam(':cod_divisa', $ultimo_cod);
             $strExec->bindParam(':tasa', $this->tasa);
             $strExec->bindParam(':fecha', $this->fecha);
             $strExec->execute();
-            $res=1;
-        }else{
-            $res=0;
+            $res = 1;
+        } else {
+            $res = 0;
         }
+        parent::desconectarBD();
         return $res;
     }
+
 
     public function consultarDivisas() {
         $sql = "SELECT *FROM divisas";
@@ -55,13 +136,15 @@ class Divisa extends Conexion{
             ON c.cod_divisa = ultimos_cambios.cod_divisa 
             AND c.fecha = ultimos_cambios.ultima_fecha
         ORDER BY d.cod_divisa;";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
-        }else{
-            return $res=0;
+        } else {
+            return $res = 0;
         }
     }
 
@@ -69,9 +152,11 @@ class Divisa extends Conexion{
         $this->nombre=$valor;
         $registro = "select * from divisas where nombre='".$this->nombre."'";
         $resutado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if ($resul) {
                 return $resultado;
             }else{
@@ -81,22 +166,27 @@ class Divisa extends Conexion{
 
     public function editar($valor){
         $registro="UPDATE divisas SET nombre=:nombre, abreviatura=:abreviatura, status=:status WHERE cod_divisa=$valor";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         #instanciar metodo bindparam
         $strExec->bindParam(':nombre', $this->nombre);
         $strExec->bindParam(':abreviatura', $this->simbolo);
         $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
+        parent::desconectarBD();
         if($resul){
             $r = 1;
-        }else{
+        } else {
             $r = 0;
         }
+        $this->desconectarBD();
         return $r;
     }
 
+
     public function eliminar($valor){
         $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN tipo_pago tp ON cd.cod_cambio = tp.cod_cambio WHERE cd.cod_divisa = $valor";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $resul = $strExec->execute();
         if($resul){
@@ -110,65 +200,38 @@ class Divisa extends Conexion{
                 $r=1;
                 }
             }
+        parent::desconectarBD();
         return $r;
     }
 
     public function tasa($valor){
         foreach($valor as $divisa){
             $sql="INSERT INTO cambio_divisa (cod_divisa, tasa, fecha) VALUES (:cod_divisa, :tasa, :fecha)";
+            parent::conectarBD();
             $strExec = $this->conex->prepare($sql);
             $strExec->bindParam(':tasa', $divisa['tasa']);
             $strExec->bindParam(':fecha', $divisa['fecha']);
             $strExec->bindParam(':cod_divisa', $divisa['cod_divisa']);
             $resul=$strExec->execute();
+            parent::desconectarBD();
             if(!$resul){
                 return false;
             }
         }
-    return true;
+        return true;
     }
 
     public function historial(){
         $registro="SELECT * FROM cambio_divisa ORDER BY fecha DESC;";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
-        }else{
-            return $res=0;
+        } else {
+            return $res = 0;
         }
-    }
-
-    public function setnombre($valor){
-        $this->nombre=$valor;
-    }
-    public function setsimbolo($valor){
-        $this->simbolo=$valor;
-    }
-    public function setstatus($valor){
-        $this->status = $valor;
-    }
-    public function set_tasa($valor){
-        $this->tasa = $valor;
-    }
-    public function setfecha($valor){
-        $this->fecha = $valor;
-    }
-
-    public function getnombre(){
-        return $this->nombre;
-    }
-    public function getsimbolo(){
-        return $this->simbolo;
-    }
-    public function getStatus(){
-        return $this->status;
-    }
-    public function get_tasa(){
-        return $this->tasa;
-    }
-    public function getfecha(){
-        return $this->fecha;
     }
 }

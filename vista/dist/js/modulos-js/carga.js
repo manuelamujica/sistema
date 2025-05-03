@@ -91,7 +91,7 @@ $(document).ready(function () {
             <div id="lista${index}" class="list-group" style="position: absolute; z-index: 1000;"></div>
         </td>
             <td>
-                <input type="text" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" required min="1" placeholder="Cantidad">
+                <input type="number" class="form-control" name="productos[${index}][cantidad]" id="cantidad${index}" required min="1" placeholder="Cantidad">
             </td>
             <td>
                 <button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(${index})">&times;</button>

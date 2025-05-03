@@ -1,59 +1,63 @@
 $(document).ready(function() {
-console.log('js');
-$('#tipo_pago').blur(function (e){
-    var buscar=$('#tipo_pago').val();
-    $.post('index.php?pagina=tpago', {buscar}, function(response){
-    if(response != ''){
-        Swal.fire({
-            title: 'Advertencia',
-            text: 'El tipo de pago ya se encuentra registrado',
-            icon: 'warning'
-        });
-    }
-    },'json');
-});
+    console.log('js');
+    
+    // Evento para cambiar entre bancos y cajas según el tipo de moneda
+    $('input[name="tipo_moneda"]').on('change', function() {
+        var tipoMoneda = $(this).val();
+        
+        if (tipoMoneda == 1) { // Digital - Mostrar bancos
+            $('.bancos-container').show();
+            $('.cajas-container').hide();
+            $('#banco').prop('required', true);
+            $('#caja').prop('required', false);
+        } else if (tipoMoneda == 2) { // Efectivo - Mostrar cajas
+            $('.bancos-container').hide();
+            $('.cajas-container').show();
+            $('#banco').prop('required', false);
+            $('#caja').prop('required', true);
+        }
+    });
+    
+    // Verificar si el tipo de pago ya está registrado
+    $('#nombre_tipo_pago').change(function (e){
+        var buscar = $('#nombre_tipo_pago option:selected').text();
+        $.post('index.php?pagina=tpago', {buscar}, function(response){
+            if(response != ''){
+                Swal.fire({
+                    title: 'Advertencia',
+                    text: 'El tipo de pago ya se encuentra registrado',
+                    icon: 'warning'
+                });
+            }
+        },'json');
+    });
 
-$('#tpago').blur(function (e){
-    var buscar=$('#tpago').val();
-    $.post('index.php?pagina=tpago', {buscar}, function(response){
-    if(response != ''){
-        Swal.fire({
-            title: 'Advertencia',
-            text: 'El tipo de pago ya se encuentra registrado',
-            icon: 'warning'
-        });
-    }
-    },'json');
-});
+    // Código existente para editar modal
+    $('#editModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var codigo = button.data('codigo');
+        var tpago = button.data('medio');
+        var status = button.data('status');
+        var origin = button.data('medio');
+        var nombre = button.data('nombre');
+        // Modal
+        var modal = $(this);
+        modal.find('.modal-body #codigo').val(codigo);
+        modal.find('.modal-body #tpago').val(tpago);
+        modal.find('.modal-body #status').val(status);
+        modal.find('.modal-body #origin').val(origin);
+    });
 
-$('#editModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var codigo = button.data('codigo');
-    var tpago = button.data('medio');
-    var status = button.data('status');
-    var origin = button.data('medio');
-    var nombre = button.data('nombre')+" - "+button.data('divisa');
-    // Modal
-    var modal = $(this);
-    modal.find('.modal-body #codigo').val(codigo);
-    modal.find('.modal-body #tpago').val(tpago);
-    modal.find('.modal-body #status').val(status);
-    modal.find('.modal-body #divisa1').val(nombre);
-    modal.find('.modal-body #origin').val(origin);
-});
+    // Código existente para eliminar modal
+    $('#eliminartpago').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); 
+        var medio = button.data('medio');
+        var codigo = button.data('codigo');
 
-$('#eliminartpago').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); 
-    var medio = button.data('medio');
-    var codigo = button.data('codigo');
-
-    var modal = $(this);
-    modal.find('#tpagonombre').text(medio);
-    modal.find('.modal-body #tpagoCodigo').val(codigo);
-});
-
-
-// VALIDAR ENTRADAS
+        var modal = $(this);
+        modal.find('#tpagonombre').text(medio);
+        modal.find('.modal-body #tpagoCodigo').val(codigo);
+    });
 
     // FUNCIONES
     function showError(selector, message) {
@@ -68,35 +72,8 @@ $('#eliminartpago').on('show.bs.modal', function (event) {
         $(selector).removeClass('is-invalid');
         $(selector).next('.invalid-feedback').css('display', 'none');
     }
-    // FIN FUNCIONES
 
-    // Registrar
-    $('#tipo_pago').on('blur', function() {
-        var tipo_pago = $(this).val();
-        if (tipo_pago.trim() === '') {
-            hideError('#tipo_pago');
-        }else if (tipo_pago.length > 50) {
-            showError('#tipo_pago', 'El texto no debe exceder los 50 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_pago)) {
-            showError('#tipo_pago', 'Solo se permiten letras');
-        } else {
-            hideError('#tipo_pago');
-        }
-    });
-
-    // Editar
-    $('#tpago').on('blur', function() {
-        var tpago = $(this).val();
-        if (tpago.trim() === '') {
-            hideError('#tpago');
-        }else if (tpago.length > 50) {
-            showError('#tpago', 'El texto no debe exceder los 50 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tpago)) {
-            showError('#tpago', 'Solo se permiten letras');
-        } else {
-            hideError('#tpago');
-        }
-    });
-
-
+    // Por defecto mostrar bancos (digital está seleccionado por defecto)
+    $('.bancos-container').show();
+    $('.cajas-container').hide();
 });

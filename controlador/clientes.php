@@ -1,8 +1,9 @@
 <?php
-
+require_once 'modelo/bitacora.php';
 require_once 'modelo/clientes.php'; 
 
 $objCliente = new Clientes(); 
+$objbitacora = new Bitacora();
 
 if(isset($_POST['buscar'])){
     $cedula=$_POST['buscar'];
@@ -10,7 +11,7 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar cliente', $cedula, 'Clientes');
+    //$objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar cliente', $cedula, 'Clientes');
     
 } else if (isset($_POST['guardar'])) { 
     $errores = [];

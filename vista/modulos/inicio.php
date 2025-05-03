@@ -594,7 +594,7 @@ if (isset($editar)): ?>
 </div>
 
 <?php 
-    $ultimo=end($consulta);
+    /*$ultimo=end($consulta);
     if($ultimo['cod_divisa']!=1):
         if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): 
 ?>
@@ -603,7 +603,7 @@ if (isset($editar)): ?>
         var sen = "dolar";
         var tasaorig = $("#tasaactual").val();
 
-        // Mostrar modal de carga antes de la solicitud
+        /*Mostrar modal de carga antes de la solicitud
         $("#loadingModal").modal("show");
 
         $.post('index.php?pagina=divisa', { sen }, function(response) {
@@ -634,6 +634,11 @@ if (isset($editar)): ?>
 </script>
 
 <?php   endif; 
-    endif; ?>
+    endif; */?>
+
+<script>
+    const permisos = <?php echo json_encode($_SESSION["permisos"]); ?>;
+    console.log("Permisos del usuario:", permisos);
+</script>
 
 <script src="vista/dist/js/modulos-js/general.js"></script>

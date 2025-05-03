@@ -32,8 +32,8 @@ if (isset($error)): ?>
                     <div class="small-box" style="background-color: #8770fa; color: white;">
                         <div class="inner">
                             <p class="mb-1">Valor inventario costo</p>
-                            <h3> <?php echo $v["total_costo"] ?>Bs</h3> 
-                            <p class="badge bg-success">+10%</p> 
+                            <h3> <?php echo number_format($v['total_costo'], 2, ',', '.')?>Bs</h3> 
+                            <p class="badge bg-success">+10%</p>  <!-- HACER DINAMICO -->
                             <span>esta semana</span> 
                         </div>
                     </div>
@@ -42,8 +42,8 @@ if (isset($error)): ?>
                     <div class="small-box bg-primary">
                         <div class="inner">
                             <p class="mb-1">Valor inventario venta</p>
-                            <h3><?php echo $v["total_venta"] ?>Bs</h3> 
-                            <p class="badge bg-success">+20%</p> 
+                            <h3><?php echo number_format($v['total_venta'], 2, ',', '.')?>Bs</h3> 
+                            <p class="badge bg-success">+20%</p>  <!-- HACER DINAMICO -->
                             <span>esta semana</span> 
                         </div>
                     </div>
@@ -54,7 +54,9 @@ if (isset($error)): ?>
                     <div class="card">
                         <div class="card-header">
                             <!-- Boton registrar producto -->
+                            <?php if (!empty($_SESSION["permisos"][1][1])): ?>
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarProducto">Registrar producto</button>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
                         <div class="table-responsive">
@@ -126,6 +128,7 @@ if (isset($error)): ?>
                                             </td>
                                             <!-- Botones -->
                                             <td>
+                                                <?php if (!empty($_SESSION["permisos"][1][2])): ?>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
                                                 data-imagen="<?php echo $producto["imagen"];?>"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
@@ -140,14 +143,16 @@ if (isset($error)): ?>
                                                 data-iva="<?php echo $producto["excento"]; ?>"
                                                 data-porcen="<?php echo $producto["porcen_venta"];?>">
                                                 <i class="fas fa-pencil-alt"></i>
+                                                <?php endif; ?>
                                             </button>
-
+                                                <?php if (!empty($_SESSION["permisos"][1][3])): ?>
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
                                                 data-producto="<?php echo $producto["cod_producto"];?>"
                                                 data-nombre="<?php echo $producto["nombre"]; ?>"
                                                 >
                                                 <i class="fas fa-trash-alt"></i></button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php } ?>

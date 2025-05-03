@@ -79,6 +79,7 @@ PLUGINGS DE CSS
 
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
+    $_GET["ruta"] == "marcas" && $_SESSION["marca"]==1 ||
     $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
     $_GET["ruta"] == "carga" && $_SESSION["inventario"]==1 ||
     $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
@@ -90,7 +91,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
-    $_GET ["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "tpago" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "divisa" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "proveedores" && $_SESSION["proveedor"]==1 || 
@@ -99,6 +100,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "clientes" && $_SESSION["cliente"]==1 ||
     $_GET["ruta"] == "roles" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "bitacora" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "categoriag" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "cajacopia" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "cuentabancariacopia" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "conciliacion" && $_SESSION["configuracion"]==1 ||
@@ -106,7 +108,6 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "venta" && $_SESSION["venta"]==1 ||
     $_GET["ruta"] == "catalogocuentas" ||
     $_GET["ruta"] == "gastos" ||
-  
     $_GET["ruta"] == "cuentaspend" ||
     $_GET["ruta"] == "movimientos" ||
     $_GET["ruta"] == "cerrarsesion"){

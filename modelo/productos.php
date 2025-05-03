@@ -1,15 +1,16 @@
 <?php
 #1) Requiero conexion 
 require_once 'conexion.php';
+require_once 'imagenes.php';
+require_once 'validaciones.php';
 
 #2) Class + inicializador
 class Productos extends Conexion{
-    private $conex;
+    use ImagenTrait;
+    use ValidadorTrait;
     #producto
-    private $imagen;
     private $nombre;
     private $marca;
-
     #presentacion
     private $presentacion;
     private $cant_presentacion;
@@ -17,31 +18,45 @@ class Productos extends Conexion{
     private $ganancia;
     private $excento;
 
+    private $errores = [];
+
     public function __construct(){
-        $this -> conex = new Conexion();
-        $this -> conex = $this->conex->conectar();
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+        $this->setDirectorioBase('vista/dist/img');
+        $this->setSubcarpeta('productos');
+        $this->setImagenDefault('default.png');
     }
 
+#ERROR
+    public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
 #3) GETTER Y SETTER
-
 #Producto
-    public function getImagen() {
-        return $this->imagen;
-    }
-    public function setImagen($imagen) {
-        $this->imagen = $imagen;
-    }
     public function getNombre(){
         return $this->nombre;
     }
     public function setNombre($nombre){
-        $this->nombre = $nombre;
+        $resultado = $this->validarTexto($nombre, 'nombre', 2, 50);
+        if($resultado === true) {
+            $this->nombre = $nombre;
+        } else {
+            $this->errores['nombre'] = $resultado;
+        }
     }
     public function getMarca(){
         return $this->marca;
     }
     public function setMarca($marca){
-        $this->marca = $marca;
+        $resultado = $this->validarNumerico($marca, 'marca', 1, 9999);
+        if($resultado === true) {
+            $this->marca = $marca;
+        } else {
+            $this->errores['marca'] = $resultado;
+        }
     }
 
 #Presentacion
@@ -49,31 +64,62 @@ class Productos extends Conexion{
         return $this->presentacion;
     }
     public function setPresentacion($presentacion){
-        $this->presentacion = $presentacion;
+        $resultado = $this->validarTexto($presentacion, 'presentacion', 2, 50);
+        if($resultado === true) {
+            $this->presentacion = $presentacion;
+        } else {
+            $this->errores['presentacion'] = $resultado;
+        }
     }
     public function getCantPresentacion(){
         return $this->cant_presentacion;
     }
     public function setCantPresentacion($cant_presentacion){
-        $this->cant_presentacion = $cant_presentacion;
+        $resultado = $this->validarAlfanumerico($cant_presentacion, 'cantidad presentacion', 1, 20);
+        if($resultado === true) {
+            $this->cant_presentacion = $cant_presentacion;
+        } else {
+            $this->errores['cant_presentacion'] = $resultado;
+        }
     }
     public function getCosto(){
         return $this->costo;
     }
     public function setCosto($costo){
-        return $this->costo = $costo;
+        // Convert to float and then to string without decimals if they are zero
+        $costo = (float)$costo;
+        $costo = $costo == (int)$costo ? (int)$costo : $costo;
+        $resultado = $this->validarNumerico($costo, 'costo', 1, 20);
+        if($resultado === true) {
+            $this->costo = $costo;
+        } else {
+            $this->errores['costo'] = $resultado;
+        }
     }
     public function getGanancia(){
         return $this->ganancia;
     }
     public function setGanancia($ganancia){
-        $this->ganancia = $ganancia;
+        // Convert to float and then to string without decimals if they are zero
+        $ganancia = (float)$ganancia;
+        $ganancia = $ganancia == (int)$ganancia ? (int)$ganancia : $ganancia;
+        $resultado = $this->validarNumerico($ganancia, 'ganancia', 1, 20);
+        if($resultado === true) {
+            $this->ganancia = $ganancia;
+        } else {
+            $this->errores['ganancia'] = $resultado;
+        }
     }
     public function getExcento(){
         return $this->excento;
     }
     public function setExcento($excento){
-        $this->excento = $excento;
+        $resultado = $this->validarStatus($excento);
+        if($resultado === true) {
+            $this->excento = $excento;
+        } else {
+            $this->errores['excento'] = $resultado;
+        }
     }
 
 
@@ -90,9 +136,11 @@ private function inventario_costo(){
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
     LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion;";
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $resul = $strExec->execute();   
     $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -108,15 +156,14 @@ public function getinventario_costo(){
 REGISTRAR PRODUCTO con CATEGORIA + REGISTRAR PRESENTACION con UNIDAD
 ========================================================================*/
 private function registrar($unidad, $categoria){ 
-
     $registro = "INSERT INTO productos(cod_categoria,nombre,cod_marca,imagen) VALUES(:cod_categoria,:nombre, :marca, :imagen)";
+    parent::conectarBD();
     $strExec = $this->conex->prepare($registro);
     $strExec->bindParam(':cod_categoria',$categoria);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':marca', $this->marca);
     $strExec->bindParam(':imagen', $this->imagen);
     $resul = $strExec->execute();
-
     if($resul){
         $nuevo_cod=$this->conex->lastInsertId(); 
         
@@ -131,15 +178,16 @@ private function registrar($unidad, $categoria){
                 $strExec->bindParam(':porcen_venta',$this->ganancia);
                 $strExec->bindParam(':excento',$this->excento);
                 $execute = $strExec->execute();
-
                 if($execute){
                 $r=1;
                 }else{
                     $r = 0;
                 }
+                parent::desconectarBD();
                 return $r;
 
             } else{
+                parent::desconectarBD();
                 return $resul=0;
             }
     }
@@ -153,9 +201,11 @@ Consultar solo las UNIDADES activas
 ================================*/
 public function consultarUnidad(){
     $sql = "SELECT * FROM unidades_medida WHERE status=1";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }return $r = 0;
@@ -166,10 +216,11 @@ Consultar solo las CATEGORIAS activas
 ================================*/
 public function consultarCategoria(){
     $registro = "SELECT * FROM categorias WHERE status=1";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
-
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -180,11 +231,11 @@ public function consultarCategoria(){
 
 public function consultarMarca() {
     $sql = "SELECT * FROM marcas WHERE status=1";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $resultado = $consulta->execute();
-
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if($resultado) {
         return $datos;
     } else {
@@ -198,7 +249,7 @@ REGISTRAR PRESENTACION A UN PRODUCTO EXISTENTE
 
 public function registrar2($unidad, $cod_producto){
         $sql2='INSERT INTO presentacion_producto(cod_unidad,cod_producto,presentacion,cantidad_presentacion,costo,porcen_venta,excento) VALUES(:cod_unidad,:cod_producto,:presentacion,:cantidad_presentacion,:costo,:porcen_venta,:excento)';
-        
+        parent::conectarBD();
         $strExec=$this->conex->prepare($sql2);
         $strExec->bindParam(':cod_unidad',$unidad);
         $strExec->bindParam(':cod_producto',$cod_producto);
@@ -208,7 +259,7 @@ public function registrar2($unidad, $cod_producto){
         $strExec->bindParam(':porcen_venta',$this->ganancia);
         $strExec->bindParam(':excento',$this->excento);
         $r = $strExec->execute();
-
+        parent::desconectarBD();
         if($r){
             $res=1;
             }else{
@@ -247,11 +298,11 @@ public function mostrar(){
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
     LEFT JOIN detalle_productos AS dp ON dp.cod_presentacion = present.cod_presentacion
     GROUP BY present.cod_presentacion;"; #Se agrupa por el código de presentacion para separar las distintas presentaciones q puede haber
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $resul = $consulta->execute();
-
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -267,24 +318,20 @@ public function getmostrar(){
 EDITAR PRODUCTO y categoria, unidad y su presentación
 ========================================*/
 public  function editar($present,$product,$categoria,$unidad){
-    
     $sql="UPDATE productos SET 
     cod_categoria=:cod_categoria,
     nombre=:nombre,
     cod_marca=:marca,
     imagen=:imagen
     WHERE cod_producto=:cod_producto";
-
+    parent::conectarBD();
     $strExec=$this->conex->prepare($sql);
-
     $strExec->bindParam(':cod_categoria', $categoria);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':marca',$this->marca);
     $strExec->bindParam(':imagen',$this->imagen);
     $strExec->bindParam(':cod_producto',$product);
-    
     $result=$strExec->execute();
-
     if($result){
         $sqlPresent = "UPDATE presentacion_producto SET
         presentacion=:presentacion,
@@ -302,18 +349,12 @@ public  function editar($present,$product,$categoria,$unidad){
             $strExec->bindParam(':porcen_venta',$this->ganancia);
             $strExec->bindParam(':cod_unidad', $unidad);
             $strExec->bindParam(':cod_presentacion',$present);
-
-        return $strExec->execute() ? 1 : 0;
+            $resultado=$strExec->execute() ? 1 : 0;
+            parent::desconectarBD();
+            return $resultado;
     }
+    parent::desconectarBD();
     return 0;
-}
-
-public function subirImagen($valor){
-    $nombre_logo = $valor['name'];
-    $tmp_logo = $valor['tmp_name'];
-    $ruta_logo = "vista/dist/img/productos/".$nombre_logo;
-    move_uploaded_file($tmp_logo, $ruta_logo);
-    $this->imagen = $ruta_logo;
 }
 
 /*======================================
@@ -321,15 +362,16 @@ ELIMINAR PRODUCTO
 ========================================*/
 
 public function eliminar($p, $pp) {
-
     // Verificar si la presentación tiene algún detalle con stock > 0
     $sqls = "SELECT * FROM detalle_productos WHERE cod_presentacion = :cod_presentacion AND stock > 0";
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sqls);
     $strExec->bindParam(':cod_presentacion', $pp, PDO::PARAM_INT);
     $strExec->execute();
     $stock = $strExec->fetchAll(PDO::FETCH_ASSOC);
 
     if ($stock) {
+        parent::desconectarBD();
         return 'error_stock';  // No se puede eliminar porque hay stock
         exit;
     }
@@ -354,13 +396,27 @@ public function eliminar($p, $pp) {
             $strExec = $this->conex->prepare($sqlp);
             $strExec->bindParam(':cod_producto', $p, PDO::PARAM_INT);
             $deleteproducto = $strExec->execute();
-
-            return $deleteproducto ? 'producto' : 'error_delete';
+            if ($deleteproducto) {
+                // Eliminar la imagen del producto si existe y no es la imagen por defecto
+                $sqlImagen = "SELECT imagen FROM productos WHERE cod_producto = :cod_producto";
+                $strExec = $this->conex->prepare($sqlImagen);
+                $strExec->bindParam(':cod_producto', $p, PDO::PARAM_INT);
+                $strExec->execute();
+                $imagen = $strExec->fetch(PDO::FETCH_ASSOC);
+                
+                if ($imagen && $imagen['imagen'] !== $this->directorioBase . $this->subcarpeta . $this->imagenDefault) {
+                    $this->eliminar($imagen['imagen'], true);
+                }
+                parent::desconectarBD();
+                return 'producto';
+            }
+            parent::desconectarBD();
+            return 'error_delete';
         }
-
+        parent::desconectarBD();
         return 'success';  // Se eliminó la presentación, pero quedan otras asociadas al producto
     }
-
+    parent::desconectarBD();
     return 'error_delete'; // No se pudo eliminar la presentación
 }
 
@@ -369,7 +425,6 @@ BUSCAR PRODUCTO (para que si ya existe asignarle una nueva presentacion)
 ========================================================================*/
 
 public function buscar($nombrep){
-
     $sql="SELECT                
     p.cod_producto,
     c.cod_categoria,                                 
@@ -380,13 +435,13 @@ public function buscar($nombrep){
     JOIN categorias AS c ON p.cod_categoria = c.cod_categoria
     JOIN marcas AS m ON p.cod_marca = m.cod_marca
     WHERE p.nombre LIKE ? GROUP BY p.nombre, m.nombre LIMIT 5;";
-
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $buscar = '%' . $nombrep. '%';
     $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -404,11 +459,12 @@ public function consultardetalleproducto($cod_presentacion){
     detp.stock
     FROM detalle_productos AS detp JOIN presentacion_producto AS present ON detp.cod_presentacion=:cod_presentacion
     GROUP BY detp.cod_detallep';
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':cod_presentacion',$cod_presentacion);
     $resul=$strExec->execute();
     $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if($resul){
         return $array;
     }else{
@@ -461,12 +517,12 @@ public function productocategoria($cod_categoria){
     JOIN presentacion_producto AS present ON p.cod_producto = present.cod_producto
     JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad
     WHERE c.cod_categoria = :cod_categoria";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam('cod_categoria',$cod_categoria);
     $result = $strExec->execute();
     $array=$strExec->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if($result){
         return $array;
     }else{

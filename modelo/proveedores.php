@@ -1,11 +1,10 @@
 <?php
 
 require_once 'conexion.php';
-
+require_once 'validaciones.php';
 class Proveedor extends Conexion
 {
-
-  private $conex;
+  use ValidadorTrait;
   private $cod_prov;
   private $rif;
   private $razon_social;
@@ -13,11 +12,19 @@ class Proveedor extends Conexion
   private $direccion;
   private $status;
 
+  private $errores = [];
+
   public function __construct()
   {
-    $this->conex = new Conexion();
-    $this->conex = $this->conex->conectar();
+    parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
   }
+
+  public function check() {
+    if (!empty($this->errores)) {
+        $mensajes = implode(" | ", $this->errores);
+        throw new Exception("Errores de validación: $mensajes");
+    }
+}
 
   public function setCod($cod_prov)
   {
@@ -35,7 +42,13 @@ class Proveedor extends Conexion
   }
   public function setRif($rif)
   {
-    $this->rif = $rif;
+    $resultado = $this->validarAlfanumerico($rif,"rif", 7,15);
+    if($resultado === true) {
+      $this->rif = $rif;
+    } else {
+      $this->errores['rif'] = $resultado;
+    }
+    
   }
 
   public function getRazon_Social()
@@ -45,7 +58,12 @@ class Proveedor extends Conexion
 
   public function setRazon_Social($razon_social)
   {
-    $this->razon_social = $razon_social;
+    $resultado = $this->validarTexto($razon_social, 'razonSocial', 2, 50);
+    if ($resultado === true) {
+        $this->razon_social= $razon_social;
+    } else {
+        $this->errores['razonSocial'] = $resultado;
+    }
   }
 
   public function get_Email()
@@ -55,7 +73,12 @@ class Proveedor extends Conexion
 
   public function setemail($email)
   {
-    $this->email = $email;
+    $resultado = $this->validarEmail($email);
+    if ($resultado === true) {
+      $this->email = $email;
+    } else {
+      $this->errores['email'] = $resultado;
+    }
   }
 
   public function getDireccion()
@@ -65,7 +88,12 @@ class Proveedor extends Conexion
 
   public function setDireccion($direccion)
   {
-    $this->direccion = $direccion;
+    $resultado = $this->validarAlfanumerico($direccion, 'direccion', 5, 250);
+        if ($resultado === true) {
+            $this->direccion = $direccion;
+        } else {
+            $this->errores['direccion'] = $resultado;
+        }
   }
 
   public function getStatus()
@@ -75,6 +103,12 @@ class Proveedor extends Conexion
 
   public function setStatus($status)
   {
+    $resultado = $this->validarStatus($status);
+        if($resultado === true) {
+            $this->status = $status;
+        } else {
+            $this->errores['status'] = $resultado;
+        }
     $this->status = $status;
   }
 
@@ -85,15 +119,14 @@ class Proveedor extends Conexion
   {
 
     $sql = "INSERT INTO proveedores(rif,razon_social,email,direccion,status)  VALUES  (:rif,:razon_social,:email,:direccion,1)";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
-
     $strExec->bindParam(':rif', $this->rif);
     $strExec->bindParam(':razon_social', $this->razon_social);
     $strExec->bindParam(':email', $this->email);
     $strExec->bindParam(':direccion', $this->direccion);
-
     $resul = $strExec->execute();
+    parent::desconectarBD();
     if ($resul) {
       $res = 1;
     } else {
@@ -114,7 +147,7 @@ class Proveedor extends Conexion
   private function editar() {
     
     $sql = "UPDATE proveedores SET rif = :rif, razon_social = :razon_social, email = :email, direccion = :direccion, status = :status WHERE cod_prov = :cod_prov";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':cod_prov', $this->cod_prov);
     $strExec->bindParam(':rif', $this->rif);
@@ -122,10 +155,9 @@ class Proveedor extends Conexion
     $strExec->bindParam(':email', $this->email);
     $strExec->bindParam(':direccion', $this->direccion);
     $strExec->bindParam(':status', $this->status);
-
     // Ejecuta la consulta  
     $resul = $strExec->execute();
-
+    parent::desconectarBD();
     if ($resul == 1) {
       return 1; 
     } else {
@@ -145,16 +177,16 @@ public function getedita() {
   {
       // Verificar si hay compras asociadas
       $sqlCompras = "SELECT COUNT(*) AS n_compras FROM compras WHERE cod_prov = :cod_prov";
+      parent::conectarBD();
       $strExec = $this->conex->prepare($sqlCompras);
       $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
       $strExec->execute();
       $resultadoCompras = $strExec->fetch(PDO::FETCH_ASSOC);
-  
       // Si hay compras asociadas, no se puede eliminar
       if ($resultadoCompras['n_compras'] > 0) {
+          parent::desconectarBD();
           return 'error_compra_asociada';
       }
-  
       // Verificar si hay representantes asociados
       $sqlRepresentantes = "SELECT COUNT(*) AS n_representantes FROM prov_representantes WHERE cod_prov = :cod_prov";
       $strExec = $this->conex->prepare($sqlRepresentantes);
@@ -169,9 +201,10 @@ public function getedita() {
           $strExec = $this->conex->prepare($fisico);
           $strExec->bindParam(':cod_prov', $valor, PDO::PARAM_INT);
           $strExec->execute();
+          parent::desconectarBD();
           return 'success_eliminado';
       }
-  
+      parent::desconectarBD();
       return 'error_compra_asociada'; // Por si acaso
   }
   
@@ -218,11 +251,11 @@ public function getedita() {
       p.cod_prov
     ORDER BY 
       p.cod_prov;";
-
+    parent::conectarBD();
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
+    parent::desconectarBD();
     if ($resul) {
       return $datos;
     } else {
@@ -243,9 +276,11 @@ public function getedita() {
     $this->rif = $dato;
     $registro = "select * from proveedores where rif='" . $this->rif . "'";
     $resulado = "";
+    parent::conectarBD();
     $dato = $this->conex->prepare($registro);
     $resul = $dato->execute();
     $resultado = $dato->fetch(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if ($resul) {
       return $resultado;
     } else {
