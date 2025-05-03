@@ -2,7 +2,6 @@
 require_once "conexion.php";
 class General extends Conexion{
 
-    private $conex;
     private $rif;
     private $nombre;
     private $direccion;
@@ -12,8 +11,7 @@ class General extends Conexion{
     private $logo;
 
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
 #GETTER Y SETTER
@@ -65,7 +63,7 @@ REGISTRAR INFO DE EMPRESA
     private function registrar(){
 
         $sql = "INSERT INTO empresa(rif,nombre,direccion,telefono,email,descripcion,logo) VALUES(:rif,:nombre,:direccion,:telefono,:email,:descripcion,:logo)";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(":rif", $this->rif);
         $strExec->bindParam(":nombre", $this->nombre);
@@ -74,9 +72,8 @@ REGISTRAR INFO DE EMPRESA
         $strExec->bindParam(":email", $this->email);
         $strExec->bindParam(":descripcion", $this->descripcion);
         $strExec->bindParam(":logo", $this->logo);
-
         $resul = $strExec->execute();
-
+        parent::desconectarBD();
         if($resul){
             $r = 1;
         }else{
@@ -94,9 +91,11 @@ MOSTRAR INFO DE EMPRESA
 ================================*/
     public function mostrar(){
         $registro="select * from empresa";
+        parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
         $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }else{
@@ -108,9 +107,11 @@ MOSTRAR INFO DE EMPRESA
     public function buscar(){
         $registro="select count(*) as total from empresa";
         $resultado= "";
+        parent::conectarBD();
             $dato=$this->conex->prepare($registro);
             $resul=$dato->execute();
             $resultado=$dato->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
             if($resul){
                 if($resultado['total']>0){
                 return $resultado;
@@ -134,7 +135,7 @@ EDITAR INFO DE EMPRESA
 ================================*/
 private function editar(){
     $registro = "UPDATE empresa SET nombre = :nombre, telefono=:telefono, email=:email, direccion = :direccion, descripcion = :descripcion, logo=:logo WHERE rif = :rif";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($registro);
     $strExec->bindParam(':rif',$this->rif);
     $strExec->bindParam(':nombre',$this->nombre);
@@ -143,8 +144,8 @@ private function editar(){
     $strExec->bindParam(':direccion',$this->direccion);
     $strExec->bindParam(':descripcion',$this->descripcion);
     $strExec->bindParam(':logo', $this->logo);
-
     $resul = $strExec->execute();
+    parent::desconectarBD();
     if($resul == 1){
         $r = 1;
     }else{

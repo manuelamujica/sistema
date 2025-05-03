@@ -1,5 +1,6 @@
 <?php
-session_start();
+session_status() == PHP_SESSION_NONE ? session_start() : null; // Iniciar sesión si no está iniciada
+
 require_once "./vendor/autoload.php";
 require_once 'modelo/productos.php';
 

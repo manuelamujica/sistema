@@ -31,6 +31,11 @@ require_once "controlador/login.php";
                                 </div>
                             </div>
                         </div>
+                        <div class="input-group mb-3 d-flex align-items-center"> 
+                            <img src="index.php?pagina=captcha" alt="code" id="codigo">
+                            <input type="text" class="form-control" id="captcha" placeholder="Captcha" name="captchaCodigo" required>
+                        </div>
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAABUTeiES0tXs0HGp"></div>
                         <div class="row">
                             <div class="col-4">
                                 <button type="submit" class="btn btn-primary btn-block" name="ingresar">Ingresar</button>
@@ -58,4 +63,19 @@ if (isset($login)): ?>
     </script>
 <?php endif; ?>
 
+<?php if (isset($_SESSION['login'])): ?>
+<script>
+    Swal.fire({
+        title: '<?php echo $_SESSION["login"]["title"]; ?>',
+        text: '<?php echo $_SESSION["login"]["message"]; ?>',
+        icon: '<?php echo $_SESSION["login"]["icon"]; ?>',
+        confirmButtonText: 'Ok'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location = 'login'; // Puedes poner 'inicio' si quieres ir a otra página
+        }
+    });
+</script>
+<?php unset($_SESSION['login']); endif; ?>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src='vista/dist/js/modulos-js/usuarios.js'></script>

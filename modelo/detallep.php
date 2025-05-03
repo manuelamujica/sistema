@@ -7,12 +7,10 @@
         private $lote;
         private $fecha_vencimiento;
         private $cod_presentacion;
-        private $conex;
 
 
         public function __construct(){
-            $this->conex = new Conexion();
-            $this->conex = $this->conex->conectar();
+            parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
         }
 
         //SET Y GET
@@ -39,14 +37,13 @@
         //METODO REGISTRAR
         private function registrar(){
             $registro = "INSERT INTO detalle_productos(cod_presentacion, fecha_vencimiento, lote, status) VALUES(:cod_presentacion, :fecha_vencimiento, :lote, 1)";
-    
+            parent::conectarBD();
             $strExec= $this->conex->prepare($registro);
             $strExec->bindParam('cod_presentacion', $this->cod_presentacion);
             $strExec->bindParam(':fecha_vencimiento',$this->fecha_vencimiento);
             $strExec->bindParam(':lote', $this->lote);
-    
             $result = $strExec->execute();
-    
+            parent::desconectarBD();
             if($result){
                 $r = 1;
             }else{
@@ -58,7 +55,7 @@
         }
     
         public function getcrear(){
-           return $this->registrar();
+            return $this->registrar();
         }
         
     }

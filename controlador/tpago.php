@@ -12,7 +12,6 @@ if(isset($_POST['buscar'])){
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar tipo de pago', $_POST['buscar'], 'Tipo de pago');
 
 }else if(isset($_POST['registrar'])){
     if(!empty($_POST['tipo_pago']) && !empty($_POST['divisa'])){

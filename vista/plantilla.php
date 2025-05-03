@@ -91,7 +91,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
-    $_GET ["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "tpago" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "divisa" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "proveedores" && $_SESSION["proveedor"]==1 || 

@@ -11,7 +11,6 @@ if (isset($_POST['buscar'])) {
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
-    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar unidad de medida', $_POST['buscar'], 'Unidad de medida');
 
 } else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
   

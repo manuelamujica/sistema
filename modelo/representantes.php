@@ -1,10 +1,7 @@
 <?php
 require_once 'conexion.php';
 
-class  Representantes extends Conexion
-{
-
-  private $conex;
+class  Representantes extends Conexion{
   private $cod_representante;
   private $cod_prov;
   private $cedula;
@@ -15,8 +12,7 @@ class  Representantes extends Conexion
 
   public function __construct()
   {
-    $this->conex = new Conexion();
-    $this->conex = $this->conex->conectar();
+    parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
   }
 
 
@@ -94,20 +90,18 @@ class  Representantes extends Conexion
   //metodos crud  registrar  //
   private function registrar()
   {
-
     $sql = "INSERT INTO prov_representantes (cod_prov, cedula, nombre, apellido, telefono, status) VALUES (:cod_prov, :cedula, :nombre, :apellido, :telefono, 1)";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
-
     // Vincula los parámetros  
     $strExec->bindParam(':cod_prov', $this->cod_prov);
     $strExec->bindParam(':cedula', $this->cedula);
     $strExec->bindParam(':nombre', $this->nombre);
     $strExec->bindParam(':apellido', $this->apellido);
     $strExec->bindParam(':telefono', $this->telefono);
-
     // Ejecutar el INSERT  
     $resul = $strExec->execute();
+    parent::desconectarBD();
     if ($resul) {
       $res = 1;
     } else {
@@ -130,7 +124,7 @@ class  Representantes extends Conexion
     $sql = "UPDATE prov_representantes 
               SET cedula=:cedula, nombre=:nombre, apellido=:apellido, telefono=:telefono, status=:status 
               WHERE cod_representante = :cod_representante";
-
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':cod_representante', $this->cod_representante);
     $strExec->bindParam(':cedula', $this->cedula);
@@ -138,9 +132,9 @@ class  Representantes extends Conexion
     $strExec->bindParam(':apellido', $this->apellido);
     $strExec->bindParam(':telefono', $this->telefono);
     $strExec->bindParam(':status', $this->status);
-
     // Ejecuta la consulta  
     $resul = $strExec->execute();
+    parent::desconectarBD();
     if ($resul == 1) {
       return 1; // Éxito  
     } else {
@@ -160,12 +154,14 @@ class  Representantes extends Conexion
   {
       // Eliminar de forma física sin buscar nada
       $eliminar = "DELETE FROM prov_representantes WHERE cod_representante = :cod_representante";
+      parent::conectarBD();
       $strExecDelete = $this->conex->prepare($eliminar);
       $strExecDelete->bindParam(':cod_representante', $valor);
-  
       if ($strExecDelete->execute()) {
+        parent::desconectarBD();
           return 'success_physical_delete';
       } else {
+        parent::desconectarBD();
           return 'error_physical_delete';
       }
   }
@@ -179,11 +175,12 @@ class  Representantes extends Conexion
   //inicio de consultar//
   private function consultar()
   {
-
     $registro = "select * from prov_representantes";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($registro);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if ($resul) {
       return $datos;
     } else {
@@ -203,9 +200,11 @@ class  Representantes extends Conexion
     $this->cedula = $dato;
     $registro = "select * from prov_representantes where cedula='" . $this->cedula . "'";
     $resulado = "";
+    parent::conectarBD();
     $dato = $this->conex->prepare($registro);
     $resul = $dato->execute();
     $resultado = $dato->fetch(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if ($resul) {
       return $resultado;
     } else {

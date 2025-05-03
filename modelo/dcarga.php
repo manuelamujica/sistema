@@ -2,11 +2,8 @@
 require_once "conexion.php";
 require_once "validaciones.php";
 
-class Dcarga extends Conexion
-{
+class Dcarga extends Conexion{
     use ValidadorTrait; // Usar el trait para validaciones  
-
-    private $conex;
     private $errores = [];
     private $codigo;
     private $cod_carga;
@@ -20,12 +17,56 @@ class Dcarga extends Conexion
     private $fecha_vencimiento;
     private $cod_presentacion;
 
+        public function __construct(){
+            parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+        }
 
-    public function __construct()
-    {
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
-    }
+        private function actualizarStock() {
+            $cod_detallep = $this->getproductod();
+            $aumentar = "UPDATE detalle_productos SET stock = stock + :cantidad WHERE cod_detallep = :cod_detallep";
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($aumentar);
+            $strExec->bindParam(':cod_detallep', $this->cod_detallep);
+            $strExec->bindParam(':cantidad', $this->cantidad); 
+            $strExec->execute();
+            parent::desconectarBD();
+        }
+    
+        //OBTENER EL CODIGO RECIEN DE CARGA
+        private function carga(){
+                $sql = "SELECT MAX(cod_carga) as ultimo FROM carga";
+                parent::conectarBD();
+                $strExec = $this->conex->prepare($sql);
+                $resul = $strExec->execute();
+                if($resul == 1){
+                    $r = $strExec->fetch(PDO::FETCH_ASSOC);
+                    parent::desconectarBD();
+                    return $r['ultimo'];
+                }else{
+                    parent::desconectarBD();
+                    return $r = 0;
+                }
+        }
+
+        //OBTENER EL CODIGO ULTIMO DE PRODUCTO
+        private function getproductod(){ 
+
+            $sql = "SELECT MAX(cod_detallep) as ultimo FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':cod_presentacion',$this->codpro);
+            $resul = $strExec->execute();
+            if($resul == 1){
+                //var_dump($this->codpro);
+                $r = $strExec->fetch(PDO::FETCH_ASSOC);
+                parent::desconectarBD();
+                return $r['ultimo'];
+            }else{
+                //var_dump($this->codpro);
+                parent::desconectarBD();
+                return $r = 0;
+            }
+        }
 
     /* ######  SETTER Y GETTER      ###### */
     public function getcod()
@@ -199,56 +240,9 @@ class Dcarga extends Conexion
         return $r; // Registro exitoso
     }
 
-
-    private function actualizarStock()
-    {
-        $cod_detallep = $this->getproductod();
-
-        $aumentar = "UPDATE detalle_productos SET stock = stock + :cantidad WHERE cod_detallep = :cod_detallep";
-        $strExec = $this->conex->prepare($aumentar);
-        $strExec->bindParam(':cod_detallep', $this->cod_detallep);
-        $strExec->bindParam(':cantidad', $this->cantidad);
-        $strExec->execute();
-    }
-
-    //ME FUNCIONA EL REGISTRAR PERO SOLO UN PRODUCTO Y CANTIDAD A LA VEZ. TAMBIEN EN EL MOMENTO EN QUE REGISTRA AUMENTA EL STOCK
-
     public function getcrear($productos)
     {
         return $this->crear($productos);
-    }
-
-    //OBTENER EL CODIGO RECIEN DE CARGA
-    private function carga()
-    {
-
-        $sql = "SELECT MAX(cod_carga) as ultimo FROM carga";
-        $strExec = $this->conex->prepare($sql);
-        $resul = $strExec->execute();
-        if ($resul == 1) {
-            $r = $strExec->fetch(PDO::FETCH_ASSOC);
-            return $r['ultimo'];
-        } else {
-            return $r = 0;
-        }
-    }
-
-    //OBTENER EL CODIGO ULTIMO DE PRODUCTO
-    private function getproductod()
-    {
-
-        $sql = "SELECT MAX(cod_detallep) as ultimo FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_presentacion', $this->codpro);
-        $resul = $strExec->execute();
-        if ($resul == 1) {
-            //var_dump($this->codpro);
-            $r = $strExec->fetch(PDO::FETCH_ASSOC);
-            return $r['ultimo'];
-        } else {
-            //var_dump($this->codpro);
-            return $r = 0;
-        }
     }
 
     public function productod()
@@ -269,19 +263,18 @@ class Dcarga extends Conexion
                     JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
                     JOIN productos p ON pre.cod_producto = p.cod_producto
                     WHERE dc.cod_carga = :cod_carga";
-
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_carga', $valor, PDO::PARAM_STR);
-
-        $resul = $strExec->execute();
-        $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-        if ($resul) {
-            return $result;
-        } else {
-            return []; // Retornar un array vacío si no hay resultados
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':cod_carga', $valor, PDO::PARAM_STR);
+            $resul = $strExec->execute();
+            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            if ($resul) {
+                return $result;
+            } else {
+                return []; // Retornar un array vacío si no hay resultados
+            }
         }
-    }
 
     public function gettodoo($valor)
     {
@@ -301,18 +294,18 @@ class Dcarga extends Conexion
                     JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
                     JOIN presentacion_producto pre ON dp.cod_presentacion = pre.cod_presentacion
                     JOIN productos p ON pre.cod_producto = p.cod_producto";
-
-        $strExec = $this->conex->prepare($sql);
-        $resul = $strExec->execute();
-        $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-        if ($resul) {
-            return $result;
-        } else {
-            return []; // Retornar un array vacío si no hay resultados
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($sql);
+            $resul = $strExec->execute();
+            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            if ($resul) {
+                return $result;
+            } else {
+                return []; // Retornar un array vacío si no hay resultados
+            }
         }
-    }
-
+        
     public function getodoo()
     {
         return $this->mostrartodo();
@@ -324,9 +317,16 @@ class Dcarga extends Conexion
             FROM presentacion_producto pre
             JOIN productos p ON pre.cod_producto = p.cod_producto
             JOIN marcas m ON p.cod_marca = m.cod_marca";
-        $strExec = $this->conex->prepare($sql);
-        $resul = $strExec->execute();
-        $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($sql);
+            $resul = $strExec->execute();
+            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            if($resul){
+                return $result;;
+            }else{
+                return $r = 0;
+            }
 
         if ($resul) {
             return $result;;
@@ -349,62 +349,60 @@ class Dcarga extends Conexion
         JOIN unidades_medida AS u ON present.cod_unidad = u.cod_unidad 
         JOIN marcas AS m ON p.cod_marca = m.cod_marca
         WHERE p.nombre LIKE ? GROUP BY present.cod_presentacion LIMIT 5;";
-
-        $consulta = $this->conex->prepare($sql);
-        $buscar = '%' . $valor . '%';
-        $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
-        $resul = $consulta->execute();
-        $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-        if ($resul) {
-            return $datos;
-        } else {
-            return [];
+            parent::conectarBD();
+            $consulta = $this->conex->prepare($sql);
+            $buscar = '%' . $valor . '%';
+            $consulta->bindParam(1, $buscar, PDO::PARAM_STR);
+            $resul = $consulta->execute();
+            $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            if($resul){
+                return $datos;
+            }else{
+                return [];
+            }
         }
-    }
 
-    public function verificarDetalleProducto($valor)
-    {
-        $sql = "SELECT cod_detallep FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_presentacion', $valor);
-        $rr = $strExec->execute();
-        $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
-
-        if ($rr) {
-            return $resultado;
-        } else {
-            return $r = 0;
+        public function verificarDetalleProducto($valor) {
+            $sql = "SELECT cod_detallep FROM detalle_productos WHERE cod_presentacion = :cod_presentacion";
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':cod_presentacion', $valor);
+            $rr=$strExec->execute();
+            $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            if($rr){
+                return $resultado;
+            }else{
+                return $r = 0;
+            }
         }
-    }
 
     public function getP()
     {
         return $this->obtenerP();
     }
 
-
-    private function mostrar()
-    {
-        $sql = "select * from detalle_carga";
-        $strExec = $this->conex->prepare($sql);
-        $resul = $strExec->execute();
-        $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
-
-        if ($resul) {
-            return $result;;
-        } else {
-            return $r = 0;
+        private function mostrar(){
+            $sql = "select * from detalle_carga";
+            parent::conectarBD();
+            $strExec = $this->conex->prepare($sql);
+            $resul = $strExec->execute();
+            $result = $strExec->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            if($resul){
+                return $result;;
+            }else{
+                return $r = 0;
+            }
         }
-    }
 
-    public function getmos()
-    {
-        return $this->mostrar();
-    }
+        public function getmos(){
+            return $this->mostrar();
+        }
 
-    public function getmostrarPorFechas($fechaInicio, $fechaFin)
-    {
-        $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
+        public function getmostrarPorFechas($fechaInicio, $fechaFin) {
+            $sql = "SELECT c.fecha, c.cod_carga, c.status, c.descripcion, pre.cod_presentacion, pre.cod_producto, pre.presentacion, pre.cantidad_presentacion , p.cod_producto, p.nombre, dp.cod_detallep, dp.stock, dc.cod_det_carga, dc.cantidad
             FROM detalle_carga dc
             JOIN carga c ON dc.cod_carga = c.cod_carga
             JOIN detalle_productos dp ON dc.cod_detallep = dp.cod_detallep
@@ -412,11 +410,15 @@ class Dcarga extends Conexion
             JOIN productos p ON pre.cod_producto = p.cod_producto
             WHERE c.fecha BETWEEN :fechaInicio AND :fechaFin
             GROUP BY pre.cod_presentacion";
+            parent::conectarBD();
+            $stmt = $this->conex->prepare($sql);
+            $stmt->bindParam(':fechaInicio', $fechaInicio);
+            $stmt->bindParam(':fechaFin', $fechaFin);
+            $stmt->execute();
+            $resultado=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            parent::desconectarBD();
+            return $resultado;
+        }
 
-        $stmt = $this->conex->prepare($sql);
-        $stmt->bindParam(':fechaInicio', $fechaInicio);
-        $stmt->bindParam(':fechaFin', $fechaFin);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+        
 }
