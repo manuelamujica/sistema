@@ -1,19 +1,21 @@
 <?php
 require_once 'modelo/finanzas.php';
-require_once 'modelo/catalogocuentas.php';
-require_once 'modelo/productos.php';
-require_once 'modelo/analisisrentabilidad.php';
 require_once 'modelo/stockmensual.php';
 require_once 'modelo/proyecciones.php';
+require_once 'modelo/bitacora.php';
+require_once 'modelo/analisisrentabilidad.php';
+require_once 'modelo/presupuestos.php';
+require_once 'controlador/proyecciones.php';
 
 $_GET['ruta'] = 'finanzas';
 
 // Instancias de las clases necesarias
-$objCuentas = new CatalogoCuentas();
-$objProductos = new Productos();
-$objRentabilidad = new AnalisisRentabilidad();
+$objFinanzas = new Finanzas();
 $objStock = new StockMensual();
 $objProyecciones = new Proyecciones();
+$objBitacora = new Bitacora();
+$objRentabilidad = new AnalisisRentabilidad();
+$objPresupuestos = new Presupuestos();
 
 // Obtener datos de cada modelo
 /*$cuentas = $objCuentas->getconsultar_cuentas();
@@ -265,15 +267,61 @@ $datos_proyecciones = [
     ]
 ];
 
-// Convertir los datos a JSON para el frontend
-$datos = [
-    'cuentas' => $datos_cuentas,
-    'inventario' => $datos_inventario,
-    'rentabilidad' => $datos_rentabilidad,
-    'presupuestos' => $datos_presupuestos,
-    'proyecciones' => $datos_proyecciones
-];
+// Si es una solicitud AJAX para detalles de producto
+if(isset($_POST['accion'])) {
+    $respuesta = [];
+    
+    switch($_POST['accion']) {
+        case 'obtener_detalle_producto':
+            if(isset($_POST['cod_producto'])) {
+                $detalles = $objProyecciones->obtenerProyeccionesProducto($_POST['cod_producto']);
+                $respuesta = [
+                    'labels' => array_column($detalles, 'mes'),
+                    'proyectado' => array_column($detalles, 'valor_proyectado'),
+                    'real' => array_column($detalles, 'valor_real'),
+                    'precision' => array_column($detalles, 'precision_valor')
+                ];
+            }
+            break;
+    }
+    
+    header('Content-Type: application/json');
+    echo json_encode($respuesta);
+    exit;
+}
 
-$datos_json = json_encode($datos);
+// Cargar datos para todas las secciones
+// 1. Análisis de Cuentas - PENDIENTE
+/*$cuentas = $objFinanzas->obtenerResumenFinanciero();
+$movimientos = $objFinanzas->obtenerUltimosMovimientos();
+$cuentas_activas = $objFinanzas->obtenerCuentasActivas();*/
+
+// 2. Rotación de Inventario - PENDIENTE
+/*$rotacion = $objStock->obtenerStockMensual();*/
+
+// 3. Rentabilidad - PENDIENTE
+/*$rentabilidad = $objRentabilidad->getAnalisisRentabilidad();*/
+
+// 4. Presupuestos - PENDIENTE
+/*$presupuestos = $objPresupuestos->obtenerPresupuestos();
+$categorias_presupuesto = $objPresupuestos->obtenerCategorias();*/
+
+// 5. Proyecciones - ACTIVO
+$periodo_default = 6;
+$proyecciones = $objProyecciones->obtenerProyeccionesFuturas($periodo_default);
+$historico = $objProyecciones->obtenerHistoricoVentas($periodo_default);
+$precision = $objProyecciones->obtenerPrecisionHistorica();
+
+// Registrar en bitácora
+$objBitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Acceso a Finanzas', '', 'Finanzas');
+
+// Establecer la ruta para la vista
+$_GET['ruta'] = 'finanzas';
+
+$datos_iniciales = [
+    'proyecciones' => $proyecciones_data ?? [],
+    'historico' => $historico_data ?? [],
+    'precision' => $precision_data ?? []
+];
 
 require_once 'plantilla.php';

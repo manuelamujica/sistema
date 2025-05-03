@@ -2,6 +2,18 @@
 require_once "controlador/finanzas.php";
 ?>
 
+<script>
+// Inicializar datos desde PHP
+const datos = <?php echo json_encode($datos); ?>;
+</script>
+
+<!-- Initialize data for JavaScript -->
+<script>
+// Initial data from PHP
+window.datosFinanzas = <?php echo json_encode($datos_iniciales ?? [], JSON_NUMERIC_CHECK); ?>;
+console.log('Initial data loaded:', window.datosFinanzas);
+</script>
+
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -304,7 +316,7 @@ require_once "controlador/finanzas.php";
                                         <label for="periodo-proyeccion" class="form-label">Período:</label>
                                         <select id="periodo-proyeccion" name="periodo-proyeccion" class="form-select">
                                             <option value="3">Próximos 3 meses</option>
-                                            <option value="6">Próximos 6 meses</option>
+                                            <option value="6" selected>Próximos 6 meses</option>
                                             <option value="12">Próximo año</option>
                                         </select>
                                     </div>
@@ -321,10 +333,6 @@ require_once "controlador/finanzas.php";
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h3 class="h5 mb-0">Proyecciones Futuras</h3>
-                                            <div class="input-group" style="width: 300px;">
-                                                <input type="text" id="buscar-producto-proyeccion" class="form-control" placeholder="Buscar producto...">
-                                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                            </div>
                                         </div>
                                         <div class="table-responsive">
                                             <table id="tabla-proyecciones-futuras" class="table table-hover">
@@ -338,6 +346,26 @@ require_once "controlador/finanzas.php";
                                                         <th class="text-center">Tendencia</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody>
+                                                    <?php foreach ($proyecciones as $p): 
+                                                        $ventasActuales = floatval($p['ventas_actuales']);
+                                                        $proyeccion = floatval($p['valor_proyectado']);
+                                                        $tendencia = $proyeccion > $ventasActuales ? 'up' : 'down';
+                                                    ?>
+                                                    <tr data-producto="<?php echo $p['producto']; ?>" 
+                                                        data-cod-producto="<?php echo $p['cod_producto']; ?>"
+                                                        class="cursor-pointer">
+                                                        <td><?php echo $p['producto']; ?></td>
+                                                        <td class="text-end"><?php echo number_format($ventasActuales, 2); ?></td>
+                                                        <td class="text-end"><?php echo number_format($proyeccion, 2); ?></td>
+                                                        <td class="text-end"><?php echo number_format($proyeccion * 1.1, 2); ?></td>
+                                                        <td class="text-end"><?php echo number_format($proyeccion * 1.25, 2); ?></td>
+                                                        <td class="text-center">
+                                                            <i class="bi bi-arrow-<?php echo $tendencia; ?>-circle-fill text-<?php echo $tendencia === 'up' ? 'success' : 'danger'; ?>"></i>
+                                                        </td>
+                                                    </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -348,10 +376,6 @@ require_once "controlador/finanzas.php";
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h3 class="h5 mb-0">Precisión de Proyecciones Anteriores</h3>
-                                            <div class="input-group" style="width: 300px;">
-                                                <input type="text" id="buscar-producto-precision" class="form-control" placeholder="Buscar producto...">
-                                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                            </div>
                                         </div>
                                         <div class="table-responsive">
                                             <table id="tabla-precision-historica" class="table table-hover">
@@ -364,6 +388,24 @@ require_once "controlador/finanzas.php";
                                                         <th class="text-end">Tendencia</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody>
+                                                    <?php foreach ($precision as $p): 
+                                                        $precisionPromedio = floatval($p['precision_promedio']);
+                                                        $tendencia = $precisionPromedio > 95 ? 'up' : 'down';
+                                                    ?>
+                                                    <tr data-producto="<?php echo $p['producto']; ?>"
+                                                        data-cod-producto="<?php echo $p['cod_producto']; ?>"
+                                                        class="cursor-pointer">
+                                                        <td><?php echo $p['producto']; ?></td>
+                                                        <td class="text-end"><?php echo number_format($precisionPromedio, 2); ?>%</td>
+                                                        <td class="text-end"><?php echo number_format($p['mejor_precision'], 2); ?>%</td>
+                                                        <td class="text-end"><?php echo number_format($p['peor_precision'], 2); ?>%</td>
+                                                        <td class="text-center">
+                                                            <i class="bi bi-arrow-<?php echo $tendencia; ?>-circle-fill text-<?php echo $tendencia === 'up' ? 'success' : 'danger'; ?>"></i>
+                                                        </td>
+                                                    </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -542,4 +584,45 @@ require_once "controlador/finanzas.php";
 <script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="vista/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="vista/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
+<script>
+// Solo mantener la inicialización de DataTables y eventos
+$(document).ready(function() {
+    // Inicializar DataTables
+    $('#tabla-proyecciones-futuras').DataTable({
+        responsive: true,
+        autoWidth: false,
+        language: {
+            url: 'vista/plugins/datatables/Spanish.json'
+        }
+    });
+
+    $('#tabla-precision-historica').DataTable({
+        responsive: true,
+        autoWidth: false,
+        language: {
+            url: 'vista/plugins/datatables/Spanish.json'
+        }
+    });
+
+    // Manejar cambio de tipo de análisis
+    $('#ver-historico').on('change', function() {
+        const tipoAnalisis = $(this).val();
+        if (tipoAnalisis === 'proyecciones') {
+            $('#tabla-proyecciones').show();
+            $('#tabla-precision').hide();
+        } else {
+            $('#tabla-proyecciones').hide();
+            $('#tabla-precision').show();
+        }
+    });
+
+    // Manejar click en filas para mostrar detalles
+    $('#tabla-proyecciones-futuras tbody, #tabla-precision-historica tbody').on('click', 'tr', function() {
+        const producto = $(this).data('producto');
+        const codProducto = $(this).data('cod-producto');
+        mostrarModalProyeccion(producto, codProducto);
+    });
+});
+</script>
 
