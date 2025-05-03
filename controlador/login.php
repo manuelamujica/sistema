@@ -98,15 +98,10 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["usuario"] = 0;
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
-
-<<<<<<< HEAD
 			$_SESSION["permisos"] = []; // Inicializamos el array de permisos
 		
-
 			//Obtenemos los modulos asociados al usuario
-=======
 			//Obtenemos los permisos asociados al usuario
->>>>>>> main
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
 			foreach ($accesos as $permisos) {
 				if ($permisos["permisos"] == 1) {
@@ -129,8 +124,9 @@ if (isset($_POST["ingresar"])) {
 					$_SESSION["reporte"] = 1;
 				} else if ($permisos["permisos"] == 10) {
 					$_SESSION["configuracion"] = 1;
-<<<<<<< HEAD
-				} 
+				} else if ($cod_permiso["cod_permiso"] == 11) {
+					$_SESSION["marca"] = 1;
+				}
 				/*$modulo = $permisos["cod_modulo"];
 				$accion = $permisos["cod_crud"];
 			
@@ -141,13 +137,7 @@ if (isset($_POST["ingresar"])) {
 			
 				// Marcamos la acción permitida con 1
 				$_SESSION["permisos"][$modulo][$accion] = 1;*/
-=======
-				} else if ($cod_permiso["cod_permiso"] == 11) {
-					$_SESSION["marca"] = 1;
-				}
-
->>>>>>> main
-			
+				} 
 			}
 			
 
@@ -182,4 +172,3 @@ if (isset($_POST["ingresar"])) {
 	}
 	
 	}
-}

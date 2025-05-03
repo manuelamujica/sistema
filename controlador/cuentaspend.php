@@ -14,4 +14,5 @@ if(isset($_POST['detallecuenta'])){
 $cobrar = $objCuentasPendientes->getmostrarcliente();
 $pagar = $objCuentasPendientes->getmostrarCuentasPagar();
 $totalcobrar = $objCuentasPendientes->getboxcobrar();
-require_once "vista/modulos/cuentaspend.php";
+
+require_once 'plantilla.php';
