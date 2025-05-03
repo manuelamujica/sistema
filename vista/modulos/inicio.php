@@ -604,7 +604,7 @@ if (isset($editar)): ?>
         var tasaorig = $("#tasaactual").val();
 
         /*Mostrar modal de carga antes de la solicitud
-        $("#loadingModal").modal("show");*/
+        $("#loadingModal").modal("show");
 
         $.post('index.php?pagina=divisa', { sen }, function(response) {
             console.log("Respuesta del servidor:", response);
