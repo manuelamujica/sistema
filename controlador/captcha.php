@@ -1,5 +1,4 @@
 <?php
-
 // Baraja una cadena aleatoriamente
 $codigo = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 0, 5);
 $ancho = 100;
