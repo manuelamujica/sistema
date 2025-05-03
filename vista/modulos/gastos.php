@@ -408,9 +408,9 @@ require_once "controlador/gastos.php";
                                     <div class="form-row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <input type="hidden" name="cod_gasto1" id="cod_gasto1">
+                                                <input type="hidden" name="cod_gasto" id="cod_gasto">
                                                 <label for="cod_gasto">Nro de Gasto</label>
-                                                <input type="text" class="form-control" id="cod_gasto" name="cod_gasto" readonly>
+                                                <input type="text" class="form-control" id="cod_gasto1" name="cod_gasto1" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -422,7 +422,7 @@ require_once "controlador/gastos.php";
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="fecha_del_pago">Fecha de pago</label>
-                                                <input type="text" class="form-control" id="fecha_del_pago" name="fecha_del_pago" readonly>
+                                                <input type="text" class="form-control" id="fecha_del_pago" name="fecha" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -442,7 +442,7 @@ require_once "controlador/gastos.php";
                                     <div class="form-row">
                                         <?php foreach ($formaspago as $index => $opcion): ?>
                                             <?php if ($opcion['tipo_moneda'] == 'bolivares'): ?>
-                                                
+
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
@@ -460,7 +460,7 @@ require_once "controlador/gastos.php";
                                                     </div>
                                                 </div>
                                             <?php else: ?>
-                                                
+
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
@@ -499,7 +499,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar" name="monto_pagar" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar" name="montototal" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -510,7 +510,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagado" name="monto_pagado" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_pagado" name="montopagado" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -566,7 +566,7 @@ require_once "controlador/gastos.php";
                 <?php endif; ?>
 
                 <!-- =======================
-                    MODAL PAGOS EN CUOTAS 
+                    MODAL PAGOS EN CUOTAS  TRABAJO EN CURSO 30/04/2025
                 ============================= -->
 
                 <div class="modal fade" id="partesModal" tabindex="-1" aria-labelledby="abonoLabel" aria-hidden="true">
@@ -584,20 +584,20 @@ require_once "controlador/gastos.php";
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="nro_gasto">Nro de Gasto</label>
-                                                <input type="text" class="form-control" id="nro_gasto" name="nro_gasto" readonly>
-                                                <input type="hidden" class="form-control" id="codigop" name="codigop">
+                                                <input type="text" class="form-control" id="nro_gasto" readonly>
+                                                <input type="hidden" class="form-control" id="codigop" name="cod_pago_emitido">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="nombreG">Nombre del Gasto</label>
-                                                <input type="text" class="form-control" id="nombreG" name="nombreG" readonly>
+                                                <input type="text" class="form-control" id="nombreG" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="fecha_cuota">Fecha</label>
-                                                <input type="text" class="form-control" id="fecha_cuota" name="fecha_cuota" readonly>
+                                                <input type="text" class="form-control" id="fecha_cuota" name="fecha" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -606,7 +606,7 @@ require_once "controlador/gastos.php";
                                     </div>
                                     <div class="text-center my-3">
                                         <h4>Monto Pagado: <span id="total-gasto" class="font-weight-bold" style="font-size: 2rem;">0.00</span></h4>
-                                        <input type="hidden" class="form-control" id="t-parcial" name="total_parcial">
+                                        <input type="hidden" class="form-control" id="t-parcial" name="montototal">
                                     </div>
                                     <div class="text-center my-3">
                                         <h4>Monto a Pagar: <span id="monto-pagar" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
@@ -624,13 +624,48 @@ require_once "controlador/gastos.php";
                                     <div class="form-row">
                                         <?php foreach ($formaspago as $index => $opcion): ?>
                                             <?php if ($opcion['cod_divisa'] == 1): ?>
-                                                
+
+
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
                                                         <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
+                                                            </div>
+                                                            <input type="number" step="0.01" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
+                                                            <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">Bs</span>
+                                                            </div>
+                                                            <input type="number" step="0.01" class="form-control monto-bs monto-con" id="monto-bs-con-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            <?php else: ?>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                                        <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                                    </div>
+                                                </div>
+
+
                                                 <div class="col-md-8">
                                                     <div class="form-group">
                                                         <div class="input-group">
@@ -641,35 +676,9 @@ require_once "controlador/gastos.php";
                                                         </div>
                                                     </div>
                                                 </div>
-                                            <?php else: ?>
-                                               
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
-                                                        <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
-                                                            </div>
-                                                            <input type="number" step="0.01" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago1(<?= $index; ?>)">
-                                                            <input type="hidden" class="form-control tasa-conversion1" id="tasa-conversion1-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text">Bs</span>
-                                                            </div>
-                                                            <input type="number" step="0.01" class="form-control monto-bs1 monto-con1" id="monto-bs-con-1<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
+
+
+
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </div>
@@ -681,7 +690,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar1" name="monto_a_pagar" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar1" name="montototal" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -692,7 +701,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagadoxcuotas" name="monto_pagado" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_pagadoxcuotas" name="montopagado" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -806,7 +815,7 @@ require_once "controlador/gastos.php";
                                     <div class="form-row">
                                         <?php foreach ($formaspago as $index => $opcion): ?>
                                             <?php if ($opcion['cod_divisa'] == 1): ?>
-                                                
+
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
@@ -824,7 +833,7 @@ require_once "controlador/gastos.php";
                                                     </div>
                                                 </div>
                                             <?php else: ?>
-                                                
+
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>

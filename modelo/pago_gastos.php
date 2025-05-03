@@ -1,5 +1,5 @@
 <?php
-//MODIFIQUE SETTER Y GETTER PERO FALTAN LOS ATRIBUTOS Y SIGO DESARROLLANDO PARA QUE PUEDA FUNCIONAR COMO LO HACIA ANTES CON LSO SETTER NORMALES
+//MODIFIQUE SETTER Y GETTER PERO FALTAN LOS ATRIBUTOS Y SIGO DESARROLLANDO PARA QUE PUEDA FUNCIONAR COMO LO HACIA ANTES CON LOS SETTER NORMALES
 require_once 'conexion.php';
 require_once 'validaciones.php';
 class Pagos extends Conexion
@@ -8,7 +8,17 @@ class Pagos extends Conexion
   private $errores = [];
   private $conex;
   private $datos = [];
-
+  private $cod_pago_emitido;
+  private $cod_gasto;
+  private $cod_tipo_pago;
+  private $cod_vuelto_r;
+  private $montototal;
+  private $montopagado;
+  private $vuelto;
+  private $monto_vueltodet;
+  private $fecha;
+  private $status;
+  private $pago = [];
 
   public function __construct()
   {
@@ -22,28 +32,79 @@ class Pagos extends Conexion
     foreach ($datos as $key => $value) {
       switch ($key) {
         case 'cod_pago_emitido':
-        //case 'tipo_pago':
+          if (is_numeric($value)) {
+            $this->cod_pago_emitido = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser numérico.";
+          }
+          break;
         case 'cod_gasto':
-        case 'cod_tipo_pago':
-        case 'cod_vuelto_r':
-
-          if (!is_numeric($value)) {
+          if (is_numeric($value)) {
+            $this->cod_gasto = $value;
+          } else {
             $this->errores[] = "El campo $key debe ser numérico.";
           }
           break;
 
-        case 'monto':
+        case 'cod_vuelto_r':
+          if (is_numeric($value)) {
+            $this->cod_vuelto_r = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser numérico.";
+          }
+          break;
+
+        case 'montototal':
+          if (!is_numeric($value) || $value >= 0) {
+            $this->montototal = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser un número mayor o igual a 0.";
+          }
+          break;
         case 'montopagado':
+          if (!is_numeric($value) || $value > 0) {
+            $this->montopagado = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser un número mayor o igual a 0.";
+          }
+          break;
+
         case 'vuelto':
+          if (!is_numeric($value) || $value >= 0) {
+            $this->vuelto = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser un número mayor o igual a 0.";
+          }
+          break;
         case 'monto_vueltodet':
-          if (!is_numeric($value) || $value < 0) {
+          if (!is_numeric($value) || $value >= 0) {
+            $this->monto_vueltodet = $value;
+          } else {
             $this->errores[] = "El campo $key debe ser un número mayor o igual a 0.";
           }
           break;
 
         case 'fecha':
           if (!empty($value)) {
-            $this->errores[] = "El campo $key debe estar lleno.";
+            $this->fecha = $value;
+          } else {
+            $this->errores[] = "El campo $key no puede estar vacío.";
+          }
+          break;
+
+        case 'pago':
+          if (is_array($value)) {
+            /*foreach ($value as $index => $pago) {
+              if (!isset($pago['monto']) || !is_numeric($pago['monto']) || $pago['monto'] <= 0) {
+                $this->errores[] = "El monto del pago en la posición $index debe ser un número mayor a 0.";
+              }
+              if (!isset($pago['cod_tipo_pago']) || !is_numeric($pago['cod_tipo_pago'])) {
+                $this->errores[] = "El código de tipo de pago en la posición $index debe ser numérico.";
+              }
+            }*/
+            $this->pago = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser un arreglo.";
           }
           break;
 
@@ -127,91 +188,137 @@ LEFT JOIN
   }
 
 
-  private function registrarPG()
+  private function registrarPG() //LISTO COMPLETADO AL 100% NI LE MUEVAN JAJAJAJ
   {
-    $tipo_pago = "gasto";
-    $sql = "INSERT INTO pago_emitido(tipo_pago,fecha,cod_gasto, monto_total) VALUES(:tipo_pago,:fecha,:cod_gasto,:monto_total)";
-    $strExec = $this->conex->prepare($sql);
-    $strExec->bindParam(':tipo_pago', $tipo_pago);
-    $strExec->bindParam(':fecha', $this->datos['fecha']);
-    $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-    $strExec->bindParam(':monto_total', $this->datos['monto']);
-    $resp_pago_emitido = $strExec->execute();
-    var_dump($resp_pago_emitido. " registro gasto");
-    $cod_pago_emitido = $this->pagoemitidoUltimoR();
-    if ($resp_pago_emitido) {
-      foreach ($this->datos['pago'] as $pagos) {
-        if (!empty($pagos['monto']) && $pagos['monto'] > 0) {
-          $this->datos['cod_tipo_pago'] = $pagos['cod_tipo_pago'];
-          $this->datos['monto'] = $pagos['monto'];
-          $registro = "INSERT INTO detalle_pago_emitido(cod_pago_emitido, cod_tipo_pagoe,monto) VALUES(:cod_pago_emitido,:cod_tipo_pago,:monto)";
-          $strExec = $this->conex->prepare($registro);
-          $strExec->bindParam(':cod_pago_emitido', $cod_pago_emitido);
-          $strExec->bindParam(':cod_tipo_pago', $this->datos['cod_tipo_pago']);
-          $strExec->bindParam(':monto', $this->datos['monto']);
-          $strExec->execute();
+    try {
+      $this->conex->beginTransaction();
 
-          $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_detalle_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
-          $strExec = $this->conex->prepare($consultaRelacion);
-          $strExec->bindParam(':cod_tipo_pago', $this->datos['cod_tipo_pago']);
-          $strExec->execute();
-          $relacion = $strExec->fetch(PDO::FETCH_ASSOC);
-          var_dump("Pasamos el ciclo");
+      $tipo_pago = "gasto";
+      $sql = "INSERT INTO pago_emitido(tipo_pago,fecha,cod_gasto, monto_total) VALUES(:tipo_pago,:fecha,:cod_gasto,:monto_total)";
+      $gasto = $this->conex->prepare($sql);
+      $gasto->bindParam(':tipo_pago', $tipo_pago);
+      $gasto->bindParam(':fecha', $this->fecha);
+      $gasto->bindParam(':cod_gasto', $this->cod_gasto);
+      $gasto->bindParam(':monto_total', $this->montototal);
+      $resp_pago_emitido = true;
+      if (!$gasto->execute()) {
+        throw new Exception("Error al insertar en pago_emitido.");
+        $resp_pago_emitido = false;
+      }
 
-          if ($relacion) {
-            if (!empty($relacion['cod_cuenta_bancaria'])) {
-              var_dump("banco");
-              $actualizarSaldoCuenta = "UPDATE cuenta_bancaria SET saldo = saldo - :monto WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
-              $strExec = $this->conex->prepare($actualizarSaldoCuenta);
-              $strExec->bindParam(':monto', $this->datos['monto']);
-              $strExec->bindParam(':cod_cuenta_bancaria', $relacion['cod_cuenta_bancaria']);
-              $strExec->execute();
-            } elseif (!empty($relacion['cod_detalle_caja'])) {
-              var_dump("caja");
-              $actualizarSaldoCaja = "UPDATE detalle_caja SET saldo = saldo - :monto WHERE cod_detalle_caja = :cod_detalle_caja";
-              $strExec = $this->conex->prepare($actualizarSaldoCaja);
-              $strExec->bindParam(':monto', $this->datos['monto']);
-              $strExec->bindParam(':cod_detalle_caja', $relacion['cod_detalle_caja']);
-              $strExec->execute();
+      $cod_pago_emitido = $this->conex->lastInsertId();
+
+      if ($resp_pago_emitido) {
+        foreach ($this->pago as $pagos) {
+          if (!empty($pagos['monto']) && $pagos['monto'] > 0) {
+            var_dump($pagos['cod_tipo_pago']);
+            var_dump($pagos['monto']);
+            $this->cod_tipo_pago = $pagos['cod_tipo_pago'];
+            var_dump($this->montopagado);
+            $registro = "INSERT INTO detalle_pago_emitido(cod_pago_emitido, cod_tipo_pagoe,monto) VALUES(:cod_pago_emitido,:cod_tipo_pago,:monto)";
+            $strExec = $this->conex->prepare($registro);
+            $strExec->bindParam(':cod_pago_emitido', $cod_pago_emitido);
+            $strExec->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);
+            $strExec->bindParam(':monto', $pagos['monto']);
+
+            if (!$strExec->execute()) {
+              throw new Exception("Error al insertar en detalle_pago_emitido.");
+            }
+
+            $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_detalle_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
+            $consulta = $this->conex->prepare($consultaRelacion);
+            $consulta->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);
+            if (!$consulta->execute()) {
+              throw new Exception("Error al obtener la relación de tipo de pago.");
+            }
+            $relacion = $consulta->fetch(PDO::FETCH_ASSOC);
+
+            if ($relacion) {
+              if (!empty($relacion['cod_cuenta_bancaria'])) {
+
+                $actualizarSaldoCuenta = "UPDATE cuenta_bancaria SET saldo = saldo - :monto WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
+                $banco = $this->conex->prepare($actualizarSaldoCuenta);
+                $banco->bindParam(':monto', $this->montopagado);
+                $banco->bindParam(':cod_cuenta_bancaria', $relacion['cod_cuenta_bancaria']);
+                if (!$banco->execute()) {
+                  throw new Exception("Error al actualizar saldo en cuenta_bancaria.");
+                }
+              } elseif (!empty($relacion['cod_detalle_caja'])) {
+
+                $actualizarSaldoCaja = "UPDATE detalle_caja SET saldo = saldo - :monto WHERE cod_detalle_caja = :cod_detalle_caja";
+                $caja = $this->conex->prepare($actualizarSaldoCaja);
+                $caja->bindParam(':monto', $this->montopagado);
+                $caja->bindParam(':cod_detalle_caja', $relacion['cod_detalle_caja']);
+                if (!$caja->execute()) {
+                  throw new Exception("Error al actualizar saldo en detalle_caja.");
+                }
+              }
             }
           }
         }
-      }
-      if ($this->datos['monto'] > $this->datos['montopagado']) {
-        var_dump("pago parcial");
-        $status = "UPDATE gasto SET detgasto_status= 2 WHERE cod_gasto=:cod_gasto";
-        $strExec = $this->conex->prepare($status);
-        $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-        $strExec->execute();
-        $r = abs($this->datos['monto'] - $this->datos['montopagado']);
-        return $r;
-      } else if ($this->datos['monto'] <= $this->datos['montopagado']) {
-        var_dump("pago completo + vuelto");
-        if ($this->datos['vuelto'] > 0) {
-          $sql = "INSERT INTO vuelto_recibido(vuelto_total, status_vuelto) VALUES(:vuelto_total, 1)";
-          $strExec = $this->conex->prepare($sql);
-          $strExec->bindParam(':vuelto_total', $this->datos['vuelto']);
-          $respuestaV = $strExec->execute();
-          $vuelto = $this->conex->lastInsertId();
-          $actualizar_gasto = "UPDATE pago_emitido SET cod_vuelto_r = :cod_vuelto_r WHERE cod_pago_emitido= :cod_pago_emitido";
-          $strExec = $this->conex->prepare($actualizar_gasto);
-          $strExec->bindParam(':cod_vuelto_r', $this->datos['cod_vuelto_r']);
-          $strExec->bindParam(':cod_pago_emitido', $this->datos['cod_pago_emitido']);
-          $strExec->execute();
-          $status = "UPDATE gasto SET detgasto_status= 3 WHERE cod_gasto=:cod_gasto";
-          $strExec = $this->conex->prepare($status);
-          $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-          $strExec->execute();
-          return $r = 0;
-        } else {
-          var_dump("pago completo");
-          $status = "UPDATE gasto SET detgasto_status= 3 WHERE cod_gasto=:cod_gasto";
-          $strExec = $this->conex->prepare($status);
-          $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-          $strExec->execute();
-          return $r = 0;
+        if ($this->montototal > $this->montopagado) {
+          var_dump("pago parcial");
+          var_dump($this->montototal, $this->montopagado);
+          $status = "UPDATE gasto SET detgasto_status= 2 WHERE cod_gasto=:cod_gasto";
+          $editgasto = $this->conex->prepare($status);
+          $editgasto->bindParam(':cod_gasto', $this->cod_gasto);
+          if (!$editgasto->execute()) {
+            throw new Exception("Error al actualizar el estado del gasto.");
+          }
+
+          $this->conex->commit();
+          return $r = abs($this->montototal - $this->montopagado);
+        } else if ($this->montototal < $this->montopagado) {
+          var_dump("pago completo + vuelto");
+          var_dump($this->vuelto);
+          if ($this->vuelto > 0) {
+            $sql = "INSERT INTO vuelto_recibido(vuelto_total, status_vuelto) VALUES(:vuelto_total, 1)";
+            $vuel = $this->conex->prepare($sql);
+            $vuel->bindParam(':vuelto_total', $this->vuelto);
+            if (!$vuel->execute()) {
+              throw new Exception("Error al insertar en vuelto_recibido.");
+            }
+
+            $vueltocod = $this->conex->lastInsertId();
+            var_dump($vueltocod);
+            var_dump("Pago emitido".$cod_pago_emitido);
+
+            $actualizargasto = "UPDATE pago_emitido SET cod_vuelto_r = :cod_vuelto_r WHERE cod_pago_emitido= :cod_pago_emitido";
+            $insert = $this->conex->prepare($actualizargasto);
+            $insert->bindParam(':cod_vuelto_r', $vueltocod);
+            $insert->bindParam(':cod_pago_emitido', $cod_pago_emitido);
+            if (!$insert->execute()) {
+              throw new Exception("Error al actualizar el gasto con el vuelto.");
+            }else{
+              var_dump("Vuelto registrado");
+            }
+
+            $status = "UPDATE gasto SET detgasto_status= 3 WHERE cod_gasto=:cod_gasto";
+            $gastoxvuelto = $this->conex->prepare($status);
+            $gastoxvuelto->bindParam(':cod_gasto', $this->cod_gasto);
+            if (!$gastoxvuelto->execute()) {
+              throw new Exception("Error al actualizar el estado del gasto.");
+            }
+
+            $this->conex->commit();
+            return $r = 0;
+          } else {
+            $status = "UPDATE gasto SET detgasto_status= 3 WHERE cod_gasto=:cod_gasto";
+            $detgasto = $this->conex->prepare($status);
+            $detgasto->bindParam(':cod_gasto', $this->cod_gasto);
+            if (!$detgasto->execute()) {
+              throw new Exception("Error al actualizar el estado del gasto.");
+            }
+            $this->conex->commit();
+            return $r = 0;
+          }
         }
       }
+
+      return true;
+    } catch (Exception $e) {
+      $this->conex->rollBack();
+      throw new Exception("Error en la transacción: " . $e->getMessage());
     }
   }
   public function registrarPgasto()
@@ -246,57 +353,116 @@ LEFT JOIN
     }
   }
 
-  private function cuotaP($pago) // continuo mañana}
+  private function cuotaP() // continuo mañana SIGUE CON PROBLEMAS DEBE DE SER LOS PARAMETRO Y VALORES QUE SE LE PASAN A LOS METODOS DE LA CLASE
   {
-    foreach ($pago as $pagos) {
-      if (!empty($pagos['monto']) && $pagos['monto'] > 0) {
-        $cod_tipo_pago = $pagos['cod_tipo_pago'];
-        $montopagado = $pagos['monto'];
-        $sql = "INSERT INTO detalle_pago_emitido(cod_pago_emitido, cod_tipo_pago,monto) VALUES(:cod_pago_emitido,:cod_tipo_pago,:monto)";
-        $strExec = $this->conex->prepare($sql);
-        $strExec->bindParam(':cod_pago_emitido', $this->datos['cod_pago_emitido']);
-        $strExec->bindParam(':cod_tipo_pago', $this->datos['cod_tipo_pago']);
-        $strExec->bindParam(':monto', $this->datos['montopagado']);
-        $strExec->execute();
-      }
-    }
-    if ($montopagado > $this->datos) {
-      $status = "UPDATE gasto SET detgasto_status= 3 WHERE cod_gasto=:cod_gasto";
-      $strExec = $this->conex->prepare($status);
-      $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-      $strExec->execute();
-      if ($this->datos['vuelto'] > 0) {
-        $actualizar = "UPDATE vuelto_recibido SET vuelto_total = :vuelto_total WHERE cod_vuelto_r = :cod_vuelto_r";
-        $strExec = $this->conex->prepare($actualizar);
-        $strExec->bindParam(':cod_vuelto_r', $this->datos['cod_vuelto_r']);
-        $strExec->bindParam(':vuelto_total', $this->datos['vuelto']);
-        $resp = $strExec->execute();
-        if (!$resp) {
-          $actualizar = "INSERT INTO vuelto_recibido(vuelto_total, status_vuelto) VALUES(:vuelto_total, 1)";
-          $strExec = $this->conex->prepare($actualizar);
-          $strExec->bindParam(':vuelto_total', $this->datos['vuelto']);
-          $strExec->execute();
+    try {
+
+      $this->conex->beginTransaction();
+      foreach ($this->pago as $pagos) {
+        if (!empty($pagos['monto']) && $pagos['monto'] > 0) {
+          var_dump($pagos['cod_tipo_pago']);
+          var_dump($pagos['monto']);
+          $this->cod_tipo_pago = $pagos['cod_tipo_pago'];
+          $this->montopagado = $pagos['monto'];
+          $registro = "INSERT INTO detalle_pago_emitido(cod_pago_emitido, cod_tipo_pagoe,monto) VALUES(:cod_pago_emitido,:cod_tipo_pago,:monto)";
+          $strExec = $this->conex->prepare($registro);
+          $strExec->bindParam(':cod_pago_emitido', $this->cod_pago_emitido);
+          $strExec->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);
+          $strExec->bindParam(':monto', $this->montopagado);
+          var_dump($this->cod_pago_emitido, $this->cod_tipo_pago, $this->pago);
+          if (!$strExec->execute()) {
+            throw new Exception("Error al insertar en detalle_pago_emitido.");
+          }
+          var_dump($this->pago);
+          $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_detalle_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
+          $consulta = $this->conex->prepare($consultaRelacion);
+          $consulta->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);
+          if (!$consulta->execute()) {
+            throw new Exception("Error al obtener la relación de tipo de pago.");
+          }
+          $relacion = $consulta->fetch(PDO::FETCH_ASSOC);
+
+          if ($relacion) {
+            if (!empty($relacion['cod_cuenta_bancaria'])) {
+
+              $actualizarSaldoCuenta = "UPDATE cuenta_bancaria SET saldo = saldo - :monto WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
+              $banco = $this->conex->prepare($actualizarSaldoCuenta);
+              $banco->bindParam(':monto', $this->montopagado);
+              $banco->bindParam(':cod_cuenta_bancaria', $relacion['cod_cuenta_bancaria']);
+              if (!$banco->execute()) {
+                throw new Exception("Error al actualizar saldo en cuenta_bancaria.");
+              }
+            } elseif (!empty($relacion['cod_detalle_caja'])) {
+
+              $actualizarSaldoCaja = "UPDATE detalle_caja SET saldo = saldo - :monto WHERE cod_detalle_caja = :cod_detalle_caja";
+              $caja = $this->conex->prepare($actualizarSaldoCaja);
+              $caja->bindParam(':monto', $this->montopagado);
+              $caja->bindParam(':cod_detalle_caja', $relacion['cod_detalle_caja']);
+              if (!$caja->execute()) {
+                throw new Exception("Error al actualizar saldo en detalle_caja.");
+              }
+            }
+          }
         }
       }
-      return $res = 0;
-    } else if ($montopagado < $this->datos['monto']) {
-      $status = "UPDATE gasto SET detgasto_status = 2 WHERE cod_gasto=:cod_gasto";
-      $strExec = $this->conex->prepare($status);
-      $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-      $strExec->execute();
-      $res = abs($montopagado - $this->datos['monto']);
-      return $res;
-    } else {
-      $status = "UPDATE gasto SET detgasto_status = 3 WHERE cod_gasto=:cod_gasto";
-      $strExec = $this->conex->prepare($status);
-      $strExec->bindParam(':cod_gasto', $this->datos['cod_gasto']);
-      $strExec->execute();
-      return $res = 0;
+      if ($this->montopagado > $this->montototal) {
+        var_dump("pago completo + vuelto");
+        var_dump($this->montopagado, $this->montototal);
+        $status = "UPDATE gasto SET detgasto_status= 3 WHERE cod_gasto=:cod_gasto";
+        $pago = $this->conex->prepare($status);
+        $pago->bindParam(':cod_gasto', $this->cod_gasto);
+        if (!$pago->execute()) {
+          throw new Exception("Error al actualizar el estado del gasto.");
+        }
+        if ($this->vuelto > 0) {
+          $actualizar = "UPDATE vuelto_recibido SET vuelto_total = :vuelto_total WHERE cod_vuelto_r = :cod_vuelto_r";
+          $act = $this->conex->prepare($actualizar);
+          $act->bindParam(':cod_vuelto_r', $this->cod_vuelto_r);
+          $act->bindParam(':vuelto_total', $this->vuelto);
+          if (!$act->execute()) {
+            throw new Exception("Error al actualizar el vuelto recibido.");
+          }
+          $resp = true;
+          if (!$resp) {
+            $actualizar = "INSERT INTO vuelto_recibido(vuelto_total, status_vuelto) VALUES(:vuelto_total, 1)";
+            $recibido = $this->conex->prepare($actualizar);
+            $recibido->bindParam(':vuelto_total', $this->vuelto);
+            if (!$recibido->execute()) {
+              throw new Exception("Error al insertar en vuelto_recibido.");
+            }
+          }
+        }
+        $this->conex->commit();
+        return $res = 0;
+      } else if ($this->montopagado < $this->montototal) {
+        $status = "UPDATE gasto SET detgasto_status = 2 WHERE cod_gasto=:cod_gasto";
+        $restante = $this->conex->prepare($status);
+        $restante->bindParam(':cod_gasto', $this->cod_gasto);
+        if (!$restante->execute()) {
+          throw new Exception("Error al actualizar el estado del gasto.");
+        }
+
+        $this->conex->commit();
+        return $res = abs($this->montopagado - $this->montototal);
+      } else {
+        $status = "UPDATE gasto SET detgasto_status = 3 WHERE cod_gasto=:cod_gasto";
+        $completo = $this->conex->prepare($status);
+        $completo->bindParam(':cod_gasto', $this->cod_gasto);
+        if (!$completo->execute()) {
+          throw new Exception("Error al actualizar el estado del gasto.");
+        }
+
+        $this->conex->commit();
+        return $res = 0;
+      }
+    } catch (Exception $e) {
+      $this->conex->rollBack();
+      throw new Exception("Error en la transacción: " . $e->getMessage());
     }
   }
 
-  public function registrarCuota($pago)
+  public function registrarCuota()
   {
-    return $this->cuotaP($pago);
+    return $this->cuotaP();
   }
 }

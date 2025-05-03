@@ -315,8 +315,33 @@ function calcularTotalpago() {
 function calcularTotalpago1() {
     let totalBs = 0;
 
-    document.querySelectorAll('.monto-bs1:not(.monto-con1)').forEach(function (input) {
+    document.querySelectorAll('.monto-bs1:not(.monto-con)').forEach(function (input) {
         let montoBs = parseFloat(input.value) || 0;
+        totalBs += montoBs;
+    });
+
+    document.querySelectorAll('.monto-divisa1').forEach(function (inputDivisa) {
+        let index = inputDivisa.id.split('-').pop();
+
+        let montoDivisa = parseFloat(inputDivisa.value) || 0;
+
+        let tasaConversion = parseFloat(document.getElementById('tasa-conversion1-' + index).value) || 1;
+
+
+        let montoConvertidoBs = montoDivisa * tasaConversion;
+
+
+        document.getElementById('monto-bs-con-' + index).value = montoConvertidoBs.toFixed(2);
+
+
+        totalBs += montoConvertidoBs;
+    });
+
+
+    document.querySelectorAll('.monto-bs1').forEach(function (input) {
+        console.log('ID:', input.id, 'Valor:', input.value);
+        let montoBs = parseFloat(input.value) || 0;
+        console.log('Monto Bs:', montoBs); // Depuración
         totalBs += montoBs;
     });
 
@@ -327,6 +352,7 @@ function calcularTotalpago1() {
         let tasaConversion = parseFloat(document.getElementById('tasa-conversion1-' + index).value) || 1;
 
         let montoConvertidoBs = montoDivisa * tasaConversion;
+        console.log('Monto Divisa:', montoDivisa, 'Tasa:', tasaConversion, 'Convertido Bs:', montoConvertidoBs); // Depuración
 
         document.getElementById('monto-bs-con-1' + index).value = parseFloat(montoConvertidoBs.toFixed(2));
 
@@ -347,81 +373,40 @@ function calcularTotalpago1() {
 }
 
 //EDITAR
-/* NUEVO EN DESARROLLO */
-$('#modificargasto').on('show.bs.modal', function (event) {
+/* Listo */
+$('#modificat').on('show.bs.modal', function (event) {
     console.log("Modal de EDICIÓN abierto");
 
     var button = $(event.relatedTarget);
-    var codigo = button.data('cod_gasto');
+    var codigo = button.data('codigo');
     var nombre = button.data('nombre');
+    var status = button.data('status');
 
     console.log("Nombre del gasto:", nombre);
     console.log("Código del gasto:", codigo);
 
     // Modal
     var modal = $(this);
-    modal.find('.modal-body #cod_gastoE').val(codigo);
-    modal.find('.modal-body #nombreG').val(nombre);
-    modal.find('.modal-body #cod_gasto_oculto').val(codigo);
-    modal.find('.modal-body #nombreOculto').val(nombre);
+    modal.find('.modal-body #cod_cat_gasto').val(codigo);
+    modal.find('.modal-body #nombre').val(nombre);
+    modal.find('.modal-body #cod_cat_gasto_oculto').val(codigo);
+    modal.find('.modal-body #origin').val(nombre);
+
 
 });
 
-/* NUEVO EN DESARROLLO */
-$('#finalizarPagoBtn').on('click', function (event) {
-    event.preventDefault();
 
-    let formData = $('#pagoForm').serializeArray();
-    let data = {};
+$('#modaleliminar').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); 
+    var codigo = button.data('codigo');
+    var nombre = button.data('nombre');
 
-    formData.forEach(function (item) {
-        if (item.name.includes('pago')) {
-            let match = item.name.match(/pago\[(\d+)\]\[(.+)\]/);
-            if (match) {
-                let index = match[1];
-                let key = match[2];
-                if (!data.pago) data.pago = [];
-                if (!data.pago[index]) data.pago[index] = {};
-                data.pago[index][key] = item.value;
-            }
-        } else {
-            data[item.name] = item.value;
-        }
-    });
+    var modal = $(this);
+    modal.find('.modal-body #cod_eliminar').val(codigo);
+    modal.find('.modal-body #categoria').text(nombre);
 
-    $.ajax({
-        url: 'index.php?pagina=gastos',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function (registrarPG) {
-            //console.log('Pago registrado:', response);
-            if (registrarPG.status === 'success') {
-                Swal.fire({
-                    title: registrarPG,
-                    text: registrarPG.data.message,
-                    icon: registrarPG.data.icon
-                }).then(() => {
-                    $('#modalregistrardetallep').modal('hide'); // Cerrar el modal
-                    $('#formRegistrarDetalle')[0].reset(); // Reiniciar el formulario
-                });
-
-            } else {
-                console.error('Error al registrar el pago:', registrarPG.message);
-                Swal.fire({
-                    title: 'Error',
-                    text: registrarPG.message,
-                    icon: 'error'
-                });
-            }
-        },
-        error: function (error) {
-            console.error('Error al registrar el pago:', error);
-
-        }
-    });
+    console.log(codigo);
 });
-
 
 $(document).ready(function () {
     // FUNCIONES
