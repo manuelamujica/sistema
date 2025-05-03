@@ -16,7 +16,7 @@ if (isset($_POST["ingresar"])) {
 	if (isset($_POST['captchaCodigo'])) {
         $captchaCodigo = $_POST['captchaCodigo'];
 
-        // Verificamos que el código ingresado sea el mismo que el que se encuentra en la sesión
+        //Verificamos que el código ingresado sea el mismo que el que se encuentra en la sesión
         if ($captchaCodigo != $_SESSION['captcha']) {
             $_SESSION['captcha'] = ''; // Limpiar el código CAPTCHA en la sesión
 			$_SESSION['login'] = [
@@ -26,7 +26,7 @@ if (isset($_POST["ingresar"])) {
 			];
 			header('Location: login');
 			exit;
-	} 
+	}
 	
 	$secret_key = '0x4AAAAAABUTeqxI-BRIgdI3RunK5-wAFfc';
 	$token = $_POST['cf-turnstile-response']; // Token recibido del frontend
@@ -98,33 +98,33 @@ if (isset($_POST["ingresar"])) {
 			$_SESSION["usuario"] = 0;
 			$_SESSION["reporte"] = 0;
 			$_SESSION["configuracion"] = 0;
-			$_SESSION["permisos"] = []; // Inicializamos el array de permisos
+			//$_SESSION["permisos"] = []; // Inicializamos el array de permisos
 		
 			//Obtenemos los modulos asociados al usuario
 			//Obtenemos los permisos asociados al usuario
 			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
 			foreach ($accesos as $permisos) {
-				if ($permisos["permisos"] == 1) {
+				if ($permisos["cod_modulo"] == 1) {
 					$_SESSION["producto"] = 1;
-				} else if ($permisos["permisos"] == 2) {
+				} else if ($permisos["cod_modulo"] == 2) {
 					$_SESSION["inventario"] = 1;
-				} else if ($permisos["permisos"] == 3) {
+				} else if ($permisos["cod_modulo"] == 3) {
 					$_SESSION["categoria"] = 1;
-				} else if ($permisos["permisos"] == 4) {
+				} else if ($permisos["cod_modulo"] == 4) {
 					$_SESSION["compra"] = 1;
-				} else if ($permisos["permisos"] == 5) {
+				} else if ($permisos["cod_modulo"] == 5) {
 					$_SESSION["venta"] = 1;
-				} else if ($permisos["permisos"] == 6) {
+				} else if ($permisos["cod_modulo"] == 6) {
 					$_SESSION["cliente"] = 1;
-				} else if ($permisos["permisos"] == 7) {
+				} else if ($permisos["cod_modulo"] == 7) {
 					$_SESSION["proveedor"] = 1;
-				} else if ($permisos["permisos"] == 8) {
+				} else if ($permisos["cod_modulo"] == 8) {
 					$_SESSION["usuario"] = 1;
-				} else if ($permisos["permisos"] == 9) {
+				} else if ($permisos["cod_modulo"] == 9) {
 					$_SESSION["reporte"] = 1;
-				} else if ($permisos["permisos"] == 10) {
+				} else if ($permisos["cod_modulo"] == 10) {
 					$_SESSION["configuracion"] = 1;
-				} else if ($cod_permiso["cod_permiso"] == 11) {
+				} else if ($cod_permiso["cod_modulo"] == 11) {
 					$_SESSION["marca"] = 1;
 				}
 				/*$modulo = $permisos["cod_modulo"];
@@ -171,4 +171,5 @@ if (isset($_POST["ingresar"])) {
 		];
 	}
 	
-	}
+}
+

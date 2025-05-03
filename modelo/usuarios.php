@@ -65,10 +65,10 @@ public function accesos($valor){
         INNER JOIN modulos p ON tp.cod_modulo = p.cod_modulo
         INNER JOIN permisos c ON tp.cod_crud=c.cod_crud
         WHERE u.cod_usuario = :valor;";*/
-        $sql= "SELECT p.cod_permiso FROM usuarios u
+        $sql= "SELECT p.cod_modulo FROM usuarios u
         INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
         INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario
-        INNER JOIN permisos p ON tp.cod_permiso = p.cod_permiso
+        INNER JOIN modulos p ON tp.cod_modulo = p.cod_modulo
         WHERE u.cod_usuario = :valor;";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);

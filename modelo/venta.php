@@ -194,7 +194,7 @@ class Venta extends Conexion{
                     throw new Exception("No hay suficiente stock disponible para el producto con código $cod_presentacion");
                 }
             }
-    
+            
             // Confirmar la transacción si todo ha ido bien
             $this->conex->commit();
             parent::desconectarBD();

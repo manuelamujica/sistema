@@ -81,17 +81,17 @@ PLUGINGS DE CSS
     if($_GET["ruta"] == "inicio" || 
     $_GET["ruta"] == "marcas" && $_SESSION["marca"]==1 ||
     $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
-    $_GET["ruta"] == "carga" && !empty($_SESSION["permisos"][2]) ||
+    $_GET["ruta"] == "carga" && $_SESSION["inventario"]==1 ||
     $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
     $_GET["ruta"] == "rep-inventario" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-proveedores" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-cliente" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-venta" && $_SESSION["reporte"]==1 ||
     $_GET["ruta"] == "rep-compra" && $_SESSION["reporte"]==1 ||
-    $_GET["ruta"] == "productos" && !empty($_SESSION["permisos"][1]) ||
+    $_GET["ruta"] == "productos" && $_SESSION["producto"]==1 ||
     $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
     $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
-    $_GET ["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
+    $_GET["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
     $_GET["ruta"] == "tpago" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "divisa" && $_SESSION["configuracion"]==1 || 
     $_GET["ruta"] == "proveedores" && $_SESSION["proveedor"]==1 || 

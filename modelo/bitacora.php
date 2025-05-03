@@ -9,7 +9,7 @@ class Bitacora extends Conexion
     parent::__construct(_SEC_DB_HOST_, _SEC_DB_NAME_, _SEC_DB_USER_, _SEC_DB_PASS_);
   }
 
-    public function registrar($cod_usuario, $accion, $detalles, $modulo = '')
+    private function registrar($cod_usuario, $accion, $detalles, $modulo = '')
     {
       parent::conectarBD();
         $query = "INSERT INTO bitacora (cod_usuario, accion, detalles, modulo) VALUES (:cod_usuario, :accion, :detalles, :modulo)";
