@@ -110,6 +110,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "gastos" ||
     $_GET["ruta"] == "cuentaspend" ||
     $_GET["ruta"] == "movimientos" ||
+    $_GET["ruta"] == "backup" ||
     $_GET["ruta"] == "cerrarsesion"){
       include "modulos/". $_GET["ruta"] . ".php";
     } else {

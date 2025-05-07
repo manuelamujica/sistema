@@ -1,7 +1,15 @@
 <?php 
 #Requerir al controlador
 require_once "controlador/login.php";
+
+$conexion = @fsockopen("www.google.com", 80, $errno, $errstr, 2);
+$hayinternet = false;
+if ($conexion) {
+    fclose($conexion);
+    $hayinternet = true;
+}
 ?>
+
 <!--<div id="wallpaper">-->
     <div class="login-page">
         <div class="login-box">
@@ -31,11 +39,16 @@ require_once "controlador/login.php";
                                 </div>
                             </div>
                         </div>
+                        <!-- CAPTCHA PHP (siempre activo) -->
                         <div class="input-group mb-3 d-flex align-items-center"> 
                             <img src="index.php?pagina=captcha" alt="code" id="codigo">
-                            <input type="text" class="form-control" id="captcha" placeholder="Captcha" name="captchaCodigo" required>
+                            <input type="text" class="form-control" id="captcha" placeholder="Ingresa el codigo" name="captchaCodigo" required>
                         </div>
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAABUTeiES0tXs0HGp"></div>
+
+                        <?php if ($hayinternet): ?>
+                            <!-- CAPTCHA Cloudflare solo si hay internet -->
+                            <div class="cf-turnstile" data-sitekey="0x4AAAAAABUTeiES0tXs0HGp"></div>
+                        <?php endif; ?>
                         <div class="row">
                             <div class="col-4">
                                 <button type="submit" class="btn btn-primary btn-block" name="ingresar">Ingresar</button>
@@ -72,10 +85,11 @@ if (isset($login)): ?>
         confirmButtonText: 'Ok'
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location = 'login'; // Puedes poner 'inicio' si quieres ir a otra página
+            window.location = 'login'; 
         }
     });
 </script>
 <?php unset($_SESSION['login']); endif; ?>
+
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src='vista/dist/js/modulos-js/usuarios.js'></script>
