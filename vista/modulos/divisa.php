@@ -41,7 +41,7 @@
                                 </thead>
                                 <tbody>
                                     <?php foreach ($consulta as $divisa) { ?>
-                                    <?php if ($divisa['divisa_status'] != 2): ?>
+                                    <?php if ($divisa['status'] != 2): ?>
                                     <tr>
                                         <td><?php echo $divisa['cod_divisa']?></td>
                                         <td><?php echo $divisa['nombre']?></td>
@@ -56,14 +56,14 @@
                                                 data-nombre="<?php echo $divisa["nombre"]; ?>" 
                                                 data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
                                                 data-tasa="<?php echo $divisa["tasa"]; ?>"
-                                                data-status="<?php echo $divisa["divisa_status"]; ?>" >
+                                                data-status="<?php echo $divisa["status"]; ?>" >
                                                 <i class="fa fa-history" aria-hidden="true"></i>
                                             </button>
                                             </div>
                                             <?php endif;?>
                                         </td>
                                         <td>
-                                            <?php if ($divisa['divisa_status']==1):?>
+                                            <?php if ($divisa['status']==1):?>
                                                 <span class="badge bg-success">Activo</span>
                                             <?php else:?>
                                                 <span class="badge bg-danger">Inactivo</span>
@@ -78,7 +78,7 @@
                                             data-nombre="<?php echo $divisa["nombre"]; ?>" 
                                             data-abreviatura="<?php echo $divisa["abreviatura"]; ?>"
                                             data-tasa="<?php echo $divisa["tasa"]; ?>"
-                                            data-status="<?php echo $divisa["divisa_status"]; ?>" >
+                                            data-status="<?php echo $divisa["status"]; ?>" >
                                             <i class="fas fa-pencil-alt"></i>
                                             </button>
                                             <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminardivisa"
@@ -354,18 +354,11 @@ MODAL ACTUALIZAR TASA DE CAMBIO
                                         <table class="table table-bordered table-striped datatable" style="width:100%">
                                             <thead>
                                                 <tr>
-                                                    <th>Fecha</th>
+                                                    <th data-orderable="true" data-order="desc">Fecha</th>
                                                     <th>Tasa</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            <?php foreach ($historial as $histori) { ?>
-                                    <?php if ($histori['cod_divisa'] == 2): ?>
-                                    <tr>
-                                        <td><?php echo $histori['fecha']?></td>
-                                        <td><?php echo $histori['tasa']?></td>
-                                        <?php endif;
-                                        } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -380,23 +373,10 @@ MODAL ACTUALIZAR TASA DE CAMBIO
 
 <script> 
 //ACTUALIZAR
-$('#actModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var codigo = button.data('codigo');
-    var nombre = button.data('nombre');
-    var origi = button.data('nombre');
-    var abreviatura = button.data('abreviatura');
-    var tasa = button.data('tasa');
-    var status = button.data('status');
+</script>
 
-    // Modal
-    var modal = $(this);
-    modal.find('.modal-body #codigo2').val(codigo);
-    modal.find('.modal-body #nombre2').val(nombre);
-    modal.find('.modal-body #abreviatura2').val(abreviatura);
-    modal.find('.modal-body #tasa2').val(tasa);
-    modal.find('.modal-body #status').val(status);
-});
+<script>
+    var historialDivisas = <?php echo json_encode($historial); ?>;
 </script>
 
 <script src='vista/dist/js/modulos-js/divisa.js'></script>
