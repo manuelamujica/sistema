@@ -85,5 +85,19 @@ trait ValidadorTrait {
         return true;
     }
 
+    //BACKUP
+    public function nombreArchivo($nombre) {
+        $nombre = trim($nombre);
+    
+        if (strlen($nombre) < 3 || strlen($nombre) > 50) {
+            $this->errores['nombre'] = "El nombre debe tener entre 3 y 50 caracteres.";
+        } elseif (!preg_match('/^[a-zA-Z0-9_-]+$/', $nombre)) {
+            $this->errores['nombre'] = "Solo se permiten letras, números, guiones y guiones bajos.";
+        } else {
+            $this->nombreArchivo = $nombre;
+        }
+    }
+    
+
 }
 
