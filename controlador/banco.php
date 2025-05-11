@@ -18,13 +18,11 @@ if (isset($_POST['guardar'])) {
     $errores = [];
 
     $nombre = trim($_POST["nombre"]);
-  
 
     // Validaciones básicas
     if (empty($nombre) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $nombre)) {
         $errores[] = "El nombre del banco solo puede contener letras y espacios.";
     }
-
 
     if (!empty($errores)) {
         $registrar = [

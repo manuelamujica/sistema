@@ -59,6 +59,48 @@ class Tpago extends Conexion{
     
     }
 
+    public function cuenta(){
+        $registro="SELECT
+                        cb.*,
+                        b.nombre_banco,
+                        tc.nombre AS tipo_cuenta_nombre,
+                        d.nombre AS divisa_nombre,
+                        d.abreviatura AS divisa_abreviatura
+                    FROM cuenta_bancaria cb
+                    JOIN banco b ON cb.cod_banco = b.cod_banco
+                    JOIN tipo_cuenta tc ON cb.cod_tipo_cuenta = tc.cod_tipo_cuenta
+                    JOIN divisas d ON cb.cod_divisa = d.cod_divisa;";
+        parent::conectarBD();
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
+    }
+
+    public function caja(){
+        $registro="SELECT
+                        c.*,
+                        d.nombre AS divisa_nombre,
+                        d.abreviatura AS divisa_abreviatura
+                    FROM caja c
+                    JOIN divisas d ON c.cod_divisas = d.cod_divisa;";
+        parent::conectarBD();
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
+    }
+
     public function editar($valor){
         $registro="UPDATE tipo_pago SET medio_pago=:medio_pago, status=:status WHERE cod_tipo_pago=$valor";
         parent::conectarBD();

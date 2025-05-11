@@ -126,7 +126,7 @@
                         <select class="form-control" id="banco" name="banco">
                             <option value="" disabled selected>Seleccione un banco</option>
                             <?php foreach ($bancos as $banco): ?>
-                                <option value="<?= $banco['id']; ?>"><?= $banco['nombre']; ?></option>
+                                <option value="<?= $banco['cod_cuenta_bancaria']; ?>"><?= $banco['nombre_banco']; ?> - <?= $banco['numero_cuenta']; ?> - <?= $banco['tipo_cuenta_nombre']; ?> - <?= $banco['divisa_nombre']; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -136,7 +136,7 @@
                         <select class="form-control" id="caja" name="caja">
                             <option value="" disabled selected>Seleccione una caja</option>
                             <?php foreach ($cajas as $caja): ?>
-                                <option value="<?= $caja['id']; ?>"><?= $caja['nombre']; ?></option>
+                                <option value="<?= $caja['cod_caja']; ?>"><?= $caja['nombre']; ?> - <?= $caja['divisa_nombre']; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

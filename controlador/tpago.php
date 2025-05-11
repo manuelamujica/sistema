@@ -130,6 +130,8 @@ if(isset($_POST['buscar'])){
     }
 }
 
+$bancos=$obj->cuenta();
+$cajas=$obj->caja();
 //$registro=$obj->consultar();
 //$divisas=$objdivisa->consultar();
 $_GET['ruta'] = 'tpago';

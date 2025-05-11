@@ -18,8 +18,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <?php if (!empty($_SESSION["permisos"]["venta"]["registrar"])): ?>
                             <!-- Botón para abrir el modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ventaModal"> Registrar venta </button>
+                            <?php endif; ?>
                         </div>
                     
                         <div class="card-body">
@@ -46,16 +48,19 @@
                                                 <td>
                                                     <?php if ($venta['status']==1):?>
                                                         <span class="badge bg-secondary">Pendiente</span>
-                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
+                                                        <?php if (!empty($_SESSION["permisos"]["venta"]["registrar"])): ?>
+                                                            <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
                                                             data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                             data-totalv="<?php echo $venta["total"]; ?>" 
                                                             data-fecha="<?php echo $venta["fecha"]; ?>"
                                                             data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
                                                             <i class="fas fa-money-bill-wave"></i>
                                                             </button>
+                                                        <?php endif; ?>
                                                     <?php elseif ($venta['status']==2):?>
                                                         <span class="badge bg-warning">Pago parcial</span>
-                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
+                                                        <?php if (!empty($_SESSION["permisos"]["venta"]["registrar"])): ?>
+                                                            <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
                                                             data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                             data-codpago="<?php echo $venta["cod_pago"]; ?>" 
                                                             data-totalv="<?php echo $venta["total"]; ?>" 
@@ -63,7 +68,8 @@
                                                             data-fecha="<?php echo $venta["fecha"]; ?>"
                                                             data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
                                                             <i class="fas fa-money-bill-wave"></i>
-                                                        </button>
+                                                            </button>
+                                                        <?php endif; ?>
                                                     <?php elseif ($venta['status']==3):?>
                                                         <span class="badge bg-success">Completada</span>
                                                     <?php else: ?>
@@ -71,12 +77,14 @@
                                                     <?php endif;?>
                                                 </td>
                                                 <td>
-                                                <?php if ($venta['status']!=0):?>
+                                                <?php if ($venta['status']!=0):
+                                                    if (!empty($_SESSION["permisos"]["venta"]["eliminar"])): ?>
                                                     <button name="anular" title="Anular" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#anularventa" 
                                                     data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                     data-status="<?php echo $venta["status"]; ?>">
                                                     <i class="fas fa-trash-alt"></i>
                                                     </button>
+                                                    <?php endif; ?>
                                                     <button form="facturaform_<?= $venta['cod_venta']; ?>" type="submit" name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar">
                                                     <i class="fas fa-file"></i>
                                                     </button>
