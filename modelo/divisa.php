@@ -14,6 +14,7 @@ class Divisa extends Conexion
 
     public function __construct(){
         parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+       
     }
 
     public function setnombre($valor)
@@ -185,7 +186,6 @@ class Divisa extends Conexion
         } else {
             $r = 0;
         }
-        $this->desconectarBD();
         return $r;
     }
 
