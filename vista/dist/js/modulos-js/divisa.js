@@ -124,6 +124,38 @@ $('#nombre1').blur(function (e){
 });
 
 //EDITAR
+$('#actModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codigo');
+    var nombre = button.data('nombre');
+    var abreviatura = button.data('abreviatura');
+    var tasa = button.data('tasa');
+
+    // campos modal
+    var modal = $(this);
+    modal.find('.modal-body #codigo2').val(codigo);
+    modal.find('.modal-body #nombre2').val(nombre);
+    modal.find('.modal-body #abreviatura2').val(abreviatura);
+    modal.find('.modal-body #tasa2').val(tasa);
+
+    // actualizar datatabla historial
+    var historialFiltrado = historialDivisas.filter(function(item) {
+        return item.cod_divisa == codigo;
+    });
+
+    var tabla = $(this).find('#carga table').DataTable();
+    tabla.clear();
+    
+    historialFiltrado.forEach(function(item) {
+        tabla.row.add([
+            item.fecha,
+            item.tasa
+        ]);
+    });
+    
+    tabla.order([0, 'desc']).draw();
+});
+
 $('#editModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var codigo = button.data('codigo');
@@ -153,3 +185,4 @@ $('#eliminardivisa').on('show.bs.modal', function (event) {
     modal.find('#divisaNombre').text(nombre);
     modal.find('.modal-body #divisaCodigo').val(codigo);
 });
+
