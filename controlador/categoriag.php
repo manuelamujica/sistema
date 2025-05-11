@@ -1,5 +1,5 @@
 <?php
-//MODIFICACIÓN COMPLETA 29/04/2025
+//COMPLETADO
 require_once "modelo/bitacora.php";
 require_once "modelo/gasto.php";
 $objbitacora = new Bitacora();
@@ -33,7 +33,6 @@ if (isset($_POST['buscarC'])) {
         } else {
             $resul = $objgasto->publicregistrarf();
         }
-        
     } catch (Exception $e) {
         $errores[] = $e->getMessage();
     }
@@ -61,19 +60,12 @@ if (isset($_POST['buscarC'])) {
     }
 } else if (isset($_POST['guardarC'])) {
     $errores = [];
+    var_dump("Parte controlador:");
+    var_dump($_POST);
     try {
         $objgasto->setDatos($_POST);
         $objgasto->check();
-        if ($objgasto->buscarCategoria()) {
-            $guardarC = [
-                "title" => "Advertencia",
-                "message" => "Categoría ya registrada",
-                "icon" => "warning"
-            ];
-            exit;
-        } else {
-            $resul = $objgasto->publicregistrarc();
-        }
+        $resul = $objgasto->publicregistrarc();
     } catch (Exception $e) {
         $errores[] = $e->getMessage();
     }
@@ -92,6 +84,12 @@ if (isset($_POST['buscarC'])) {
                 "icon" => "success"
             ];
             $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de categoría de gastos', $_POST["nombre"], 'Categoría de gastos');
+        } else if ($resul == 2) {
+            $guardarC = [
+                "title" => "Advertencia",
+                "message" => "La categoría ya se encuentra registrada",
+                "icon" => "warning"
+            ];
         } else {
             $guardarC = [
                 "title" => "Error",
@@ -99,6 +97,41 @@ if (isset($_POST['buscarC'])) {
                 "icon" => "error"
             ];
         }
+    }
+} else if (isset($_POST['editarG'])) {
+    $errores = [];
+    try {
+        $objgasto->setDatos($_POST);
+        $objgasto->check();
+        $res = $objgasto->editarC();
+    } catch (Exception $e) {
+        $errores[] = $e->getMessage();
+    }
+    if (!empty($errores)) {
+        $editar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    } else if ($res == 1) {
+        $editar = [
+            "title" => "Editado con éxito",
+            "message" => "La categoría de gastos ha sido editada",
+            "icon" => "success"
+        ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar categoría de gastos', $_POST["cod_cat_gasto"], 'Categoría de gastos');
+    } else if ($res == 2) {
+        $editar = [
+            "title" => "Advertencia",
+            "message" => "La categoría de gastos ya se encuentra registrada",
+            "icon" => "warning"
+        ];
+    } else {
+        $editar = [
+            "title" => "Error",
+            "message" => "Error al editar la categoría de gastos",
+            "icon" => "error"
+        ];
     }
 }
 
