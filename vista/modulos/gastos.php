@@ -2,7 +2,7 @@
 require_once "controlador/gastos.php";
 ?>
 
-<!-- MODificado 29/04/2025 -->
+<!-- MODificado 11/05/2025 -->
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -88,7 +88,7 @@ require_once "controlador/gastos.php";
                                             <th>Código</th>
                                             <th>Descripción</th>
                                             <th>Monto</th>
-                                            <th>Último pago</th> <!--Aquí se debe de añadir la fecha del ultimo pago combinando las tablas pago emitido y gastos-->
+                                            <th>Último pago</th> 
                                             <th>Inicios de pago</th>
                                             <!--<th>Días restantes</th>-->
                                             <th>Status</th>
@@ -96,83 +96,65 @@ require_once "controlador/gastos.php";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        foreach ($gastosF as $F) {
-                                        ?>
-                                            <td><?php echo $F['cod_gasto']
-                                                ?></td>
-                                            <td><?php echo $F['detgasto_descripcion']
-                                                ?></td>
-                                            <td><?php echo $F['detgasto_monto']
-                                                ?></td>
-                                            <td><?php echo $F['fecha']
-                                                ?></td>
-                                            <td><?php echo $F['fechac']
-                                                ?></td>
-                                            <td>
-                                                <?php if ($F['detgasto_status'] == 1): ?>
-                                                    <span class="badge bg-secondary">Pendiente</span>
-                                                    <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
-                                                        data-cod_gasto="<?php echo $F["cod_gasto"];
-                                                                        ?>"
-                                                        data-total="<?php echo $F["detgasto_monto"];
-                                                                    ?>"
-                                                        data-nombre="<?php echo $F["nombret"];
-                                                                        ?>">
-                                                        <i class="fas fa-money-bill-wave"></i>
-                                                    </button>
-                                                <?php elseif ($F['detgasto_status'] == 2): ?>
-                                                    <span class="badge bg-warning">Pago parcial</span>
-                                                    <button name="partes" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#partesModal"
-                                                        data-codgasto="<?php echo $F["cod_gasto"];
-                                                                        ?>"
-                                                        data-codpago="<?php echo $F["cod_pago_emitido"];
-                                                                        ?>"
-                                                        data-cod_vuelto_r="<?php echo $F["cod_vuelto_r"]; ?>"
-                                                        data-fecha="<?php echo $F["fecha"]; ?>"
-                                                        data-totalgastos="<?php echo $F["monto_detalle"];
-                                                                            ?>"
-                                                        data-montop="<?php echo $F["monto_total"];
-                                                                        ?>"
-                                                        data-nombregasto="<?php echo $F["nombret"];
-                                                                            ?>">
-                                                        <i class="fas fa-money-bill-wave"></i>
-                                                    </button>
-                                                <?php elseif ($F['detgasto_status'] == 3): ?>
-                                                    <span class="badge bg-success">Completada</span>
-                                                    <?php if ($F['status_vuelto'] == 1): ?>
-                                                        <button name="vuelto" title="Recibir vuelto" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#vueltoModal"
+                                        <?php if (empty($gastosF)): ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No hay gastos fijos</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php
+                                            foreach ($gastosF as $F) {
+                                            ?>
+                                                <td><?php echo $F['cod_gasto']
+                                                    ?></td>
+                                                <td><?php echo $F['descripcion']
+                                                    ?></td>
+                                                <td><?php echo $F['monto']
+                                                    ?></td>
+                                                <td><?php echo $F['fecha']
+                                                    ?></td>
+                                                <td><?php echo $F['fechac']
+                                                    ?></td>
+                                                <td>
+                                                    <?php if ($F['status'] == 1): ?>
+                                                        <span class="badge bg-secondary">Pendiente</span>
+                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
                                                             data-cod_gasto="<?php echo $F["cod_gasto"]; ?>"
-                                                            data-fecha="<?php echo $F["fecha"]; ?>"
-                                                            data-codpago="<?php echo $F["cod_pago_emitido"]; ?>"
-                                                            data-cod_vuelto_r="<?php echo $F["cod_vuelto_r"]; ?>"
-                                                            data-vuelto="<?php echo $F["vuelto_total"]; ?>"
-                                                            data-v_monto="<?php echo $F["monto_detallev"]; ?>"
-                                                            data-nombre=" <?php echo $F["nombret"]; ?> ">
+                                                            data-totalgastos="<?php echo $F["monto"];  ?>"
+                                                            data-nombre="<?php echo $F["nombret"]; ?>">
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
+                                                    <?php elseif ($F['status'] == 2): ?>
+                                                        <span class="badge bg-warning">Pago parcial</span>
+                                                        <button name="partes" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
+                                                            data-cod_gasto="<?php echo ($F["cod_gasto"]);  //MODIFICACIÓN 11/05/2025?>" 
+                                                            data-codpago="<?php echo ($F["cod_pago_emitido"])  ?>"
+                                                            data-fecha="<?php echo ($F["fecha"])  ?>"
+                                                            data-totalgastos="<?php echo ($F["monto"]) ?>"
+                                                            data-montop="<?php echo ($F["monto_total"])?>"
+                                                            data-nombre="<?php echo ($F["nombret"])?>">
+                                                            <i class="fas fa-money-bill-wave"></i>
+                                                        </button>
+                                                    <?php elseif ($F['status'] == 3): ?>
+                                                        <span class="badge bg-success">Completada</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger">Anulada</span>
                                                     <?php endif; ?>
-
-                                                <?php else: ?>
-                                                    <span class="badge bg-danger">Anulada</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <button name="ajustar" class="btn btn-warning btn-sm editar" title="Editar" data-toggle="modal" data-target="#modificargasto"
-                                                    data-cod_gasto="<?php echo $F["cod_gasto"]; ?>"
-                                                    data-nombre=" <?php echo $F["nombret"]; ?> ">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </button>
-                                                <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
-                                                    data-cod="<?php //echo $dato['cod_tipo_usuario']; 
-                                                                ?>"
-                                                    data-roleliminar="<?php //echo $dato['rol']; 
-                                                                        ?>"><i class="fas fa-trash-alt"></i></button>
-
-                                            </td>
-                                            </tr>
-                                        <?php }
-                                        ?>
+                                                </td>
+                                                <td>
+                                                    <button name="ajustar" class="btn btn-warning btn-sm editar" title="Editar" data-toggle="modal" data-target="#modificargasto"
+                                                        data-codigo_gasto="<?php echo $F["cod_gasto"]; ?>"
+                                                        data-nombre=" <?php echo $F["descripcion"]; ?> ">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </button>
+                                                    <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#eliminarG"
+                                                        data-cod="<?php echo $F["cod_gasto"]; ?>"
+                                                        data-eliminar="<?php echo $F['descripcion']; ?>">
+                                                        <i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                                </tr>
+                                            <?php }
+                                            ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -198,84 +180,71 @@ require_once "controlador/gastos.php";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        foreach ($gastosV as $v) {
-                                        ?>
-                                            <td><?php echo $v['cod_gasto']
-                                                ?></td>
-                                            <td><?php echo $v['detgasto_descripcion']
-                                                ?></td>
-                                            <td><?php echo $v['detgasto_monto']
-                                                ?></td>
-                                            <td><?php echo $v['fecha']
-                                                ?></td>
-                                            <td><?php echo $v['fechac']
-                                                ?></td>
-                                            <td>
-                                                <?php if ($v['detgasto_status'] == 1): ?>
-                                                    <span class="badge bg-secondary">Pendiente</span>
-                                                    <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
-                                                        data-cod_gasto="<?php echo $v["cod_gasto"];
-                                                                        ?>"
-                                                        data-total="<?php echo $v["detgasto_monto"];
-                                                                    ?>"
-                                                        data-nombre="<?php echo $v["nombret"];
-                                                                        ?>">
-                                                        <i class="fas fa-money-bill-wave"></i>
-                                                    </button>
-                                                <?php elseif ($v['detgasto_status'] == 2): ?>
-                                                    <span class="badge bg-warning">Pago parcial</span>
-                                                    <button name="partes" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#partesModal"
-                                                        data-codgasto="<?php echo $v["cod_gasto"];
-                                                                        ?>"
-                                                        data-codpago="<?php echo $v["cod_pago_emitido"];
-                                                                        ?>"
-                                                        data-fecha="<?php echo $v["fecha"]; ?>"
-                                                        data-totalgastos="<?php echo $v["monto_detalle"];
+                                        <?php if (empty($gastosV)): ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No hay gastos variables</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php
+                                            foreach ($gastosV as $v) {
+                                            ?>
+                                                <td><?php echo $v['cod_gasto']
+                                                    ?></td>
+                                                <td><?php echo $v['descripcion']
+                                                    ?></td>
+                                                <td><?php echo $v['monto']
+                                                    ?></td>
+                                                <td><?php echo $v['fecha']
+                                                    ?></td>
+                                                <td><?php echo $v['fechac']
+                                                    ?></td>
+                                                <td>
+                                                    <?php if ($v['status'] == 1): ?>
+                                                        <span class="badge bg-secondary">Pendiente</span>
+                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
+                                                            data-cod_gasto="<?php echo $v["cod_gasto"];
                                                                             ?>"
-                                                        data-montop="<?php echo $v["monto_total"];
-                                                                        ?>"
-                                                        data-nombregasto="<?php echo $v["nombret"];
+                                                            data-totalgastos="<?php echo $v["monto"];
+                                                                                ?>"
+                                                            data-nombre="<?php echo $v["nombret"];
                                                                             ?>">
-                                                        <i class="fas fa-money-bill-wave"></i>
-                                                    </button>
-                                                <?php elseif ($v['detgasto_status'] == 3): ?>
-                                                    <span class="badge bg-success">Completada</span>
-                                                    <?php if ($v['status_vuelto'] == 1): ?>
-                                                        <button name="vuelto" title="Recibir vuelto" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#vueltoModal"
-                                                            data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
-                                                            data-fecha="<?php echo $v["fecha"]; ?>"
-                                                            data-codpago="<?php echo $v["cod_pago_emitido"]; ?>"
-                                                            data-cod_vuelto_r="<?php echo $v["cod_vuelto_r"]; ?>"
-                                                            data-vuelto="<?php echo $v["vuelto_total"]; ?>"
-                                                            data-v_monto="<?php echo $v["monto_detallev"]; ?>"
-                                                            data-nombre=" <?php echo $v["nombret"]; ?> ">
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
+                                                    <?php elseif ($v['status'] == 2): ?>
+                                                        <span class="badge bg-warning">Pago parcial</span>
+                                                        <button name="partes" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
+                                                            data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
+                                                            data-codpago="<?php echo $v["cod_pago_emitido"]; ?>"
+                                                            data-fecha="<?php echo $v["fecha"]; ?>"
+                                                            data-totalgastos="<?php echo $v["monto"];  ?>"
+                                                            data-montop="<?php echo $v["monto_total"];  ?>"
+                                                            data-nombre="<?php echo $v["nombret"];  ?>">
+                                                            <i class="fas fa-money-bill-wave"></i>
+                                                        </button>
+                                                    <?php elseif ($v['status'] == 3): ?>
+                                                        <span class="badge bg-success">Completada</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger">Anulada</span>
                                                     <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <button name="ajustar" class="btn btn-warning btn-sm editar" title="Editar" data-toggle="modal" data-target="#modificargasto"
+                                                        data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
+                                                        data-nombre=" <?php echo $v["descripcion"]; ?> ">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </button>
+                                                    <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#eliminarG"
+                                                        data-cod="<?php echo $v['cod_gasto']; ?>"
+                                                        data-eliminar="<?php echo $v['descripcion']; ?>">
+                                                        <i class="fas fa-trash-alt"></i></button>
 
-                                                <?php else: ?>
-                                                    <span class="badge bg-danger">Anulada</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <button name="ajustar" class="btn btn-warning btn-sm editar" title="Editar" data-toggle="modal" data-target="#modificargasto"
-                                                    data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
-                                                    data-nombre=" <?php echo $v["detgasto_descripcion"]; ?> ">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </button>
-                                                <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
-                                                    data-cod="<?php //echo $dato['cod_tipo_usuario']; 
-                                                                ?>"
-                                                    data-roleliminar="<?php //echo $dato['rol']; 
-                                                                        ?>"><i class="fas fa-trash-alt"></i></button>
-
-                                            </td>
-                                            </tr>
+                                                </td>
+                                                </tr>
 
 
-                                        <?php }
-                                        ?>
+                                            <?php }
+                                            ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -285,7 +254,7 @@ require_once "controlador/gastos.php";
                 </div>
 
                 <!-- =============================
-                    MODAL REGISTRAR GASTOS  (ESTO FUE LO QUE MODIFIQUE)
+                    MODAL REGISTRAR GASTOS  (100% FUNCIONAL)
                 ================================== -->
                 <div class="modal fade" id="modalRGasto" tabindex="-1" aria-labelledby="modalRegistrarGastoLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -392,7 +361,7 @@ require_once "controlador/gastos.php";
                     </script>
                 <?php endif; ?>
                 <!-- =======================
-                MODAL REGISTRAR PAGO DE GASTOS
+                MODAL REGISTRAR PAGO DE GASTOS (100% FUNCIONAL)
                 ============================= -->
                 <div class="modal fade" id="pagoGModal" tabindex="-1" aria-labelledby="pagoGLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -417,6 +386,7 @@ require_once "controlador/gastos.php";
                                             <div class="form-group">
                                                 <label for="nombre_gasto">Nombre del Gasto</label>
                                                 <input type="text" class="form-control" id="nombre_gasto" name="nombre_gasto" readonly>
+                                                <input type="hidden" name="tipo_pago" id="gasto">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -426,8 +396,20 @@ require_once "controlador/gastos.php";
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="monto-section">
+                                        <div class="text-center my-3">
+                                            <h4>Monto pagado: <span id="total-pago1" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                                        </div>
+                                        <div class="text-center my-3">
+                                            <h4>Monto a Pagar: <span id="total-pago" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                                        </div>
+                                    </div>
+                                    <?php /*}
+                                    } }*/ ?>
                                     <div class="text-center my-3">
-                                        <h4>Total a Pagar: <span id="total-pago" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                                        <h4>Total del gasto : <span id="total-gasto" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                                        <input type="hidden" name="montototal" id="total-gasto-oculto">
                                     </div>
                                     <div class="form-row">
                                         <div class="col-md-4">
@@ -447,6 +429,7 @@ require_once "controlador/gastos.php";
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
                                                         <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8">
@@ -499,7 +482,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar" name="montototal" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -535,6 +518,9 @@ require_once "controlador/gastos.php";
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
                                                     <input type="number" step="0.001" name="vuelto" class="form-control" id="vuelto" placeholder="Vuelto" readonly>
+                                                    <button type="button" class="btn btn-primary ml-2" id="registrarVueltoBtn" data-toggle="modal" data-target="#vueltoModal" data-cod_gasto="" data-vuelto="" style="display: none;" title="Registrar vuelto">
+                                                        <i class="fas fa-money-bill-wave"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -566,241 +552,29 @@ require_once "controlador/gastos.php";
                 <?php endif; ?>
 
                 <!-- =======================
-                    MODAL PAGOS EN CUOTAS  TRABAJO EN CURSO 30/04/2025
+                    MODAL REGISTRAR VUELTO EN OBSERVACIÓN
                 ============================= -->
-
-                <div class="modal fade" id="partesModal" tabindex="-1" aria-labelledby="abonoLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
+                <div class="modal fade" id="vueltoModal" tabindex="-1" aria-labelledby="vueltoModalBtn" aria-hidden="true">
+                    <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="pagoLabel">Registrar Pago</h5>
+                                <h5 class="modal-title" id="pagoLabel">Registrar vuelto a recibir</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="abonoForm" method="post">
+                                <form id="vueltoForm" method="post">
                                     <div class="form-row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="nro_gasto">Nro de Gasto</label>
-                                                <input type="text" class="form-control" id="nro_gasto" readonly>
-                                                <input type="hidden" class="form-control" id="codigop" name="cod_pago_emitido">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="nombreG">Nombre del Gasto</label>
-                                                <input type="text" class="form-control" id="nombreG" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="fecha_cuota">Fecha</label>
-                                                <input type="text" class="form-control" id="fecha_cuota" name="fecha" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="text-center my-3">
-                                        <h4>Monto Total: <span id="montoT" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
-                                    </div>
-                                    <div class="text-center my-3">
-                                        <h4>Monto Pagado: <span id="total-gasto" class="font-weight-bold" style="font-size: 2rem;">0.00</span></h4>
-                                        <input type="hidden" class="form-control" id="t-parcial" name="montototal">
-                                    </div>
-                                    <div class="text-center my-3">
-                                        <h4>Monto a Pagar: <span id="monto-pagar" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="col-md-5">
-                                            <h4>Tipos de Pago</h4>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="form-group">
-                                                <h4>Monto</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <?php foreach ($formaspago as $index => $opcion): ?>
-                                            <?php if ($opcion['cod_divisa'] == 1): ?>
-
-
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
-                                                        <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
-                                                            </div>
-                                                            <input type="number" step="0.01" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
-                                                            <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text">Bs</span>
-                                                            </div>
-                                                            <input type="number" step="0.01" class="form-control monto-bs monto-con" id="monto-bs-con-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-                                            <?php else: ?>
-
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
-                                                        <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
-                                                    </div>
-                                                </div>
-
-
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text">Bs</span>
-                                                            </div>
-                                                            <input type="number" step="0.01" class="form-control monto-bs1" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago1()">
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    </div>
-                                    <div class="form-row justify-content-end">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="monto_a_pagar">Monto a pagar</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">Bs</span>
-                                                    </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar1" name="montototal" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="">Monto pagado</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">Bs</span>
-                                                    </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagadoxcuotas" name="montopagado" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-row justify-content-end">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="">Diferencia</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">Bs</span>
-                                                    </div>
-                                                    <input type="number" step="0.001" class="form-control" id="diferencia1" name="diferencia1" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="">Vuelto a recibir</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">Bs</span>
-                                                    </div>
-                                                    <input type="number" step="0.001" name="vuelto" class="form-control" id="vuelto1" placeholder="Vuelto" readonly>
-                                                    <input type="hidden" class="form-control" id="cod_vuelto_r" name="cod_vuelto_r">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-success" form="abonoForm" id="finalizarPagoBtn" name="pago_cuotas">Finalizar Pago</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <?php
-                if (isset($registrarPGcuotas)): ?>
-                    <script>
-                        Swal.fire({
-                            title: '<?php echo $registrarPGcuotas["title"]; ?>',
-                            text: '<?php echo $registrarPGcuotas["message"]; ?>',
-                            icon: '<?php echo $registrarPGcuotas["icon"]; ?>',
-                            confirmButtonText: 'Ok'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location = 'gastos';
-                            }
-                        });
-                    </script>
-                <?php endif; ?>
-
-                <!-- =======================
-                    MODAL REGISTRAR VUELTO EN CONSTRUCCIÓN
-                ============================= -->
-                <div class="modal fade" id="vueltoModal" tabindex="-1" aria-labelledby="abonoLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="pagoLabel">Registrar Pago</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="abonoForm" method="post">
-                                    <div class="form-row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="nro_gasto">Nro de Gasto</label>
                                                 <input type="text" class="form-control" id="nro_gasto" name="nro_gasto" readonly>
-                                                <input type="hidden" class="form-control" id="codigop" name="codigop">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="nombreG">Nombre del Gasto</label>
-                                                <input type="text" class="form-control" id="nombreG" name="nombreG" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="fecha_cuota">Fecha</label>
-                                                <input type="text" class="form-control" id="fecha_cuota" name="fecha_cuota" readonly>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="text-center my-3">
-                                        <h4>Monto Total: <span id="montoT" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
-                                    </div>
-                                    <div class="text-center my-3">
-                                        <h4>Monto Pagado: <span id="total-gasto" class="font-weight-bold" style="font-size: 2rem;">0.00</span></h4>
-                                        <input type="hidden" class="form-control" id="t-parcial" name="total_parcial">
-                                    </div>
-                                    <div class="text-center my-3">
-                                        <h4>Monto a Pagar: <span id="monto-pagar" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                                        <h4>Monto Total: <span id="montoV" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
                                     </div>
                                     <div class="form-row">
                                         <div class="col-md-5">
@@ -828,7 +602,7 @@ require_once "controlador/gastos.php";
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">Bs</span>
                                                             </div>
-                                                            <input type="number" step="0.01" class="form-control monto-bs1" id="monto-bs-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalpago1()">
+                                                            <input type="number" step="0.01" class="form-control monto-bs1" id="monto-bs1-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalvuelto()">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -846,7 +620,7 @@ require_once "controlador/gastos.php";
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
                                                             </div>
-                                                            <input type="number" step="0.01" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago1(<?= $index; ?>)">
+                                                            <input type="number" step="0.01" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalvuelto(<?= $index; ?>)">
                                                             <input type="hidden" class="form-control tasa-conversion1" id="tasa-conversion1-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
                                                         </div>
                                                     </div>
@@ -857,7 +631,7 @@ require_once "controlador/gastos.php";
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">Bs</span>
                                                             </div>
-                                                            <input type="number" step="0.01" class="form-control monto-bs1 monto-con1" id="monto-bs-con-1<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                                            <input type="number" step="0.01" class="form-control monto-bs monto-con" id="monto-bs-con1-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -872,7 +646,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagar1" name="monto_a_pagar" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_vuelto" name="vuelto" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -883,7 +657,7 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="monto_pagadoxcuotas" name="monto_pagado" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="monto_pagado1" name="montopagado" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -896,18 +670,16 @@ require_once "controlador/gastos.php";
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">Bs</span>
                                                     </div>
-                                                    <input type="number" step="0.001" class="form-control" id="diferencia1" name="diferencia1" readonly>
+                                                    <input type="number" step="0.001" class="form-control" id="diferencia1" name="diferencia" readonly>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
-
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-success" form="abonoForm" id="finalizarPagoBtn" name="pago_cuotas">Finalizar Pago</button>
+                                <button type="button" class="btn btn-success" id="vueltoModalBtn" name="pago_vuelto">Guardar vuelto</button>
                             </div>
                         </div>
                     </div>
@@ -953,6 +725,45 @@ require_once "controlador/gastos.php";
                             title: '<?php echo $editarG["title"]; ?>',
                             text: '<?php echo $editarG["message"]; ?>',
                             icon: '<?php echo $editarG["icon"]; ?>',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location = 'gastos';
+                            }
+                        });
+                    </script>
+                <?php endif; ?>
+
+                <!-- ELIMINAR GASTO -->
+                <div class="modal fade" id="eliminarG">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h4 class="modal-title">Confirmar Eliminar</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post">
+                                    <p>¿Estás seguro de eliminar el gasto: <b><span id=gasto></span>?</p></b>
+                                    <input type="hidden" name="cod_gasto" id="cod_eliminar">
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" name="eliminarG" class="btn btn-danger">Eliminar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if (isset($eliminar)): ?>
+                    <script>
+                        Swal.fire({
+                            title: '<?php echo $eliminar["title"]; ?>',
+                            text: '<?php echo $eliminar["message"]; ?>',
+                            icon: '<?php echo $eliminar["icon"]; ?>',
                             confirmButtonText: 'Ok'
                         }).then((result) => {
                             if (result.isConfirmed) {

@@ -36,18 +36,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        foreach ($frecuencia as $f) {
-                                        ?>
-                                            <td><?php echo $f['cod_frecuencia']
-                                                ?></td>
-                                            <td><?php echo $f['nombre']
-                                                ?></td>
-                                            <td><?php echo $f['dias']
-                                                ?></td>
+                                        <?php if (empty($frecuencia)): ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No hay frecuencias de pago</td>
                                             </tr>
-                                        <?php }
-                                        ?>
+                                        <?php else: ?>
+
+                                            <?php
+                                            foreach ($frecuencia as $f) {
+                                            ?>
+                                                <td><?php echo $f['cod_frecuencia']
+                                                    ?></td>
+                                                <td><?php echo $f['nombre']
+                                                    ?></td>
+                                                <td><?php echo $f['dias']
+                                                    ?></td>
+                                                </tr>
+                                            <?php }
+                                            ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -60,56 +67,62 @@
                                         <tr>
                                             <th>Código</th>
                                             <th>Fecha</th>
-                                            <th>Frecuancia de gastos</th>
-                                            <th>Tipo de gasto</th>
                                             <th>Nombre</th>
+                                            <th>Frecuancia de gastos</th>
+                                            <th>Tipo de gasto</th>   
                                             <th>Status</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($categorias as $c) { ?>
-                                            <?php if ($c['status_cat_gasto'] != 2): ?>
-                                                <tr>
-                                                    <td><?php echo $c['cod_cat_gasto']
-                                                        ?></td>
-                                                    <td><?php echo $c['fecha']
-                                                        ?></td>
-                                                    <td><?php echo $c['nombref']
-                                                        ?></td>
-                                                    <td><?php echo $c['nombre']
-                                                        ?></td>
-                                                    <td><?php echo $c['nombret']
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php if ($c['status_cat_gasto'] == 1): ?>
-                                                            <span class="badge bg-success">Activo</span>
+                                        <?php if (empty($categorias)): ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No hay categorías de gastos</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($categorias as $c) { ?>
+                                                <?php if ($c['status_cat_gasto'] != 2): ?>
+                                                    <tr>
+                                                        <td><?php echo $c['cod_cat_gasto']
+                                                            ?></td>
+                                                        <td><?php echo $c['fecha']
+                                                            ?></td>
+                                                            <td><?php echo $c['categoria']
+                                                            ?></td>
+                                                        <td><?php echo $c['nombref']
+                                                            ?></td>
+                                                        <td><?php echo $c['nombret']
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php if ($c['status_cat_gasto'] == 1): ?>
+                                                                <span class="badge bg-success">Activo</span>
+                                                            <?php else: ?>
+                                                                <span class="badge bg-danger">Inactivo</span>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                        <td>
+
+                                                            <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modificat"
+
+                                                                data-nombre="<?php echo $c["categoria"]; ?>"
+                                                                data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
+                                                                data-status="<?php echo $c["status_cat_gasto"]; ?>">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </button>
+                                                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#modaleliminar"
+                                                                data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
+                                                                data-nombre="<?php echo $c["categoria"]; ?>"
+                                                                data-status="<?php echo $c["status_cat_gasto"]; ?>">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
                                                         <?php else: ?>
-                                                            <span class="badge bg-danger">Inactivo</span>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td>
 
-                                                        <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modificat"
-                                                            
-                                                            data-nombre="<?php echo $c["nombre"]; ?>"
-                                                            data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
-                                                            data-status="<?php echo $c["status_cat_gasto"]; ?>">
-                                                            <i class="fas fa-pencil-alt"></i>
-                                                        </button>
-                                                        <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#modaleliminar"
-                                                            data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
-                                                            data-nombre="<?php echo $c["nombre"]; ?>"
-                                                            data-status="<?php echo $c["status_cat_gasto"]; ?>">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    <?php else: ?>
-
-                                                    </td>
-                                                </tr>
-                                            <?php endif; ?>
-                                        <?php } ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                            <?php } ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -332,7 +345,7 @@ if (isset($guardarF)): ?>
                     </div>
                     <div class="form-group">
                         <label for="status">Estatus</label>
-                        <select name="status" id="status">
+                        <select name="status_cat_gasto" id="status">
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>
                         </select>
@@ -346,6 +359,21 @@ if (isset($guardarF)): ?>
         </div>
     </div>
 </div>
+<?php
+if (isset($editar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $editar["title"]; ?>',
+            text: '<?php echo $editar["message"]; ?>',
+            icon: '<?php echo $editar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categoriag';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 <div class="modal fade" id="modaleliminar">
     <div class="modal-dialog">
@@ -359,7 +387,7 @@ if (isset($guardarF)): ?>
             <div class="modal-body">
                 <form method="post">
                     <p>¿Estás seguro de eliminar la categoría: <b><span id=categoria></span>?</p></b>
-                    <input type="hidden" name="cod_eliminar" id="cod_eliminar" >
+                    <input type="hidden" name="cod_eliminar" id="cod_eliminar">
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-danger">Eliminar</button>
