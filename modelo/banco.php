@@ -9,8 +9,8 @@ class Banco extends Conexion {
     private $errores = [];
 
     public function __construct() {
-        $this->conex = (new Conexion())->conectar();
-    } 
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
+    }
 
     public function setNombre($nombre_banco){
         $resultado = $this->validarTexto($nombre_banco, 'nombre', 2, 50);

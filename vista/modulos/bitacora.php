@@ -9,7 +9,47 @@
                 </div>
             </div>
         </div>
+
     </section>
+    
+   <div class=""   style=" text-align-last: right;
+    margin-right: 20px ">
+<button type="button" class="btn btn-danger mb-4" data-toggle="modal" data-target="#modalEliminarBitacora">
+    Eliminar registros de bitácora
+</button>
+   </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalEliminarBitacora" tabindex="-1" role="dialog" aria-labelledby="modalEliminarBitacoraLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form action="" method="POST">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalEliminarBitacoraLabel">Eliminar Registros de Bitácora</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="fecha_desde">Desde:</label>
+                <input type="date" name="fecha_desde" id="fecha_desde" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_hasta">Hasta:</label>
+                <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control" required>
+            </div>
+            <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger" name="eliminar_por_fecha">Eliminar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -47,3 +87,13 @@
         </div>
     </section>
 </div>
+<?php if (isset($resultado)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $resultado["title"]; ?>',
+            text: '<?php echo $resultado["message"]; ?>',
+            icon: '<?php echo $resultado["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        });
+    </script>
+<?php endif; ?>

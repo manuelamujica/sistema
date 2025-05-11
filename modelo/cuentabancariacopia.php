@@ -4,27 +4,22 @@ require_once "validaciones.php";
 class CuentaBancaria extends Conexion{
 
     use ValidadorTrait; // Usar el trait para validaciones
-    private $conex;
+    
     private $numero_cuenta;
     private $saldo;
     private $divisa;
     private $status;
     private $tipo_cuenta;
     
-  
-
     private $cod_cuenta_bancaria;
     private $cod_divisa;
     private $cod_tipo_cuenta;
     private $cod_banco;
     
-
-
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
-    }
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
 
+    }
     private $errores = [];
 
 #GETTER Y SETTER
@@ -121,7 +116,8 @@ private function crearCuenta(){
 
     $sql = "INSERT INTO cuenta_bancaria (numero_cuenta, saldo, cod_divisa, status, cod_tipo_cuenta, cod_banco) 
             VALUES(:numero_cuenta, :saldo, :cod_divisa, :status, :cod_tipo_cuenta, :cod_banco)";
-
+    
+    parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(":numero_cuenta", $this->numero_cuenta);
     $strExec->bindParam(":saldo", $this->saldo);
@@ -129,9 +125,10 @@ private function crearCuenta(){
     $strExec->bindParam(":status", $this->status);
     $strExec->bindParam(":cod_tipo_cuenta", $this->cod_tipo_cuenta);
     $strExec->bindParam(":cod_banco", $this->cod_banco);
-
+    $result = $strExec->execute();
+    parent::desconectarBD();
     try {
-        return $strExec->execute() ? 1 : 0;
+        return $result ? 1 : 0;
     } catch (PDOException $e) {
         error_log("Error al crear cuenta: " . $e->getMessage());
         return 0;
@@ -150,9 +147,11 @@ private function crearCuenta(){
          b.nombre_banco, t.nombre AS tipo_cuenta, d.nombre AS divisa, d.cod_divisa, c.cod_tipo_cuenta 
          FROM cuenta_bancaria c INNER JOIN divisas d ON c.cod_divisa = d.cod_divisa INNER JOIN tipo_cuenta t 
         ON c.cod_tipo_cuenta = t.cod_tipo_cuenta INNER JOIN banco b ON c.cod_banco = b.cod_banco;";
+        parent::conectarBD();
         $consulta = $this->conex->prepare($sql);
         $resul = $consulta->execute();
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }return $r = 0;
@@ -161,10 +160,13 @@ private function crearCuenta(){
 
     public function getbuscar($cod_cuenta_bancaria) {
         $sql = "SELECT * FROM cuenta_bancaria WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':cod_cuenta_bancaria', $cod_cuenta_bancaria);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        return $resultado;
     }
     
 
@@ -178,7 +180,7 @@ private function crearCuenta(){
                          cod_tipo_cuenta = :cod_tipo_cuenta, 
                          cod_banco = :cod_banco 
                      WHERE cod_cuenta_bancaria = :cod_cuenta_bancaria";
-    
+        parent::conectarBD();
         $strExec = $this->conex->prepare($editar);
         $strExec->bindParam(':cod_cuenta_bancaria', $this->cod_cuenta_bancaria);
         $strExec->bindParam(':numero_cuenta', $this->numero_cuenta);
@@ -189,6 +191,7 @@ private function crearCuenta(){
         $strExec->bindParam(':cod_banco', $this->cod_banco);
     
         return $strExec->execute() ? 1 : 0;
+        parent::desconectarBD();    
     }
     
 
@@ -201,6 +204,7 @@ private function crearCuenta(){
     private function eliminar($valor) {
         // Verificar si existe la caja
         $sql = "SELECT * FROM cuenta_bancaria WHERE cod_cuenta_bancaria = :cod";
+        parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':cod', $valor);
         $stmt->execute();
@@ -215,10 +219,10 @@ private function crearCuenta(){
         $stmt = $this->conex->prepare($sql);
         $stmt->bindParam(':cod', $valor);
         return $stmt->execute() ? 'success' : 'error_delete';
+        parent::desconectarBD();
     }
   
     public function geteliminar($valor){
         return $this->eliminar($valor);
     }
 }
-

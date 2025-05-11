@@ -57,6 +57,7 @@
                                                     </td>
                                                    
                                                     <td>
+                                                    <button name="ajustar" class="btn btn-secondary btn-sm movimientos" title="Ver Movimientos" data-toggle="modal" data-target="#modalmovimientos"> <i class="fas fa-eye"></i> </button>
                                                     <button class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modalmodificarcuenta"
                                                     data-cod="<?php echo $dato['cod_cuenta_bancaria']; ?>"
                                                     data-numero="<?php echo $dato['numero_cuenta']; ?>"
@@ -303,6 +304,99 @@ MODAL REGISTRAR CUENTA BANCARIA
         </div>
     </section>
 </div>
+
+<!-- MODAL MOVIMIENTOS-->
+<!-------------------------------------------------------------->
+
+<div class="modal fade" id="modalmovimientos">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background:rgb(57, 128, 236); color: #ffffff;">
+                <h4 class="modal-title">Historial de Movimientos - Cuenta Bancaria <?php echo htmlspecialchars($dato['numero_cuenta']); ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Información básica de la caja -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Código</label>
+                            <div class="form-control" style="background-color: #f8f9fa; padding: 6px 12px; border-radius: 4px;">
+                                <?php echo htmlspecialchars($dato['cod_cuenta_bancaria']); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Divisa</label>
+                            <div class="form-control" style="background-color: #f8f9fa; padding: 6px 12px; border-radius: 4px;">
+                                <?php 
+                                foreach($divisas as $div) {
+                                    if($div['cod_divisa'] == $dato['cod_divisa']) {
+                                        echo htmlspecialchars($div['nombre']);
+                                        break;
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Saldo actual</label>
+                            <div class="form-control" style="background-color: #f8f9fa; padding: 6px 12px; border-radius: 4px;">
+                                <?php echo htmlspecialchars($dato['saldo']); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de movimientos -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Detalle de Movimientos</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Motivo</th>
+                                        <th>Monto</th>
+                                        <th>Responsable</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                              
+                                    <tr>
+                                        <td>15/04/2023 10:30</td>
+                                        <td><span class="badge badge-success">Entrada</span></td>
+                                        <td>Venta #12345</td>
+                                        <td>150.00</td>
+                                        <td>Juan Pérez</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15/04/2023 12:45</td>
+                                        <td><span class="badge badge-danger">Salida</span></td>
+                                        <td>Compra de materiales</td>
+                                        <td>75.50</td>
+                                        <td>María Gómez</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Confirmar Eliminar Modal -->
 <div class="modal fade" id="modaleliminar">

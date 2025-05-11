@@ -6,7 +6,7 @@ class Bitacora extends Conexion
 
     public function __construct()
   {
-    parent::__construct(_SEC_DB_HOST_, _SEC_DB_NAME_, _SEC_DB_USER_, _SEC_DB_PASS_);
+    parent::__construct(_SEC_DB_HOST_, _SEC_DB_NAME_, _SEC_DB_USER_, _SEC_DB_PASS_);  
   }
 
     private function registrar($cod_usuario, $accion, $detalles, $modulo = '')
@@ -33,10 +33,28 @@ class Bitacora extends Conexion
       return $resul;
     }
 
-function registrarEnBitacora($cod_usuario, $accion, $detalles, $modulo = '')
-{
-    $this->registrar($cod_usuario, $accion, $detalles, $modulo);
-}
+    function registrarEnBitacora($cod_usuario, $accion, $detalles, $modulo = '')
+    {
+        $this->registrar($cod_usuario, $accion, $detalles, $modulo);
+    }
+    public function eliminarPorFechas($fechaInicio, $fechaFin)
+    {
+        parent::conectarBD();
+    
+        // Incluir el inicio del primer día y el final del último día
+        $fechaInicio .= " 00:00:00";
+        $fechaFin .= " 23:59:59"; // Esto incluye todo el día hasta el último segundo
+    
+        $query = "DELETE FROM bitacora WHERE fecha BETWEEN :fechaInicio AND :fechaFin";
+        $stmt = $this->conex->prepare($query);
+        $stmt->bindParam(':fechaInicio', $fechaInicio);
+        $stmt->bindParam(':fechaFin', $fechaFin);
+    
+        $resultado = $stmt->execute();
+    
+        parent::desconectarBD();
+        return $resultado;
+    }
 
 
 }
