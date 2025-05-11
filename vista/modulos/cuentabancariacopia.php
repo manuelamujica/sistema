@@ -232,7 +232,7 @@ MODAL REGISTRAR CUENTA BANCARIA
                                             <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
                                         </div>
                                         <div class="form-group">
-                                            <label for="numero_cuenta">Saldo</label>
+                                            <label for="saldo">Saldo</label>
                                             <input type="text" class="form-control" name="saldo1" id="saldo1" value="" maxlength="20">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                             <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
@@ -251,7 +251,7 @@ MODAL REGISTRAR CUENTA BANCARIA
                                     <select class="form-control" name="tipodecuenta1" id="tipodecuenta1" required>
                                         <?php foreach($tipo as $tip): ?>
                                             <option value="<?php echo $tip['cod_tipo_cuenta']; ?>"
-                                                <?php echo ($tip['cod_tipo_cuenta'] == $dato['cod_tipo_cuenta']) ? 'selected' : ''; ?>>
+                                                <?php echo ($tip['cod_tipo_cuenta'] == $dato['cod_tipo_cuenta']); ?>>
                                                 <?php echo $tip['nombre'];  ?>
                                             </option>
                                         <?php endforeach; ?>

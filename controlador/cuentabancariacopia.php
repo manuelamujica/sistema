@@ -30,13 +30,20 @@ else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
     if (!empty($_POST["numerocuenta"])) {
         $errores = [];
         try {
-            // Paso 1: Setear valores
-            $objCuenta->setNumero($_POST["numerocuenta"]);
-            $objCuenta->setBanco($_POST["banco"]);
-            $objCuenta->setTipo($_POST["tipo_cuenta"]);
-            $objCuenta->setSaldo($_POST["saldo"]);
-            $objCuenta->setDivisa($_POST["divisa"]);
-            $objCuenta->setStatus(1); 
+      
+
+            $data = [
+                'numero_cuenta' => $_POST["numerocuenta"],
+                'divisa' => $_POST["divisa"],
+                'cod_banco' => $_POST["banco"],
+                'cod_tipo_cuenta' => $_POST["tipo_cuenta"],
+                'saldo' => $_POST["saldo"],
+                'status' => 1,
+               
+                
+            ];
+            
+            $objCuenta->setData($data);
     
             // Paso 2: Validar datos
             $objCuenta->check(); 
@@ -79,95 +86,28 @@ else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
             ];
         }
     }
-    else {
-        $errores = [];
-        try {
-          // En el método donde procesas el POST
-            $objCuenta->setNumero($_POST["numerocuenta"]); // nombre del campo en el formulario
-            $objCuenta->setBanco($_POST["banco"]);
-            $objCuenta->setTipo($_POST["tipo_cuenta"]); // nombre del campo en el formulario
-            $objCuenta->setSaldo($_POST["saldo"]);
-            $objCuenta->setDivisa($_POST["divisa"]);
-            $objCuenta->setStatus(1); 
-                        
-            $objCuenta->check();
-            
-            if (!$objCuenta->getbuscar($_POST['numerocuenta'])) {
-                $resul = $objCuenta->getcrearCuenta();
-           // En el método donde procesas el POST
-                $objCuenta->setNumero($_POST["numerocuenta"]); 
-                $objCuenta->setBanco($_POST["banco"]);
-                $objCuenta->setTipo($_POST["tipo_cuenta"]);
-                $objCuenta->setSaldo($_POST["saldo"]);
-                $objCuenta->setDivisa($_POST["divisa"]);
-
-         
-        
-            $objCuenta->check(); // Lanza excepción si hay errores
-          
-           
-        }} catch (Exception $e) {
-            $errores[] = $e->getMessage();
-        }
-          // Si hay errores, se muestra el mensaje de error
-    if (!empty($errores)) {
-        $registrar = [
-            "title" => "Error",
-            "message" => implode(" ", $errores),
-            "icon" => "error"
-        ];
-    } else {
-            if (!$objCuenta->getbuscar($_POST['numero_cuenta'])) {
-              
-                
-                $resul = $objCuenta->getcrearCuenta();
-
-                if ($resul == 1) {
-                    $registrar = [
-                        "title" => "Exito",
-                        "message" => "¡Registro exitoso!",
-                        "icon" => "success"
-                    ];
-                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de Cuenta', $_POST["numero_cuenta"], 'Cuenta Bancaria');
-                } else {
-                    $registrar = [
-                        "title" => "Error",
-                        "message" => "Hubo un problema al intentar registrar la cuenta bancaria..",
-                        "icon" => "error"
-                    ];
-                }
-            } else {
-                $registrar = [
-                    "title" => "Error",
-                    "message" => "No se pudo registrar. La cuenta bancaria ya existe.",
-                    "icon" => "error"
-                ];
-            }
-        }
-    } 
+   
 }else if (isset($_POST['editar'])) {
-    $cod = $_POST['cod_cuenta_bancaria'];
-    $objCuenta->setCod($cod);
-    $numero_cuenta = $_POST['numero_cuenta1'];  
-    $saldo = $_POST['saldo1']; 
-    $divisa = $_POST['divisa1'];  
-    $status = $_POST['status'];  
-    $banco = $_POST['banco1'];  
-    $tipo_cuenta = $_POST['tipodecuenta1']; 
-
-    // Validar que el número de cuenta no esté vacío
-    if (!empty($numero_cuenta)) {
+   
         try {
-            // Establecer los valores en el objeto CuentaBancaria
-            $objCuenta->setNumero($numero_cuenta);
-            $objCuenta->setSaldo($saldo);
-            $objCuenta->setDivisa($divisa);
-            $objCuenta->setStatus($status);
-            $objCuenta->setBanco($banco);
-            $objCuenta->setTipo($tipo_cuenta);
+           
+            $data = [
+                'numero_cuenta' => $_POST["numero_cuenta1"],
+                'divisa' => $_POST["divisa1"],
+                'cod_banco' => $_POST["banco1"],
+                'cod_tipo_cuenta' => $_POST["tipodecuenta1"],
+                'saldo' => $_POST["saldo1"],
+                'status' => $_POST["status"],
+                 'cod_cuenta_bancaria' => $_POST['cod_cuenta_bancaria1'],
+                
+            ];
+            
+            $objCuenta->setData($data);
+            $objCuenta->check(); 
+            
 
             // Verificar si el número de cuenta ya existe en la base de datos
-            if (!$objCuenta->getbuscar($numero_cuenta)) {
+            if (!$objCuenta->getbuscar($data['numero_cuenta'])) {
                 // Realizar la actualización en la base de datos
                 $resul = $objCuenta->geteditar();
 
@@ -201,18 +141,7 @@ else if (isset($_POST["guardar"]) || isset($_POST["guardaru"])) {
                 "icon" => "error"
             ];
         }
-    } else {
-        $editar = [
-            "title" => "Error",
-            "message" => "El número de cuenta no puede estar vacío.",
-            "icon" => "error"
-        ];
-    }
-}
-
-
-
-
+    } 
 
 else if (isset($_POST['eliminar'])) {
     

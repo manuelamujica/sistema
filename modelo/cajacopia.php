@@ -21,50 +21,52 @@ class Caja extends Conexion{
     private $errores = [];
 
     #GETTER Y SETTER
-    public function getNombre(){
-        return $this->nombre;
-    }
-    public function setNombre($nombre){
-        $resultado = $this->validarTexto($nombre, 'nombre', 2, 50);
-        if ($resultado === true) {
-            $this->nombre = $nombre;
-        } else {
-            $this->errores['nombre'] = $resultado;
+    public function setData(array $data)
+    {
+        foreach ($data as $key => $value) {
+            switch ($key) {
+                case 'nombre':
+                    $resultado = $this->validarTexto($value, 'nombre', 1, 50);
+                    if ($resultado === true) {
+                        $this->nombre = $value;
+                    } else {
+                        $this->errores['nombre'] = $resultado;
+                    }
+                    break;
+
+                case 'cod_divisa':
+                    $resultado = $this->validarNumerico($value, 'cod_divisa', 1, 50);
+                    if ($resultado === true) {
+                        $this->cod_divisa = $value;
+                    } else {
+                        $this->errores['cod_divisa'] = $resultado;
+                    }
+                    break;
+
+                case 'saldo':
+                    $resultado = $this->validarDecimal($value, 'saldo', 1, 100);
+                    if ($resultado === true) {
+                        $this->saldo = $value;
+                    } else {
+                        $this->errores['saldo'] = $resultado;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
-        $this->nombre = $nombre;
-    }
-    public function setSaldo($saldo){
-        $resultado = $this->validarNumerico($saldo, 'saldo', 1, 100);
-        if ($resultado === true) {
-            $this->saldo = $saldo;
-        } else {
-            $this->errores['saldo'] = $resultado;
-        }
-    }
- 
-public function setDivisa($divisa){
-    $resultado = $this->validarNumerico($divisa, 'divisa', 1, 10);
-    if ($resultado === true) {
-        $this->cod_divisa = $divisa;
-        $this->divisa = $divisa; // Añadir esta línea
-    } else {
-        $this->errores['divisa'] = $resultado;
-    }
-}
-    public function getStatus(){
-        return $this->status;
-    }
-    public function setStatus($status){
-        $this->status = $status;
     }
 
-    public function setCod($cod_caja){
-        $this->cod_caja = $cod_caja;
-    }
+    public function getData()
+    {
+        return [
+            'nombre' => $this->nombre,
+            'cod_divisa' => $this->cod_divisa,
+            'saldo' => $this->saldo,
+        ]; 
+     }
 
-    public function getCod(){
-        return $this->cod_caja;
-    }
 
      // Chequear si hay errores
      public function check() {

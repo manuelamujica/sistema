@@ -5,11 +5,68 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
+                    <br>
                     <h2>Conciliación bancaria</h2>
                 </div>
             </div>
         </div>
     </section>
+
+    <div style=" text-align-last: right;
+    margin-right: 20px; margin-bottom: 20px">
+    
+      
+<button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modalHistorialConciliaciones">
+    <i class="fas fa-history mr-1"></i> Historial de conciliaciones
+</button>
+</div>
+
+
+<div class="modal fade" id="modalHistorialConciliaciones" tabindex="-1" role="dialog" aria-labelledby="modalHistorialConciliacionesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalHistorialConciliacionesLabel">Historial de Conciliaciones</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="table-responsive">
+          <table class="table table-bordered mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Cuenta Bancaria</th>
+                <th>Documento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Ejemplo estático -->
+              <tr>
+                <td>10-05-2025</td>
+                <td>Banesco - 0134XXXXXXXX1234</td>
+                <td><a href="uploads/conciliaciones/extracto_mayo_2025.pdf" target="_blank">Ver documento</a></td>
+              </tr>
+              <tr>
+                <td>05-04-2025</td>
+                <td>Mercantil - 0105XXXXXXXX5678</td>
+                <td><a href="uploads/conciliaciones/extracto_abril_2025.pdf" target="_blank">Ver documento</a></td>
+              </tr>
+              <!-- Puedes repetir más filas aquí -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
 
     <section class="content">
         <div class="container-fluid">

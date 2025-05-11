@@ -24,25 +24,22 @@ if (isset($_POST['buscar'])) {
         $errores = [];
         try {
             
-            $objCaja->setNombre($_POST["nombre"]);
-            $objCaja->setSaldo($_POST["saldo"]);
-            $objCaja->setDivisa($_POST["divisa"]);
-         
-        
-            $objCaja->check(); // Lanza excepción si hay errores
-          
+            $data = [
+                'nombre' => $_POST["nombre"],
+                'cod_divisa' => $_POST["divisa"],
+                'saldo' => $_POST["saldo"],
+                'status' => 1,
+               
+                
+            ];
+            
+            $objCaja->setData($data);
+    
+            // Paso 2: Validar datos
+            $objCaja->check();
            
-        } catch (Exception $e) {
-            $errores[] = $e->getMessage();
-        }
-          // Si hay errores, se muestra el mensaje de error
-    if (!empty($errores)) {
-        $registrar = [
-            "title" => "Error",
-            "message" => implode(" ", $errores),
-            "icon" => "error"
-        ];
-    } else {
+       
+         
             if (!$objCaja->getbuscar($_POST['nombre'])) {
               
                 
@@ -68,72 +65,65 @@ if (isset($_POST['buscar'])) {
                     "message" => "No se pudo registrar. La caja ya existe.",
                     "icon" => "error"
                 ];
-            }
-        }
-    } 
-} else if (isset($_POST['editar'])) {
 
-    $nombre = $_POST['nombre1'];
-    $status = $_POST['status'];
-
-        if ($nombre !== $_POST['origin']) {
-            // Si la unidad cambió, verificamos si ya existe en la base de datos
-            if ($objCaja->getbuscar($nombre)) {
-                $advertencia = [
-                    "title" => "Error",
-                    "message" => "No se pudo registrar porque el nombre de la caja ya existe.",
-                    "icon" => "error"
-                ];
-            }
-        }
-          // Si hay errores, se muestra el mensaje de error
-          $errores = [];
-        // Validaciones
-        if (!empty($nombre)){
-           try {
-                $objCaja->setCod($_POST["cod_caja_oculto"]);
-                $objCaja->setNombre($_POST["nombre1"]);
-                $objCaja->setSaldo($_POST["saldo1"]);
-                $objCaja->setDivisa($_POST["divisa1"]);
-                $objCaja->setStatus($status);
-                $objCaja->check(); // Lanza excepción si hay errores
-                
-                $res = $objCaja->geteditar();
-                if ($res == 1) {
-                    $editar = [
-                        "title" => "Editado con éxito",
-                        "message" => "La caja ha sido actualizada",
-                        "icon" => "success"
-                    ];
-                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar Caja', $_POST["nombre"], 'Caja');
-                } else {
-                    $editar = [
-                        "title" => "Error",
-                        "message" => "Hubo un problema al editar la caja",
-                        "icon" => "error"
-                    ];
-                }
-            } catch (Exception $e) {
-                $errores[] = $e->getMessage();  
-            }
-            // Si hay errores, se muestra el mensaje de error
-            if (!empty($errores)) {
-                $editar = [
-                    "title" => "Error",
-                    "message" => implode(" ", $errores),
-                    "icon" => "error"
-                ];
             }
             
-        } else {
-            $editar = [
+        }
+        catch (Exception $e) {
+            $errores[] = $e->getMessage();
+            $registrar = [
                 "title" => "Error",
-                "message" => "No se permiten campos vacios.",
+                "message" => implode(" ", $errores),
                 "icon" => "error"
             ];
         }
+    } 
+} else if (isset($_POST['editar'])) {
+    $errores = [];
+
+    try {
         
-} else if (isset($_POST['eliminar'])) {
+        // Preparar datos para edición
+        $data = [
+            'nombre' => $_POST["nombre1"],
+            'cod_divisa' => $_POST["divisa1"],
+            'saldo' => $_POST["saldo1"],
+            'status' => $_POST["status"],
+            'cod_caja' => $_POST["cod_caja"], 
+        ];
+
+        $objCaja->setData($data);
+        $objCaja->check();
+
+        $resul = $objCaja->geteditar($cod_caja); 
+
+        if ($resul == 1) {
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar Caja', $nombre, 'Caja');
+            $editar = [
+                "title" => "Editado con éxito",
+                "message" => "La caja ha sido actualizada",
+                "icon" => "success"
+            ];
+        } else {
+            $editar = [
+                "title" => "Error",
+                "message" => "Hubo un problema al editar la caja.",
+                "icon" => "error"
+            ];
+        }
+
+    } catch (Exception $e) {
+        $errores[] = $e->getMessage();
+        $editar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    }
+}
+
+
+else if (isset($_POST['eliminar'])) {
     
     $cod_caja = $_POST['eliminar'];
     $resul = $objCaja->geteliminar($cod_caja);

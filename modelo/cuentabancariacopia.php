@@ -3,7 +3,7 @@ require_once "conexion.php";
 require_once "validaciones.php";
 class CuentaBancaria extends Conexion{
 
-    use ValidadorTrait; // Usar el trait para validaciones
+    use ValidadorTrait; 
     
     private $numero_cuenta;
     private $saldo;
@@ -12,7 +12,7 @@ class CuentaBancaria extends Conexion{
     private $tipo_cuenta;
     
     private $cod_cuenta_bancaria;
-    private $cod_divisa;
+  
     private $cod_tipo_cuenta;
     private $cod_banco;
     
@@ -23,78 +23,88 @@ class CuentaBancaria extends Conexion{
     private $errores = [];
 
 #GETTER Y SETTER
-    public function getNumero(){
-        return $this->numero_cuenta;
-    }
-    public function setNumero($numero_cuenta){
-        $resultado = $this->validarNumerico($numero_cuenta, 'numero_cuenta', 20, 20);
-        if ($resultado === true) {
-            $this->numero_cuenta = $numero_cuenta;
-        } else {
-            $this->errores['numero_cuenta'] = $resultado;
+public function setData(array $data)
+{
+    foreach ($data as $key => $value) {
+        switch ($key) {
+            case 'numero_cuenta':
+                $resultado = $this->validarNumerico($value, 'numero_cuenta', 20, 20);
+                if ($resultado === true) {
+                    $this->numero_cuenta = $value;
+                } else {
+                    $this->errores['numero_cuenta'] = $resultado;
+                }
+                break;
+
+            case 'cod_banco':
+                $resultado = $this->validarNumerico($value, 'cod_banco', 1, 50);
+                if ($resultado === true) {
+                    $this->cod_banco = $value;
+                } else {
+                    $this->errores['cod_banco'] = $resultado;
+                }
+                break;
+
+            case 'cod_tipo_cuenta':
+                $resultado = $this->validarNumerico($value, 'cod_tipo_cuenta', 1, 50);
+                if ($resultado === true) {
+                    $this->cod_tipo_cuenta = $value;
+                } else {
+                    $this->errores['cod_tipo_cuenta'] = $resultado;
+                }
+                break;
+
+            case 'saldo':
+                $resultado = $this->validarDecimal($value, 'saldo', 1, 100);
+                if ($resultado === true) {
+                    $this->saldo = $value;
+                } else {
+                    $this->errores['saldo'] = $resultado;
+                }
+                break;
+
+            case 'divisa':
+                $resultado = $this->validarNumerico($value, 'divisa', 1, 10);
+                if ($resultado === true) {
+                    $this->divisa = $value;
+                  
+                } else {
+                    $this->errores['divisa'] = $resultado;
+                }
+                break;
+
+            case 'status':
+                $this->status = $value;
+                break;
+
+            case 'cod_cuenta_bancaria':
+                $this->cod_cuenta_bancaria = $value;
+                break;
+
+            default:
+                $this->errores[$key] = "Campo no reconocido: $key";
         }
-        $this->numero_cuenta = $numero_cuenta;
-    }
-    public function getStatus(){
-        return $this->status;
-    }
-    public function setStatus($status){
-        $this->status = $status;
-    }
-    public function getBanco(){
-        return $this->cod_banco;
-    }
-   
-public function setBanco($cod_banco){
-    $resultado = $this->validarNumerico($cod_banco, 'cod_banco', 1, 50);
-    if ($resultado === true) {
-        $this->cod_banco = $cod_banco;
-    } else {
-        
     }
 }
 
+public function getData($key = null)
+{
+    $data = [
+        'cod_cuenta_bancaria' => $this->cod_cuenta_bancaria ?? null,
+        'numero_cuenta' => $this->numero_cuenta ?? null,
+        'cod_banco' => $this->cod_banco ?? null,
+        'cod_tipo_cuenta' => $this->cod_tipo_cuenta ?? null,
+        'saldo' => $this->saldo ?? null,
+        'divisa' => $this->divisa ?? null,
+        'status' => $this->status ?? null,
+    ];
 
-    public function getTipo(){
-        return $this->tipo_cuenta;
+    if ($key !== null) {
+        return $data[$key] ?? null;
     }
-    public function setTipo($cod_tipo_cuenta){
-        $resultado = $this->validarNumerico($cod_tipo_cuenta, 'cod_tipo_cuenta', 1, 50);
-        if ($resultado === true) {
-            $this->cod_tipo_cuenta = $cod_tipo_cuenta;
-        } else {
-            
-        }
-    }
-   
-    
 
-    public function setSaldo($saldo){
-        $resultado = $this->validarNumerico($saldo, 'saldo', 1, 100);
-        if ($resultado === true) {
-            $this->saldo = $saldo;
-        } else {
-            $this->errores['saldo'] = $resultado;
-        }
-    }
- 
-public function setDivisa($divisa){
-    $resultado = $this->validarNumerico($divisa, 'divisa', 1, 10);
-    if ($resultado === true) {
-        $this->cod_divisa = $divisa;
-        $this->divisa = $divisa; 
-    } else {
-        $this->errores['divisa'] = $resultado;
-    }
+    return $data;
 }
-
-    public function setCod($cod_cuenta_bancaria){
-        $this->cod_cuenta_bancaria = $cod_cuenta_bancaria;
-    }
-
-    public function getCod(){
-        return $this->cod_cuenta_bancaria;
-    }
 
      // Chequear si hay errores
      public function check() {
@@ -121,7 +131,7 @@ private function crearCuenta(){
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(":numero_cuenta", $this->numero_cuenta);
     $strExec->bindParam(":saldo", $this->saldo);
-    $strExec->bindParam(":cod_divisa", $this->cod_divisa);
+    $strExec->bindParam(":cod_divisa", $this->divisa);
     $strExec->bindParam(":status", $this->status);
     $strExec->bindParam(":cod_tipo_cuenta", $this->cod_tipo_cuenta);
     $strExec->bindParam(":cod_banco", $this->cod_banco);
@@ -185,7 +195,7 @@ private function crearCuenta(){
         $strExec->bindParam(':cod_cuenta_bancaria', $this->cod_cuenta_bancaria);
         $strExec->bindParam(':numero_cuenta', $this->numero_cuenta);
         $strExec->bindParam(':saldo', $this->saldo);
-        $strExec->bindParam(':divisa', $this->cod_divisa);
+        $strExec->bindParam(':divisa', $this->divisa);
         $strExec->bindParam(':status', $this->status);
         $strExec->bindParam(':cod_tipo_cuenta', $this->cod_tipo_cuenta);
         $strExec->bindParam(':cod_banco', $this->cod_banco);
