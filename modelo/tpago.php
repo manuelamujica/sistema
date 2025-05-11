@@ -1,21 +1,51 @@
 <?php 
 require_once 'conexion.php';
+require_once 'validaciones.php';
 
 class Tpago extends Conexion{
     private $metodo; 
     private $moneda; 
     private $status;
+    use ValidadorTrait;
+    private $errores = [];
+
 
     public function __construct(){
         parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
-    public function incluir($valor){
-        $registro="INSERT INTO tipo_pago(cod_cambio, medio_pago, status) VALUES(:cod_cambio, :medio_pago, 1)";
+    public function check(){
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
+    public function registrar($tipopago){
+        $consulta="INSERT INTO detalle_tipo_pago ( cod_metodo, tipo_moneda, cod_cuenta_bancaria, cod_caja) VALUES ( :cod_metodo, :tipo_moneda, :cod_cuenta_bancaria, :cod_caja);";
+        $codcuenta = isset($tipopago['cod_cuenta_bancaria']) ? $tipopago['cod_cuenta_bancaria'] : null;
+        $codcaja = isset($tipopago['cod_caja']) ? $tipopago['cod_caja'] : null;
+        parent::conectarBD();
+        $strExec=$this->conex->prepare($consulta);
+        $strExec->bindParam(':cod_metodo', $tipopago['cod_metodo']);
+        $strExec->bindParam(':tipo_moneda', $tipopago['tipo_moneda']);
+        $strExec->bindParam(':cod_cuenta_bancaria', $codcuenta);
+        $strExec->bindParam(':cod_caja', $codcaja);
+        $resul=$strExec->execute();
+        parent::desconectarBD();
+        if($resul){
+            return $res=1;
+        }else{
+            return $res=0;
+        }
+    }
+
+
+    public function incluir(){
+        $registro="INSERT INTO tipo_pago(medio_pago, status) VALUES(:medio_pago, 1)";
         parent::conectarBD();
         $strExec=$this->conex->prepare($registro);
         $strExec->bindParam(':medio_pago', $this->metodo);
-        $strExec->bindParam(':cod_cambio', $valor);
         $resul=$strExec->execute();
         parent::desconectarBD();
         if ($resul){
@@ -27,9 +57,44 @@ class Tpago extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT tp.cod_tipo_pago, tp.medio_pago, tp.status AS status_pago, d.cod_divisa, d.nombre, d.abreviatura, d.status AS status_divisa, cd.cod_cambio, cd.tasa  FROM tipo_pago tp 
-        JOIN cambio_divisa cd ON tp.cod_cambio = cd.cod_cambio 
-        JOIN divisas d ON cd.cod_divisa = d.cod_divisa ORDER BY tp.cod_tipo_pago;";
+        $registro="SELECT dtp.*, tp.medio_pago, tp.status AS status_tipo_pago,
+                    CASE 
+                        WHEN dtp.tipo_moneda = 'digital' THEN 'cuenta_bancaria'
+                        WHEN dtp.tipo_moneda = 'efectivo' THEN 'caja'
+                        ELSE 'indefinido'
+                    END AS origen,
+
+                        -- Datos de cuenta bancaria si aplica
+                        cb.cod_cuenta_bancaria,
+                        cb.numero_cuenta,
+                        cb.saldo AS saldo_cuenta,
+                        b.nombre_banco,
+                        tc.nombre AS tipo_cuenta,
+                        dcb.nombre AS nombre_divisa_cuenta,
+                        dcb.abreviatura AS abrev_divisa_cuenta,
+
+                        -- Datos de caja si aplica
+                        c.cod_caja,
+                        c.nombre AS nombre_caja,
+                        c.saldo AS saldo_caja,
+                        dc.nombre AS nombre_divisa_caja,
+                        dc.abreviatura AS abrev_divisa_caja
+
+                    FROM detalle_tipo_pago dtp
+
+                    -- Unir con tipo_pago
+                    LEFT JOIN tipo_pago tp ON dtp.cod_metodo = tp.cod_metodo
+
+                    -- Si es tipo digital
+                    LEFT JOIN cuenta_bancaria cb ON dtp.cod_cuenta_bancaria = cb.cod_cuenta_bancaria
+                    LEFT JOIN banco b ON cb.cod_banco = b.cod_banco
+                    LEFT JOIN tipo_cuenta tc ON cb.cod_tipo_cuenta = tc.cod_tipo_cuenta
+                    LEFT JOIN divisas dcb ON cb.cod_divisa = dcb.cod_divisa
+
+                    -- Si es tipo efectivo
+                    LEFT JOIN caja c ON dtp.cod_caja = c.cod_caja
+                    LEFT JOIN divisas dc ON c.cod_divisas = dc.cod_divisa
+                    ";
         parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
@@ -101,6 +166,20 @@ class Tpago extends Conexion{
         }
     }
 
+    public function mediopago(){
+        $registro="SELECT * FROM tipo_pago;";
+        parent::conectarBD();
+        $consulta=$this->conex->prepare($registro);
+        $resul=$consulta->execute();
+        $datos=$consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        if($resul){
+            return $datos;
+        }else{
+            return $res=0;
+        }
+    }
+
     public function editar($valor){
         $registro="UPDATE tipo_pago SET medio_pago=:medio_pago, status=:status WHERE cod_tipo_pago=$valor";
         parent::conectarBD();
@@ -143,7 +222,12 @@ class Tpago extends Conexion{
 
     #set
     public function setmetodo($valor){
-        $this->metodo=$valor;
+        $resultado=$this->validarTexto($valor, "Medio pago", 1, 50);
+        if($resultado === true){
+            $this->metodo = $valor;
+        }else{
+            $this->errores['rol'] = $resultado;
+        }
     }
     public function setmoneda($valor){
         $this->moneda=$valor;
