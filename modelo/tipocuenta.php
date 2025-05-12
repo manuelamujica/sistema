@@ -2,23 +2,20 @@
 require_once "conexion.php";
 
 class Tipo_cuenta extends Conexion {
-    private $conex;
     private $nombre;
     private $cod_tipo_cuenta;
     
-
-
-    public function __construct()
-    {
-       $this->conex = new Conexion();
-       $this->conex = $this->conex->conectar();
+    public function __construct() {
+        parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
-    public function consultar(){
+    public function consultarTipo(){
         $sql = "select * from tipo_cuenta";
+        parent::conectarBD();
         $consulta = $this->conex->prepare($sql);
         $resul = $consulta->execute();
         $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
         if($resul){
             return $datos;
         }return $r = 0;
@@ -41,4 +38,3 @@ class Tipo_cuenta extends Conexion {
 
 
 }
-    

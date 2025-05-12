@@ -1,11 +1,11 @@
 //Validar registrar
-$('#tipo_medida1').blur(function (e) {
-    var buscar = $('#tipo_medida1').val();
+$('#numero_cuenta1').blur(function (e) {
+    var buscar = $('#numero_cuenta1').val();
     $.post('index.php?pagina=cuentabancariacopia', { buscar }, function (response) {
         if (response != '') {
             Swal.fire({
                 title: 'Error',
-                text: 'La unidad de medida ya se encuentra registrada.',
+                text: 'El numero de cuenta ya se encuentra registrado.',
                 icon: 'warning'
             });
         }
@@ -30,65 +30,72 @@ $(document).ready(function () {
     }
     // FIN FUNCIONES
 
-
-    $('#tipo_medida1').on('blur', function() {
-        var tipo_medida1 = $(this).val();
-        if(tipo_medida1.trim() === ''){
-            hideError('#tipo_medida1');
-        }else if (tipo_medida1.length > 10) {
-            showError('#tipo_medida1', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida1)) {
-            showError('#tipo_medida1', 'Solo se permiten letras');
+    $('#numerocuenta').on('blur', function() {
+        var numero_cuenta = $(this).val();
+        if(numero_cuenta.trim() === ''){
+            hideError('#numerocuenta');
+        }else if (numero_cuenta.length > 20) {
+            showError('#numerocuenta', 'El numero de cuenta no debe exceder los 20 caracteres'); // Validar longitud máxima
+        } else if (!/^[0-9]+$/.test(numero_cuenta)) {
+            showError('#numerocuenta', 'Solo se permiten numeros');
+        } 
+    });
+    $('#saldo').on('blur', function() {
+        var saldo = $(this).val();
+        if (saldo.trim() === '') {
+            hideError('#saldo');
+        } else if (saldo.length > 10) {
+            showError('#saldo', 'El saldo no debe exceder los 10 caracteres');
+        } else if (!/^[0-9.]+$/.test(saldo)) {
+            showError('#saldo', 'Solo se permiten números');
         } else {
-            hideError('#tipo_medida1');
+            hideError('#saldo');
         }
     });
-
-    $('#tipo_medida').on('blur', function() {
-        var tipo_medida = $(this).val();
-        if(tipo_medida.trim() === ''){
-            hideError('#tipo_medida');
-        }else if (tipo_medida.length > 10) {
-            showError('#tipo_medida', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida)) {
-            showError('#tipo_medida', 'Solo se permiten letras');
-        } else {
-            hideError('#tipo_medida');
-        }
-    });
-});
-
-//EDITAR
-$(document).ready(function () {
-    // Cuando se hace clic en el botón de editar
-    $('.editar').click(function () {
-        var cod = $(this).data('cod');
-        var tipo = $(this).data('tipo');
-        var status = $(this).data('status');
-
-        // Asignar los valores al formulario del modal
-        $('#cod_unidad').val(cod);
-        $('#cod_unidad_oculto').val(cod);
-        $('#tipo_medida').val(tipo);
-        $('#status').val(status);
-        $('#origin').val(tipo);   
-    });
-
+    
 
 });
+ 
+
+
+
+$('.editar').click(function () {
+    var cod = $(this).data('cod');
+    var numero = $(this).data('numero'); 
+    var saldo = $(this).data('saldo');
+    var divisa = $(this).data('divisa');
+    var status = $(this).data('status');
+    var banco = $(this).data('banco');
+    var tipocuenta = $(this).data('tipocuenta'); 
+
+    // Asignar valores
+    $('#cod_cuenta_bancaria_oculto').val(cod);
+    $('#cod_cuenta_bancaria1').val(cod);
+    $('#numero_cuenta1').val(numero);
+    $('#saldo1').val(saldo);
+    $('#divisa1').val(divisa);
+    $('#status').val(status);
+    $('#banco1').val(banco);
+    $('#tipodecuenta1').val(tipocuenta);
+
+    // Verificar si el valor de cod_cuenta_bancaria es correcto
+    console.log('Código de cuenta bancaria:', cod);
+});
+
+
 //ELIMINAR
 $('#modaleliminar').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); 
     var codigo = button.data('cod');
     var status = button.data('status');
-    var tipomedida = button.data('tipo');
+    var numero = button.data('numero');
 
     var modal = $(this);
     modal.find('.modal-body #cod_eliminar').val(codigo);
-    modal.find('#tipomedidaD').text(tipomedida);
+    modal.find('#numero_cuentaD').text(numero);
     modal.find('.modal-body #status_e').val(codigo);
 
-    console.log(tipomedida,codigo);
+   
 });
 
 

@@ -19,9 +19,19 @@ if (isset($_POST['guardar'])) {
 
     $nombre = trim($_POST["nombre"]);
 
-    // Validaciones básicas
-    if (empty($nombre) || !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/", $nombre)) {
-        $errores[] = "El nombre del banco solo puede contener letras y espacios.";
+    if (!empty($_POST["nombre"])) {
+       
+        $errores = [];
+        try {
+            
+            $objBanco->setNombre($_POST["nombre"]);
+            $objBanco->check(); // Lanza excepción si hay errores
+          
+           
+        } catch (Exception $e) {
+            $errores[] = $e->getMessage();
+        }
+  
     }
 
     if (!empty($errores)) {

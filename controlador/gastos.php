@@ -1,7 +1,7 @@
 <?php
 //MODIFICACIÓN COMPLETA 29/04/2025
 require_once "modelo/gasto.php";
-require_once "modelo/pago_gastos.php";
+require_once "modelo/pago_emitido.php";
 require_once "modelo/bitacora.php";
 
 ini_set('display_errors', 1);
@@ -60,14 +60,12 @@ if (isset($_POST['buscar'])) {
             "icon" => "error"
         ];
     }
-} else if (isset($_POST['pagar_gasto'])) { /* EN DESARROLLO */
+} else if (isset($_POST['pagar_gasto'])) { /* LISTO */
     $errores = [];
+
     try {
-        $dato = json_decode(file_get_contents('php://input'), true);
-        if (json_last_error() !== JSON_ERROR_NONE || $dato === null) {
-            $dato = $_POST;
-        }
-        $objpago->setDatos($dato);
+        var_dump($_POST['montopagado']);
+        $objpago->setDatos($_POST);
         $objpago->check();
         $res = $objpago->registrarPgasto();
     } catch (Exception $e) {
@@ -75,79 +73,94 @@ if (isset($_POST['buscar'])) {
     }
     if (!empty($errores)) {
         $registrarPG = [
+
             "title" => "Error",
             "message" => implode(" ", $errores),
             "icon" => "error"
+
         ];
     } else if ($res == 0) {
-        $registrarPG['status'] = 'success';
-        $registrarPG['data'] = [
+        $registrarPG = [
+
             "title" => "El pago del gasto ha sido registrado exitosamente.",
             "message" => "El gasto se ha completado.",
             "icon" => "success"
+
         ];
-        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago de gasto', $_POST["monto_pagado"], 'Pago');
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago de gasto', $_POST["montopagado"], 'Pago', $_POST["cod_gasto"]);
     } else if ($res > 0) {
-        $registrarPG['status'] = 'success';
-        $registrarPG['data'] = [
+        $registrarPG = [
+
             "title" => "Se ha registrado un pago parcial.",
             "message" => "El monto pendiente es de " . $res . "Bs.",
             "icon" => "success"
+
         ];
-        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial', $_POST["monto_pagar"], 'Pago');
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial', $_POST["montototal"], 'Pago');
+    } else if ($res == 'error_saldo') {
+        $registrarPG = [
+
+            "title" => "Advertencia",
+            "message" => "No se pudo completar el pago porque el monto pagado es mayo al saldo disponible.",
+            "icon" => "warning"
+
+        ];
     } else {
-        $registrarPG = 'error';
-        $registrarPG['message'] = "Error al enviar el pago";
+        $registrarPG = [
+
+            "title" => "Error",
+            "message" => "Descripción detallada del error",
+            "icon" => "error"
+
+        ];
     }
-    header('Content-Type: application/json');
-    echo json_encode($registrarPG);
-    exit;
-} else if (isset($_POST['pago_cuotas'])) {
+} else if (isset($_POST['eliminarG'])) {
     $errores = [];
     try {
-        $dato = json_decode(file_get_contents('php://input'), true);
-        if (json_last_error() !== JSON_ERROR_NONE || $dato === null) {
-            $dato = $_POST;
-        }
-        $objpago->setDatos($dato);
-        $objpago->check();
-        $res = $objpago->registrarCuota($_POST['pago']);
+
+        $objgasto->setDatos($_POST);
+        $objgasto->check();
+        $res = $objgasto->eliminarGasto();
     } catch (Exception $e) {
         $errores[] = $e->getMessage();
     }
     if (!empty($errores)) {
-        $registrarPGcuotas = [
+        $eliminar = [
             "title" => "Error",
             "message" => implode(" ", $errores),
             "icon" => "error"
         ];
-    }
-    if ($res == 0) {
-        $registrarPGcuotas = [
-            "title" => "El pago del gasto ha sido registrado exitosamente.",
-            "message" => "El gasto se ha completado.",
+    } else if ($res == 'success') {
+
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "El gasto ha sido eliminado",
             "icon" => "success"
         ];
-        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago de gasto', $_POST["monto_pagado"], 'Pago');
-    } else if ($res > 0) {
-        $registrarPGcuotas = [
-            "title" => "Se ha registrado un pago parcial.",
-            "message" => "El monto pendiente es de " . $res . "Bs.",
-            "icon" => "success"
-        ];
-        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial', $_POST["monto_pagado"], 'Pago');
-    } else {
-        $registrarPGcuotas = [
+
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminación de gasto', $_POST["cod_gasto"], 'Gasto');
+    } else if ($res == 'error_associated') {
+        $eliminar = [
             "title" => "Error",
-            "message" => "Error al enviar el pago parcial",
+            "message" => "Error al eliminar el gasto tiene pagos asociados",
+            "icon" => "error"
+        ];
+    } else if ($res == 'error_delete') {
+        $eliminar = [
+            "title" => "Error",
+            "message" => "Error al eliminar el gasto",
+            "icon" => "error"
+        ];
+    } else if ($res == 'error_query') {
+        $eliminar = [
+            "title" => "Error",
+            "message" => "Hubo un problema de consulta al eliminar el gasto",
             "icon" => "error"
         ];
     }
-    header('Content-Type: application/json');
-    echo json_encode($registrarPGcuotas);
-    exit;
 } else if (isset($_POST['editarG'])) {
     $errores = [];
+
     try {
         $objgasto->setDatos($_POST);
         $objgasto->check();
@@ -184,8 +197,39 @@ if (isset($_POST['buscar'])) {
             "icon" => "error"
         ];
     }
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vuelto'])) { //ESTE REGISTRA EL VUELTO CON EL AJAX (EN OBSERVACIÓN NO REGISTRA EL DETALLE DEL VUELTO)
+    $errores = [];
+    try {
+        $objpago->setDatos($_POST);
+        $objpago->check();
+        $res = $objpago->v();
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+    if (!empty($errores)) {
+        echo json_encode(['success' => false, 'message' => implode(" ", $errores)]);
+    } else if ($res == 1) {
+        echo json_encode(['success' => true, 'message' => 'Vuelto registrado correctamente.']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'El vuelto no esta completo.']);
+    }
+    exit;
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cod_gasto'])) { //REVISO SI EL GASTO TIENE PAGOS ASOCIADOS Y ME EXTRAIGA EL MONTO DE ESTOS
+    require_once 'modelo/pago_emitido.php';
+    $objpago = new Pagos();
+    $objpago->setDatos(['cod_gasto' => $_POST['cod_gasto']]);
+    $resultado = $objpago->getGastos();
+
+
+    if (!empty($resultado)) {
+        echo json_encode(['success' => true, 'monto_total' => $resultado['monto_total']]);
+    } else {
+        echo json_encode(['success' => false, 'monto_total' => 0]);
+    }
+    exit;
 }
 
+$gasto = $objpago->getGastos() ?? [];
 $frecuencia = $objgasto->consultarFrecuencia();
 $tipo = $objgasto->consultarTipo();
 $categorias = $objgasto->consultarCategoria();

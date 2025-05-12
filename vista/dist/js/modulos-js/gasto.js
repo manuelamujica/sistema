@@ -1,4 +1,4 @@
-//Validar registrar NUEVO 29/04/2025
+
 $('#descripcion').blur(function (e) {
     var buscar = $('#descripcion').val();
     $.post('index.php?pagina=gastos', { buscar }, function (response) {
@@ -162,108 +162,100 @@ $(document).ready(function () {
 });
 
 //PAGOS DE GASTOS
-$('#pagoGModal').on('show.bs.modal', function (event) {
+$('#pagoGModal').on('show.bs.modal', function (event) { 
+    var modal = $(this);
+    /* LIMPIO EL MODAL Y EL CALCULO DE ESTE */
+    modal.find('.modal-body #total-pago1').text('0.00 Bs');
+    modal.find('.modal-body #total-pago2').text('0.00 Bs');
+    modal.find('.modal-body #total-pago').text('0.00 Bs');
+    modal.find('.modal-body #cod_gasto1').val('');
+    modal.find('.modal-body #cod_gasto').val('');
+    modal.find('.modal-body #monto_pagar').val('');
+    modal.find('.modal-body #fecha_del_pago').val('');
+    modal.find('.modal-body #nombre_gasto').val('');
+    modal.find('.modal-body .monto-section').hide();
+    modal.find('.modal-body #monto_pagado').val('0.00');
+    modal.find('.modal-body #diferencia').val('0.00');
+    modal.find('.modal-body #vuelto').val('0.00');
 
     var button = $(event.relatedTarget);
     var codigo = button.data('cod_gasto');
-    var total = button.data('total');
+    var codp = button.data('codpago');
+    var gasto = 'gasto';
+    modal.find('.modal-body #gasto').val(gasto);
     var fecha = new Date();
-    var nombre = button.data('nombre');
     var fechaFormateada = fecha.getFullYear() + '-' +
         String(fecha.getMonth() + 1).padStart(2, '0') + '-' +
         String(fecha.getDate()).padStart(2, '0');
-    // Modal
+    var nombre = button.data('nombre');
+    var montop = button.data('montop') || 0;
+    var total = button.data('totalgastos');
     var modal = $(this);
+
     modal.find('.modal-body #cod_gasto1').val(codigo);
     modal.find('.modal-body #cod_gasto').val(codigo);
-    modal.find('.modal-body #monto_pagar').val(total);
-    modal.find('.modal-body #total-pago').text(total + 'Bs');
+
+    modal.find('.modal-body #total-gasto').text(total + 'Bs');
+    modal.find('.modal-body #total-gasto-oculto').val(total);
+
     modal.find('.modal-body #fecha_del_pago').val(fechaFormateada);
     modal.find('.modal-body #nombre_gasto').val(nombre);
-});
 
-//PAGO PARCIAL
-$('#partesModal').on('show.bs.modal', function (event) {
-    console.log("Modal de pago parcial abierto");
+    var totalGastoOculto = $('#total-gasto-oculto').val();
 
-    var button = $(event.relatedTarget);
-    var codigo = button.data('codgasto');
-    var fecha = button.data('fecha');
-    var codp = button.data('codpago');
+    $.ajax({
+        url: 'index.php?pagina=gastos',
+        method: 'POST',
+        data: { cod_gasto: codigo },
+        dataType: 'json',
+        success: function (response) {
+            var modal = $('#pagoGModal');
+            if (response.success) {
+                var montoTotal = parseFloat(response.monto_total) || 0; 
 
-
-
-    var total = button.data('totalgastos');
-    var monto = button.data('montop');
-    var nombre = button.data('nombregasto');
-    var mpagar = Math.abs(total - monto);
+                console.log("Monto total como número:", montoTotal);
 
 
-    console.log(button.data('codgasto'));
-    console.log(button.data('codpago'));
-    console.log(button.data('totalgastos'));
-    console.log(button.data('montop'));
-    console.log(mpagar + " esto es lo que se debe pagar");
+                modal.find('.modal-body #total-pago1').text(montoTotal.toFixed(2) + ' Bs');
+                modal.find('.modal-body #total-gasto').text(total.toFixed(2) + ' Bs');
 
+                var montopagar = Math.abs(total - montoTotal);
+                modal.find('.modal-body #total-pago').text(montopagar.toFixed(2) + ' Bs');
+                modal.find('.modal-body #monto_pagar').val(montopagar.toFixed(2));
 
+                modal.find('.modal-body .monto-section').show();
+            } else {
+                modal.find('.modal-body #monto_pagar').val(total);
+                modal.find('.modal-body .monto-section').hide();
 
-    console.log(button.data('fecha'));
-    console.log(button.data('nombregasto'));
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error en la solicitud AJAX:', error);
 
-
-    // Modal
-    var modal = $(this);
-    modal.find('.modal-body #nro_gasto').val(codigo);
-    modal.find('.modal-body #montoT').text(monto);
-    modal.find('.modal-body #monto_pagar1').val(mpagar.toFixed(2));
-    modal.find('.modal-body #total-gasto').text(total + 'Bs');
-    modal.find('.modal-body #t-parcial').val(mpagar);
-    modal.find('.modal-body #monto-pagar').text(mpagar.toFixed(2) + 'Bs');
-    modal.find('.modal-body #fecha_cuota').val(fecha);
-    modal.find('.modal-body #nombreG').val(nombre);
-    modal.find('.modal-body #codigop').val(codp);
+            var modal = $('#pagoGModal');
+            modal.find('.modal-body .monto-section').hide();
+        }
+    });
 
 });
+
 
 $('#vueltoModal').on('show.bs.modal', function (event) {
     console.log("Modal de pago parcial abierto");
 
     var button = $(event.relatedTarget);
-    var codigo = button.data('codgasto');
-    var fecha = button.data('fecha');
-    var codp = button.data('codpago');
+    var codigo = button.data('cod_gasto');
+    var vuelto = button.data('vuelto');
 
+    console.log("Código del gasto:", codigo);
+    console.log("Total del vuelto:", vuelto);
 
-
-    var total = button.data('totalgastos');
-    var monto = button.data('montop');
-    var nombre = button.data('nombregasto');
-    var mpagar = Math.abs(total - monto);
-
-
-    console.log(button.data('codgasto'));
-    console.log(button.data('codpago'));
-    console.log(button.data('totalgastos'));
-    console.log(button.data('montop'));
-    console.log(mpagar + " esto es lo que se debe pagar");
-
-
-
-    console.log(button.data('fecha'));
-    console.log(button.data('nombregasto'));
-
-
-    // Modal
     var modal = $(this);
     modal.find('.modal-body #nro_gasto').val(codigo);
-    modal.find('.modal-body #montoT').text(monto);
-    modal.find('.modal-body #monto_pagar1').val(mpagar.toFixed(2));
-    modal.find('.modal-body #total-gasto').text(total + 'Bs');
-    modal.find('.modal-body #t-parcial').val(mpagar);
-    modal.find('.modal-body #monto-pagar').text(mpagar.toFixed(2) + 'Bs');
-    modal.find('.modal-body #fecha_cuota').val(fecha);
-    modal.find('.modal-body #nombreG').val(nombre);
-    modal.find('.modal-body #codigop').val(codp);
+    modal.find('.modal-body #montoV').text(vuelto);
+    modal.find('.modal-body #monto_vuelto').val(vuelto);
+    
 
 });
 
@@ -282,6 +274,9 @@ function calcularTotalpago() {
         let montoDivisa = parseFloat(inputDivisa.value) || 0;
 
         let tasaConversion = parseFloat(document.getElementById('tasa-conversion-' + index).value) || 1;
+        console.log('Index:', index);
+        console.log('Monto Divisa:', montoDivisa);
+        console.log('Tasa de Conversión:', tasaConversion);
 
 
         let montoConvertidoBs = montoDivisa * tasaConversion;
@@ -301,58 +296,167 @@ function calcularTotalpago() {
     let diferencia = montoPagar - totalBs;
     document.getElementById('diferencia').value = diferencia.toFixed(2);
 
+    var vuelto = 0;
     if (diferencia < 0) {
-        let vuelto = Math.abs(diferencia);
+        vuelto = Math.abs(diferencia);
         document.getElementById('vuelto').value = vuelto.toFixed(2);
     } else {
         document.getElementById('vuelto').value = '0.00';
     }
 
+    console.log('Vuelto:', vuelto);
 
+    const registrarVueltoBtn = document.getElementById('registrarVueltoBtn');
+    if (vuelto > 0) {
+        registrarVueltoBtn.style.display = 'inline-block';
+        console.log('Botón Registrar Vuelto mostrado');
+        registrarVueltoBtn.setAttribute('data-cod_gasto', document.getElementById('cod_gasto').value);
+        registrarVueltoBtn.setAttribute('data-vuelto', vuelto.toFixed(2));
+    } else {
+        registrarVueltoBtn.style.display = 'none';
+        console.log('Botón Registrar Vuelto oculto');
+    }
 
 }
 
-function calcularTotalpago1() {
+function calcularTotalvuelto() {
     let totalBs = 0;
 
     document.querySelectorAll('.monto-bs1:not(.monto-con1)').forEach(function (input) {
         let montoBs = parseFloat(input.value) || 0;
+        console.log('Monto en Bs:', montoBs);
         totalBs += montoBs;
     });
 
     document.querySelectorAll('.monto-divisa1').forEach(function (inputDivisa) {
         let index = inputDivisa.id.split('-').pop();
+
         let montoDivisa = parseFloat(inputDivisa.value) || 0;
 
         let tasaConversion = parseFloat(document.getElementById('tasa-conversion1-' + index).value) || 1;
+        console.log('Index:', index);
+        console.log('Monto Divisa:', montoDivisa);
+        console.log('Tasa de Conversión:', tasaConversion);
+
 
         let montoConvertidoBs = montoDivisa * tasaConversion;
 
-        document.getElementById('monto-bs-con-1' + index).value = parseFloat(montoConvertidoBs.toFixed(2));
+
+        document.getElementById('monto-bs-con1-' + index).value = montoConvertidoBs.toFixed(2);
+
 
         totalBs += montoConvertidoBs;
     });
 
-    document.getElementById('monto_pagadoxcuotas').value = totalBs.toFixed(2);
+    console.log('Total en Bs:', totalBs);
+    document.getElementById('monto_pagado1').value = totalBs.toFixed(2);
 
-    let montoPagar = parseFloat(document.getElementById('monto_pagar1').value) || 0;
+
+    let montoPagar = parseFloat(document.getElementById('monto_vuelto').value) || 0;
     let diferencia = montoPagar - totalBs;
     document.getElementById('diferencia1').value = diferencia.toFixed(2);
-    if (diferencia < 0) {
-        let vuelto = Math.abs(diferencia);
-        document.getElementById('vuelto1').value = vuelto.toFixed(2);
-    } else {
-        document.getElementById('vuelto1').value = '0.00';
-    }
+
 }
 
+$(document).ready(function () {
+    $('#vueltoModalBtn').on('click', function (e) {
+        e.preventDefault(); 
+
+        // Obtén los datos del formulario
+        let vuelto = $('#monto_vuelto').val();
+
+ 
+        if (!vuelto) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Por favor, completa todos los campos.',
+                icon: 'error',
+            });
+            return;
+        }
+
+        $.ajax({
+            url: 'index.php?pagina=gastos',
+            method: 'POST',
+            data: {
+                vuelto: vuelto,
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'El vuelto se registró correctamente.',
+                        icon: 'success',
+                    }).then(() => {
+                        
+                        $('#vueltoModal').modal('hide');
+                        $('#vueltoForm')[0].reset();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.message || 'Hubo un error al registrar el vuelto.',
+                        icon: 'error',
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud AJAX:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo registrar el vuelto. Intenta nuevamente.',
+                    icon: 'error',
+                });
+            },
+        });
+    });
+});
+
+
 //EDITAR
-/* NUEVO EN DESARROLLO */
+/* Listo */
+$('#modificat').on('show.bs.modal', function (event) {
+    console.log("Modal de EDICIÓN abierto");
+
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codigo');
+    var nombre = button.data('nombre');
+    var status = button.data('status');
+
+    console.log("Nombre del gasto:", nombre);
+    console.log("Código del gasto:", codigo);
+
+    // Modal
+    var modal = $(this);
+    modal.find('.modal-body #cod_cat_gasto').val(codigo);
+    modal.find('.modal-body #nombre').val(nombre);
+    modal.find('.modal-body #cod_cat_gasto_oculto').val(codigo);
+    modal.find('.modal-body #origin').val(nombre);
+
+
+});
+
+
+$('#modaleliminar').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var codigo = button.data('codigo');
+    var nombre = button.data('nombre');
+
+    var modal = $(this);
+    modal.find('.modal-body #cod_eliminar').val(codigo);
+    modal.find('.modal-body #categoria').text(nombre);
+
+    console.log(codigo);
+});
+
+//GASTO
+
 $('#modificargasto').on('show.bs.modal', function (event) {
     console.log("Modal de EDICIÓN abierto");
 
     var button = $(event.relatedTarget);
-    var codigo = button.data('cod_gasto');
+    var codigo = button.data('codigo_gasto');
     var nombre = button.data('nombre');
 
     console.log("Nombre del gasto:", nombre);
@@ -363,108 +467,23 @@ $('#modificargasto').on('show.bs.modal', function (event) {
     modal.find('.modal-body #cod_gastoE').val(codigo);
     modal.find('.modal-body #nombreG').val(nombre);
     modal.find('.modal-body #cod_gasto_oculto').val(codigo);
-    modal.find('.modal-body #nombreOculto').val(nombre);
+    modal.find('.modal-body #origin').val(nombre);
+
 
 });
 
-/* NUEVO EN DESARROLLO */
-$('#finalizarPagoBtn').on('click', function (event) {
-    event.preventDefault();
+$('#eliminarG').on('show.bs.modal', function (event) {
+    console.log("MODAL DE ELIMINACIÓN");
+    var button = $(event.relatedTarget);
+    var codigo = button.data('cod');
+    var nombre = button.data('eliminar');
 
-    let formData = $('#pagoForm').serializeArray();
-    let data = {};
+    var modal = $(this);
+    modal.find('.modal-body #cod_eliminar').val(codigo);
+    modal.find('.modal-body #gasto').text(nombre);
 
-    formData.forEach(function (item) {
-        if (item.name.includes('pago')) {
-            let match = item.name.match(/pago\[(\d+)\]\[(.+)\]/);
-            if (match) {
-                let index = match[1];
-                let key = match[2];
-                if (!data.pago) data.pago = [];
-                if (!data.pago[index]) data.pago[index] = {};
-                data.pago[index][key] = item.value;
-            }
-        } else {
-            data[item.name] = item.value;
-        }
-    });
-
-    $.ajax({
-        url: 'index.php?pagina=gastos',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function (registrarPG) {
-            //console.log('Pago registrado:', response);
-            if (registrarPG.status === 'success') {
-                Swal.fire({
-                    title: registrarPG,
-                    text: registrarPG.data.message,
-                    icon: registrarPG.data.icon
-                }).then(() => {
-                    $('#modalregistrardetallep').modal('hide'); // Cerrar el modal
-                    $('#formRegistrarDetalle')[0].reset(); // Reiniciar el formulario
-                });
-
-            } else {
-                console.error('Error al registrar el pago:', registrarPG.message);
-                Swal.fire({
-                    title: 'Error',
-                    text: registrarPG.message,
-                    icon: 'error'
-                });
-            }
-        },
-        error: function (error) {
-            console.error('Error al registrar el pago:', error);
-
-        }
-    });
-});
-
-
-$(document).ready(function () {
-    // FUNCIONES
-    function showError(selector, message) {
-        $(selector).addClass('is-invalid');
-        $(selector).next('.invalid-feedback').html('<i class="fas fa-exclamation-triangle"></i> ' + message.toUpperCase()).css({
-            'display': 'block',
-            'color': 'red',
-        });
-    }
-
-    function hideError(selector) {
-        $(selector).removeClass('is-invalid');
-        $(selector).next('.invalid-feedback').css('display', 'none');
-    }
-    // FIN FUNCIONES
-
-
-    $('#tipo_medida1').on('blur', function () {
-        var tipo_medida1 = $(this).val();
-        if (tipo_medida1.trim() === '') {
-            hideError('#tipo_medida1');
-        } else if (tipo_medida1.length > 10) {
-            showError('#tipo_medida1', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida1)) {
-            showError('#tipo_medida1', 'Solo se permiten letras');
-        } else {
-            hideError('#tipo_medida1');
-        }
-    });
-
-    $('#tipo_medida').on('blur', function () {
-        var tipo_medida = $(this).val();
-        if (tipo_medida.trim() === '') {
-            hideError('#tipo_medida');
-        } else if (tipo_medida.length > 10) {
-            showError('#tipo_medida', 'El texto no debe exceder los 10 caracteres'); // Validar longitud máxima
-        } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(tipo_medida)) {
-            showError('#tipo_medida', 'Solo se permiten letras');
-        } else {
-            hideError('#tipo_medida');
-        }
-    });
+    console.log(codigo);
+    console.log(nombre);
 });
 
 

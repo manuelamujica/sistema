@@ -65,21 +65,17 @@ trait ValidadorTrait {
         }
         return true;
     }
-    public function validarDecimal($valor, $campo, $min = null, $max = null) {
-        // Primero validar formato decimal con punto
-        if (!preg_match('/^\d+(\.\d+)?$/', $valor)) {
-            return "El campo $campo debe ser un número decimal válido con punto (.) como separador.";
+    public function validarDecimal($valor, $campo, $min = 1, $max = 20) {
+        $valor = trim($valor);
+        
+        // Validar que sea un número decimal o entero positivo (sin letras ni símbolos)
+        if (!preg_match("/^\d+(\.\d+)?$/", $valor)) {
+            return "El campo $campo solo puede contener números o decimales positivos.";
         }
     
-        // Convertir a número decimal real
-        $numero = floatval($valor);
-    
-        // Validar rango si se especificó
-        if ($min !== null && $numero < $min) {
-            return "El campo $campo debe ser mayor o igual a $min.";
-        }
-        if ($max !== null && $numero > $max) {
-            return "El campo $campo debe ser menor o igual a $max.";
+        // Verificar la longitud total del número
+        if (mb_strlen($valor) < $min || mb_strlen($valor) > $max) {
+            return "El campo $campo debe tener entre $min y $max caracteres.";
         }
     
         return true;
