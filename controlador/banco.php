@@ -18,6 +18,7 @@ if (isset($_POST['guardar'])) {
     $errores = [];
 
     $nombre = trim($_POST["nombre"]);
+
     if (!empty($_POST["nombre"])) {
        
         $errores = [];
@@ -32,6 +33,7 @@ if (isset($_POST['guardar'])) {
         }
   
     }
+
     if (!empty($errores)) {
         $registrar = [
             "title" => "Error",

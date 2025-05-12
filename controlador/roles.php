@@ -13,57 +13,52 @@ if (isset($_POST['buscar'])) {
 
 } else if (isset($_POST["guardar"])) {
     if (!empty($_POST["rol"])) {
-        $length = strlen($_POST["rol"]);
-        if ($length < 50) {
-            if (preg_match("/^[a-zA-Z\s]+$/", $_POST["rol"])) {
+        $errores = [];
+        try {
+            $objRol->setRol($_POST["rol"]);
+            $objRol->check();
+        } catch (Exception $e) {
+            $errores[] = $e->getMessage();
+        }
+        if (!empty($errores)) {
+            $registrar = [
+                "title" => "Error",
+                "message" => implode(" ", $errores),
+                "icon" => "error"
+            ];
+        } else {
+            if(!$objRol->buscar($_POST["rol"])){
+            $resul = $objRol->getcrearRol($_POST['modulo'], $_POST['permisos']);
 
-                    if (!$objRol->buscar($_POST['rol'])) {
-                        #Instanciar los setter
-                        $objRol->setRol($_POST["rol"]);
-                        $resul = $objRol->getcrearRol($_POST['permisos']);
+            if ($resul == 1) {
 
-                        if ($resul == 1) {
-
-                            $registrar = [
-                                "title" => "Registrado con éxito",
-                                "message" => "El rol ha sido registrado",
-                                "icon" => "success"
-                            ];
-                            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de rol', $_POST["rol"], 'Roles');
-                        } else {
-                            $registrar = [
-                                "title" => "Error",
-                                "message" => "Hubo un problema al registrar el rol",
-                                "icon" => "error"
-                            ];
-                        }
-                    } else {
-                            $registrar = [
-                                "title" => "Error",
-                                "message" => "No se puede registrar porque el nombre del rol ya existe.",
-                                "icon" => "error"
-                            ];
-                        }
-                } else {
-                    $registrar = [
-                        "title" => "Error",
-                        "message" => "El rol solo debe contener letras. No se permiten números ni caracteres especiales.",
-                        "icon" => "error"
-                    ];
-                }
+                $registrar = [
+                    "title" => "Registrado con éxito",
+                    "message" => "El rol ha sido registrado",
+                    "icon" => "success"
+                ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de rol', $_POST["rol"], 'Roles');
             } else {
                 $registrar = [
                     "title" => "Error",
-                    "message" => "El rol no debe excederse de 50 caracteres",
+                    "message" => "Hubo un problema al registrar el rol",
                     "icon" => "error"
                 ];
             }
-    } else {
-        $registrar = [
-            "title" => "Error",
-            "message" => "No se permiten campos vacíos.",
-            "icon" => "error"
-        ];
+        } else {
+                $registrar = [
+                    "title" => "Error",
+                    "message" => "No se puede registrar porque el nombre del rol ya existe.",
+                    "icon" => "error"
+                ];
+            }
+    } 
+    }else {
+    $registrar = [
+        "title" => "Error",
+        "message" => "No se permiten campos vacíos.",
+        "icon" => "error"
+    ];
     }
 
 } else if (isset($_POST['editar'])) {
@@ -165,7 +160,8 @@ if (isset($_POST['buscar'])) {
 }
         
 
-$permiso = $objRol->permisos();
+$permisos=$objRol->permisos();
+$modulos=$objRol->modulos();
 
 $registro = $objRol->consultar();
 $_GET['ruta'] = 'roles';
