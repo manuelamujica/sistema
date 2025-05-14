@@ -1,8 +1,6 @@
-// Create a namespace for our chart utilities
-window.ChartUtils = {
-    // Chart configurations
-    chartConfigs: {
-        common: {
+window.UtilidadesGraficos = {
+    configuraciones: {
+        comun: {
             responsive: true,
             maintainAspectRatio: true,
             aspectRatio: 2,
@@ -26,7 +24,7 @@ window.ChartUtils = {
                 }
             }
         },
-        lineChart: {
+        graficoLinea: {
             type: 'line',
             options: {
                 plugins: {
@@ -34,15 +32,15 @@ window.ChartUtils = {
                         mode: 'index',
                         intersect: false,
                         callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
+                            label: function(contexto) {
+                                let etiqueta = contexto.dataset.label || '';
+                                if (etiqueta) {
+                                    etiqueta += ': ';
                                 }
-                                if (context.parsed.y !== null) {
-                                    label += formatearNumero(context.parsed.y);
+                                if (contexto.parsed.y !== null) {
+                                    etiqueta += formatearNumero(contexto.parsed.y);
                                 }
-                                return label;
+                                return etiqueta;
                             }
                         }
                     }
@@ -50,16 +48,14 @@ window.ChartUtils = {
             }
         }
     },
-
-    // Dataset styles
-    datasetStyles: {
-        realData: {
+    estilosDataset: {
+        datosReales: {
             borderColor: 'rgb(75, 192, 192)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             tension: 0.4,
             fill: true
         },
-        projectionData: {
+        datosProyectados: {
             borderColor: 'rgb(153, 102, 255)',
             backgroundColor: 'rgba(153, 102, 255, 0.2)',
             borderDash: [5, 5],
@@ -67,110 +63,102 @@ window.ChartUtils = {
             fill: true
         }
     },
-
-    // Chart management utilities
-    destroyChart: function(chart) {
-        if (chart) {
-            chart.destroy();
+    destruirGrafico: function(grafico) {
+        if (grafico) {
+            grafico.destroy();
             return null;
         }
         return null;
     },
-    
-    createLineDataset: function(label, data, isProjection = false) {
+
+    crearDatasetLinea: function(etiqueta, datos, esProyeccion = false) {
         return {
-            label,
-            data,
-            ...(isProjection ? this.datasetStyles.projectionData : this.datasetStyles.realData)
+            label: etiqueta,
+            data: datos,
+            ...(esProyeccion ? this.estilosDataset.datosProyectados : this.estilosDataset.datosReales)
         };
     },
     
-    getChartOptions: function(title, additionalOptions = {}) {
+    obtenerOpciones: function(titulo, opcionesAdicionales = {}) {
         return {
-            ...this.chartConfigs.common,
-            ...this.chartConfigs.lineChart.options,
+            ...this.configuraciones.comun,
+            ...this.configuraciones.graficoLinea.options,
             plugins: {
-                ...this.chartConfigs.lineChart.options.plugins,
+                ...this.configuraciones.graficoLinea.options.plugins,
                 title: {
                     display: true,
-                    text: title
+                    text: titulo
                 }
             },
-            ...additionalOptions
+            ...opcionesAdicionales
         };
     },
 
-    // Modal management utilities
-    modalUtils: {
-        setupModal: function(modalId, onShown = null, onHidden = null) {
-            const $modal = $(modalId);
-            
-            // Remove existing event listeners
+    utilidadesModal: {
+        configurarModal: function(idModal, alMostrar = null, alOcultar = null) {
+            const $modal = $(idModal);
             $modal.off('shown.bs.modal hidden.bs.modal');
-            
-            // Add new event listeners
-            if (onShown) {
-                $modal.on('shown.bs.modal', onShown);
+            if (alMostrar) {
+                $modal.on('shown.bs.modal', alMostrar);
             }
             
-            if (onHidden) {
-                $modal.on('hidden.bs.modal', onHidden);
+            if (alOcultar) {
+                $modal.on('hidden.bs.modal', alOcultar);
             }
             
             return $modal;
         },
         
-        updateModalTitle: function(modalId, title) {
-            $(`${modalId}-label`).text(title);
+        actualizarTituloModal: function(idModal, titulo) {
+            $(`${idModal}-label`).text(titulo);
         },
         
-        ensureCanvasHeight: function(canvas) {
+        ajustarAltoCanvas: function(canvas) {
             if (canvas && canvas.parentElement) {
                 canvas.parentElement.style.height = '400px';
             }
         }
     },
 
-    // Chart initialization functions
     inicializarGraficoCuentas: function(ctx, datos) {
         return new Chart(ctx, {
             type: 'line',
-            ...this.chartConfigs.common,
+            ...this.configuraciones.comun,
             data: {
                 labels: datos.labels,
                 datasets: [
-                    this.createLineDataset('Ingresos', datos.ingresos),
-                    this.createLineDataset('Egresos', datos.egresos)
+                    this.crearDatasetLinea('Ingresos', datos.ingresos),
+                    this.crearDatasetLinea('Egresos', datos.egresos)
                 ]
             },
-            options: this.getChartOptions('Análisis de Cuentas')
+            options: this.obtenerOpciones('Análisis de Cuentas')
         });
     },
 
     inicializarGraficoPresupuesto: function(ctx, datos, categoria) {
         return new Chart(ctx, {
             type: 'line',
-            ...this.chartConfigs.common,
+            ...this.configuraciones.comun,
             data: {
                 labels: datos.labels,
                 datasets: [
-                    this.createLineDataset('Presupuesto', datos.presupuesto),
-                    this.createLineDataset('Gasto Real', datos.gasto_real)
+                    this.crearDatasetLinea('Presupuesto', datos.presupuesto),
+                    this.crearDatasetLinea('Gasto Real', datos.gasto_real)
                 ]
             },
-            options: this.getChartOptions(`Presupuesto vs Gasto Real - ${categoria}`)
+            options: this.obtenerOpciones(`Presupuesto vs Gasto Real - ${categoria}`)
         });
     },
 
     inicializarGraficoProyecciones: function(ctx, historico, proyeccion) {
-        const data = {
+        const datos = {
             labels: [...historico.labels, ...proyeccion.labels],
             datasets: [
-                this.createLineDataset(
+                this.crearDatasetLinea(
                     'Ventas Reales',
                     [...historico.valores, ...Array(proyeccion.valores.length).fill(null)]
                 ),
-                this.createLineDataset(
+                this.crearDatasetLinea(
                     'Proyecciones',
                     [...Array(historico.valores.length - 1).fill(null), 
                      historico.valores[historico.valores.length - 1], 
@@ -182,21 +170,21 @@ window.ChartUtils = {
 
         return new Chart(ctx, {
             type: 'line',
-            data: data,
-            options: this.getChartOptions('Proyecciones Futuras')
+            data: datos,
+            options: this.obtenerOpciones('Proyecciones Futuras')
         });
     },
 
-    inicializarGraficoModal: function(ctx, modalId, datos, producto) {
-        let chartData;
+    inicializarGraficoModal: function(ctx, idModal, datos, producto) {
+        let datosGrafico;
         
-        switch (modalId) {
+        switch (idModal) {
             case 'modal-rotacion':
-                chartData = {
+                datosGrafico = {
                     labels: datos.rotacion.labels,
                     datasets: [
-                        this.createLineDataset('Stock', datos.rotacion.stock),
-                        this.createLineDataset('Ventas', datos.rotacion.ventas)
+                        this.crearDatasetLinea('Stock', datos.rotacion.stock),
+                        this.crearDatasetLinea('Ventas', datos.rotacion.ventas)
                     ]
                 };
                 break;
@@ -207,14 +195,14 @@ window.ChartUtils = {
                     const ultimoValorHistorico = historico.ventas_reales[historico.ventas_reales.length - 1];
                     const mesesFuturos = ['Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
                     
-                    chartData = {
+                    datosGrafico = {
                         labels: [...historico.labels, ...mesesFuturos],
                         datasets: [
-                            this.createLineDataset(
+                            this.crearDatasetLinea(
                                 'Ventas Reales',
                                 [...historico.ventas_reales, ...Array(mesesFuturos.length).fill(null)]
                             ),
-                            this.createLineDataset(
+                            this.crearDatasetLinea(
                                 'Proyecciones',
                                 [
                                     ...Array(historico.ventas_reales.length - 1).fill(null),
@@ -231,21 +219,21 @@ window.ChartUtils = {
                         ]
                     };
                 } else {
-                    chartData = {
+                    datosGrafico = {
                         labels: datos.proyeccion.labels,
                         datasets: [
-                            this.createLineDataset('Ventas Reales', datos.proyeccion.ventas_reales),
-                            this.createLineDataset('Proyectado', datos.proyeccion.proyectado, true)
+                            this.crearDatasetLinea('Ventas Reales', datos.proyeccion.ventas_reales),
+                            this.crearDatasetLinea('Proyectado', datos.proyeccion.proyectado, true)
                         ]
                     };
                 }
                 break;
             case 'modal-rentabilidad':
-                chartData = {
+                datosGrafico = {
                     labels: datos.rentabilidad.labels,
                     datasets: [
-                        this.createLineDataset('Rentabilidad', datos.rentabilidad.rentabilidad),
-                        this.createLineDataset('ROI', datos.rentabilidad.roi)
+                        this.crearDatasetLinea('Rentabilidad', datos.rentabilidad.rentabilidad),
+                        this.crearDatasetLinea('ROI', datos.rentabilidad.roi)
                     ]
                 };
                 break;
@@ -253,21 +241,13 @@ window.ChartUtils = {
 
         return new Chart(ctx, {
             type: 'line',
-            ...this.chartConfigs.common,
-            data: chartData,
-            options: this.getChartOptions(
-                `${modalId === 'modal-proyeccion' ? 
+            ...this.configuraciones.comun,
+            data: datosGrafico,
+            options: this.obtenerOpciones(
+                `${idModal === 'modal-proyeccion' ? 
                     ($('#ver-historico').val() === 'proyecciones' ? 'Proyección de Ventas' : 'Precisión Histórica') : 
-                    modalId.replace('modal-', '').charAt(0).toUpperCase() + modalId.slice(7)} - ${producto}`
+                    idModal.replace('modal-', '').charAt(0).toUpperCase() + idModal.slice(7)} - ${producto}`
             )
         });
     }
 };
-
-// Helper function for number formatting
-function formatearNumero(numero) {
-    return new Intl.NumberFormat('es-VE', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(numero);
-} 

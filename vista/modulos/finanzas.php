@@ -1,17 +1,10 @@
 <?php 
 require_once "controlador/finanzas.php";
 ?>
-
+<!-- datos del controlador al js -->
 <script>
-// Inicializar datos desde PHP
-const datos = <?php echo json_encode($datos); ?>;
-</script>
-
-<!-- Initialize data for JavaScript -->
-<script>
-// Initial data from PHP
 window.datosFinanzas = <?php echo json_encode($datos_iniciales ?? [], JSON_NUMERIC_CHECK); ?>;
-console.log('Initial data loaded:', window.datosFinanzas);
+console.log('Datos iniciales cargados:', window.datosFinanzas);
 </script>
 
 <div class="content-wrapper">
@@ -348,18 +341,20 @@ console.log('Initial data loaded:', window.datosFinanzas);
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($proyecciones as $p): 
-                                                        $ventasActuales = floatval($p['ventas_actuales']);
-                                                        $proyeccion = floatval($p['valor_proyectado']);
-                                                        $tendencia = $proyeccion > $ventasActuales ? 'up' : 'down';
+                                                        $ventasActuales = $p['ventas_actuales'];
+                                                        $proyeccion3m = $p['proyeccion_3m'];
+                                                        $proyeccion6m = $p['proyeccion_6m'];
+                                                        $proyeccion12m = $p['proyeccion_12m'];
+                                                        $tendencia = $p['tendencia'];
                                                     ?>
                                                     <tr data-producto="<?php echo $p['producto']; ?>" 
                                                         data-cod-producto="<?php echo $p['cod_producto']; ?>"
                                                         class="cursor-pointer">
                                                         <td><?php echo $p['producto']; ?></td>
                                                         <td class="text-end"><?php echo number_format($ventasActuales, 2); ?></td>
-                                                        <td class="text-end"><?php echo number_format($proyeccion, 2); ?></td>
-                                                        <td class="text-end"><?php echo number_format($proyeccion * 1.1, 2); ?></td>
-                                                        <td class="text-end"><?php echo number_format($proyeccion * 1.25, 2); ?></td>
+                                                        <td class="text-end"><?php echo number_format($proyeccion3m, 2); ?></td>
+                                                        <td class="text-end"><?php echo number_format($proyeccion6m, 2); ?></td>
+                                                        <td class="text-end"><?php echo number_format($proyeccion12m, 2); ?></td>
                                                         <td class="text-center">
                                                             <i class="bi bi-arrow-<?php echo $tendencia; ?>-circle-fill text-<?php echo $tendencia === 'up' ? 'success' : 'danger'; ?>"></i>
                                                         </td>
@@ -390,7 +385,7 @@ console.log('Initial data loaded:', window.datosFinanzas);
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($precision as $p): 
-                                                        $precisionPromedio = floatval($p['precision_promedio']);
+                                                        $precisionPromedio = $p['precision_promedio'];
                                                         $tendencia = $precisionPromedio > 95 ? 'up' : 'down';
                                                     ?>
                                                     <tr data-producto="<?php echo $p['producto']; ?>"
@@ -576,53 +571,4 @@ console.log('Initial data loaded:', window.datosFinanzas);
 <!-- Scripts específicos para finanzas -->
 <script src="vista/dist/js/modulos-js/graficos.js"></script>
 <script src="vista/dist/js/modulos-js/finanzas.js"></script>
-
-<!-- Agregar DataTables CSS y JS -->
-<link rel="stylesheet" href="vista/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="vista/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-<script src="vista/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="vista/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="vista/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="vista/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-
-<script>
-// Solo mantener la inicialización de DataTables y eventos
-$(document).ready(function() {
-    // Inicializar DataTables
-    $('#tabla-proyecciones-futuras').DataTable({
-        responsive: true,
-        autoWidth: false,
-        language: {
-            url: 'vista/plugins/datatables/Spanish.json'
-        }
-    });
-
-    $('#tabla-precision-historica').DataTable({
-        responsive: true,
-        autoWidth: false,
-        language: {
-            url: 'vista/plugins/datatables/Spanish.json'
-        }
-    });
-
-    // Manejar cambio de tipo de análisis
-    $('#ver-historico').on('change', function() {
-        const tipoAnalisis = $(this).val();
-        if (tipoAnalisis === 'proyecciones') {
-            $('#tabla-proyecciones').show();
-            $('#tabla-precision').hide();
-        } else {
-            $('#tabla-proyecciones').hide();
-            $('#tabla-precision').show();
-        }
-    });
-
-    // Manejar click en filas para mostrar detalles
-    $('#tabla-proyecciones-futuras tbody, #tabla-precision-historica tbody').on('click', 'tr', function() {
-        const producto = $(this).data('producto');
-        const codProducto = $(this).data('cod-producto');
-        mostrarModalProyeccion(producto, codProducto);
-    });
-});
-</script>
 

@@ -1,45 +1,70 @@
-// Configuración base de gráficos
-const configGraficos = {
-    type: 'line',
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 2,
-        animation: {
-            duration: 0
-        },
-        layout: {
-            padding: {
-                top: 10,
-                right: 20,
-                bottom: 10,
-                left: 20
-            }
-        },
-        plugins: {
-            legend: {
-                position: 'top',
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    maxTicksLimit: 8
-                }
-            }
-        }
+const graficos = {};
+
+const tablas = {
+    proyecciones: null,
+    precision: null
+};
+
+let datosFinanzas = {};
+
+function formatearMoneda(value) {
+    if (typeof value === 'string') {
+        value = value.replace('USD', '').trim();
+        value = value.replace(/,/g, '');
+    }
+    
+    const valorNumerico = parseFloat(value);
+    
+    console.log('formatear valor:', value, 'Tipo:', typeof value, 'Parseado:', valorNumerico);
+    
+    if (isNaN(valorNumerico)) {
+        console.warn('Valor numérico inválido:', value);
+        return 'USD 0.00';
+    }
+    
+    return new Intl.NumberFormat('es-VE', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(valorNumerico);
+}
+
+// Función para formatear porcentaje
+function formatearPorcentaje(valor) {
+    if (typeof valor !== 'number') {
+        valor = parseFloat(valor);
+    }
+    
+    if (isNaN(valor)) {
+        return '0.00%';
+    }
+    
+    return new Intl.NumberFormat('es-VE', {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(valor / 100);
+}
+
+// Configuración común para las tablas
+const configComun = {
+    responsive: true,
+    autoWidth: false,
+    language: {
+        url: 'vista/plugins/datatables/Spanish.json'
     }
 };
 
-// Objeto para almacenar las instancias de los gráficos
-const graficos = {};
-
-// Objeto para almacenar las instancias de DataTables
-const tablas = {};
-
-// Objeto para almacenar los datos
-let datosFinanzas = {};
+// Función para inicializar una tabla si no está ya inicializada
+function inicializarTabla(idTabla, config) {
+    //inicializa si no está ya inicializada
+    const $tabla = $(idTabla);
+    if (!$.fn.DataTable.isDataTable($tabla)) {
+        return $tabla.DataTable(config);
+    }
+    return $tabla.DataTable();
+}
 
 // Funciones para cargar datos del servidor
 function cargarProyecciones(periodo) {
@@ -129,21 +154,21 @@ function mostrarModalProyeccion(producto, cod_producto) {
 
     cargarDetalleProducto(cod_producto)
         .done(function(response) {
-            const modalId = '#modal-proyeccion';
+            const idModal = '#modal-proyeccion';
             const tipoAnalisis = $('#ver-historico').val();
-            
+    
             // Update modal title
-            $('#modal-proyeccion-label').text(
+            UtilidadesGraficos.utilidadesModal.actualizarTituloModal(idModal,
                 `${tipoAnalisis === 'proyecciones' ? 'Proyección de Ventas' : 'Precisión Histórica'} - ${producto}`
             );
-            
+    
             // Store product reference on modal
-            $(modalId).data('producto', producto);
-            $(modalId).data('cod-producto', cod_producto);
-            
+            $(idModal).data('producto', producto);
+            $(idModal).data('cod-producto', cod_producto);
+    
             // Clean up existing chart
             if (graficos.modalProyeccion) {
-                graficos.modalProyeccion.destroy();
+                UtilidadesGraficos.destruirGrafico(graficos.modalProyeccion);
             }
             
             // Create new chart with server data
@@ -153,34 +178,10 @@ function mostrarModalProyeccion(producto, cod_producto) {
                 return;
             }
 
-            graficos.modalProyeccion = new Chart(ctx, {
-                ...configGraficos,
-                data: {
-                    labels: response.labels,
-                    datasets: [
-                        {
-                            label: 'Proyectado',
-                            data: response.proyectado,
-                            borderColor: 'rgb(153, 102, 255)',
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            borderDash: [5, 5],
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Real',
-                            data: response.real,
-                            borderColor: 'rgb(75, 192, 192)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                }
-            });
+            graficos.modalProyeccion = UtilidadesGraficos.inicializarGraficoModal(ctx, 'modal-proyeccion', response, producto);
 
             // Show the modal
-            $(modalId).modal('show');
+            $(idModal).modal('show');
         })
         .fail(function(xhr, status, error) {
             console.error('Error al obtener detalles del producto:', error);
@@ -198,164 +199,127 @@ function inicializarGraficos() {
     const ctxProyecciones = document.getElementById('proyeccionesChart');
     if (ctxProyecciones && datosFinanzas.historico) {
         if (graficos.proyecciones) {
-            graficos.proyecciones.destroy();
+            UtilidadesGraficos.destruirGrafico(graficos.proyecciones);
         }
         
-        graficos.proyecciones = new Chart(ctxProyecciones, {
-            type: 'line',
-            data: {
-                labels: datosFinanzas.historico.labels,
-                datasets: [{
-                    label: 'Ventas Históricas',
-                    data: datosFinanzas.historico.valores,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: configGraficos.options
+        graficos.proyecciones = UtilidadesGraficos.inicializarGraficoProyecciones(
+            ctxProyecciones,
+            datosFinanzas.historico,
+            datosFinanzas.proyecciones
+        );
+    }
+}
+
+
+function inicializarTablas() {
+    if (window.datosFinanzas?.proyecciones) {
+        console.debug('Inicializando tablas con datos:', {
+            count: window.datosFinanzas.proyecciones.length,
+            structure: Object.keys(window.datosFinanzas.proyecciones[0] || {})
         });
     }
-}
 
-// Función para inicializar todas las tablas
-function inicializarTablas() {
-    console.log('Initializing tables with data:', window.datosFinanzas);
-
-    // Destroy existing tables if they exist
-    Object.values(tablas).forEach(tabla => {
-        if (tabla && tabla.destroy) {
-            tabla.destroy();
-        }
-    });
-
-    // Initialize projections table
-    if ($.fn.DataTable.isDataTable('#tabla-proyecciones-futuras')) {
-        $('#tabla-proyecciones-futuras').DataTable().destroy();
-    }
-    
-    tablas.proyecciones = $('#tabla-proyecciones-futuras').DataTable({
-        responsive: true,
-        autoWidth: false,
-        language: {
-            url: 'vista/plugins/datatables/Spanish.json'
-        },
-        data: window.datosFinanzas?.proyecciones || [],
+    //tabla de proyecciones
+    tablas.proyecciones = inicializarTabla('#tabla-proyecciones-futuras', {
+        ...configComun,
         columns: [
             { data: 'producto' },
             { 
-                data: 'ventasActuales',
+                data: 'ventas_actuales',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? formatearNumero(data) : '$0.00';
+                    return formatearMoneda(data);
                 }
             },
             { 
-                data: 'proyeccion3m',
+                data: 'proyeccion_3m',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? formatearNumero(data) : '$0.00';
+                    return formatearMoneda(data);
                 }
             },
             { 
-                data: 'proyeccion6m',
+                data: 'proyeccion_6m',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? formatearNumero(data) : '$0.00';
+                    return formatearMoneda(data);
                 }
             },
             { 
-                data: 'proyeccion12m',
+                data: 'proyeccion_12m',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? formatearNumero(data) : '$0.00';
+                    return formatearMoneda(data);
                 }
             },
             { 
                 data: 'tendencia',
                 className: 'text-center',
                 render: function(data) {
-                    const direction = data || 'down';
-                    return `<i class="bi bi-arrow-${direction}-circle-fill text-${direction === 'up' ? 'success' : 'danger'}"></i>`;
+                    return '<i class="bi bi-arrow-' + (data === 'up' ? 'up' : 'down') + '-circle-fill text-' + (data === 'up' ? 'success' : 'danger') + '"></i>';
                 }
             }
         ]
     });
 
-    // Initialize precision table
-    if ($.fn.DataTable.isDataTable('#tabla-precision-historica')) {
-        $('#tabla-precision-historica').DataTable().destroy();
-    }
-    
-    tablas.precision = $('#tabla-precision-historica').DataTable({
-        responsive: true,
-        autoWidth: false,
-        language: {
-            url: 'vista/plugins/datatables/Spanish.json'
-        },
-        data: window.datosFinanzas?.precision || [],
+    //tabla de precision
+    tablas.precision = inicializarTabla('#tabla-precision-historica', {
+        ...configComun,
         columns: [
             { data: 'producto' },
             { 
-                data: 'precisionPromedio',
+                data: 'precision_promedio',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? data.toFixed(2) + '%' : '0.00%';
+                    return formatearPorcentaje(data);
                 }
             },
             { 
-                data: 'mejorPrecision',
+                data: 'mejor_precision',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? data.toFixed(2) + '%' : '0.00%';
+                    return formatearPorcentaje(data);
                 }
             },
             { 
-                data: 'peorPrecision',
+                data: 'peor_precision',
                 className: 'text-end',
                 render: function(data) {
-                    return data ? data.toFixed(2) + '%' : '0.00%';
+                    return formatearPorcentaje(data);
                 }
             },
             { 
                 data: 'tendencia',
                 className: 'text-center',
                 render: function(data) {
-                    const direction = data || 'down';
-                    return `<i class="bi bi-arrow-${direction}-circle-fill text-${direction === 'up' ? 'success' : 'danger'}"></i>`;
+                    return '<i class="bi bi-arrow-' + (data === 'up' ? 'up' : 'down') + '-circle-fill text-' + (data === 'up' ? 'success' : 'danger') + '"></i>';
                 }
             }
         ]
     });
+
+    actualizarTablas();
 }
 
-// Función para actualizar los datos de las tablas
 function actualizarTablas() {
-    if (!datosFinanzas) return;
-
-    // Actualizar tabla de rotación
-    if (datosFinanzas.inventario && datosFinanzas.inventario.productos) {
-        tablas.rotacion.clear().rows.add(datosFinanzas.inventario.productos).draw();
-    }
+    if (!window.datosFinanzas) return;
 
     // Actualizar tabla de proyecciones
-    if (datosFinanzas.proyecciones && datosFinanzas.proyecciones.productos) {
-        tablas.proyecciones.clear().rows.add(datosFinanzas.proyecciones.productos).draw();
+    if (window.datosFinanzas.proyecciones && tablas.proyecciones) {
+        tablas.proyecciones.clear().rows.add(window.datosFinanzas.proyecciones).draw();
     }
 
-    // Actualizar tabla de rentabilidad
-    if (datosFinanzas.rentabilidad && datosFinanzas.rentabilidad.productos) {
-        tablas.rentabilidad.clear().rows.add(datosFinanzas.rentabilidad.productos).draw();
+    // Actualizar tabla de precisión
+    if (window.datosFinanzas.precision && tablas.precision) {
+        tablas.precision.clear().rows.add(window.datosFinanzas.precision).draw();
     }
 }
 
-// Función para inicializar los selectores de mes
 function inicializarSelectoresMes() {
-    // Obtener mes actual
     const fecha = new Date();
-    const mesActual = fecha.getMonth() + 1; // getMonth() devuelve 0-11
+    const mesActual = fecha.getMonth() + 1;
     const añoActual = fecha.getFullYear();
 
-    // Establecer valores por defecto
     $('#mes-inicio').val(mesActual > 1 ? mesActual - 1 : 12);
     $('#año-inicio').val(mesActual > 1 ? añoActual : añoActual - 1);
     $('#mes-fin').val(mesActual);
@@ -367,15 +331,13 @@ function inicializarSelectoresMes() {
     $('#mes-rentabilidad').val(mesActual);
     $('#año-rentabilidad').val(añoActual);
 
-    // Eventos de cambio
     $('.form-select[id^="mes-"], .form-select[id^="año-"]').on('change', function() {
-        const seccion = this.id.split('-')[1]; // inicio, fin, inventario, rentabilidad
+        const seccion = this.id.split('-')[1];
         validarPeriodo(seccion);
         actualizarDatos();
     });
 }
 
-// Función para validar que el período seleccionado sea válido
 function validarPeriodo(seccion) {
     if (seccion === 'inicio' || seccion === 'fin') {
         const mesInicio = parseInt($('#mes-inicio').val());
@@ -383,19 +345,17 @@ function validarPeriodo(seccion) {
         const mesFin = parseInt($('#mes-fin').val());
         const añoFin = parseInt($('#año-fin').val());
 
-        // Convertir a fecha para comparar
+        
         const fechaInicio = new Date(añoInicio, mesInicio - 1);
         const fechaFin = new Date(añoFin, mesFin - 1);
 
         if (fechaFin < fechaInicio) {
-            // Si el período no es válido, ajustar fecha fin
             $('#mes-fin').val(mesInicio);
             $('#año-fin').val(añoInicio);
         }
     }
 }
 
-// Función para obtener el período seleccionado
 function obtenerPeriodo() {
     return $('#periodo-proyeccion').val() || '6';
 }
@@ -409,18 +369,14 @@ function mostrarModalPrecision(producto) {
 
     const modalId = '#modal-precision';
     
-    // Update modal title
     ChartUtils.modalUtils.updateModalTitle(modalId, `Precisión Histórica - ${producto}`);
 
-    // Clean up existing chart
     graficos.modalPrecision = ChartUtils.destroyChart(graficos.modalPrecision);
 
     const historico = datos.proyeccion;
     const precision = datos.resumen.precision;
 
-    // Setup modal events
     ChartUtils.modalUtils.setupModal(modalId, 
-        // onShown handler
         function() {
             const ctx = document.getElementById('grafico-precision');
             if (!ctx) {
@@ -447,13 +403,12 @@ function mostrarModalPrecision(producto) {
                 options: ChartUtils.getChartOptions(`Precisión Histórica - ${producto}`)
             });
         },
-        // onHidden handler
+        // al ocultar el modal
         function() {
             graficos.modalPrecision = ChartUtils.destroyChart(graficos.modalPrecision);
         }
     );
 
-    // Update summary section with monthly comparison
     $('#resumen-precision').html(`
         <div class="row">
             <div class="col-md-4">
@@ -506,10 +461,10 @@ function mostrarModalPrecision(producto) {
                                         return `
                                             <tr>
                                                 <td>${mes}</td>
-                                                <td class="text-end">${formatearNumero(proyectado)}</td>
-                                                <td class="text-end">${formatearNumero(real)}</td>
+                                                <td class="text-end">${formatearMoneda(proyectado)}</td>
+                                                <td class="text-end">${formatearMoneda(real)}</td>
                                                 <td class="text-end ${diff >= 0 ? 'text-success' : 'text-danger'}">
-                                                    ${diff >= 0 ? '+' : ''}${formatearNumero(diff)}
+                                                    ${diff >= 0 ? '+' : ''}${formatearMoneda(diff)}
                                                 </td>
                                                 <td class="text-end">${precisionMes}%</td>
                                             </tr>
@@ -523,12 +478,9 @@ function mostrarModalPrecision(producto) {
             </div>
         </div>
     `);
-
-    // Show the modal
     $(modalId).modal('show');
 }
 
-// Función para formatear números
 function formatearNumero(numero) {
     return new Intl.NumberFormat('es-VE', {
         style: 'currency',
@@ -536,39 +488,26 @@ function formatearNumero(numero) {
     }).format(numero);
 }
 
-// Función para formatear porcentajes
-function formatearPorcentaje(numero) {
-    return new Intl.NumberFormat('es-VE', {
-        style: 'percent',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(numero / 100);
-}
-
 function inicializarEventosModales() {
-    // Cleanup any existing event listeners
     $('.modal').off('hidden.bs.modal');
     
-    // Add global modal cleanup
     $('.modal').on('hidden.bs.modal', function() {
-        const modalId = $(this).attr('id');
-        if (graficos[modalId]) {
-            graficos[modalId].destroy();
-            graficos[modalId] = null;
+        const idModal = $(this).attr('id');
+        if (graficos[idModal]) {
+            UtilidadesGraficos.destruirGrafico(graficos[idModal]);
+            graficos[idModal] = null;
         }
     });
 
-    // Ensure canvas containers have proper height
     $('.modal canvas').each(function() {
-        const container = $(this).parent();
-        if (container) {
-            container.css('height', '400px');
+        const contenedor = $(this).parent();
+        if (contenedor) {
+            contenedor.css('height', '400px');
         }
     });
 }
 
 function inicializarEventosTablas() {
-    // Handle clicks on projection/precision tables
     $('#tabla-proyecciones-futuras tbody, #tabla-precision-historica tbody').on('click', 'tr', function() {
         const tabla = $(this).closest('table').attr('id');
         const data = tabla === 'tabla-proyecciones-futuras' ? 
@@ -586,36 +525,28 @@ function inicializarEventosTablas() {
     });
 }
 
-// Initialize everything when document is ready
 $(document).ready(function() {
-    console.log('Document ready - Initializing finanzas module');
+    console.debug('Initializing finanzas module');
     
-    // Initialize tabs
     $('#pestañas button[data-toggle="tab"]').on('click', function (e) {
         e.preventDefault();
         $(this).tab('show');
     });
 
-    // Ensure first tab is active
     $('#cuentas-tab').tab('show');
     
-    // Initialize tables and graphs
     if (window.datosFinanzas) {
         inicializarTablas();
         inicializarGraficos();
-    } else {
-        console.error('No initial data available');
     }
     
-    // Initialize other components
     inicializarSelectoresMes();
     inicializarEventosModales();
     inicializarEventosTablas();
 
-    // Handle analysis type change
     $('#ver-historico').on('change', function() {
         actualizarTipoAnalisis();
     });
-
-    console.log('Finanzas module initialization complete');
 });
+
+window.tablas = tablas;
