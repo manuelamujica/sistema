@@ -79,38 +79,36 @@ PLUGINGS DE CSS
 
   if(isset ($_GET["ruta"])){
     if($_GET["ruta"] == "inicio" || 
-    $_GET["ruta"] == "marcas" && $_SESSION["marca"]==1 ||
-    $_GET["ruta"] == "categorias" && $_SESSION["categoria"]==1 ||
-    $_GET["ruta"] == "carga" && !empty($_SESSION["permisos"][2]) ||
-    $_GET["ruta"] == "descarga" && $_SESSION["inventario"]==1 ||
-    $_GET["ruta"] == "rep-inventario" && $_SESSION["reporte"]==1 ||
-    $_GET["ruta"] == "rep-proveedores" && $_SESSION["reporte"]==1 ||
-    $_GET["ruta"] == "rep-cliente" && $_SESSION["reporte"]==1 ||
-    $_GET["ruta"] == "rep-venta" && $_SESSION["reporte"]==1 ||
-    $_GET["ruta"] == "rep-compra" && $_SESSION["reporte"]==1 ||
-    $_GET["ruta"] == "productos" && !empty($_SESSION["permisos"][1]) ||
-    $_GET["ruta"] == "usuarios" && $_SESSION["usuario"]==1 ||
-    $_GET["ruta"] == "compras" && $_SESSION["compra"]==1 ||
-    $_GET["ruta"] == "finanzas" && $_SESSION["finanzas"]==1 ||
-    $_GET ["ruta"] == "banco" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "tpago" && $_SESSION["configuracion"]==1 || 
-    $_GET["ruta"] == "divisa" && $_SESSION["configuracion"]==1 || 
-    $_GET["ruta"] == "proveedores" && $_SESSION["proveedor"]==1 || 
-    $_GET["ruta"] == "unidad" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "general" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "clientes" && $_SESSION["cliente"]==1 ||
-    $_GET["ruta"] == "roles" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "bitacora" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "categoriag" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "cajacopia" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "cuentabancariacopia" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "conciliacion" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "tipocuenta" && $_SESSION["configuracion"]==1 ||
-    $_GET["ruta"] == "venta" && $_SESSION["venta"]==1 ||
-    $_GET["ruta"] == "catalogocuentas" ||
-    $_GET["ruta"] == "gastos" ||
-    $_GET["ruta"] == "cuentaspend" ||
-    $_GET["ruta"] == "movimientos" ||
+    $_GET["ruta"] == "marcas" && (!isset($_SESSION["permisos"]["config_productos"])) ||
+    $_GET["ruta"] == "categorias" && (!isset($_SESSION["permisos"]["config_productos"])) ||
+    $_GET["ruta"] == "carga" && (!empty($_SESSION["permisos"]["inventario"])) ||
+    $_GET["ruta"] == "descarga" && (!empty($_SESSION["permisos"]["inventario"])) ||
+    $_GET["ruta"] == "rep-inventario" && (!empty($_SESSION["permisos"]["reporte"])) ||
+    $_GET["ruta"] == "rep-proveedores" && (!empty($_SESSION["permisos"]["reporte"])) ||
+    $_GET["ruta"] == "rep-cliente" && (!empty($_SESSION["permisos"]["reporte"])) ||
+    $_GET["ruta"] == "rep-venta" && (!empty($_SESSION["permisos"]["reporte"])) ||
+    $_GET["ruta"] == "rep-compra" && (!empty($_SESSION["permisos"]["reporte"])) ||
+    $_GET["ruta"] == "productos" && (!empty($_SESSION["permisos"]["producto"])) ||
+    $_GET["ruta"] == "usuarios" && (!empty($_SESSION["permisos"]["seguridad"])) ||
+    $_GET["ruta"] == "compras" && (!empty($_SESSION["permisos"]["compra"])) ||
+    $_GET["ruta"] == "banco" && (!empty($_SESSION["permisos"]["config_finanza"])) ||
+    $_GET["ruta"] == "tpago" && (!empty($_SESSION["permisos"]["config_finanza"])) || 
+    $_GET["ruta"] == "divisa" && (!empty($_SESSION["permisos"]["config_finanza"])) || 
+    $_GET["ruta"] == "proveedores" && (!empty($_SESSION["permisos"]["proveedor"])) || 
+    $_GET["ruta"] == "unidad" && (!isset($_SESSION["permisos"]["config_productos"])) ||
+    $_GET["ruta"] == "general" && (!empty($_SESSION["permisos"]["seguridad"])) ||
+    $_GET["ruta"] == "clientes" && (!empty($_SESSION["permisos"]["cliente"])) ||
+    $_GET["ruta"] == "roles" && (!empty($_SESSION["permisos"]["seguridad"])) ||
+    $_GET["ruta"] == "bitacora" && (!empty($_SESSION["permisos"]["seguridad"])) ||
+    $_GET["ruta"] == "categoriag" && (!empty($_SESSION["permisos"]["config_finanza"])) ||
+    $_GET["ruta"] == "cajacopia" && (!empty($_SESSION["permisos"]["tesoreria"])) ||
+    $_GET["ruta"] == "cuentabancariacopia" && (!empty($_SESSION["permisos"]["tesoreria"])) ||
+    $_GET["ruta"] == "conciliacion" && (!empty($_SESSION["permisos"]["tesoreria"])) ||
+    $_GET["ruta"] == "venta" && (!empty($_SESSION["permisos"]["venta"])) ||
+    $_GET["ruta"] == "catalogocuentas" && (!empty($_SESSION["permisos"]["contabilidad"])) ||
+    $_GET["ruta"] == "gastos" && (!empty($_SESSION["permisos"]["gasto"])) ||
+    $_GET["ruta"] == "cuentaspend" && (!empty($_SESSION["permisos"]["cuentas_pendiente"]))||
+    $_GET["ruta"] == "movimientos" && (!empty($_SESSION["permisos"]["contabilidad"])) ||
     $_GET["ruta"] == "cerrarsesion"){
       include "modulos/". $_GET["ruta"] . ".php";
     } else {

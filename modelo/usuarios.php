@@ -59,17 +59,12 @@ class Usuario extends Conexion{
     }
 
 public function accesos($valor){
-    /*$sql= "SELECT tp.cod_modulo, tp.cod_crud FROM usuarios u
-        INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
-        INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario
-        INNER JOIN modulos p ON tp.cod_modulo = p.cod_modulo
-        INNER JOIN permisos c ON tp.cod_crud=c.cod_crud
-        WHERE u.cod_usuario = :valor;";*/
-        $sql= "SELECT p.cod_modulo FROM usuarios u
-        INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario
-        INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario
-        INNER JOIN modulos p ON tp.cod_modulo = p.cod_modulo
-        WHERE u.cod_usuario = :valor;";
+        $sql="SELECT p.nombre AS modulos, c.nombre AS accion FROM usuarios u 
+        INNER JOIN tipo_usuario tu ON u.cod_tipo_usuario = tu.cod_tipo_usuario 
+        INNER JOIN tpu_permisos tp ON tu.cod_tipo_usuario = tp.cod_tipo_usuario 
+        INNER JOIN modulos p ON tp.cod_modulo = p.cod_modulo 
+        INNER JOIN permisos c ON tp.cod_crud=c.cod_crud 
+        WHERE u.cod_usuario = :valor ORDER BY p.nombre;";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':valor', $valor, PDO::PARAM_INT); 

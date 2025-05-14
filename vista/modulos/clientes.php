@@ -19,8 +19,10 @@
         <div class="col-12">
             <div class="card">
             <div class="card-header">
-            <!-- Botón para ventana modal -->
-            <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarClientes">Registrar cliente</button>
+                <?php if (!empty($_SESSION["permisos"]["cliente"]["registrar"])): ?>
+                <!-- Botón para ventana modal -->
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarClientes">Registrar cliente</button>
+                <?php endif; ?>
             </div>
             <div class="card-body">
 
@@ -59,6 +61,7 @@
                                 <?php endif;?>
                             </td>
                             <td>
+                            <?php if (!empty($_SESSION["permisos"]["cliente"]["editar"])): ?>
                             <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
                             data-cedula_rif="<?php echo $datos["cedula_rif"]; ?>" 
                             data-codigo="<?php echo $datos["cod_cliente"]; ?>" 
@@ -70,11 +73,14 @@
                             data-status="<?php echo $datos["status"]; ?>">
                             <i class="fas fa-pencil-alt"></i>
                             </button>
+                            <?php endif; ?>
+                            <?php if (!empty($_SESSION["permisos"]["cliente"]["eliminar"])): ?>
                             <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarcliente"
                                 data-codigo="<?php echo $datos["cod_cliente"]; ?>" 
                                 data-nombre="<?php echo $datos["nombre"]; ?>">
                                 <i class="fas fa-trash-alt" ></i>
                             </button>
+                            <?php endif; ?>
                             </td>
                         <?php endif; ?>
                         <?php } ?>

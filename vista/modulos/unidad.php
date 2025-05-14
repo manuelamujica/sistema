@@ -17,8 +17,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <?php if (!empty($_SESSION["permisos"]["config_producto"]["registrar"])): ?>
                             <!-- Botón para ventana modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarUnidad">Registrar Unidad de medida</button>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
                             <!-- MOSTRAR EL REGISTRO DE UNIDADES DE MEDIDA -->
@@ -48,17 +50,21 @@
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
+                                                        <?php if (!empty($_SESSION["permisos"]["config_producto"]["editar"])): ?>
                                                         <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarunidad"
                                                             data-cod="<?php echo $dato['cod_unidad']; ?>"
                                                             data-tipo="<?php echo $dato['tipo_medida']; ?>"
                                                             data-status="<?php echo $dato['status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($_SESSION["permisos"]["config_producto"]["eliminar"])): ?>
                                                         <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
                                                         data-cod="<?php echo $dato['cod_unidad']; ?>"
                                                         data-tipo="<?php echo $dato['tipo_medida']; ?>">
                                                         <i class="fas fa-trash-alt"></i>
-                                                    </button>
+                                                        </button>
+                                                        <?php endif; ?>
                                                     </td>
                                                 </tr>
                                         <?php

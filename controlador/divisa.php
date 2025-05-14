@@ -110,7 +110,7 @@ if (isset($_POST['buscar'])) {
         } else if ($result == 0) {
             $eliminar = [
                 "title" => "Error",
-                "message" => "La divisa no se puede eliminar ya que tiene tipos de pago asociados",
+                "message" => "La divisa no se puede eliminar ya que tiene registros asociados",
                 "icon" => "error"
             ];
         } else {
@@ -162,6 +162,6 @@ if (isset($_POST['buscar'])) {
 }
 
 $historial = $obj->historial();
-$consulta = $obj->consultar();
+$consulta = $obj->consultarDivisas();
 $_GET['ruta'] = 'divisa';
 require_once 'plantilla.php';

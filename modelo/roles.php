@@ -1,21 +1,35 @@
 <?php 
 require_once "conexion.php";
+require_once "validaciones.php";
 class Rol extends Conexion{
 
+    use ValidadorTrait;
     private $rol;
     private $codigo;
-
     private $status;
-
+    private $errores = [];
     public function __construct(){
         parent::__construct(_SEC_DB_HOST_, _SEC_DB_NAME_, _SEC_DB_USER_, _SEC_DB_PASS_);
     }
+#ERRORCHECK
+public function check() {
+    if(!empty($this->errores)) {
+        $mensajes = implode(" | ",  $this->errores);
+        throw new Exception("Errores de validación: $mensajes");
+    }
+}
+
 #GETTER Y SETTER
     public function getRol(){
         return $this->rol;
     }
     public function setRol($rol){
-        $this->rol = $rol;
+        $resultado=$this->validarTexto($rol, "Rol", 1, 50);
+        if($resultado === true){
+            $this->rol = $rol;
+        }else{
+            $this->errores['rol'] = $resultado;
+        }
     }
     public function getStatus(){
         return $this->status;
@@ -33,7 +47,7 @@ class Rol extends Conexion{
 /*==============================
 REGISTRAR TIPOS DE USUARIO
 ================================*/
-    private function crearRol($permisos){
+    private function crearRol($modulos, $permisos){
         parent::conectarBD();
         $sql = "INSERT INTO tipo_usuario(rol,status) VALUES(:rol, 1)";
         $strExec = $this->conex->prepare($sql);
@@ -41,13 +55,15 @@ REGISTRAR TIPOS DE USUARIO
         $resul = $strExec->execute();
         if($resul){
             $nuevo_cod=$this->conex->lastInsertId();
-            foreach($permisos as $cod_permisos){
-            $sqlpermiso="INSERT INTO tpu_permisos (cod_tipo_usuario, cod_modulo) VALUES (:cod_tipo_usuario, :cod_modulo)";
-            $strExec = $this->conex->prepare($sqlpermiso);
-            $strExec->bindParam(":cod_tipo_usuario", $nuevo_cod);
-            $strExec->bindParam(":cod_modulo", $cod_permisos);
-            $strExec->execute();
-            
+            foreach($modulos as $modulo){
+                foreach($permisos[$modulo] as $cod_permisos){
+                    $sqlpermiso="INSERT INTO tpu_permisos (cod_tipo_usuario, cod_modulo, cod_crud) VALUES (:cod_tipo_usuario, :cod_modulo, :cod_crud)";
+                    $strExec = $this->conex->prepare($sqlpermiso);
+                    $strExec->bindParam(":cod_tipo_usuario", $nuevo_cod);
+                    $strExec->bindParam(":cod_modulo", $modulo);
+                    $strExec->bindParam(":cod_crud", $cod_permisos);
+                    $strExec->execute();
+                }
             }
         parent::desconectarBD();
             $r = 1;
@@ -57,11 +73,9 @@ REGISTRAR TIPOS DE USUARIO
         $this->desconectarBD();
         return $r;
 
-        
-
     }
-    public function getcrearRol($valor){
-        return $this->crearRol($valor);
+    public function getcrearRol($valor, $valor2){
+        return $this->crearRol($valor, $valor2);
     }
 
     public function consultar(){
@@ -153,7 +167,7 @@ REGISTRAR TIPOS DE USUARIO
     
     }
 
-    public function permisos(){
+    public function modulos(){
         $registro = "select * from modulos";
         $accesos= "";
         parent::conectarBD();
@@ -165,7 +179,21 @@ REGISTRAR TIPOS DE USUARIO
                 return $accesos;
             }else{
                 return false;
-            }
+        }
+    }
+
+    public function permisos(){
+        $acciones="SELECT * FROM permisos";
+        parent::conectarBD();
+        $per=$this->conex->prepare($acciones);
+        $result=$per->execute();
+        $permisos=$per->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        if($result){
+            return $permisos;
+        }else{
+            return false;
+        }
     }
 
     private function editar(){

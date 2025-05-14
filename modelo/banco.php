@@ -6,17 +6,33 @@ class Banco extends Conexion {
     use ValidadorTrait;
     private $nombre_banco;
     private $cod_banco;
+    private $errores = [];
+
     public function __construct() {
         parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
-    public function setNombre($nombre_banco) {
+    public function setNombre($nombre_banco){
+        $resultado = $this->validarTexto($nombre_banco, 'nombre', 2, 50);
+        if ($resultado === true) {
+            $this->nombre_banco = $nombre_banco;
+        } else {
+            $this->errores['nombre_banco'] = $resultado;
+        }
         $this->nombre_banco = $nombre_banco;
     }
-
     public function getNombreBanco() {
         return $this->nombre_banco;
     }
+
+     // Chequear si hay errores
+     public function check() {
+        if (!empty($this->errores)) {
+            $mensajes = implode(" | ", $this->errores);
+            throw new Exception("Errores de validación: $mensajes");
+        }
+    }
+
 
     // REGISTRAR
     private function registrar() {
