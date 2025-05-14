@@ -233,6 +233,7 @@ $gasto = $objpago->getGastos() ?? [];
 $frecuencia = $objgasto->consultarFrecuencia();
 $tipo = $objgasto->consultarTipo();
 $categorias = $objgasto->consultarCategoria();
+$condicion = $objgasto->consultarCondi();
 $gastosF = $objgasto->consultarGastoF();
 $gastosV = $objgasto->consultarGastoV();
 $totalV = $objgasto->consultarTotalV();

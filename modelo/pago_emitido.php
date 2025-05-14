@@ -19,7 +19,7 @@ class Pagos extends Conexion
   private $fecha;
   private $status;
   private $tipo_pago;
-  private $cod_detalle_caja;
+  private $cod_caja;
   private $cod_cuenta_bancaria;
   private $pago = [];
 
@@ -151,7 +151,6 @@ class Pagos extends Conexion
   COALESCE(c.cod_divisa, '') AS cod_divisa,
   COALESCE(cam1.cod_cambio, '') AS cod_cambio,
   COALESCE(d1.cod_divisa, '') AS divisa_cod,
-  dc.cod_detalle_caja AS cod_detalle_caja,
   COALESCE(dc.cod_divisas, '') AS detcaja_cod,
   COALESCE(dc.cod_caja, '') AS detcaja_cod_caja,
   COALESCE(cam2.cod_cambio, '') AS cod_cambio_dtcaja,
@@ -169,16 +168,14 @@ LEFT JOIN
 LEFT JOIN
   (
     SELECT
-      dtcaja.cod_detalle_caja,
       dtcaja.cod_divisas,
       dtcaja.cod_caja
     FROM
-      detalle_caja dtcaja
+      caja dtcaja
     GROUP BY
-      dtcaja.cod_detalle_caja,
       dtcaja.cod_divisas,
       dtcaja.cod_caja
-  ) dc ON tp.cod_detalle_caja = dc.cod_detalle_caja
+  ) dc ON tp.cod_caja = dc.cod_caja
 LEFT JOIN
   cambio_divisa cam2 ON dc.cod_divisas = cam2.cod_cambio
 LEFT JOIN
@@ -265,7 +262,7 @@ LEFT JOIN
               throw new Exception("Error al insertar en detalle_pago_emitido.");
             }
 
-            $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_detalle_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
+            $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
             $consulta = $this->conex->prepare($consultaRelacion);
             $consulta->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);
             if (!$consulta->execute()) {
@@ -287,17 +284,17 @@ LEFT JOIN
                 $banco->bindParam(':monto', $pagos['monto']);
                 $banco->bindParam(':cod_cuenta_bancaria', $relacion['cod_cuenta_bancaria']);
                 $banco->execute();
-              } else if (!empty($relacion['cod_detalle_caja'])) {
-                $this->cod_detalle_caja = $relacion['cod_detalle_caja'];
+              } else if (!empty($relacion['cod_caja'])) {
+                $this->cod_caja = $relacion['cod_caja'];
                 $saldodisponible = abs($this->saldoCaja());
                 if ((float)$saldodisponible < (float)$pagos['monto']) {
                   throw new Exception("Saldo insuficiente en la caja.");
                 }
 
-                $actualizarSaldoCaja = "UPDATE detalle_caja SET saldo = saldo - :monto WHERE cod_detalle_caja = :cod_detalle_caja";
+                $actualizarSaldoCaja = "UPDATE caja SET saldo = saldo - :monto WHERE cod_caja = :cod_caja";
                 $caja = $this->conex->prepare($actualizarSaldoCaja);
                 $caja->bindParam(':monto', $pagos['monto']);
-                $caja->bindParam(':cod_detalle_caja', $relacion['cod_detalle_caja']);
+                $caja->bindParam(':cod_caja', $relacion['cod_caja']);
                 $caja->execute();
               }
             }
@@ -464,7 +461,7 @@ LEFT JOIN
             $respuesta = $strExec->execute();
           }
 
-          $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_detalle_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
+          $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
           $consulta = $this->conex->prepare($consultaRelacion);
           $consulta->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);
           if (!$consulta->execute()) {
@@ -486,17 +483,17 @@ LEFT JOIN
               $banco->bindParam(':monto', $pagos['monto']);
               $banco->bindParam(':cod_cuenta_bancaria', $relacion['cod_cuenta_bancaria']);
               $banco->execute();
-            } else if (!empty($relacion['cod_detalle_caja'])) {
-              $this->cod_detalle_caja = $relacion['cod_detalle_caja'];
+            } else if (!empty($relacion['cod_caja'])) {
+              $this->cod_caja = $relacion['cod_caja'];
               $saldodisponible = abs($this->saldoCaja());
               if ((float)$saldodisponible < (float)$pagos['monto']) {
                 throw new Exception("Saldo insuficiente en la caja.");
               }
 
-              $actualizarSaldoCaja = "UPDATE detalle_caja SET saldo = saldo + :monto WHERE cod_detalle_caja = :cod_detalle_caja";
+              $actualizarSaldoCaja = "UPDATE caja SET saldo = saldo + :monto WHERE cod_caja = :cod_caja";
               $caja = $this->conex->prepare($actualizarSaldoCaja);
               $caja->bindParam(':monto', $pagos['monto']);
-              $caja->bindParam(':cod_detalle_caja', $relacion['cod_detalle_caja']);
+              $caja->bindParam(':cod_caja', $relacion['cod_caja']);
               $caja->execute();
             }
           }
@@ -535,10 +532,10 @@ LEFT JOIN
   }
   private function saldoCaja()
   {
-    $sql = "SELECT saldo FROM detalle_caja WHERE cod_detalle_caja = :cod_detalle_caja";
+    $sql = "SELECT saldo FROM caja WHERE cod_caja = :cod_caja";
 
     $strExec = $this->conex->prepare($sql);
-    $strExec->bindParam(':cod_detalle_caja', $this->cod_detalle_caja);
+    $strExec->bindParam(':cod_caja', $this->cod_caja);
     $res = $strExec->execute();
     $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
 
@@ -559,7 +556,7 @@ LEFT JOIN
 
   private function gastos()
   {
-    $sql = "SELECT monto_total, cod_gasto FROM pago_emitido WHERE cod_gasto = :cod_gasto";
+    $sql = "SELECT monto_total, cod_pago_emitido, cod_gasto FROM pago_emitido WHERE cod_gasto = :cod_gasto";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
     $strExec->bindParam(':cod_gasto', $this->cod_gasto);

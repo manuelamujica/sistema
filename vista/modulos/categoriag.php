@@ -69,7 +69,8 @@
                                             <th>Fecha</th>
                                             <th>Nombre</th>
                                             <th>Frecuancia de gastos</th>
-                                            <th>Tipo de gasto</th>   
+                                            <th>Tipo de gasto</th>
+                                            <th>Naturaleza</th>
                                             <th>Status</th>
                                             <th>Acciones</th>
                                         </tr>
@@ -81,19 +82,21 @@
                                             </tr>
                                         <?php else: ?>
                                             <?php foreach ($categorias as $c) { ?>
-                                                <?php if ($c['status_cat_gasto'] != 2): ?>
+                                                <?php //if ($c['status_cat_gasto'] != 2): ?>
                                                     <tr>
                                                         <td><?php echo $c['cod_cat_gasto']
                                                             ?></td>
                                                         <td><?php echo $c['fecha']
                                                             ?></td>
-                                                            <td><?php echo $c['categoria']
+                                                        <td><?php echo $c['categoria']
                                                             ?></td>
-                                                        <td><?php echo $c['nombref']
+                                                        <td><?php echo $c['nombref'] || '';
                                                             ?></td>
                                                         <td><?php echo $c['nombret']
                                                             ?>
                                                         </td>
+                                                        <td><?php echo $c['nombre_naturaleza']
+                                                            ?>
                                                         <td>
                                                             <?php if ($c['status_cat_gasto'] == 1): ?>
                                                                 <span class="badge bg-success">Activo</span>
@@ -116,11 +119,11 @@
                                                                 data-status="<?php echo $c["status_cat_gasto"]; ?>">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
-                                                        <?php else: ?>
+                                                        
 
                                                         </td>
                                                     </tr>
-                                                <?php endif; ?>
+                                                <?php //endif; ?>
                                             <?php } ?>
                                         <?php endif; ?>
                                     </tbody>
@@ -133,7 +136,7 @@
             MODAL REGISTRAR CATEGORIA PARA GASTOS 
         ================================== -->
                     <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalregistrarCategoriaLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
+                        <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header" style="background: black ;color: #ffffff; ">
                                     <h5 class="modal-title" id="exampleModalLabel">Registrar categoría de gastos</h5>
@@ -145,11 +148,10 @@
                                 <div class="modal-body">
                                     <form id="formregistrarCategoria" method="post">
                                         <!--    FECHA     -->
-                                        <input type="hidden" id="fecha-hora" name="fecha_hora">
                                         <div class="form-group">
                                             <label for="fecha">Fecha</label>
                                             <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Se muestran la fecha en que se registra el gasto, según la frecuencia seleccionada, por ejemplo: 01-05-2025 si es mensual.">
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="seleccione la fecha en la que iniciara el conteo según la frecuencia seleccionada, por ejemplo: 05-05-2025.">
                                                 <i class="fas fa-info-circle"></i>
                                             </button>
                                             <script>
@@ -157,14 +159,14 @@
                                                     $('[data-toggle="tooltip"]').tooltip();
                                                 });
                                             </script>
-                                            <input type="text" class="form-control form-control-sm" name="fecha" id="fecha" readonly>
+                                            <input type="date" class="form-control form-control-sm" name="fecha" id="fecha">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <!--   NOMBRE      -->
                                         <div class="form-group">
                                             <label for="nombre">Nombre de la categoría</label>
                                             <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingrese el nombre de la categoría, por ejemplo: Gasto para transporte.">
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingrese el nombre de la categoría, por ejemplo: Maquinaria.">
                                                 <i class="fas fa-info-circle"></i>
                                             </button>
                                             <script>
@@ -172,13 +174,13 @@
                                                     $('[data-toggle="tooltip"]').tooltip();
                                                 });
                                             </script>
-                                            <input type="text" class="form-control" name="nombre" placeholder="Ej: transporte." id="nombre" maxlength="15">
+                                            <input type="text" class="form-control" name="nombre" placeholder="Ej: Maquinaria." id="nombre" maxlength="15">
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="tipogasto">Tipo de gasto</label>
                                             <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingrese el tipo de gasto, por ejemplo: Gastos fijos.">
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Seleccione el tipo de gasto, por ejemplo: producto.">
                                                 <i class="fas fa-info-circle"></i>
                                             </button>
                                             <script>
@@ -197,16 +199,25 @@
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="form-group">
+                                            <label for="naturaleza">Naturaleza del gasto</label>
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Seleccione la naturaleza del gasto, por ejemplo: Gastos fijos.">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <select name="naturaleza" id="naturaleza" class="form-control">
+                                                <option value=""></option>
+                                                <?php foreach ($naturaleza as $n): ?>
+                                                    <option value="<?php echo $n['cod_naturaleza']; ?>">
+                                                        <?php echo $n['nombre_naturaleza']; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+                                        <div class="form-group" id="frecuenciaContainer" style="display: none;">
                                             <label for="frecuenciaC">Frecuencia de pago</label>
-                                            <!-- TOOLTIPS-->
                                             <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingrese la frecuencia de pago, por ejemplo: Mensual.">
                                                 <i class="fas fa-info-circle"></i>
                                             </button>
-                                            <script>
-                                                $(function() {
-                                                    $('[data-toggle="tooltip"]').tooltip();
-                                                });
-                                            </script>
                                             <select name="frecuenciaC" id="frecuenciaC" class="form-control">
                                                 <option value=""></option>
                                                 <?php foreach ($frecuencia as $f): ?>
@@ -220,7 +231,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-dark" name="guardarC" onclick="return validacion();">Guardar</button>
+                                    <button type="submit" class="btn btn-dark" name="guardarC" >Guardar</button>
                                 </div>
                                 </form>
                             </div>
@@ -325,7 +336,7 @@ if (isset($guardarF)): ?>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Editar Gasto</h4>
+                <h4 class="modal-title">Editar Categoría de Gasto</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -347,7 +358,7 @@ if (isset($guardarF)): ?>
                         <label for="status">Estatus</label>
                         <select name="status_cat_gasto" id="status">
                             <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
+                            <option value="3">Inactivo</option>
                         </select>
                     </div>
                 </div>

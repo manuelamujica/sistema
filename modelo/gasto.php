@@ -9,7 +9,9 @@ class Gastos extends Conexion
     #VARIABLES DEL AJUSTE DE GASTOS
     private $cod_frecuencia; //
     private $dias; //
+    private $cod_naturaleza; //
     private $frecuencia; //
+    private $cod_condicion; //
     private $cod_cat_gasto; //
     private $cod_tipo_gasto; //
     private $nombre; //
@@ -48,15 +50,29 @@ class Gastos extends Conexion
             switch ($key) {
 
                 case 'status_cat_gasto':
-                    if (is_numeric($value)) {
-                        $this->status_cat_gasto = $value;
-                    } else {
-                        $this->errores[] = "El campo $key debe ser numérico.";
-                    }
+
+                    $this->status_cat_gasto = $value;
+
                     break;
                 case 'frecuenciaC':
                     if (is_numeric($value)) {
                         $this->cod_frecuencia = $value;
+                    } else if ($value == null) {
+                        $this->cod_frecuencia = null;
+                    } else {
+                        $this->errores[] = "El campo $key debe ser numérico.";
+                    }
+                    break;
+                case 'naturaleza':
+                    if (is_numeric($value)) {
+                        $this->cod_naturaleza = $value;
+                    } else {
+                        $this->errores[] = "El campo $key debe ser numérico.";
+                    }
+                    break;
+                case 'cod_condicion':
+                    if (is_numeric($value)) {
+                        $this->cod_condicion = $value;
                     } else {
                         $this->errores[] = "El campo $key debe ser numérico.";
                     }
@@ -217,15 +233,22 @@ class Gastos extends Conexion
 
     private function registrarC()
     {
-        if (!empty($this->cod_frecuencia) && !empty($this->cod_tipo_gasto) && !empty($this->nombre) && !empty($this->fecha)) {
+
+        var_dump($this->cod_frecuencia);
+        var_dump($this->cod_tipo_gasto);
+        var_dump($this->nombre);
+        var_dump($this->fecha);
+        var_dump($this->cod_naturaleza);
+        if (!empty($this->cod_tipo_gasto) && !empty($this->nombre) && !empty($this->fecha)) {
             if ($this->buscarCategoria() == null) {
 
-                $registro = "INSERT INTO categoria_gasto(cod_tipo_gasto, cod_frecuencia, nombre, fecha, status_cat_gasto) VALUES(:cod_tipo_gasto, :cod_frecuencia, :nombre, :fecha, 1)";
+                $registro = "INSERT INTO categoria_gasto(cod_tipo_gasto, cod_frecuencia, cod_naturaleza, nombre, fecha, status_cat_gasto) VALUES(:cod_tipo_gasto, :cod_frecuencia,:cod_naturaleza, :nombre, :fecha, 1)";
                 parent::conectarBD();
                 $strExec = $this->conex->prepare($registro);
                 $strExec->bindParam(':cod_frecuencia', $this->cod_frecuencia);
                 $strExec->bindParam(':cod_tipo_gasto', $this->cod_tipo_gasto);
                 $strExec->bindParam(':nombre', $this->nombre);
+                $strExec->bindParam(':cod_naturaleza', $this->cod_naturaleza);
                 $strExec->bindParam(':fecha', $this->fecha);
                 $resul = $strExec->execute();
                 parent::desconectarBD();
@@ -246,10 +269,11 @@ class Gastos extends Conexion
 
     private function consultarC()
     {
-        $sql = "SELECT c.status_cat_gasto,c.fecha, c.cod_cat_gasto, c.cod_tipo_gasto, c.cod_frecuencia, c.nombre AS categoria, f.cod_frecuencia, f.nombre, t.cod_tipo_gasto, t.nombre AS nombret,
+        $sql = "SELECT c.cod_cat_gasto, c.cod_tipo_gasto, c.fecha, c.status_cat_gasto, c.cod_frecuencia, c.nombre AS categoria, f.cod_frecuencia, f.nombre, t.cod_tipo_gasto, t.nombre AS nombret, n.cod_naturaleza, n.nombre_naturaleza,
         f.nombre AS nombref FROM categoria_gasto c
-        JOIN tipo_gasto t ON c.cod_tipo_gasto = t.cod_tipo_gasto
-        JOIN frecuencia_gasto f ON c.cod_frecuencia = f.cod_frecuencia";
+        LEFT JOIN tipo_gasto t ON c.cod_tipo_gasto = t.cod_tipo_gasto
+        LEFT JOIN naturaleza_gasto n ON c.cod_naturaleza = n.cod_naturaleza
+        LEFT JOIN frecuencia_gasto f ON c.cod_frecuencia = f.cod_frecuencia";
         parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
         $resul = $strExec->execute();
@@ -265,6 +289,44 @@ class Gastos extends Conexion
     public function consultarCategoria()
     {
         return $this->consultarC();
+    }
+
+    private function consultarCondicion()
+    {
+        $sql = "SELECT * FROM condicion_pagoe";
+        parent::conectarBD();
+        $strExec = $this->conex->prepare($sql);
+        $resul = $strExec->execute();
+        $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        if ($resul) {
+            return $datos;
+        } else {
+            return [];
+        }
+    }
+    public function consultarCondi()
+    {
+        return $this->consultarCondicion();
+    }
+
+    private function consulN()
+    {
+        $sql = "SELECT cod_naturaleza, nombre_naturaleza FROM naturaleza_gasto";
+        parent::conectarBD();
+        $strExec = $this->conex->prepare($sql);
+        $resul = $strExec->execute();
+        $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
+        parent::desconectarBD();
+        if ($resul) {
+            return $datos;
+        } else {
+            return [];
+        }
+    }
+    public function consulNaturaleza()
+    {
+        return $this->consulN();
     }
 
     private function buscarTporC()
@@ -333,33 +395,59 @@ class Gastos extends Conexion
         return $this->bF();
     }
 
-    private function EditC()
+    private function EditC() //listo
     {
-        var_dump("Cual es el error?");
-        var_dump($this->cod_cat_gasto);
-        var_dump($this->nombre);
-        var_dump($this->status_cat_gasto);
-        var_dump($this->origin);
-        $comparar = $this->bC();
-        if ($comparar != null) {
-            // Verifica si el nombre ya existe y no es el mismo que el original
-            if ($comparar['nombre'] == $this->nombre && $this->nombre != $this->origin) {
-                return 2; // La categoría ya existe
-            }
-        } else {
-            $registro = "UPDATE categoria_gasto SET cod_frecuencia = :cod_frecuencia, status_cat_gasto = :status_cat_gasto , nombre = :nombre WHERE cod_cat_gasto = :cod_cat_gasto";
+        try {
             parent::conectarBD();
-            $strExec = $this->conex->prepare($registro);
-            $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto);
-            $strExec->bindParam(':status_cat_gasto', $this->status_cat_gasto);
+            if ($this->status_cat_gasto !== null && $this->nombre === $this->origin) {
+                // Solo se está editando el status
+                $registro = "UPDATE categoria_gasto SET status_cat_gasto = :status_cat_gasto WHERE cod_cat_gasto = :cod_cat_gasto";
+                //parent::conectarBD();
+                $strExec = $this->conex->prepare($registro);
+                $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto);
+                $strExec->bindParam(':status_cat_gasto', $this->status_cat_gasto);
+                $res = $strExec->execute();
+                parent::desconectarBD();
+                if ($res) {
+                    return $res = 1;
+                } else {
+
+                    return $res = 'error_query';
+                }
+            }
+
+            $comparar = "SELECT nombre FROM categoria_gasto WHERE nombre = :nombre"; //funciona
+
+            $strExec = $this->conex->prepare($comparar);
             $strExec->bindParam(':nombre', $this->nombre);
             $res = $strExec->execute();
-            parent::desconectarBD();
-            if ($res) {
-                return 1;
+            $datos = $strExec->fetch(PDO::FETCH_ASSOC);
+
+            if ($datos != null) {
+                if ($datos['nombre'] == $this->nombre && $this->nombre != $this->origin) {
+                    parent::desconectarBD();
+                    return 'error_associated'; // La categoría ya existe
+                }
             } else {
-                return 0;
+                $registro = "UPDATE categoria_gasto SET status_cat_gasto = :status_cat_gasto, nombre = :nombre WHERE cod_cat_gasto = :cod_cat_gasto";
+                $strExec = $this->conex->prepare($registro);
+                $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto);
+                $strExec->bindParam(':status_cat_gasto', $this->status_cat_gasto);
+                $strExec->bindParam(':nombre', $this->nombre);
+                $res = $strExec->execute();
+                parent::desconectarBD();
+                if ($res) {
+                    return 1;
+                } else {
+                    return 'error_query';
+                }
             }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            // Captura cualquier otro tipo de error
+            parent::desconectarBD();
+            $errores[] = throw new Exception("Error en la transacción: " . $e->getMessage());
         }
     }
 
@@ -368,7 +456,52 @@ class Gastos extends Conexion
         return $this->EditC();
     }
 
+    private function eliminarC()
+    {
+        try {
+            parent::conectarBD();
+            $this->conex->beginTransaction(); // Inicia la transacción
 
+            // Verifica si hay pagos asociados
+            $gasto = "SELECT COUNT(*) AS n_gasto FROM gasto WHERE cod_cat_gasto = :cod_cat_gasto";
+            $strExec = $this->conex->prepare($gasto);
+            $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto, PDO::PARAM_INT);
+            $strExec->execute();
+            $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
+
+            if ($resultado['n_gasto'] > 0) {
+                var_dump($resultado['n_gasto']);
+                $this->conex->rollBack(); // Revierte la transacción
+                parent::desconectarBD();
+                return "error_associated";
+            }
+
+            // Elimina el gasto
+            $fisico = "UPDATE categoria_gasto SET status_cat_gasto = 0 WHERE cod_cat_gasto = :cod_cat_gasto";
+            $strExec = $this->conex->prepare($fisico);
+            $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto, PDO::PARAM_INT);
+            $re = $strExec->execute();
+
+            if ($re) {
+                $this->conex->commit(); // Confirma la transacción
+                parent::desconectarBD();
+                return "success";
+            } else {
+                $this->conex->rollBack(); // Revierte la transacción
+                parent::desconectarBD();
+                return "error_delete";
+            }
+        } catch (Exception $e) {
+            $this->conex->rollBack(); // Revierte la transacción en caso de error
+            parent::desconectarBD();
+            return "error_query: " . $e->getMessage(); // Devuelve el mensaje de error
+        }
+    }
+
+    public function eliminarCat()
+    {
+        return $this->eliminarC();
+    }
 
     //FUNCIONES DE GASTOS
 
@@ -377,12 +510,14 @@ class Gastos extends Conexion
 
         $resp = $this->buscarG();
         if ($resp == null) {
-            $registro = "INSERT INTO gasto(cod_cat_gasto,descripcion, monto, status) VALUES(:cod_cat_gasto ,:descripcion, :monto, 1)";
+            $registro = "INSERT INTO gasto(cod_cat_gasto,cod_condicion,descripcion, monto,fecha_creacion, status) VALUES(:cod_cat_gasto , :cod_condicion, :descripcion, :monto, :fecha_creacion, 1)";
             parent::conectarBD();
             $strExec = $this->conex->prepare($registro);
             $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto);
+            $strExec->bindParam(':cod_condicion', $this->cod_condicion);
             $strExec->bindParam(':descripcion', $this->descripcion);
             $strExec->bindParam(':monto', $this->monto);
+            $strExec->bindParam(':fecha_creacion', $this->fecha);
             $resul = $strExec->execute();
             parent::desconectarBD();
             if ($resul == 1) {
@@ -404,6 +539,9 @@ class Gastos extends Conexion
     {
         $valor = "variable";
         $registro = "SELECT 
+        t.nombre,
+        n.nombre_naturaleza,
+        n.cod_naturaleza,
         g.cod_gasto, 
         g.descripcion, 
         g.monto, 
@@ -411,18 +549,19 @@ class Gastos extends Conexion
         c.nombre AS categoria_nombre, 
         c.fecha AS fechac, 
         c.cod_tipo_gasto, 
-        t.nombre AS nombret,
         p.cod_pago_emitido, 
         p.fecha, 
         p.monto_total AS monto_ultimo_pago, 
-        v.vuelto_total 
-    FROM 
+        v.vuelto_total
+FROM 
         gasto g
-    LEFT JOIN 
+LEFT JOIN 
         categoria_gasto c ON g.cod_cat_gasto = c.cod_cat_gasto
-    LEFT JOIN 
+LEFT JOIN 
         tipo_gasto t ON c.cod_tipo_gasto = t.cod_tipo_gasto
-    LEFT JOIN 
+LEFT JOIN 
+        naturaleza_gasto n ON c.cod_naturaleza = n.cod_naturaleza
+LEFT JOIN 
         (
             SELECT 
                 cod_gasto, 
@@ -432,18 +571,18 @@ class Gastos extends Conexion
             GROUP BY 
                 cod_gasto
         ) subp ON g.cod_gasto = subp.cod_gasto
-    LEFT JOIN 
+LEFT JOIN 
         pago_emitido p ON g.cod_gasto = p.cod_gasto AND p.cod_pago_emitido = subp.ultimo_pago
-    LEFT JOIN 
+LEFT JOIN 
         vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r
-    WHERE 
-        t.nombre = :nombret OR (t.nombre = :nombret AND p.cod_pago_emitido IS NULL)
-    GROUP BY 
-        g.cod_gasto, g.descripcion, g.monto, g.status, c.nombre, c.fecha, c.cod_tipo_gasto, t.nombre, 
-        p.cod_pago_emitido, p.fecha, p.monto_total, v.vuelto_total";
+WHERE 
+        n.nombre_naturaleza = :nombre_naturaleza OR (n.nombre_naturaleza = :nombre_naturaleza AND p.cod_pago_emitido IS NULL)
+GROUP BY 
+        g.cod_gasto, g.descripcion, g.monto, g.status, c.nombre, c.fecha, c.cod_tipo_gasto, 
+        p.cod_pago_emitido, p.fecha, p.monto_total, v.vuelto_total, n.nombre_naturaleza";
         parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-        $strExec->bindParam(':nombret', $valor);
+        $strExec->bindParam(':nombre_naturaleza', $valor);
         $resul = $strExec->execute();
         $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
         parent::desconectarBD();
@@ -460,8 +599,11 @@ class Gastos extends Conexion
     }
     private function consultarGF()
     {
-        $valor = "fijo";
+        $valor = "fijo"; //EN DESARROLLO
         $registro = "SELECT 
+        t.nombre,
+        n.nombre_naturaleza,
+        n.cod_naturaleza,
         g.cod_gasto, 
         g.descripcion, 
         g.monto, 
@@ -469,18 +611,19 @@ class Gastos extends Conexion
         c.nombre AS categoria_nombre, 
         c.fecha AS fechac, 
         c.cod_tipo_gasto, 
-        t.nombre AS nombret,
         p.cod_pago_emitido, 
         p.fecha, 
         p.monto_total AS monto_ultimo_pago, 
-        v.vuelto_total 
-    FROM 
+        v.vuelto_total
+FROM 
         gasto g
-    LEFT JOIN 
+LEFT JOIN 
         categoria_gasto c ON g.cod_cat_gasto = c.cod_cat_gasto
-    LEFT JOIN 
+LEFT JOIN 
         tipo_gasto t ON c.cod_tipo_gasto = t.cod_tipo_gasto
-    LEFT JOIN 
+LEFT JOIN 
+        naturaleza_gasto n ON c.cod_naturaleza = n.cod_naturaleza
+LEFT JOIN 
         (
             SELECT 
                 cod_gasto, 
@@ -490,18 +633,18 @@ class Gastos extends Conexion
             GROUP BY 
                 cod_gasto
         ) subp ON g.cod_gasto = subp.cod_gasto
-    LEFT JOIN 
+LEFT JOIN 
         pago_emitido p ON g.cod_gasto = p.cod_gasto AND p.cod_pago_emitido = subp.ultimo_pago
-    LEFT JOIN 
+LEFT JOIN 
         vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r
-    WHERE 
-        t.nombre = :nombret OR (t.nombre = :nombret AND p.cod_pago_emitido IS NULL)
-    GROUP BY 
-        g.cod_gasto, g.descripcion, g.monto, g.status, c.nombre, c.fecha, c.cod_tipo_gasto, t.nombre, 
-        p.cod_pago_emitido, p.fecha, p.monto_total, v.vuelto_total";
+WHERE 
+        n.nombre_naturaleza = :nombre_natualeza OR (n.nombre_naturaleza = :nombre_natualeza AND p.cod_pago_emitido IS NULL)
+GROUP BY 
+        g.cod_gasto, g.descripcion, g.monto, g.status, c.nombre, c.fecha, c.cod_tipo_gasto, 
+        p.cod_pago_emitido, p.fecha, p.monto_total, v.vuelto_total, n.nombre_naturaleza";
         parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-        $strExec->bindParam(':nombret', $valor);
+        $strExec->bindParam(':nombre_natualeza', $valor);
         $resul = $strExec->execute();
         $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
         parent::desconectarBD();
@@ -647,46 +790,46 @@ class Gastos extends Conexion
     }
 
     private function eliminarG()
-{
-    try {
-        parent::conectarBD();
-        $this->conex->beginTransaction(); // Inicia la transacción
+    {
+        try {
+            parent::conectarBD();
+            $this->conex->beginTransaction(); // Inicia la transacción
 
-        // Verifica si hay pagos asociados
-        $pago = "SELECT COUNT(*) AS n_gasto FROM pago_emitido WHERE cod_gasto = :cod_gasto";
-        $strExec = $this->conex->prepare($pago);
-        $strExec->bindParam(':cod_gasto', $this->cod_gasto, PDO::PARAM_INT);
-        $strExec->execute();
-        $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
+            // Verifica si hay pagos asociados
+            $pago = "SELECT COUNT(*) AS n_gasto FROM pago_emitido WHERE cod_gasto = :cod_gasto";
+            $strExec = $this->conex->prepare($pago);
+            $strExec->bindParam(':cod_gasto', $this->cod_gasto, PDO::PARAM_INT);
+            $strExec->execute();
+            $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
 
-        if ($resultado['n_gasto'] > 0) {
-            var_dump($resultado['n_gasto']);
-            $this->conex->rollBack(); // Revierte la transacción
+            if ($resultado['n_gasto'] > 0) {
+                var_dump($resultado['n_gasto']);
+                $this->conex->rollBack(); // Revierte la transacción
+                parent::desconectarBD();
+                return "error_associated";
+            }
+
+            // Elimina el gasto
+            $fisico = "UPDATE gasto SET status = 0 WHERE cod_gasto = :cod_gasto";
+            $strExec = $this->conex->prepare($fisico);
+            $strExec->bindParam(':cod_gasto', $this->cod_gasto, PDO::PARAM_INT);
+            $re = $strExec->execute();
+
+            if ($re) {
+                $this->conex->commit(); // Confirma la transacción
+                parent::desconectarBD();
+                return "success";
+            } else {
+                $this->conex->rollBack(); // Revierte la transacción
+                parent::desconectarBD();
+                return "error_delete";
+            }
+        } catch (Exception $e) {
+            $this->conex->rollBack(); // Revierte la transacción en caso de error
             parent::desconectarBD();
-            return "error_associated";
+            return "error_query: " . $e->getMessage(); // Devuelve el mensaje de error
         }
-
-        // Elimina el gasto
-        $fisico = "UPDATE gasto SET status = 0 WHERE cod_gasto = :cod_gasto";
-        $strExec = $this->conex->prepare($fisico);
-        $strExec->bindParam(':cod_gasto', $this->cod_gasto, PDO::PARAM_INT);
-        $re = $strExec->execute();
-
-        if ($re) {
-            $this->conex->commit(); // Confirma la transacción
-            parent::desconectarBD();
-            return "success";
-        } else {
-            $this->conex->rollBack(); // Revierte la transacción
-            parent::desconectarBD();
-            return "error_delete";
-        }
-    } catch (Exception $e) {
-        $this->conex->rollBack(); // Revierte la transacción en caso de error
-        parent::desconectarBD();
-        return "error_query: " . $e->getMessage(); // Devuelve el mensaje de error
     }
-}
 
     public function eliminarGasto()
     {

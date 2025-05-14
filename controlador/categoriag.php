@@ -61,7 +61,7 @@ if (isset($_POST['buscarC'])) {
 } else if (isset($_POST['guardarC'])) {
     $errores = [];
     var_dump("Parte controlador:");
-    var_dump($_POST);
+    var_dump($_POST['frecuenciaC']);
     try {
         $objgasto->setDatos($_POST);
         $objgasto->check();
@@ -120,12 +120,19 @@ if (isset($_POST['buscarC'])) {
             "icon" => "success"
         ];
         $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar categoría de gastos', $_POST["cod_cat_gasto"], 'Categoría de gastos');
-    } else if ($res == 2) {
+    } else if ($res == 'error_associated') {
         $editar = [
             "title" => "Advertencia",
             "message" => "La categoría de gastos ya se encuentra registrada",
             "icon" => "warning"
         ];
+    }else if($res == 'error_query'){
+        $editar = [
+            "title" => "Error",
+            "message" => "Hubo un problema de consulta al editar la categoría de gastos",
+            "icon" => "error"
+        ];
+
     } else {
         $editar = [
             "title" => "Error",
@@ -138,6 +145,7 @@ if (isset($_POST['buscarC'])) {
 $frecuencia = $objgasto->consultarFrecuencia();
 $tipo = $objgasto->consultarTipo();
 $categorias = $objgasto->consultarCategoria();
+$naturaleza = $objgasto->consulNaturaleza();
 
 $_GET['ruta'] = 'categoriag';
 
