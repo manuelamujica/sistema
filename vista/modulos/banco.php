@@ -20,10 +20,12 @@ require_once "controlador/banco.php";
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <?php if (isset($_SESSION["permisos"]["config_finanza"]["registrar"])): ?>
                         <div class="card-header">
                             <!-- Botón para ventana modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarbanco">Registrar Entidad Bancaria</button>
                         </div>
+                        <?php endif; ?>
                         <div class="card-body">
                         <div class="table-responsive">
                             <table id="bancos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
@@ -42,7 +44,6 @@ require_once "controlador/banco.php";
                                         <tr>
                                             <td> <?php echo $banco["cod_banco"] ?></td>
                                             <td> <?php echo $banco["nombre_banco"] ?></td>
-                                        
                                             <!-- Botones -->
                                             <td>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"

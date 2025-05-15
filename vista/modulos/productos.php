@@ -54,7 +54,7 @@ if (isset($error)): ?>
                     <div class="card">
                         <div class="card-header">
                             <!-- Boton registrar producto -->
-                            <?php if (!empty($_SESSION["permisos"][1][1])): ?>
+                            <?php if (!empty($_SESSION["permisos"]["producto"]["registrar"])): ?>
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarProducto">Registrar producto</button>
                             <?php endif; ?>
                         </div>
@@ -128,7 +128,7 @@ if (isset($error)): ?>
                                             </td>
                                             <!-- Botones -->
                                             <td>
-                                                <?php if (!empty($_SESSION["permisos"][1][2])): ?>
+                                                <?php if (!empty($_SESSION["permisos"]["producto"]["editar"])): ?>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
                                                 data-imagen="<?php echo $producto["imagen"];?>"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
@@ -145,7 +145,7 @@ if (isset($error)): ?>
                                                 <i class="fas fa-pencil-alt"></i>
                                                 <?php endif; ?>
                                             </button>
-                                                <?php if (!empty($_SESSION["permisos"][1][3])): ?>
+                                                <?php if (!empty($_SESSION["permisos"]["producto"]["eliminar"])): ?>
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
                                                 data-codigo="<?php echo $producto["cod_presentacion"];?>"
                                                 data-producto="<?php echo $producto["cod_producto"];?>"

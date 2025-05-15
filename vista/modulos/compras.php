@@ -21,10 +21,12 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
+                            <?php if (!empty($_SESSION["permisos"]["compra"]["registrar"])): ?>
                             <!-- Botones  de registar en línea -->
                             <button name="reg" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modalcom">
                                 Registrar compra
                             </button>
+                            <?php endif; ?>
                         </div>
                         <br>
                         <div class="card-body">

@@ -21,8 +21,10 @@ require_once "controlador/categorias.php";
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <?php if (!empty($_SESSION["permisos"]["config_producto"]["registrar"])): ?>
                             <!-- Botón para ventana modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarCategoria">Registrar categoría</button>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
                         <div class="table-responsive">
@@ -52,18 +54,21 @@ require_once "controlador/categorias.php";
                                             </td>
                                             <!-- Botones -->
                                             <td>
+                                                <?php if (!empty($_SESSION["permisos"]["config_producto"]["editar"])): ?>
                                                 <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal"
                                                 data-codigo="<?php echo $categoria["cod_categoria"]; ?>"
                                                 data-nombre="<?php echo $categoria["nombre"]; ?>"
                                                 data-status="<?php echo $categoria["status"]; ?>">
                                                 <i class="fas fa-pencil-alt"></i></button>
-
+                                                <?php endif; ?>
+                                                
+                                                <?php if (!empty($_SESSION["permisos"]["config_producto"]["eliminar"])): ?>
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
                                                 data-codigo="<?php echo $categoria["cod_categoria"]; ?>"
                                                 data-nombre="<?php echo $categoria["nombre"]; ?>"
                                                 data-status="<?php echo $categoria["status"]; ?>">
                                                 <i class="fas fa-trash-alt"></i></button>
-                                                
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php } ?>

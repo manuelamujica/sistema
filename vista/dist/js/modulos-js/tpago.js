@@ -18,7 +18,7 @@ $(document).ready(function() {
         }
     });
     
-    // Verificar si el tipo de pago ya está registrado
+    /* Verificar si el tipo de pago ya está registrado
     $('#nombre_tipo_pago').change(function (e){
         var buscar = $('#nombre_tipo_pago option:selected').text();
         $.post('index.php?pagina=tpago', {buscar}, function(response){
@@ -30,7 +30,7 @@ $(document).ready(function() {
                 });
             }
         },'json');
-    });
+    });*/
 
     // Código existente para editar modal
     $('#editModal').on('show.bs.modal', function (event) {

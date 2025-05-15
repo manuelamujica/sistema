@@ -85,75 +85,29 @@ if (isset($_POST["ingresar"])) {
 			// Verificamos la contraseña utilizando password_verify()
 			if ($respuesta["user"] == $_POST["ingUsuario"] && password_verify($_POST["ingPassword"], $respuesta["password"])) {
 
-				$_SESSION["iniciarsesion"] = "ok";
-				$_SESSION["user"] = $respuesta["user"];
-				$_SESSION["nombre"] = $respuesta["nombre"];
-				$_SESSION["cod_usuario"]=$respuesta["cod_usuario"];
-			// Para acceder al nombre del rol y guardarlo en una variable SESSION
-				$rol=$objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
-				$_SESSION["rol"] = $rol["rol"];
+			$_SESSION["iniciarsesion"] = "ok";
+			$_SESSION["user"] = $respuesta["user"];
+			$_SESSION["nombre"] = $respuesta["nombre"];
+			$_SESSION["cod_usuario"]=$respuesta["cod_usuario"];
+			$rol=$objRol->consultarLogin($respuesta["cod_tipo_usuario"]);
+			$_SESSION["rol"] = $rol["rol"];
 
-				$_SESSION["producto"] = 0;
-				$_SESSION["inventario"] = 0;
-				$_SESSION["categoria"] = 0;
-				$_SESSION["marca"] = 0;
-				$_SESSION["venta"] = 0;
-				$_SESSION["compra"] = 0;
-				$_SESSION["cliente"] = 0;
-				$_SESSION["proveedor"] = 0;
-				$_SESSION["usuario"] = 0;
-				$_SESSION["reporte"] = 0;
-				$_SESSION["configuracion"] = 0;
-				//$_SESSION["permisos"] = []; // Inicializamos el array de permisos
+			$_SESSION["permisos"] = []; // Inicializamos el array de permisos
 			
-				//Obtenemos los modulos asociados al usuario
-				//Obtenemos los permisos asociados al usuario
-				$accesos = $objuser->accesos($respuesta["cod_usuario"]);
-				foreach ($accesos as $permisos) {
-					if ($permisos["cod_modulo"] == 1) {
-						$_SESSION["producto"] = 1;
-					} else if ($permisos["cod_modulo"] == 2) {
-						$_SESSION["inventario"] = 1;
-					} else if ($permisos["cod_modulo"] == 3) {
-						$_SESSION["categoria"] = 1;
-					} else if ($permisos["cod_modulo"] == 4) {
-						$_SESSION["compra"] = 1;
-					} else if ($permisos["cod_modulo"] == 5) {
-						$_SESSION["venta"] = 1;
-					} else if ($permisos["cod_modulo"] == 6) {
-						$_SESSION["cliente"] = 1;
-					} else if ($permisos["cod_modulo"] == 7) {
-						$_SESSION["proveedor"] = 1;
-					} else if ($permisos["cod_modulo"] == 8) {
-						$_SESSION["usuario"] = 1;
-					} else if ($permisos["cod_modulo"] == 9) {
-						$_SESSION["reporte"] = 1;
-					} else if ($permisos["cod_modulo"] == 10) {
-						$_SESSION["configuracion"] = 1;
-					} else if ($cod_permiso["cod_modulo"] == 11) {
-						$_SESSION["marca"] = 1;
-					}
-					/*$modulo = $permisos["cod_modulo"];
-					$accion = $permisos["cod_crud"];
-				
-					// Si no existe el módulo aún, lo inicializamos como array vacío
-					if (!isset($_SESSION["permisos"][$modulo])) {
-						$_SESSION["permisos"][$modulo] = [];
-					}
-				
-					// Marcamos la acción permitida con 1
-					$_SESSION["permisos"][$modulo][$accion] = 1;*/
-					} 
-				//Obtenemos la informacion de la empresa
-				$logo = $obj->mostrar();
-				if(!empty($logo)){
-				$_SESSION["logo"] = $logo[0]["logo"];
-				$_SESSION["n_empresa"] = $logo[0]["nombre"];
-				$_SESSION["rif"] = $logo[0]["rif"];
-				$_SESSION["telefono"] = $logo[0]["telefono"];
-				$_SESSION["email"] = $logo[0]["email"];
-				$_SESSION["direccion"] = $logo[0]["direccion"];
+			$accesos = $objuser->accesos($respuesta["cod_usuario"]);
+			foreach ($accesos as $permisos) {
+				$modulo = $permisos["modulos"];
+				$accion = $permisos["accion"];
+			
+				if (!isset($_SESSION["permisos"][$modulo])) {
+					$_SESSION["permisos"][$modulo] = [];
 				}
+			
+				// Marcamos la acción permitida con 1
+				$_SESSION["permisos"][$modulo][$accion] = 1;
+				} 
+			}
+			
 
 				echo '<script>
 				window.location="inicio";
@@ -182,5 +136,8 @@ if (isset($_POST["ingresar"])) {
 			"icon" => "error"
 		];
 	}
-	}
+	
 }
+
+
+

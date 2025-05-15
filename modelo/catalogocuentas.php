@@ -126,7 +126,7 @@ class CatalogoCuentas extends Conexion{
     CONSULTAR (TABLA) CON STORED PROCEDURE
     ================================*/
 
-    private function consultar_cuentas(){
+   /* private function consultar_cuentas(){
         $sql = "CALL consultar_cuentas_contables()";
         parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
@@ -138,7 +138,7 @@ class CatalogoCuentas extends Conexion{
 
     public function getconsultar_cuentas(){
         return $this->consultar_cuentas();
-    }
+    }*/
 
 
   /* =============================
