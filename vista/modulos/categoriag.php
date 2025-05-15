@@ -82,48 +82,50 @@
                                             </tr>
                                         <?php else: ?>
                                             <?php foreach ($categorias as $c) { ?>
-                                                <?php //if ($c['status_cat_gasto'] != 2): ?>
-                                                    <tr>
-                                                        <td><?php echo $c['cod_cat_gasto']
-                                                            ?></td>
-                                                        <td><?php echo $c['fecha']
-                                                            ?></td>
-                                                        <td><?php echo $c['categoria']
-                                                            ?></td>
-                                                        <td><?php echo $c['nombref'] || '';
-                                                            ?></td>
-                                                        <td><?php echo $c['nombret']
-                                                            ?>
-                                                        </td>
-                                                        <td><?php echo $c['nombre_naturaleza']
-                                                            ?>
-                                                        <td>
-                                                            <?php if ($c['status_cat_gasto'] == 1): ?>
-                                                                <span class="badge bg-success">Activo</span>
-                                                            <?php else: ?>
-                                                                <span class="badge bg-danger">Inactivo</span>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
+                                                <?php //if ($c['status_cat_gasto'] != 2): 
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $c['cod_cat_gasto']
+                                                        ?></td>
+                                                    <td><?php echo $c['fecha']
+                                                        ?></td>
+                                                    <td><?php echo $c['categoria']
+                                                        ?></td>
+                                                    <td><?php echo $c['nombref'] || '';
+                                                        ?></td>
+                                                    <td><?php echo $c['nombret']
+                                                        ?>
+                                                    </td>
+                                                    <td><?php echo $c['nombre_naturaleza']
+                                                        ?>
+                                                    <td>
+                                                        <?php if ($c['status_cat_gasto'] == 1): ?>
+                                                            <span class="badge bg-success">Activo</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-danger">Inactivo</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
 
-                                                            <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modificat"
+                                                        <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#modificat"
 
-                                                                data-nombre="<?php echo $c["categoria"]; ?>"
-                                                                data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
-                                                                data-status="<?php echo $c["status_cat_gasto"]; ?>">
-                                                                <i class="fas fa-pencil-alt"></i>
-                                                            </button>
-                                                            <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#modaleliminar"
-                                                                data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
-                                                                data-nombre="<?php echo $c["categoria"]; ?>"
-                                                                data-status="<?php echo $c["status_cat_gasto"]; ?>">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        
+                                                            data-nombre="<?php echo $c["categoria"]; ?>"
+                                                            data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
+                                                            data-status="<?php echo $c["status_cat_gasto"]; ?>">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </button>
+                                                        <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#modaleliminar"
+                                                            data-codigo="<?php echo $c["cod_cat_gasto"]; ?>"
+                                                            data-nombre="<?php echo $c["categoria"]; ?>"
+                                                            data-status="<?php echo $c["status_cat_gasto"]; ?>">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
 
-                                                        </td>
-                                                    </tr>
-                                                <?php //endif; ?>
+
+                                                    </td>
+                                                </tr>
+                                                <?php //endif; 
+                                                ?>
                                             <?php } ?>
                                         <?php endif; ?>
                                     </tbody>
@@ -231,7 +233,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-dark" name="guardarC" >Guardar</button>
+                                    <button type="submit" class="btn btn-dark" name="guardarC">Guardar</button>
                                 </div>
                                 </form>
                             </div>
@@ -398,7 +400,7 @@ if (isset($editar)): ?>
             <div class="modal-body">
                 <form method="post">
                     <p>¿Estás seguro de eliminar la categoría: <b><span id=categoria></span>?</p></b>
-                    <input type="hidden" name="cod_eliminar" id="cod_eliminar">
+                    <input type="hidden" name="cod_cat_gasto" id="cod_eliminar">
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -408,6 +410,20 @@ if (isset($editar)): ?>
         </div>
     </div>
 </div>
+<?php if (isset($eliminar)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $eliminar["title"]; ?>',
+            text: '<?php echo $eliminar["message"]; ?>',
+            icon: '<?php echo $eliminar["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'categoriag';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 
 <script src="vista/dist/js/modulos-js/gasto.js"></script>

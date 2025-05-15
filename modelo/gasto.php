@@ -460,7 +460,7 @@ class Gastos extends Conexion
     {
         try {
             parent::conectarBD();
-            $this->conex->beginTransaction(); // Inicia la transacción
+            $this->conex->beginTransaction();
 
             // Verifica si hay pagos asociados
             $gasto = "SELECT COUNT(*) AS n_gasto FROM gasto WHERE cod_cat_gasto = :cod_cat_gasto";
@@ -471,30 +471,38 @@ class Gastos extends Conexion
 
             if ($resultado['n_gasto'] > 0) {
                 var_dump($resultado['n_gasto']);
-                $this->conex->rollBack(); // Revierte la transacción
+                $this->conex->rollBack();
                 parent::desconectarBD();
                 return "error_associated";
             }
-
-            // Elimina el gasto
-            $fisico = "UPDATE categoria_gasto SET status_cat_gasto = 0 WHERE cod_cat_gasto = :cod_cat_gasto";
+            $status = "SELECT status_cat_gasto FROM categoria_gasto  WHERE cod_cat_gasto = :cod_cat_gasto";
+            $strExec = $this->conex->prepare($status);
+            $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto, PDO::PARAM_INT);
+            $re = $strExec->execute();
+            $estado = $strExec->fetch(PDO::FETCH_ASSOC);
+            if($estado['status_cat_gasto'] == 1){
+                $this->conex->rollBack();
+                parent::desconectarBD();
+                return "error_delete";
+            }
+            $fisico = "DELETE FROM categoria_gasto  WHERE cod_cat_gasto = :cod_cat_gasto";
             $strExec = $this->conex->prepare($fisico);
             $strExec->bindParam(':cod_cat_gasto', $this->cod_cat_gasto, PDO::PARAM_INT);
             $re = $strExec->execute();
 
             if ($re) {
-                $this->conex->commit(); // Confirma la transacción
+                $this->conex->commit();
                 parent::desconectarBD();
                 return "success";
             } else {
-                $this->conex->rollBack(); // Revierte la transacción
+                $this->conex->rollBack();
                 parent::desconectarBD();
                 return "error_delete";
             }
         } catch (Exception $e) {
-            $this->conex->rollBack(); // Revierte la transacción en caso de error
+            $this->conex->rollBack();
             parent::desconectarBD();
-            return "error_query: " . $e->getMessage(); // Devuelve el mensaje de error
+            return "error_query: " . $e->getMessage();
         }
     }
 
@@ -569,7 +577,7 @@ LEFT JOIN
                 pe.cod_pago_emitido,
                 pe.fecha,
                 pe.monto_total,
-                pe.cod_vuelto_r  -- Incluir el código del vuelto aquí
+                pe.cod_vuelto_r  
             FROM 
                 pago_emitido pe
             INNER JOIN 
@@ -583,7 +591,7 @@ LEFT JOIN
                         cod_gasto
                 ) max_pe ON pe.cod_gasto = max_pe.cod_gasto AND pe.fecha = max_pe.max_fecha
         ) p ON g.cod_gasto = p.cod_gasto
-LEFT JOIN vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r  -- Relación correcta entre pago_emitido y vuelto_recibido
+LEFT JOIN vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r 
 LEFT JOIN 
         (
             SELECT 
@@ -831,9 +839,8 @@ GROUP BY
     {
         try {
             parent::conectarBD();
-            $this->conex->beginTransaction(); // Inicia la transacción
+            $this->conex->beginTransaction();
 
-            // Verifica si hay pagos asociados
             $pago = "SELECT COUNT(*) AS n_gasto FROM pago_emitido WHERE cod_gasto = :cod_gasto";
             $strExec = $this->conex->prepare($pago);
             $strExec->bindParam(':cod_gasto', $this->cod_gasto, PDO::PARAM_INT);
@@ -842,7 +849,7 @@ GROUP BY
 
             if ($resultado['n_gasto'] > 0) {
                 var_dump($resultado['n_gasto']);
-                $this->conex->rollBack(); // Revierte la transacción
+                $this->conex->rollBack();
                 parent::desconectarBD();
                 return "error_associated";
             }
@@ -854,18 +861,18 @@ GROUP BY
             $re = $strExec->execute();
 
             if ($re) {
-                $this->conex->commit(); // Confirma la transacción
+                $this->conex->commit();
                 parent::desconectarBD();
                 return "success";
             } else {
-                $this->conex->rollBack(); // Revierte la transacción
+                $this->conex->rollBack();
                 parent::desconectarBD();
                 return "error_delete";
             }
         } catch (Exception $e) {
-            $this->conex->rollBack(); // Revierte la transacción en caso de error
+            $this->conex->rollBack();
             parent::desconectarBD();
-            return "error_query: " . $e->getMessage(); // Devuelve el mensaje de error
+            return "error_query: " . $e->getMessage();
         }
     }
 

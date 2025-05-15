@@ -202,7 +202,6 @@ $(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
 //PAGOS DE GASTOS
 $('#pagoGModal').on('show.bs.modal', function (event) {
     var modal = $(this);
-    //console.log(button.data(montop)+ " = deberia ser el ultimo");
     console.log("abri el modal");
     /* LIMPIO EL MODAL Y EL CALCULO DE ESTE */
     modal.find('.modal-body #total-pago1').text('0.00 Bs');
@@ -536,7 +535,7 @@ $('#modificat').on('show.bs.modal', function (event) { //LISTO CONFIRMADO 14/05/
 });
 
 
-$('#modaleliminar').on('show.bs.modal', function (event) { //FALTA 14/05/2025
+$('#modaleliminar').on('show.bs.modal', function (event) { 
     var button = $(event.relatedTarget);
     var codigo = button.data('codigo');
     var nombre = button.data('nombre');

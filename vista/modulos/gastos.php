@@ -302,9 +302,11 @@ require_once "controlador/gastos.php";
                                                 <select class="form-control" id="categoriaG" name="cod_cat_gasto" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
                                                     <?php foreach ($categorias as $c): ?>
+                                                        <?php if($c['status_cat_gasto'] == 1): ?>
                                                         <option value="<?php echo $c['cod_cat_gasto']; ?>">
                                                             <?php echo $c['categoria']; ?>
                                                         </option>
+                                                        <?php endif; ?>
                                                     <?php endforeach; ?>
                                                 </select>
                                                 <div class="input-group-append">
@@ -394,7 +396,7 @@ require_once "controlador/gastos.php";
                 <div class="modal fade" id="pagoGModal" tabindex="-1" aria-labelledby="pagoGLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header bg-success">
                                 <h5 class="modal-title" id="pagoLabel">Registrar Pago para Gastos</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -579,12 +581,12 @@ require_once "controlador/gastos.php";
                 <?php endif; ?>
 
                 <!-- =======================
-                    MODAL REGISTRAR VUELTO EN OBSERVACIÓN
+                    MODAL REGISTRAR VUELTO
                 ============================= -->
                 <div class="modal fade" id="vueltoModal" tabindex="-1" aria-labelledby="vueltoModalBtn" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header bg-warning">
                                 <h5 class="modal-title" id="pagoLabel">Registrar vuelto a recibir</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>

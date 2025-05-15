@@ -140,6 +140,36 @@ if (isset($_POST['buscarC'])) {
             "icon" => "error"
         ];
     }
+}else if(isset($_POST['cod_cat_gasto'])){
+    $objgasto->setDatos($_POST);
+    $objgasto->check();
+    $res = $objgasto->eliminarCat();
+    if($res == 'success'){
+        $eliminar = [
+            "title" => "Eliminado con éxito",
+            "message" => "La categoría de gastos ha sido eliminada",
+            "icon" => "success"
+        ];
+        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminación de categoría de gastos', $_POST["cod_cat_gasto"], 'Categoría de gastos');
+    }else if($res == 'error_associated'){
+        $eliminar = [
+            "title" => "Advertencia",
+            "message" => "La categoría de gastos tiene gastos asociados",
+            "icon" => "warning"
+        ];
+    }else if($res == 'error_delete'){
+        $eliminar = [
+            "title" => "Error",
+            "message" => "Error al eliminar la categoría de gastos",
+            "icon" => "error"
+        ];
+    }else if($res == 'error_query'){
+        $eliminar = [
+            "title" => "Error",
+            "message" => "Hubo un problema de consulta al eliminar la categoría de gastos",
+            "icon" => "error"
+        ];
+    }
 }
 
 $frecuencia = $objgasto->consultarFrecuencia();

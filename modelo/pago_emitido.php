@@ -202,20 +202,13 @@ LEFT JOIN
   }
 
 
-  private function registrarPG() //LISTO COMPLETADO AL 100% NI LE MUEVAN JAJAJAJ (ES UNA OBRA DE ARTE) ME CUIDAN EL CÓDIGO JAJAJA (TODO FUNCIONAL NECESITO IMPLEMENTAR EN COMPRA 11/05/2025)
+  private function registrarPG() //LISTO COMPLETADO AL 100%  ME CUIDAN EL CÓDIGO JAJAJA
   {
     $cod_pago_emitido = 0;
 
     try {
       parent::conectarBD();
       $this->conex->beginTransaction();
-    /*  var_dump($this->tipo_pago);
-      var_dump($this->fecha);
-      var_dump($this->cod_gasto);
-      var_dump($this->montopagado."  ->monto total");
-      var_dump($this->monto_pagar."  ->monto ya pagado");
-      var_dump($this->vuelto);*/
-
 
       if ($this->tipo_pago == 'gasto') {
         $sql = "INSERT INTO pago_emitido(tipo_pago,fecha,cod_gasto, monto_total) VALUES(:tipo_pago,:fecha,:cod_gasto,:monto_total)";
@@ -238,7 +231,7 @@ LEFT JOIN
         $montopg = $resultado['montopago'];
         $n = $montopg + $this->montopagado;
       } else {
-        $sql = "INSERT INTO pago_emitido(tipo_pago,fecha,cod_compra, monto_total) VALUES(:tipo_pago,:fecha,:cod_gasto,:monto_total)";
+        $sql = "INSERT INTO pago_emitido(tipo_pago,fecha,cod_compra, monto_total) VALUES(:tipo_pago,:fecha,:cod_compra,:monto_total)";
 
         $compra = $this->conex->prepare($sql);
         $compra->bindParam(':tipo_pago', $this->tipo_pago);
@@ -316,12 +309,13 @@ LEFT JOIN
           }
         }
         if ($this->tipo_pago == 'compra') {
-
-          $montopc = $this->montopagado + $this->monto_pagar;
+          $montopagado = (float)$this->montopagado;
+          $monto_pagar = (float)$this->monto_pagar;
+          $montopc = $montopagado + $monto_pagar;
           var_dump($montopc);
 
           if ($this->montototal > $montopc) {
-            $status = "UPDATE compra SET status = 2 WHERE cod_compra=:cod_compra";
+            $status = "UPDATE compras SET status = 2 WHERE cod_compra=:cod_compra";
             $editgasto = $this->conex->prepare($status);
             $editgasto->bindParam(':cod_compra', $this->cod_compra);
             if (!$editgasto->execute()) {
@@ -341,13 +335,13 @@ LEFT JOIN
 
               $actualizargasto = "UPDATE pago_emitido SET cod_vuelto_r = :cod_vuelto_r WHERE cod_pago_emitido= :cod_pago_emitido";
               $insert = $this->conex->prepare($actualizargasto);
-              $insert->bindParam(':cod_vuelto_r', $vueltocod);
+              $insert->bindParam(':cod_vuelto_r', $vueltocod['cod_vuelto_r']);
               $insert->bindParam(':cod_pago_emitido', $cod_pago_emitido);
               if (!$insert->execute()) {
                 throw new Exception("Error al actualizar el gasto con el vuelto.");
               }
 
-              $status = "UPDATE compra SET status= 3 WHERE cod_compra=:cod_compra";
+              $status = "UPDATE compras SET status= 3 WHERE cod_compra=:cod_compra";
               $gastoxvuelto = $this->conex->prepare($status);
               $gastoxvuelto->bindParam(':cod_compra', $this->cod_compra);
               if (!$gastoxvuelto->execute()) {
@@ -359,9 +353,9 @@ LEFT JOIN
               return $r = 0;
             }
           } else if ($this->montototal == $montopc) {
-            $status = "UPDATE compra SET status = 3 WHERE cod_compra=:cod_compra";
+            $status = "UPDATE compras SET status = 3 WHERE cod_compra=:cod_compra";
             $detgasto = $this->conex->prepare($status);
-            $detgasto->bindParam(':cod_compra', $this->cod_gasto);
+            $detgasto->bindParam(':cod_compra', $this->cod_compra);
             if (!$detgasto->execute()) {
               throw new Exception("Error al actualizar el estado del gasto.");
             }
@@ -574,6 +568,26 @@ LEFT JOIN
   public function getGastos()
   {
     return $this->gastos();
+  }
+
+  private function compras()
+  {
+    $sql = "SELECT monto_total, cod_pago_emitido FROM pago_emitido WHERE cod_compra = :cod_compra";
+    parent::conectarBD();
+    $strExec = $this->conex->prepare($sql);
+    $strExec->bindParam(':cod_compra', $this->cod_compra);
+    $res = $strExec->execute();
+    $resultado = $strExec->fetch(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
+    if ($res) {
+      return $resultado;
+    } else {
+      return [];
+    }
+  }
+  public function getCompras()
+  {
+    return $this->compras();
   }
   public function getDatos()
   {
