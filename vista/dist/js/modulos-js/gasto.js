@@ -76,43 +76,43 @@ function hideError(selector) {
 
 $(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
     $('#fecha').on('blur', function () {
-        var fecha = $(this).val(); 
-        var fechactual = new Date(); 
-        fechactual.setHours(0, 0, 0, 0); 
-        
+        var fecha = $(this).val();
+        var fechactual = new Date();
+        fechactual.setHours(0, 0, 0, 0);
+
         var anual = fechactual.getFullYear();
-        var mes = String(fechactual.getMonth() + 1).padStart(2, '0'); 
+        var mes = String(fechactual.getMonth() + 1).padStart(2, '0');
         var dia = String(fechactual.getDate()).padStart(2, '0');
         var fechactualformateada = `${anual}-${mes}-${dia}`;
-        console.log(fecha); 
-        console.log(fechactualformateada); 
-        
+        console.log(fecha);
+        console.log(fechactualformateada);
+
         if (fecha.trim() === '') {
             showError('#fecha', 'El campo fecha no puede estar vacío');
         }
-       
+
         else if (fecha < fechactualformateada) {
             showError('#fecha', 'La fecha no puede ser una fecha pasada');
 
         }
-       
+
         else {
             hideError('#fecha');
         }
     });
 
     $('#formregistrarCategoria').on('submit', function (e) {
-        var fecha = $('#fecha').val(); 
-        var fechactual = new Date(); 
-        fechactual.setHours(0, 0, 0, 0); 
-  
+        var fecha = $('#fecha').val();
+        var fechactual = new Date();
+        fechactual.setHours(0, 0, 0, 0);
+
         var anual = fechactual.getFullYear();
-        var mes = String(fechactual.getMonth() + 1).padStart(2, '0'); 
+        var mes = String(fechactual.getMonth() + 1).padStart(2, '0');
         var dia = String(fechactual.getDate()).padStart(2, '0');
         var fechactualformateada = `${anual}-${mes}-${dia}`;
 
         if (fecha < fechactualformateada) {
-            e.preventDefault(); 
+            e.preventDefault();
             Swal.fire({
                 title: 'Advertencia',
                 text: 'La fecha no puede ser una fecha pasada.',
@@ -188,10 +188,10 @@ $(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
         });
     });
     $('#modalRGasto').on('show.bs.modal', function (event) {
-        var fechactual = new Date(); 
+        var fechactual = new Date();
         fechactual.setHours(0, 0, 0, 0);
         var anual = fechactual.getFullYear();
-        var mes = String(fechactual.getMonth() + 1).padStart(2, '0'); 
+        var mes = String(fechactual.getMonth() + 1).padStart(2, '0');
         var dia = String(fechactual.getDate()).padStart(2, '0');
         var fechactualformateada = `${anual}-${mes}-${dia}`;
         $('#fecha_del_pago').val(fechactualformateada);
@@ -202,6 +202,8 @@ $(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
 //PAGOS DE GASTOS
 $('#pagoGModal').on('show.bs.modal', function (event) {
     var modal = $(this);
+    //console.log(button.data(montop)+ " = deberia ser el ultimo");
+    console.log("abri el modal");
     /* LIMPIO EL MODAL Y EL CALCULO DE ESTE */
     modal.find('.modal-body #total-pago1').text('0.00 Bs');
     modal.find('.modal-body #total-pago2').text('0.00 Bs');
@@ -226,8 +228,9 @@ $('#pagoGModal').on('show.bs.modal', function (event) {
         String(fecha.getMonth() + 1).padStart(2, '0') + '-' +
         String(fecha.getDate()).padStart(2, '0');
     var nombre = button.data('nombre');
-    var montop = button.data('montop') || 0;
-    var total = button.data('totalgastos');
+    var montop = parseFloat(button.data('montop')) || 0;
+    console.log("muestra el montop? "+montop);
+    var total = parseFloat(button.data('totalgastos')) || 0;
     var modal = $(this);
 
     modal.find('.modal-body #cod_gasto1').val(codigo);
@@ -241,6 +244,7 @@ $('#pagoGModal').on('show.bs.modal', function (event) {
 
     var totalGastoOculto = $('#total-gasto-oculto').val();
 
+
     $.ajax({
         url: 'index.php?pagina=gastos',
         method: 'POST',
@@ -248,16 +252,19 @@ $('#pagoGModal').on('show.bs.modal', function (event) {
         dataType: 'json',
         success: function (response) {
             var modal = $('#pagoGModal');
+
             if (response.success) {
                 var montoTotal = parseFloat(response.monto_total) || 0;
 
                 console.log("Monto total como número:", montoTotal);
+                console.log(montop);
 
 
-                modal.find('.modal-body #total-pago1').text(montoTotal.toFixed(2) + ' Bs');
+                modal.find('.modal-body #total-pago1').text(montop.toFixed(2) + ' Bs');
+                modal.find('.modal-body #total-pagop').val(montop.toFixed(2) + ' Bs');
                 modal.find('.modal-body #total-gasto').text(total.toFixed(2) + ' Bs');
 
-                var montopagar = Math.abs(total - montoTotal);
+                var montopagar = Math.abs(total - montop);
                 modal.find('.modal-body #total-pago').text(montopagar.toFixed(2) + ' Bs');
                 modal.find('.modal-body #monto_pagar').val(montopagar.toFixed(2));
 
@@ -405,7 +412,7 @@ $(document).ready(function () {
         console.log("Vuelto:", vuelto);
         console.log("Monto Pagado:", montoPagado);
 
-        if (parseFloat(vuelto) < montoPagado) {
+        if (parseFloat(vuelto) > montoPagado) {
             Swal.fire({
                 title: 'Error',
                 text: 'El vuelto no puede ser mayor que el monto pagado.',
@@ -414,7 +421,7 @@ $(document).ready(function () {
                 location.reload();
             });
             return;
-        } else if (parseFloat(vuelto) > montoPagado) {
+        } else if (parseFloat(vuelto) < montoPagado) {
             Swal.fire({
                 title: 'Error',
                 text: 'El vuelto no puede ser menor que el monto pagado.',
@@ -435,11 +442,42 @@ $(document).ready(function () {
             return;
         }
 
+        let arrayConDetalles = [];
+
+        $('.monto-bs1').each(function () {
+            let monto = parseFloat($(this).val()) || 0;
+            let cod_tipo_pago = $(this).closest('.form-group').find('input[type="hidden"][name*="cod_tipo_pago"]').val();
+            console.log('Bs:', monto, 'Tipo:', cod_tipo_pago);
+            if (monto > 0 && cod_tipo_pago) {
+                arrayConDetalles.push({
+                    cod_tipo_pago: cod_tipo_pago,
+                    monto: monto
+                });
+            }
+        });
+        // Captura de montos en divisas
+        $('.monto-divisa1').each(function () {
+            let montoDivisa = parseFloat($(this).val()) || 0;
+            let cod_tipo_pago = $(this).closest('.form-group').find('input[type="hidden"][name*="cod_tipo_pago"]').val();
+            console.log('Bs:', monto, 'Tipo:', cod_tipo_pago);
+            // El monto en Bs está en el input readonly asociado
+            let index = $(this).attr('id').split('-').pop();
+            let montoBs = parseFloat($('#monto-bs-con1-' + index).val()) || 0;
+            if (montoBs > 0 && cod_tipo_pago) {
+                arrayConDetalles.push({
+                    cod_tipo_pago: cod_tipo_pago,
+                    monto: montoBs
+                });
+            }
+        });
+        console.log(arrayConDetalles);
+
         $.ajax({
             url: 'index.php?pagina=gastos',
             method: 'POST',
             data: {
                 vuelto: vuelto,
+                pago: arrayConDetalles
             },
             dataType: 'json',
             success: function (response) {

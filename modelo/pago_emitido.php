@@ -21,6 +21,7 @@ class Pagos extends Conexion
   private $tipo_pago;
   private $cod_caja;
   private $cod_cuenta_bancaria;
+  private $monto_pagar;
   private $pago = [];
 
   public function __construct()
@@ -63,6 +64,13 @@ class Pagos extends Conexion
         case 'montototal':
           if (!is_numeric($value) || $value >= 0) {
             $this->montototal = $value;
+          } else {
+            $this->errores[] = "El campo $key debe ser un número mayor o igual a 0.";
+          }
+          break;
+        case 'monto_pagar':
+          if (!is_numeric($value) || $value > 0) {
+            $this->monto_pagar = $value;
           } else {
             $this->errores[] = "El campo $key debe ser un número mayor o igual a 0.";
           }
@@ -201,6 +209,13 @@ LEFT JOIN
     try {
       parent::conectarBD();
       $this->conex->beginTransaction();
+    /*  var_dump($this->tipo_pago);
+      var_dump($this->fecha);
+      var_dump($this->cod_gasto);
+      var_dump($this->montopagado."  ->monto total");
+      var_dump($this->monto_pagar."  ->monto ya pagado");
+      var_dump($this->vuelto);*/
+
 
       if ($this->tipo_pago == 'gasto') {
         $sql = "INSERT INTO pago_emitido(tipo_pago,fecha,cod_gasto, monto_total) VALUES(:tipo_pago,:fecha,:cod_gasto,:monto_total)";
@@ -302,7 +317,8 @@ LEFT JOIN
         }
         if ($this->tipo_pago == 'compra') {
 
-          $montopc += $this->montopagado;
+          $montopc = $this->montopagado + $this->monto_pagar;
+          var_dump($montopc);
 
           if ($this->montototal > $montopc) {
             $status = "UPDATE compra SET status = 2 WHERE cod_compra=:cod_compra";
@@ -353,12 +369,10 @@ LEFT JOIN
 
             return $r = 0;
           }
-        } else {
-
-          //$montopg += $this->montopagado;
-          
-          var_dump('pago parcial');
-          var_dump($n);
+        } else { //GASTOS
+          $montopagado = (float)$this->montopagado;
+          $monto_pagar = (float)$this->monto_pagar;
+          $n = $montopagado + $monto_pagar; 
           if ($this->montototal > $n) {
             $status = "UPDATE gasto SET status = 2 WHERE cod_gasto=:cod_gasto";
             $editgasto = $this->conex->prepare($status);
@@ -425,7 +439,7 @@ LEFT JOIN
     return $this->registrarPG();
   }
 
-  private function vuelto() //ME FALTA TRABAJAR MAS EL DETALLE DE LA VUELTO
+  private function vuelto() //FUNCIONA AL 100%
   {
     try {
       parent::conectarBD();
@@ -438,29 +452,17 @@ LEFT JOIN
       }
       $res = 1;
       $vueltocod = $this->conex->lastInsertId();
-
-
       foreach ($this->pago as $pagos) {
         if (!empty($pagos['monto']) && $pagos['monto'] > 0) {
-          var_dump($pagos['cod_tipo_pago']);
           $this->cod_tipo_pago = $pagos['cod_tipo_pago'];
-          var_dump($this->montopagado);
-          $detvuelto = "INSERT INTO detalle_vuelto(cod_vuelto_r,cod_tipo_pago, monto) VALUES(:cod_vuelto_r,:cod_tipo_pago,:monto)";
+          $detvuelto = "INSERT INTO detalle_vueltor(cod_vuelto_r,cod_tipo_pago, monto) VALUES(:cod_vuelto_r,:cod_tipo_pago,:monto)";
           $strExec = $this->conex->prepare($detvuelto);
           $strExec->bindParam(':cod_vuelto_r', $vueltocod);
           $strExec->bindParam(':cod_tipo_pago', $pagos['cod_tipo_pago']);
           $strExec->bindParam(':monto', $pagos['monto']);
-          $respuesta = $strExec->execute();
-
           if (!$strExec->execute()) {
             throw new Exception("Error al insertar en detalle_vuelto.");
-          } else {
-            $sql = "DELETE FROM vuelto_recibido WHERE cod_vuelto_r = :vuelto_total";
-            $strExec = $this->conex->prepare($sql);
-            $strExec->bindParam(':cod_vuelto_r', $vueltocod);
-            $respuesta = $strExec->execute();
-          }
-
+          } 
           $consultaRelacion = "SELECT cod_cuenta_bancaria, cod_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago";
           $consulta = $this->conex->prepare($consultaRelacion);
           $consulta->bindParam(':cod_tipo_pago', $this->cod_tipo_pago);

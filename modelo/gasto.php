@@ -548,11 +548,12 @@ class Gastos extends Conexion
         g.status, 
         c.nombre AS categoria_nombre, 
         c.fecha AS fechac, 
-        c.cod_tipo_gasto, 
-        p.cod_pago_emitido, 
-        p.fecha, 
-        p.monto_total AS monto_ultimo_pago, 
-        v.vuelto_total
+        c.cod_tipo_gasto,
+        p.cod_pago_emitido,
+        COALESCE(p.fecha, 'Sin fecha') AS fecha,  
+        COALESCE(p.monto_total, 0) AS monto_ultimo_pago,  
+        COALESCE(tp.total_pagos_emitidos, 0) AS total_pagos_emitidos,  
+        COALESCE(v.vuelto_total, 0) AS vuelto_total  
 FROM 
         gasto g
 LEFT JOIN 
@@ -564,19 +565,37 @@ LEFT JOIN
 LEFT JOIN 
         (
             SELECT 
+                pe.cod_gasto, 
+                pe.cod_pago_emitido,
+                pe.fecha,
+                pe.monto_total,
+                pe.cod_vuelto_r  -- Incluir el código del vuelto aquí
+            FROM 
+                pago_emitido pe
+            INNER JOIN 
+                (
+                    SELECT 
+                        cod_gasto, 
+                        MAX(fecha) AS max_fecha
+                    FROM 
+                        pago_emitido
+                    GROUP BY 
+                        cod_gasto
+                ) max_pe ON pe.cod_gasto = max_pe.cod_gasto AND pe.fecha = max_pe.max_fecha
+        ) p ON g.cod_gasto = p.cod_gasto
+LEFT JOIN vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r  -- Relación correcta entre pago_emitido y vuelto_recibido
+LEFT JOIN 
+        (
+            SELECT 
                 cod_gasto, 
-                MAX(cod_pago_emitido) AS ultimo_pago
+                SUM(monto_total) AS total_pagos_emitidos
             FROM 
                 pago_emitido
             GROUP BY 
                 cod_gasto
-        ) subp ON g.cod_gasto = subp.cod_gasto
-LEFT JOIN 
-        pago_emitido p ON g.cod_gasto = p.cod_gasto AND p.cod_pago_emitido = subp.ultimo_pago
-LEFT JOIN 
-        vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r
+        ) tp ON g.cod_gasto = tp.cod_gasto
 WHERE 
-        n.nombre_naturaleza = :nombre_naturaleza OR (n.nombre_naturaleza = :nombre_naturaleza AND p.cod_pago_emitido IS NULL)
+        n.nombre_naturaleza = :nombre_naturaleza
 GROUP BY 
         g.cod_gasto, g.descripcion, g.monto, g.status, c.nombre, c.fecha, c.cod_tipo_gasto, 
         p.cod_pago_emitido, p.fecha, p.monto_total, v.vuelto_total, n.nombre_naturaleza";
@@ -599,7 +618,7 @@ GROUP BY
     }
     private function consultarGF()
     {
-        $valor = "fijo"; //EN DESARROLLO
+        $valor = "fijo"; //TERMINADO 15/05/2025
         $registro = "SELECT 
         t.nombre,
         n.nombre_naturaleza,
@@ -610,11 +629,12 @@ GROUP BY
         g.status, 
         c.nombre AS categoria_nombre, 
         c.fecha AS fechac, 
-        c.cod_tipo_gasto, 
-        p.cod_pago_emitido, 
-        p.fecha, 
-        p.monto_total AS monto_ultimo_pago, 
-        v.vuelto_total
+        c.cod_tipo_gasto,
+        p.cod_pago_emitido,
+        COALESCE(p.fecha, 'Sin fecha') AS fecha,  
+        COALESCE(p.monto_total, 0) AS monto_ultimo_pago,  
+        COALESCE(tp.total_pagos_emitidos, 0) AS total_pagos_emitidos,  
+        COALESCE(v.vuelto_total, 0) AS vuelto_total  
 FROM 
         gasto g
 LEFT JOIN 
@@ -626,25 +646,43 @@ LEFT JOIN
 LEFT JOIN 
         (
             SELECT 
+                pe.cod_gasto, 
+                pe.cod_pago_emitido,
+                pe.fecha,
+                pe.monto_total,
+                pe.cod_vuelto_r 
+            FROM 
+                pago_emitido pe
+            INNER JOIN 
+                (
+                    SELECT 
+                        cod_gasto, 
+                        MAX(fecha) AS max_fecha
+                    FROM 
+                        pago_emitido
+                    GROUP BY 
+                        cod_gasto
+                ) max_pe ON pe.cod_gasto = max_pe.cod_gasto AND pe.fecha = max_pe.max_fecha
+        ) p ON g.cod_gasto = p.cod_gasto
+LEFT JOIN vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r 
+LEFT JOIN 
+        (
+            SELECT 
                 cod_gasto, 
-                MAX(cod_pago_emitido) AS ultimo_pago
+                SUM(monto_total) AS total_pagos_emitidos
             FROM 
                 pago_emitido
             GROUP BY 
                 cod_gasto
-        ) subp ON g.cod_gasto = subp.cod_gasto
-LEFT JOIN 
-        pago_emitido p ON g.cod_gasto = p.cod_gasto AND p.cod_pago_emitido = subp.ultimo_pago
-LEFT JOIN 
-        vuelto_recibido v ON p.cod_vuelto_r = v.cod_vuelto_r
+        ) tp ON g.cod_gasto = tp.cod_gasto
 WHERE 
-        n.nombre_naturaleza = :nombre_natualeza OR (n.nombre_naturaleza = :nombre_natualeza AND p.cod_pago_emitido IS NULL)
+        n.nombre_naturaleza = :nombre_naturaleza
 GROUP BY 
         g.cod_gasto, g.descripcion, g.monto, g.status, c.nombre, c.fecha, c.cod_tipo_gasto, 
         p.cod_pago_emitido, p.fecha, p.monto_total, v.vuelto_total, n.nombre_naturaleza";
         parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
-        $strExec->bindParam(':nombre_natualeza', $valor);
+        $strExec->bindParam(':nombre_naturaleza', $valor);
         $resul = $strExec->execute();
         $datos = $strExec->fetchAll(PDO::FETCH_ASSOC);
         parent::desconectarBD();

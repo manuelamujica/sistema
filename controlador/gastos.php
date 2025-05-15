@@ -64,8 +64,11 @@ if (isset($_POST['buscar'])) {
     $errores = [];
 
     try {
-        var_dump($_POST['montopagado']);
+        
+        var_dump($_POST['montopagado']."->MAS");//EN REVISIÓN
+        var_dump($_POST['monto_pagar']. "->SI");//EN REVISIÓN
         $objpago->setDatos($_POST);
+
         $objpago->check();
         $res = $objpago->registrarPgasto();
     } catch (Exception $e) {
@@ -197,7 +200,7 @@ if (isset($_POST['buscar'])) {
             "icon" => "error"
         ];
     }
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vuelto'])) { //ESTE REGISTRA EL VUELTO CON EL AJAX (EN OBSERVACIÓN NO REGISTRA EL DETALLE DEL VUELTO)
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vuelto'])) {
     $errores = [];
     try {
         $objpago->setDatos($_POST);
@@ -205,15 +208,18 @@ if (isset($_POST['buscar'])) {
         $res = $objpago->v();
     } catch (Exception $e) {
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
     }
     if (!empty($errores)) {
         echo json_encode(['success' => false, 'message' => implode(" ", $errores)]);
+        exit;
     } else if ($res == 1) {
         echo json_encode(['success' => true, 'message' => 'Vuelto registrado correctamente.']);
+        exit;
     } else {
         echo json_encode(['success' => false, 'message' => 'El vuelto no esta completo.']);
+        exit;
     }
-    exit;
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cod_gasto'])) { //REVISO SI EL GASTO TIENE PAGOS ASOCIADOS Y ME EXTRAIGA EL MONTO DE ESTOS
     require_once 'modelo/pago_emitido.php';
     $objpago = new Pagos();
@@ -223,10 +229,11 @@ if (isset($_POST['buscar'])) {
 
     if (!empty($resultado)) {
         echo json_encode(['success' => true, 'monto_total' => $resultado['monto_total']]);
+        exit;
     } else {
         echo json_encode(['success' => false, 'monto_total' => 0]);
+        exit;
     }
-    exit;
 }
 
 $gasto = $objpago->getGastos() ?? [];
