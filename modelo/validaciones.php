@@ -4,8 +4,19 @@ trait ValidadorTrait {
 
     public function validarTexto($valor, $campo, $min = 1, $max = 255) {
         $valor = trim($valor);
-        if (!preg_match("/^[\p{L}\s]+$/u", $valor)) {
+        if (!preg_match("/^[\p{L}\s]+$/u", $valor)) {  
             return "El campo $campo solo puede contener letras y espacios.";
+        }
+        if (mb_strlen($valor) < $min || mb_strlen($valor) > $max) {
+            return "El campo $campo debe tener entre $min y $max caracteres.";
+        }
+        return true;
+    }
+
+    public function validarDescripcion($valor, $campo, $min = 1, $max = 255) {
+        $valor = trim($valor);
+        if (!preg_match("/^[\p{L}ñÑ\d\s\.,\-#áéíóúÁÉÍÓÚüÜ]+$/u", $valor)) { // nuevo, agregado por manu
+            return "El campo $campo solo puede contener letras, números y algunos signos (.,-#).";
         }
         if (mb_strlen($valor) < $min || mb_strlen($valor) > $max) {
             return "El campo $campo debe tener entre $min y $max caracteres.";
@@ -85,7 +96,7 @@ trait ValidadorTrait {
         return true;
     }
 
-    //BACKUP
+    //BACKUP nuevo, agregado por manu
     public function nombreArchivo($nombre) {
         $nombre = trim($nombre);
     
@@ -96,6 +107,8 @@ trait ValidadorTrait {
         } else {
             $this->nombreArchivo = $nombre;
         }
+        return true;
+
     }
     
 

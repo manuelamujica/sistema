@@ -13,7 +13,7 @@
         Ayuda
         </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
-        <a class="dropdown-item" href="vista/dist/manual/manual.pdf" target="_blank">Manual de usuario</a>
+        <a class="dropdown-item" href="vista/dist/manual/manual.pdf" target="_blank" title="Exportar Manual de usuario como PDF">Manual de usuario</a>
     </div>
     </li>
     </ul>

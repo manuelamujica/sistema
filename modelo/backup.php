@@ -8,6 +8,18 @@ class Backup extends Conexion {
     private $nombreArchivo;
     private $ruta;
     private $tamanio;
+    private $descripcion;
+
+
+    private $frecuencia;
+    private $dia;
+    private $hora;
+    private $retencion;
+    private $habilitado;
+    private $modo;
+    private $tipo;
+
+
 
     private $errores = [];
 
@@ -23,16 +35,77 @@ class Backup extends Conexion {
     }
 
     public function setNombreArchivo($nombre) {
-        $this->nombreArchivo($nombre); // usa directamente el trait
+        $r = $this->nombreArchivo($nombre);
+        if ($r === true) {
+            $this->nombreArchivo = $nombre;
+        } else {
+            $this->errores['nombre'] = $r;
+        }
     }
     
-
-    public function getRuta() {
-        return $this->ruta;
+    public function getDescripcion() {
+        return $this->descripcion;
+    }
+    public function setDescripcion($descripcion) {
+        $r= $this->validarDescripcion($descripcion, 'descripcion', 2, 50);
+        if ($r === true) {
+            $this->descripcion = $descripcion;
+        } else {
+            $this->errores['descripcion'] = $r;
+        }
     }
 
-    public function getTamanio() {
-        return $this->tamanio;
+    public function getFrecuencia() {
+        return $this->frecuencia;
+    }
+
+    public function setFrecuencia($frecuencia){
+        $this->frecuencia = $frecuencia;
+    }
+
+    public function getDia(){
+        return $this->dia;
+    }
+
+    public function setDia($dia){
+        $this->dia = $dia;
+    }
+
+    public function getHora(){
+        return $this->hora;
+    }
+
+    public function setHora($hora){
+        $this->hora = $hora;
+    }
+
+    public function getRetencion(){
+        return $this->retencion;
+    }
+
+    public function setRetencion($retencion){
+        $valor = intval($retencion); // aseguramos que sea entero
+        if ($valor < 5) {
+            $this->errores['retencion'] = "El valor de retención debe ser al menos 5.";
+        } else {
+            $this->retencion = $valor;
+        }
+    }
+
+    public function getHabilitado(){
+        return $this->habilitado;
+    }
+
+    public function setHabilitado($habilitado){
+        $this->habilitado = $habilitado;
+    }
+
+    public function getModo(){
+        return $this->modo;
+    }
+
+    public function setModo($modo){
+        $this->modo = $modo;
     }
 
     public function getErrores() {
@@ -43,7 +116,7 @@ class Backup extends Conexion {
         if (!empty($this->errores)) {
         $mensajes = implode(" | ", $this->errores);
         throw new Exception("Errores de validación: $mensajes");
-    }
+        }
     }
     
 
@@ -57,21 +130,13 @@ class Backup extends Conexion {
     
             if (!is_dir($directorio)) {
                 mkdir($directorio, 0755, true);
-            }
-    
-            //$comando = "C:/xampp/mysql/bin/mysqldump.exe -u " . _SEC_DB_USER_ . " -p\"" . _SEC_DB_PASS_ . "\" " . _SEC_DB_NAME_ . " " . _DB_NAME_ . " > " . $this->ruta;
-            
-           
+            }        
             
             $comando = "C:/xampp/mysql/bin/mysqldump.exe --user=" . _SEC_DB_USER_ . " --databases " . _SEC_DB_NAME_ . " " . _DB_NAME_ . " > " . $this->ruta;
-
-            //system($comando);
             exec($comando, $output, $return_var);
             if ($return_var !== 0) {
                 throw new Exception("mysqldump falló con código: $return_var");
             }
-
-            
 
             if (!file_exists($this->ruta)) {
                 throw new Exception("No se generó el archivo.");
@@ -79,18 +144,19 @@ class Backup extends Conexion {
     
             $this->tamanio = filesize($this->ruta) / 1024 / 1024;
     
-            $sql = "INSERT INTO backup (cod_usuario, descripcion, ruta, fecha, tipo, tamanio)
-                    VALUES (:cod_usuario, :descripcion, :ruta, :fecha, :tipo, :tamanio)";
+            $sql = "INSERT INTO backup (cod_usuario, cod_config_backup, nombre, descripcion, ruta, fecha, tipo, tamanio)
+                    VALUES (:cod_usuario, :cod_config_backup, :nombre, :descripcion, :ruta, :fecha, :tipo, :tamanio)";
     
             parent::conectarBD();
             $stmt = $this->conex->prepare($sql);
     
             $fecha = date("Y-m-d H:i:s");
             $tipo = "manual";
-    
             $stmt->bindParam(':cod_usuario', $cod_usuario);
+            $stmt->bindValue(':cod_config_backup', 1);
             $stmt->bindParam(':ruta', $this->ruta);
-            $stmt->bindParam(':descripcion', $this->nombreArchivo);
+            $stmt->bindParam(':nombre', $this->nombreArchivo);
+            $stmt->bindParam(':descripcion', $this->descripcion);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':tipo', $tipo);
             $stmt->bindParam(':tamanio', $this->tamanio);
@@ -120,7 +186,11 @@ class Backup extends Conexion {
     MOSTRAR RESPALDOS
     ==============================*/
     private function mostrar() {
-        $sql = "SELECT * FROM backup ORDER BY fecha DESC";
+        $sql = "SELECT b.*,
+        u.nombre
+        FROM backup b 
+        INNER JOIN usuarios u ON b.cod_usuario = u.cod_usuario
+        ORDER BY fecha DESC";
         parent::conectarBD();
         $stmt = $this->conex->prepare($sql);
         $stmt->execute();
@@ -134,31 +204,54 @@ class Backup extends Conexion {
     }
 
     /*==============================
-    ELIMINAR RESPALDO
-    ==============================
-    private function eliminar($cod_backup) {
-        $sql = "SELECT ruta FROM backup WHERE cod_backup = :id";
-        parent::conectarBD();
-        $stmt = $this->conex->prepare($sql);
-        $stmt->bindParam(":id", $cod_backup);
-        $stmt->execute();
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    ELIMINAR RESPALDO + POLITICA DE RETENCION
+    ==============================*/
+    private function eliminarRetencion($retencion, $tipo) {
+        try {
+            $sql = "SELECT cod_backup, ruta FROM backup ";
+    
+            if ($tipo == 'manual') {
+                $sql .= "WHERE tipo = 'manual' ";
+            } elseif ($tipo == 'automatico') {
+                $sql .= "WHERE tipo = 'automatico' ";
+            }
+    
+            $sql .= "ORDER BY fecha DESC LIMIT 18446744073709551615 OFFSET $retencion";
 
-        if ($res && file_exists($res['ruta'])) {
-            unlink($res['ruta']);
+    
+            parent::conectarBD();
+            $stmt = $this->conex->prepare($sql);
+            $resul = $stmt->execute();
+    
+            if ($resul) {
+                $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($registros as $r) {
+                    if (!empty($r['ruta']) && file_exists($r['ruta'])) {
+                        unlink($r['ruta']); // elimina archivo físico
+                    }
+    
+                    $del = $this->conex->prepare("DELETE FROM backup WHERE cod_backup = :cod_backup");
+                    $del->bindParam(':cod_backup', $r['cod_backup']);
+                    $del->execute();
+                }
+                $r = 1;
+            } else {
+                $r = 0;
+            }
+            return $r;
+    
+        } catch (Exception $e) {
+            throw new Exception("Error al aplicar política de retención: " . $e->getMessage());
+        } finally {
+            parent::desconectarBD(); 
         }
-
-        $del = $this->conex->prepare("DELETE FROM backup WHERE cod_backup = :id");
-        $del->bindParam(":id", $cod_backup);
-        $resDel = $del->execute();
-        parent::desconectarBD();
-        return $resDel ? 'success' : 'error_delete';
     }
 
-    public function getEliminar($cod_backup) {
-        return $this->eliminar($cod_backup);
+    public function geteliminarRetencion($retencion, $tipo) {
+        return $this->eliminarRetencion($retencion, $tipo);
     }
-*/
+    
+
     /*==============================
     CONFIGURACIÓN DE BACKUP
     ==============================*/
@@ -176,28 +269,41 @@ class Backup extends Conexion {
         return $this->obtenerConfig();
     }
 
-    /*private function guardarConfig($data) {
-        $sql = "UPDATE config_backup SET 
-                    frecuencia = :frecuencia,
-                    retencion = :retencion,
-                    hora = :hora,
-                    dia = :dia,
-                    habilitado = :habilitado
-                WHERE cod_config_backup = :id";
-        parent::conectarBD();
-        $stmt = $this->conex->prepare($sql);
-        $stmt->bindParam(":frecuencia", $data['frecuencia']);
-        $stmt->bindParam(":retencion", $data['retencion']);
-        $stmt->bindParam(":hora", $data['hora']);
-        $stmt->bindParam(":dia", $data['dia']);
-        $stmt->bindParam(":habilitado", $data['habilitado'], PDO::PARAM_BOOL);
-        $stmt->bindParam(":id", $data['cod_config_backup']);
-        $res = $stmt->execute();
-        parent::desconectarBD();
-        return $res ? 1 : 0;
+    /*==============================
+    ACTUALIZAR CONFIGURACIÓN DE RESPALDO
+    ==============================*/
+    private function guardarConfig() {
+        try {
+            $sql = "UPDATE config_backup SET
+            frecuencia = :frecuencia,
+            modo = :modo,
+            retencion = :retencion,
+            hora = :hora,
+            dia = :dia,
+            habilitado = :habilitado
+            WHERE cod_config_backup = 1";
+
+            parent::conectarBD();
+            $stmt = $this->conex->prepare($sql);
+
+            $stmt->bindParam(':frecuencia', $this->frecuencia, PDO::PARAM_INT);
+            $stmt->bindParam(':dia', $this->dia, PDO::PARAM_INT);
+            $stmt->bindParam(':hora', $this->hora);
+            $stmt->bindParam(':retencion', $this->retencion, PDO::PARAM_INT);
+            $stmt->bindParam(':habilitado', $this->habilitado, PDO::PARAM_INT);
+            $stmt->bindParam(':modo', $this->modo, PDO::PARAM_INT);
+
+            $res = $stmt->execute();
+            return $res ? 1 : 0;
+
+        } catch (Exception $e) {
+            throw new Exception("Error al actualizar configuración: " . $e->getMessage());
+        } finally {
+            parent::desconectarBD();
+        }
     }
 
-    public function setConfig($data) {
-        return $this->guardarConfig($data);
-    }*/
+    public function getGuardarConfig() {
+        return $this->guardarConfig();
+    }
 }
