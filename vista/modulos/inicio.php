@@ -594,18 +594,17 @@ if (isset($editar)): ?>
 </div>
 
 <?php 
-    /*$ultimo=end($consulta);
-    /*$ultimo=end($consulta);
+    $ultimo=end($consulta);
+    $ultimo=end($consulta);
     if($ultimo['cod_divisa']!=1):
-        if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): */
+        if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): 
 ?>
-    <!-- Commenting out the divisa loading script since Python is not installed
     <script>
     $(document).ready(function() {  
         var sen = "dolar";
         var tasaorig = $("#tasaactual").val();
 
-        /*Mostrar modal de carga antes de la solicitud
+        //Mostrar modal de carga antes de la solicitud
         $("#loadingModal").modal("show");
 
         $.post('index.php?pagina=divisa', { sen: sen }, function(response) {
@@ -634,10 +633,10 @@ if (isset($editar)): ?>
         });
     });
     </script>
-    -->
 
-<?php /*  endif; 
-    endif; */?>
+
+<?php endif; 
+    endif;?>
 
 <script>
     const permisos = <?php echo json_encode($_SESSION["permisos"]); ?>;
