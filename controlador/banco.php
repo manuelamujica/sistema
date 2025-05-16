@@ -54,7 +54,7 @@ if (isset($_POST['guardar'])) {
                     "message" => "El banco ha sido registrado",
                     "icon" => "success"
                 ];
-                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de banco', $_POST["nombre_banco"], 'Banco');
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de banco', $_POST["nombre"], 'Banco');
             }  
             else {
                 $registrar = [
@@ -99,7 +99,7 @@ if (isset($_POST['guardar'])) {
                 "message" => "Los datos del banco han sido actualizados",
                 "icon" => "success"
             ];
-            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar banco', $_POST["nombre_banco"], 'Banco');
+            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar banco', $_POST["nombre"], 'Banco');
         } else {
             $editar = [
                 "title" => "Error",

@@ -301,6 +301,7 @@ $(document).ready(function() {
     
     var fechaHora = fecha + ' ' + hora;
     $('#fecha-hora').val(fechaHora);
+    //$('#fecha_pago').val(fechaHora); 
 });
 
 $(function() {//inicio de los alertas peque;os
@@ -362,6 +363,7 @@ $(document).ready(function() {
 });//fin de los alertas peque;os
 
 function calcularTotalpago() {
+
     let totalBs = 0;
     // 1. Procesar las entradas que ya están en bolívares (sin conversión)
     document.querySelectorAll('.monto-bs:not(.monto-con)').forEach(function(input) {
@@ -395,12 +397,150 @@ function calcularTotalpago() {
     let montoPagar = parseFloat(document.getElementById('monto_pagar').value) || 0;
     let diferencia = montoPagar - totalBs;
     document.getElementById('diferencia').value = diferencia.toFixed(2);
+    window.vueltoRegistrado = false;
+    if (diferencia < 0) {
+        // Si la diferencia es negativa, muestra el div que contiene el botón
+        $('#div-boton-vuelto').show();
+
+        // Opcional: Puedes pasar datos al botón para usarlos al abrir el modal de vuelto
+        // Por ejemplo, el monto del vuelto (la diferencia en positivo)
+        $('#btn-registrar-vuelto').data('monto-vuelto', Math.abs(diferencia));
+
+        // Desactivar el botón de finalizar pago hasta que se registre el vuelto
+        $('#finalizarPagoBtn').prop('disabled', true);
+    } else {
+        // Si la diferencia no es negativa, oculta el div del botón
+        $('#div-boton-vuelto').hide();
+        // Limpia los datos que pudieras haber adjuntado al botón
+        $('#btn-registrar-vuelto').removeData('monto-vuelto');
+        $('#btn-registrar-vuelto').removeData('cod-venta');
+        // Activar botón de finalizar pago
+        $('#finalizarPagoBtn').prop('disabled', false);
+        // Resetear la variable de vuelto registrado
+        window.vueltoRegistrado = false;
+    }
+
+    if (window.vueltoRegistrado && diferencia < 0) {
+        // Mostrar alerta de que debe registrar el vuelto nuevamente
+        Swal.fire({
+            title: 'Atención',
+            text: 'Has modificado el pago. Debes registrar el vuelto nuevamente.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+        window.vueltoRegistrado = false;
+        $('#finalizarPagoBtn').prop('disabled', true);
+    }
 }
- 
+
+$('#vueltoModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget); // Botón que activó el modal (será #btn-registrar-vuelto)
+    // Obtén los datos que pasaste desde la función calcularTotalpago()
+    const montoVuelto = button.data('monto-vuelto');
+    // Ahora puedes usar montoVuelto y codVenta para llenar los campos
+    // del modal de vuelto o hacer lo que necesites con ellos.
+    console.log('Monto del vuelto:', montoVuelto);
+    // Ejemplo: si tu modal de vuelto tiene un input para el monto del vuelto con id="input-monto-vuelto"
+    $('#total-vuelto').text(montoVuelto.toFixed(2)+ 'Bs');
+    $('#monto_pagarv').val(montoVuelto.toFixed(2));
+    // Y si tiene un input oculto para el código de venta con id="input-cod-venta-vuelto"
+    // $('#input-cod-venta-vuelto').val(codVenta);
+    // Limpiar los campos de entrada de vuelto
+    document.querySelectorAll('.monto-bsv').forEach(function(input) {
+        input.value = '';
+    });
+    document.querySelectorAll('.monto-divisav').forEach(function(input) {
+        input.value = '';
+    });
+    
+    // Deshabilitar el botón de registrar vuelto inicialmente
+    $('#registrarVueltoBtn').prop('disabled', true);
+    
+    // Reiniciar el cálculo
+    calcularTotalvuelto();
+});
+
 $(document).ready(function() {
+    window.vueltoRegistrado = false;
     $('#pagoModal').on('hidden.bs.modal', function () {
         // Recargar la página cuando el modal se cierra
         location.reload();
+    });
+
+    // Manejar el clic en el botón de registrar vuelto
+    $('#registrarVueltoBtn').on('click', function(e) {
+        e.preventDefault(); // Prevenir el envío del formulario
+        
+        // Verificar que el vuelto sea exacto
+        let diferencia = parseFloat(document.getElementById('diferenciav').value);
+        
+        if (Math.abs(diferencia) < 0.01) { // Considerar una pequeña tolerancia para errores de redondeo
+            // Obtener los datos del formulario de vuelto
+            let vueltoData = $('#vueltoForm').serialize();
+            
+            // Guardar los datos de vuelto en un campo oculto en el formulario principal
+            let vueltoInput = document.createElement('input');
+            vueltoInput.type = 'hidden';
+            vueltoInput.name = 'vuelto_data';
+            vueltoInput.value = vueltoData;
+            document.getElementById('pagoForm').appendChild(vueltoInput);
+            
+            // Marcar que el vuelto ha sido registrado
+            window.vueltoRegistrado = true;
+            
+            // Cerrar el modal de vuelto
+            $('#vueltoModal').modal('hide');
+            
+            // Habilitar el botón de finalizar pago
+            $('#finalizarPagoBtn').prop('disabled', false);
+            
+            // Mostrar confirmación
+            Swal.fire({
+                title: 'Vuelto registrado',
+                text: 'El vuelto ha sido registrado correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+            
+            // Cambiar el texto del botón de vuelto
+            $('#btn-registrar-vuelto').text('Editar Vuelto');
+        } else {
+            // Mostrar error
+            Swal.fire({
+                title: 'Error',
+                text: 'El vuelto debe ser exactamente igual al monto calculado.',
+                icon: 'error',
+                confirmButtonText: 'Entendido'
+            });
+        }
+    });
+
+    // Manejar el envío del formulario de pago
+    $('#pagoForm').on('submit', function(e) {
+        let diferencia = parseFloat(document.getElementById('diferencia').value);
+        
+        // Si hay que dar vuelto pero no se ha registrado
+        if (diferencia < 0 && !window.vueltoRegistrado) {
+            e.preventDefault(); // Prevenir el envío del formulario
+            
+            // Mostrar mensaje de error
+            Swal.fire({
+                title: 'Error',
+                text: 'Debes registrar el vuelto antes de finalizar el pago.',
+                icon: 'error',
+                confirmButtonText: 'Entendido'
+            });
+            
+            return false;
+        }
+        
+        // Continuar con el envío normal si todo está bien
+        return true;
+    });
+    
+    // Monitorear cambios en los campos de pago para detectar modificaciones después de registrar el vuelto
+    $('.monto-bs, .monto-divisa').on('input', function() {
+        calcularTotalpago();
     });
 });
 
@@ -410,13 +550,42 @@ $('#pagoModal').on('show.bs.modal', function (event) {
     var total = button.data('totalv');
     var fecha = button.data('fecha');
     var nombre = button.data('nombre');
+    var saldoPendiente = button.data('saldopen');
+    // Obtener la fecha y hora actual
+    var now = new Date();
+    var fecha = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+
+    // Formatea la hora en el formato HH:MM:SS
+    var hora=String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
+    var fechaHora = fecha + ' ' + hora;
     // Modal
     var modal = $(this);
     modal.find('.modal-body #nro-venta').val(codigo);
-    modal.find('.modal-body #monto_pagar').val(total);
     modal.find('.modal-body #total-pago').text(total+ 'Bs');
     modal.find('.modal-body #fecha_venta').val(fecha);
     modal.find('.modal-body #nombre_cliente').val(nombre);
+    modal.find('.modal-body #fecha_pago').val(fechaHora);
+
+    // Mostrar campo de saldo pendiente si aplica
+    if (saldoPendiente !== undefined) {
+        $('#campo-saldo').show();
+        $('#saldo_pendiente').text(saldoPendiente + ' Bs');
+        modal.find('.modal-body #monto_pagar').val(saldoPendiente.toFixed(2));
+    } else {
+        $('#campo-saldo').hide();
+        $('#saldo_pendiente').val('');
+        modal.find('.modal-body #monto_pagar').val(total);
+    }
+
+     // Reiniciar el estado del vuelto
+    window.vueltoRegistrado = false;
+    $('#btn-registrar-vuelto').text('Registrar Vuelto');
+    $('#div-boton-vuelto').hide();
+    $('#finalizarPagoBtn').prop('disabled', false);
 });
 
 $('#abonoModal').on('show.bs.modal', function (event) {
@@ -490,7 +659,45 @@ $('#anularventa').on('show.bs.modal', function (event) {
     modal.find('.modal-body #cventa').val(codigo);
     modal.find('.modal-body #statusv').val(status);
     modal.find('.modal-body #codv').text(codigo);
-
 });
+
+function calcularTotalvuelto() {
+    let totalBs = 0;
+
+    // 1. Procesar las entradas que ya están en bolívares (sin conversión)
+    document.querySelectorAll('.monto-bsv:not(.monto-conv)').forEach(function(input) {
+        let montoBs = parseFloat(input.value) || 0;
+        totalBs += montoBs;  // Sumar cada monto en bolívares directo
+    });
+
+    /* 2. Procesar las entradas en divisas (convertirlas a bolívares)
+    document.querySelectorAll('.monto-divisav').forEach(function(inputDivisa) {
+        let index = inputDivisa.id.split('-').pop();  // Obtener el índice de la fila actual
+        // Obtener el monto en divisa de la fila
+        let montoDivisa = parseFloat(inputDivisa.value) || 0;
+        // Obtener la tasa de conversión de la misma fila
+        let tasaConversion = parseFloat(document.getElementById('tasa-conversionv-' + index).value) || 1;
+        // Calcular el monto en bolívares
+        let montoConvertidoBs = montoDivisa * tasaConversion;
+        // Actualizar el campo de bolívares convertido en esa fila
+        document.getElementById('monto-bs-con-v' + index).value = parseFloat(montoConvertidoBs.toFixed(2));
+        // Sumar al total de bolívares
+        totalBs += montoConvertidoBs;
+    });
+
+*/ //3. Mostrar el total en el campo "Monto Pagado"
+    document.getElementById('vuelto_pagado').value = totalBs.toFixed(2);
+    // 4. Calcular y mostrar la diferencia con el monto a pagar
+    let montoPagar = parseFloat(document.getElementById('monto_pagarv').value) || 0;
+    let diferencia = montoPagar - totalBs;
+    document.getElementById('diferenciav').value = diferencia.toFixed(2);
+
+    if (Math.abs(diferencia) < 0.01) { // Considerar una pequeña tolerancia para errores de redondeo
+        $('#registrarVueltoBtn').prop('disabled', false);
+    } else {
+        $('#registrarVueltoBtn').prop('disabled', true);
+    }
+}
+
 
 

@@ -23,7 +23,7 @@ if(isset($_POST['buscar'])){
                         "message" => "El tipo de pago ha sido registrado",
                         "icon" => "success"
                     ];
-                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de tipo de pago', $_POST["tipo_pago"], 'Tipo de pago');
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de tipo de pago', $_POST["cod_metodo"], 'Tipo de pago');
                 }else{
                     $registrar = [
                         "title" => "Error",
@@ -49,12 +49,11 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }else{
-
             if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['tpago'])){
                 
                 $obj->setmetodo($_POST['tpago']);
                 $obj->setstatus($_POST['status']);
-                $result=$obj->editar($_POST['codigo']);
+                $result=$obj->editar($_POST['codigo'], $_POST['cod_metodo']);
                 if($result==1){
                     $editar = [
                         "title" => "Editado con éxito",
@@ -128,21 +127,21 @@ if(isset($_POST['buscar'])){
         if (!$obj->buscar($_POST['medio'])) {
             $resul = $obj->incluir();
             if ($resul == 1) {
-                $registrar = [
+                $registrarm = [
                     "title" => "Exito",
                     "message" => "¡Registro exitoso!",
                     "icon" => "success"
                 ];
                 $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de metodo de pago', $_POST["medio"], 'metodo de pago');
             } else {
-                $registrar = [
+                $registrarm = [
                     "title" => "Error",
                     "message" => "Hubo un problema al intentar registrar el metodo de pago..",
                     "icon" => "error"
                 ];
             }
         } else {
-            $registrar = [
+            $registrarm = [
                 "title" => "Error",
                 "message" => "No se pudo registrar. El metodo de pago ya existe.",
                 "icon" => "error"

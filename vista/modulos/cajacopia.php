@@ -63,10 +63,7 @@
                                                             data-divisa="<?php echo $dato['cod_divisa']; ?>"
                                                             data-status="<?php echo $dato['status']; ?>">
                                                             <i class="fas fa-pencil-alt"></i>
-                                                        </button>
-                                                  
-                                                                                                                                                                                      
-
+                                                        </button>                                                     
                                                         <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#modaleliminar"
                                                         data-cod="<?php echo $dato['cod_caja']; ?>"
                                                         data-nombre="<?php echo $dato['nombre']; ?>">   

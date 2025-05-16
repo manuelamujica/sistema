@@ -57,44 +57,56 @@ class Tpago extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT dtp.*, tp.medio_pago, tp.status AS status_tipo_pago,
-                    CASE 
-                        WHEN dtp.tipo_moneda = 'digital' THEN 'cuenta_bancaria'
-                        WHEN dtp.tipo_moneda = 'efectivo' THEN 'caja'
-                        ELSE 'indefinido'
-                    END AS origen,
+        $registro="SELECT 
+                        dtp.*,
+                        tp.medio_pago,
+                        tp.status AS status_tipo_pago,
 
-                        -- Datos de cuenta bancaria si aplica
-                        cb.cod_cuenta_bancaria,
-                        cb.numero_cuenta,
-                        cb.saldo AS saldo_cuenta,
-                        b.nombre_banco,
-                        tc.nombre AS tipo_cuenta,
-                        dcb.nombre AS nombre_divisa_cuenta,
-                        dcb.abreviatura AS abrev_divisa_cuenta,
+                        CASE 
+                            WHEN dtp.tipo_moneda = 'digital' THEN 'cuenta_bancaria'
+                            WHEN dtp.tipo_moneda = 'efectivo' THEN 'caja'
+                            ELSE 'indefinido'
+                        END AS origen,
 
-                        -- Datos de caja si aplica
-                        c.cod_caja,
-                        c.nombre AS nombre_caja,
-                        c.saldo AS saldo_caja,
-                        dc.nombre AS nombre_divisa_caja,
-                        dc.abreviatura AS abrev_divisa_caja
+                        CASE 
+                            WHEN dtp.tipo_moneda = 'digital' THEN 
+                                CONCAT(b.nombre_banco, ' - ', cb.numero_cuenta, ' (', tc.nombre, ')')
+                            WHEN dtp.tipo_moneda = 'efectivo' THEN 
+                                c.nombre
+                            ELSE 
+                                'Sin descripción'
+                        END AS descripcion,
+
+                        -- Divisa asociada (de cuenta o caja, según el tipo)
+                        CASE 
+                            WHEN dtp.tipo_moneda = 'digital' THEN dcb.nombre
+                            WHEN dtp.tipo_moneda = 'efectivo' THEN dc.nombre
+                            ELSE 'Sin divisa'
+                        END AS nombre_divisa,
+
+                        CASE 
+                            WHEN dtp.tipo_moneda = 'digital' THEN dcb.abreviatura
+                            WHEN dtp.tipo_moneda = 'efectivo' THEN dc.abreviatura
+                            ELSE '-'
+                        END AS abreviatura_divisa,
+                        
+                        CASE 
+                            WHEN dtp.tipo_moneda = 'digital' THEN dcb.cod_divisa
+                            WHEN dtp.tipo_moneda = 'efectivo' THEN dc.cod_divisa
+                            ELSE '-'
+                        END AS cod_divisa
 
                     FROM detalle_tipo_pago dtp
 
-                    -- Unir con tipo_pago
                     LEFT JOIN tipo_pago tp ON dtp.cod_metodo = tp.cod_metodo
 
-                    -- Si es tipo digital
                     LEFT JOIN cuenta_bancaria cb ON dtp.cod_cuenta_bancaria = cb.cod_cuenta_bancaria
                     LEFT JOIN banco b ON cb.cod_banco = b.cod_banco
                     LEFT JOIN tipo_cuenta tc ON cb.cod_tipo_cuenta = tc.cod_tipo_cuenta
                     LEFT JOIN divisas dcb ON cb.cod_divisa = dcb.cod_divisa
 
-                    -- Si es tipo efectivo
                     LEFT JOIN caja c ON dtp.cod_caja = c.cod_caja
-                    LEFT JOIN divisas dc ON c.cod_divisas = dc.cod_divisa
-                    ";
+                    LEFT JOIN divisas dc ON c.cod_divisas = dc.cod_divisa;";
         parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
@@ -180,16 +192,20 @@ class Tpago extends Conexion{
         }
     }
 
-    public function editar($valor){
-        $registro="UPDATE tipo_pago SET medio_pago=:medio_pago, status=:status WHERE cod_tipo_pago=$valor";
+    public function editar($valor, $cod_metodo){
+        $registro="UPDATE tipo_pago SET medio_pago=:medio_pago WHERE cod_metodo=$cod_metodo";
+        $reg="UPDATE detalle_tipo_pago SET status=:status WHERE cod_tipo_pago=$valor";
         parent::conectarBD();
+        #editar el metodo de pago
         $strExec = $this->conex->prepare($registro);
-        #instanciar metodo bindparam
         $strExec->bindParam(':medio_pago', $this->metodo);
-        $strExec->bindParam(':status', $this->status);
         $resul = $strExec->execute();
+        #editar el status del detalle tipo pago
+        $str=$this->conex->prepare($reg);
+        $str->bindParam(':status', $this->status);
+        $resul2 = $str->execute();
         parent::desconectarBD();
-        if($resul){
+        if($resul && $resul2){
             $r = 1;
         }else{
             $r = 0;

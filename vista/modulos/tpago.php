@@ -42,22 +42,10 @@
                                 <tr>
                                     <td><?php echo $dato['cod_tipo_pago']?></td>
                                     <td><?php echo $dato['medio_pago']?></td>
-                                    <td><?php 
-                                            if(isset($dato['cod_cuenta_bancaria'])){
-                                                echo $dato['nombre_banco'] . " - " . $dato['numero_cuenta'] . " - " . $dato['tipo_cuenta'];
-                                            }else{
-                                                echo $dato['nombre_caja'];
-                                            }
-                                    ?></td>
-                                    <td><?php 
-                                            if(isset($dato['cod_cuenta_bancaria'])){
-                                                echo $dato['nombre_divisa_cuenta'];
-                                            }else{
-                                                echo $dato['nombre_divisa_caja'];
-                                            } 
-                                    ?></td>
+                                    <td><?php echo $dato['descripcion'];?></td>
+                                    <td><?php echo $dato['nombre_divisa'];?></td>
                                     <td>
-                                        <?php if ($dato['status_tipo_pago']==1):?>
+                                        <?php if ($dato['status']==1):?>
                                             <span class="badge bg-success">Activo</span>
                                         <?php else:?>
                                             <span class="badge bg-danger">Inactivo</span>
@@ -66,11 +54,11 @@
                                     <td>
                                     <?php if($dato['cod_tipo_pago']!=1): ?>
                                         <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
-                                        data-codigo="<?php //echo $dato["cod_tipo_pago"]; ?>" 
-                                        data-medio="<?php //echo $dato["medio_pago"]; ?>" 
-                                        data-divisa="<?php //echo $dato["abreviatura"]; ?>" 
-                                        data-nombre="<?php //echo $dato["nombre"]; ?>"
-                                        data-status="<?php //echo $dato["status_pago"]; ?>" >
+                                        data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
+                                        data-medio="<?php echo $dato["medio_pago"]; ?>" 
+                                        data-desc="<?php echo $dato["descripcion"]; ?>"
+                                        data-cod_metodo="<?php echo $dato["cod_metodo"]; ?>"
+                                        data-status="<?php echo $dato["status"]; ?>" >
                                         <i class="fas fa-pencil-alt"></i>
                                         </button>
                                         <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
@@ -205,6 +193,7 @@ MODAL EDITAR TIPO DE PAGO
                     <div class="form-group">
                         <label for="codigo">Código</label>
                         <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                        <input type="hidden" id="cod_metodo" name="cod_metodo">
                     </div>
                     <div class="form-group">
                         <label for="tpago">Tipo de Pago</label>
@@ -213,8 +202,8 @@ MODAL EDITAR TIPO DE PAGO
                         <input type="hidden" id="origin" name="origin">
                     </div>
                     <div class="form-group">
-                        <label for="divisa">Divisa</label>
-                        <input type="text" class="form-control" id="divisa1" readonly>
+                        <label for="divisa">Descripcion</label>
+                        <input type="text" class="form-control" id="descripcion" readonly>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -325,12 +314,12 @@ MODAL CONFIRMAR ELIMINAR
         </div>
     </div>
 </div>
-<?php if (isset($registrar)): ?>
+<?php if (isset($registrarm)): ?>
     <script>
         Swal.fire({
-            title: '<?php echo $registrar["title"]; ?>',
-            text: '<?php echo $registrar["message"]; ?>',
-            icon: '<?php echo $registrar["icon"]; ?>',
+            title: '<?php echo $registrarm["title"]; ?>',
+            text: '<?php echo $registrarm["message"]; ?>',
+            icon: '<?php echo $registrarm["icon"]; ?>',
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
