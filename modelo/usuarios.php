@@ -82,8 +82,7 @@ public function accesos($valor){
 /*==============================
 REGISTRAR USUARIO
 ================================*/
-private function registrar($rol){
-    $this->conectarBD();    
+private function registrar($rol){ 
     $sql = "INSERT INTO usuarios(nombre,user,password,cod_tipo_usuario,status) VALUES(:nombre,:user,:password,:cod_tipo_usuario,1)";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
@@ -112,7 +111,6 @@ VALIDAR USUARIO (USER)
 ================================*/
 public function buscar($valor){
     $this->user=$valor;
-    $this->conectarBD();
     $registro = "select * from usuarios where user=:user"; 
     $resultado= "";
     parent::conectarBD();
@@ -132,7 +130,6 @@ public function buscar($valor){
 MOSTRAR USUARIOS
 ================================*/
 public function listar(){
-    $this->conectarBD();
     $registro = "SELECT
     u.cod_usuario,
     u.nombre,
@@ -160,7 +157,6 @@ public function listar(){
 EDITAR USUARIO
 ================================*/
     public function editar($codigo, $rol){
-        $this->conectarBD();
     $sql = "UPDATE usuarios 
         SET nombre=:nombre, user=:user, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
         WHERE cod_usuario=:codigo";
@@ -177,7 +173,6 @@ EDITAR USUARIO
     }
     
     public function editar2($codigo, $rol){
-        $this->conectarBD();
     $sql = "UPDATE usuarios 
             SET nombre=:nombre, user=:user, password=:password, cod_tipo_usuario=:cod_tipo_usuario, status=:status 
             WHERE cod_usuario=:codigo";
@@ -198,8 +193,6 @@ EDITAR USUARIO
 ELIMINAR USUARIO
 ================================*/
 public function eliminar($valor) {
-    $this->conectarBD();
-    // el usuario a eliminar es administrador?
     $sql = "SELECT cod_tipo_usuario, status FROM usuarios WHERE cod_usuario = :valor";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
