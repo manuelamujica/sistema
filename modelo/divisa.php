@@ -120,12 +120,16 @@ class Divisa extends Conexion
 
 
     public function consultarDivisas() {
-        $sql = "SELECT *FROM divisas";
         parent::conectarBD();
+        $sql = "SELECT d.*, 
+            (SELECT cd.tasa FROM cambio_divisa cd WHERE cd.cod_divisa = d.cod_divisa ORDER BY cd.fecha DESC, cd.cod_cambio DESC LIMIT 1) AS tasa,
+            (SELECT cd.fecha FROM cambio_divisa cd WHERE cd.cod_divisa = d.cod_divisa ORDER BY cd.fecha DESC, cd.cod_cambio DESC LIMIT 1) AS fecha
+            FROM divisas d";
         $stmt = $this->conex->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         parent::desconectarBD();
+        return $datos;
     }
 
     public function consultar(){
@@ -187,21 +191,21 @@ class Divisa extends Conexion
 
 
     public function eliminar($valor){
-        $registro="SELECT COUNT(*) AS v_count FROM cambio_divisa cd JOIN tipo_pago tp ON cd.cod_cambio = tp.cod_cambio WHERE cd.cod_divisa = $valor";
-        parent::conectarBD();
-        $strExec = $this->conex->prepare($registro);
-        $resul = $strExec->execute();
-        if($resul){
-            $resultado=$strExec->fetch(PDO::FETCH_ASSOC); 
-            if ($resultado['v_count']>0){
-                $r=0;
-            }else{
-                $fisico="DELETE FROM divisas WHERE cod_divisa=$valor";
-                $strExec=$this->conex->prepare($fisico);
-                $strExec->execute();
-                $r=1;
-                }
+        try {
+            parent::conectarBD();
+            $fisico = "DELETE FROM divisas WHERE cod_divisa = :cod_divisa";
+            $strExec = $this->conex->prepare($fisico);
+            $strExec->bindParam(':cod_divisa', $valor);
+            $strExec->execute();
+            $r = 1;
+        } catch (PDOException $e) {
+            // violacion de clave foranea
+            if ($e->getCode() == '23000') {
+                $r = 0;
+            } else {
+                throw $e; // volver a lanzar si es un error diferente
             }
+        }
         parent::desconectarBD();
         return $r;
     }
