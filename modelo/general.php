@@ -61,7 +61,6 @@ class General extends Conexion{
 REGISTRAR INFO DE EMPRESA
 ================================*/
     private function registrar(){
-        $this->conectarBD();
         $sql = "INSERT INTO empresa(rif,nombre,direccion,telefono,email,descripcion,logo) VALUES(:rif,:nombre,:direccion,:telefono,:email,:descripcion,:logo)";
         parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
@@ -90,7 +89,6 @@ REGISTRAR INFO DE EMPRESA
 MOSTRAR INFO DE EMPRESA
 ================================*/
     public function mostrar(){
-        $this->conectarBD();
         $registro="select * from empresa";
         parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
@@ -106,7 +104,6 @@ MOSTRAR INFO DE EMPRESA
 
     //VALIDAR REGISTRO
     public function buscar(){
-        $this->conectarBD();
         $registro="select count(*) as total from empresa";
         $resultado= "";
         parent::conectarBD();
@@ -136,7 +133,6 @@ MOSTRAR INFO DE EMPRESA
 EDITAR INFO DE EMPRESA
 ================================*/
 private function editar(){
-    $this->conectarBD();
     $registro = "UPDATE empresa SET nombre = :nombre, telefono=:telefono, email=:email, direccion = :direccion, descripcion = :descripcion, logo=:logo WHERE rif = :rif";
     parent::conectarBD();
     $strExec = $this->conex->prepare($registro);
