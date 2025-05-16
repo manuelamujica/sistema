@@ -11,6 +11,7 @@ $objRol= new Rol();
 $objbitacora = new Bitacora();
 
 
+
 if (isset($_POST["ingresar"])) {
 	
 	if (isset($_POST['captchaCodigo'])) {
@@ -128,7 +129,7 @@ if (isset($_POST["ingresar"])) {
 	} else {
 		$login = [
 			"title" => "Error",
-			"message" => "Intenta de nuevo.. ",
+			"message" => "Intenta de nuevo. ",
 			"icon" => "error"
 		];
 	}
