@@ -81,6 +81,21 @@ trait ValidadorTrait {
         return true;
     }
 
+    public function validarFecha($valor, $campo) {
+        $valor = trim($valor);
+        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $valor)) {
+            return "El campo $campo no es una fecha válida.";
+        }
+        return true;
+    }
+
+    public function validardatetime($valor, $campo) {
+        $valor = trim($valor);
+        if (!preg_match("/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/", $valor)) {
+            return "El campo $campo no es una fecha y hora válida.";
+        }
+        return true;
+    }
 
 }
 

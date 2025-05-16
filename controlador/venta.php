@@ -15,14 +15,14 @@ if(isset($_POST['buscar'])){
     exit;
     //$objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Buscar producto', $_POST['buscar'], 'Productos');
 }else if(isset($_POST['registrarv'])){
-    if(!empty($_POST['cod_cliente']) && !empty($_POST['total_general']) && !empty($_POST['fecha_hora'])){
+    if(!empty($_POST['cod_cliente']) && !empty($_POST['total_general']) && !empty($_POST['fecha_hora']) && !empty($_POST['condicion'])){
         if(isset($_POST['productos'])){
-            $obj->set_total($_POST['total_general']);
-            $obj->setfecha($_POST['fecha_hora']);
+            $obj->setdatav($_POST);
             $resul=$obj->registrar($_POST['cod_cliente'], $_POST['productos']);
             error_log($resul);
             header('Content-Type: application/json');
             if($resul>0){
+                $obj->rmovimiento($resul);
                 echo json_encode([
                     'success'=>true,
                     'cod_venta'=>$resul,
@@ -55,13 +55,11 @@ if(isset($_POST['buscar'])){
     }
 
 }else if(isset($_POST['finalizarp'])){
-    if(!empty($_POST['nro_venta']) && !empty($_POST['monto_pagado'])){
-        //if($_POST['monto_pagado']!=$_POST['monto_pagar']){
+    if(!empty($_POST['nro_venta']) && !empty($_POST['monto_pagado']) && !empty($_POST['fecha_pago'])){
             if(isset($_POST['pago'])){
-                $objp->set_cod_venta($_POST['nro_venta']);
-                $objp->set_montototal($_POST['monto_pagado']);
+                $objp->setdatap($_POST);
                 $resul=$objp->registrar($_POST['pago'], $_POST['monto_pagar']);
-                if($resul==0){
+                if($resul===0){
                     $registrarp = [
                         "title" => "El pago de la venta ha sido registrado exitosamente.",
                         "message" => "La venta se ha completado en su totalidad.",
@@ -75,9 +73,14 @@ if(isset($_POST['buscar'])){
                         "icon" => "success"
                     ];
                     $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de pago parcial', $_POST["monto_pagar"], 'Pago');
+                }else {
+                    $registrarp = [
+                        "title" => "Error al registrar el pago.",
+                        "message" => "Inténtelo de nuevo o contacte a soporte.",
+                        "icon" => "error"
+                    ];
                 }
             }
-        //}
     }
 }else if(isset($_POST['parcialp'])){
     if(!empty($_POST['codigop'])){
@@ -125,7 +128,7 @@ if(isset($_POST['buscar'])){
 }
 
 //$datos=$obj->v_cliente();
-//$opciones=$objpago->consultar();
+$opciones=$objpago->consultar();
 $consulta=$obj->consultar();
 $_GET['ruta']='venta';
 require_once 'plantilla.php';

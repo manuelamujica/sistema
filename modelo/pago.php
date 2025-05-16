@@ -1,10 +1,17 @@
 <?php
 require_once 'conexion.php';
+require_once 'validaciones.php';
 class Pago extends Conexion{
     private $monto_total;
     private $monto_dpago;
     private $cod_venta;
     private $cod_pago;
+    private $fecha_pago;
+    private $cod_vuelto;
+    private $vuelto;
+    use ValidadorTrait;
+    private $errores=[];
+
 
     public function __construct(){
         parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
@@ -34,18 +41,68 @@ class Pago extends Conexion{
         return $this->cod_pago;
     }
 
+    public function setdatap($datos){
+        if($this->validarDecimal($datos['monto_pagado'], 'Monto pagado', 1, 20)){
+            $this->monto_total = $datos['monto_pagado'];
+        }else{
+            $this->errores['monto_pagado'] = $this->validarDecimal($datos['monto_pagado'], 'Monto pagado', 1, 20);
+        }
+        if($this->validarNumerico($datos['nro_venta'], 'Número de venta', 1, 20)){
+            $this->cod_venta = $datos['nro_venta'];
+        }else{
+            $this->errores['nro_venta'] = $this->validarNumerico($datos['nro_venta'], 'Número de venta', 1, 20);
+        }
+        if($this->validardatetime($datos['fecha_pago'], 'Fecha de pago')){
+            $this->fecha_pago = $datos['fecha_pago'];
+        }else{
+            $this->errores['fecha_pago'] = $this->validardatetime($datos['fecha_pago'], 'Fecha de pago');
+        }
+        if(!empty($datos['vuelto_data'])){
+            parse_str($datos['vuelto_data'], $this->vuelto);
+            echo '<script>console.log(' . json_encode($this->vuelto) . ');</script>';
+        }else{
+            $this->cod_vuelto = null;
+        }
+    }
+
     public function registrar($pago, $monto_venta){
-        $sql="INSERT INTO pagos(cod_venta, monto_total) VALUES(:cod_venta, :monto_total)";
+        try{
         parent::conectarBD();
+        $this->conex->beginTransaction();
+        if(!empty($this->vuelto)){
+            $sql="INSERT INTO vuelto_emitido(vuelto_total) VALUES(:vuelto_total)";
+            $strExec = $this->conex->prepare($sql);
+            $strExec->bindParam(':vuelto_total', $this->vuelto['vuelto_pagado']);
+            $resultado=$strExec->execute();
+            if($resultado){
+                $this->cod_vuelto = $this->conex->lastInsertId();
+                foreach($this->vuelto['vuelto'] as $dvuelto){
+                    if(!empty($dvuelto['monto']) && $dvuelto['monto']>0){
+                        $registro="INSERT INTO detalle_vueltoe(cod_vuelto, cod_tipo_pago, monto) VALUES(:cod_vuelto, :cod_tipo_pago, :monto)";
+                        $sentencia=$this->conex->prepare($registro);
+                        $sentencia->bindParam(':cod_vuelto', $this->cod_vuelto);
+                        $sentencia->bindParam(':cod_tipo_pago', $dvuelto['cod_tipo_pago']);
+                        $sentencia->bindParam(':monto', $dvuelto['monto']);
+                        $sentencia->execute();
+                    }
+                }
+            }else{
+                throw new Exception("Error al registrar el vuelto");
+            }
+        }
+
+        $sql="INSERT INTO pago_recibido(cod_venta, cod_vuelto, fecha, monto_total) VALUES(:cod_venta, :cod_vuelto, :fecha, :monto_total)";
         $strExec = $this->conex->prepare($sql);
         $strExec->bindParam(':cod_venta', $this->cod_venta);
+        $strExec->bindParam(':cod_vuelto', $this->cod_vuelto);
+        $strExec->bindParam(':fecha', $this->fecha_pago);
         $strExec->bindParam(':monto_total', $this->monto_total);
         $resul = $strExec->execute();
         if($resul){
             $nuevo_cod = $this->conex->lastInsertId();
             foreach ($pago as $pagos){
                 if(!empty($pagos['monto']) && $pagos['monto']>0){
-                    $registro="INSERT INTO detalle_pagos(cod_pago, cod_tipo_pago, monto) VALUES($nuevo_cod, :cod_tipo_pago, :monto)";
+                    $registro="INSERT INTO detalle_pago_recibido(cod_pago, cod_tipo_pago, monto) VALUES($nuevo_cod, :cod_tipo_pago, :monto)";
                     $sentencia=$this->conex->prepare($registro);
                     $sentencia->bindParam(':cod_tipo_pago', $pagos['cod_tipo_pago']);
                     $sentencia->bindParam(':monto', $pagos['monto']);
@@ -65,9 +122,18 @@ class Pago extends Conexion{
                 $strExec->execute();
                 $r=0;
             }
+        }else{
+            throw new Exception("Error al registrar el pago");
         }
-        parent::desconectarBD();
-    return $r;
+        $this->conex->commit();
+        return $r;
+        }catch(PDOException $e){
+            $this->conex->rollBack();
+            error_log("Error en la consulta: " . $e->getMessage());
+            return false;
+        }finally{
+            parent::desconectarBD();
+        }
     }
 
     public function parcialp($pago){

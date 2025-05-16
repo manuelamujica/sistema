@@ -176,12 +176,11 @@ class Dcarga extends Conexion{
     private function crear($productos)
     {
         $r = 0;
-        $registro = "INSERT INTO carga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)";
-
+        $registro="INSERT INTO carga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)";
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $strExec->bindParam(':fecha', $this->fecha);
         $strExec->bindParam(':descripcion', $this->descripcion);
-
         $result = $strExec->execute();
         $carga = $this->conex->lastInsertId(); // Obtener el último ID insertado
         $this->setcodcarga($carga); // Obtener el último código de carga insertado
@@ -214,9 +213,9 @@ class Dcarga extends Conexion{
                     $cod_carga = $this->carga(); // Obtener el último código de carga insertado
                     $this->setcodcarga($cod_carga); // Asignar el código de carga a la propiedad
                     $sql = "INSERT INTO detalle_carga(cod_detallep,cod_carga, cantidad) VALUES(:cod_detallep, :cod_carga, :cantidad)";
-
+                    parent::conectarBD();
                     $strExec = $this->conex->prepare($sql);
-                    $strExec->bindParam(':cod_detallep', $this->cod_detallep);
+                    $strExec->bindParam(':cod_detallep', $detallep);
                     $strExec->bindParam(':cod_carga', $this->cod_carga);
                     $strExec->bindParam(':cantidad', $this->cantidad);
 
@@ -235,8 +234,10 @@ class Dcarga extends Conexion{
                 }
             }
         } else {
+            parent::desconectarBD();
             return 0;
         }
+        parent::desconectarBD();
         return $r; // Registro exitoso
     }
 

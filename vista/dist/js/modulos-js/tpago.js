@@ -4,13 +4,13 @@ $(document).ready(function() {
     // Evento para cambiar entre bancos y cajas según el tipo de moneda
     $('input[name="tipo_moneda"]').on('change', function() {
         var tipoMoneda = $(this).val();
-        
-        if (tipoMoneda == 1) { // Digital - Mostrar bancos
+        console.log(tipoMoneda);
+        if (tipoMoneda == 2) { // Digital - Mostrar bancos
             $('.bancos-container').show();
             $('.cajas-container').hide();
             $('#banco').prop('required', true);
             $('#caja').prop('required', false);
-        } else if (tipoMoneda == 2) { // Efectivo - Mostrar cajas
+        } else if (tipoMoneda == 1) { // Efectivo - Mostrar cajas
             $('.bancos-container').hide();
             $('.cajas-container').show();
             $('#banco').prop('required', false);
@@ -39,13 +39,16 @@ $(document).ready(function() {
         var tpago = button.data('medio');
         var status = button.data('status');
         var origin = button.data('medio');
-        var nombre = button.data('nombre');
+        var nombre = button.data('desc');
+        var cod=button.data('cod_metodo');
         // Modal
         var modal = $(this);
         modal.find('.modal-body #codigo').val(codigo);
         modal.find('.modal-body #tpago').val(tpago);
         modal.find('.modal-body #status').val(status);
         modal.find('.modal-body #origin').val(origin);
+        modal.find('.modal-body #descripcion').val(nombre);
+        modal.find('.modal-body #cod_metodo').val(cod);
     });
 
     // Código existente para eliminar modal
