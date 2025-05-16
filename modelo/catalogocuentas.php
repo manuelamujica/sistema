@@ -126,7 +126,7 @@ class CatalogoCuentas extends Conexion{
     CONSULTAR (TABLA) CON STORED PROCEDURE
     ================================*/
 
-   /* private function consultar_cuentas(){
+   private function consultar_cuentas(){
         $sql = "CALL consultar_cuentas_contables()";
         parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
@@ -138,7 +138,7 @@ class CatalogoCuentas extends Conexion{
 
     public function getconsultar_cuentas(){
         return $this->consultar_cuentas();
-    }*/
+    }
 
 
   /* =============================
@@ -165,79 +165,79 @@ class CatalogoCuentas extends Conexion{
 }
 
 
-  /* ====================================
-  GENERAR CÓDIGO CONTABLE POR NIVEL
-  =======================================*/
-  public function generarCodigo($nivel, $codPadre = null) {
-    try {
-        parent::conectarBD();
+/* ====================================
+GENERAR CÓDIGO CONTABLE POR NIVEL
+=======================================*/
+    public function generarCodigo($nivel, $codPadre = null) {
+        try {
+            parent::conectarBD();
 
-        // NIVEL 1: Código raíz
-        if ($nivel == 1) {
-            $sql = "SELECT MAX(CAST(codigo_contable AS UNSIGNED)) AS ultimo 
-                    FROM cuentas_contables 
-                    WHERE nivel = 1 AND codigo_contable NOT LIKE '%.%'";
+            // NIVEL 1: Código raíz
+            if ($nivel == 1) {
+                $sql = "SELECT MAX(CAST(codigo_contable AS UNSIGNED)) AS ultimo 
+                        FROM cuentas_contables 
+                        WHERE nivel = 1 AND codigo_contable NOT LIKE '%.%'";
+                $stmt = $this->conex->prepare($sql);
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                $nuevo = $row && $row['ultimo'] ? ((int)$row['ultimo'] + 1) : 1;
+                return $nuevo;
+            }
+
+            // NIVEL > 1: Buscar código del padre y generar en base a él
+            if ($codPadre === null) {
+                return 'VACIO/CUENTA SIN PADRE'; // No se puede sin padre
+            }
+
+            // Obtener código del padre
+            $sql = "SELECT codigo_contable FROM cuentas_contables WHERE cod_cuenta = :codPadre";
             $stmt = $this->conex->prepare($sql);
+            $stmt->bindParam(':codPadre', $codPadre);
             $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $padre = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $nuevo = $row && $row['ultimo'] ? ((int)$row['ultimo'] + 1) : 1;
-            return $nuevo;
-        }
-
-        // NIVEL > 1: Buscar código del padre y generar en base a él
-        if ($codPadre === null) {
-            return 'VACIO/CUENTA SIN PADRE'; // No se puede sin padre
-        }
-
-        // Obtener código del padre
-        $sql = "SELECT codigo_contable FROM cuentas_contables WHERE cod_cuenta = :codPadre";
-        $stmt = $this->conex->prepare($sql);
-        $stmt->bindParam(':codPadre', $codPadre);
-        $stmt->execute();
-        $padre = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$padre) {
-            return 'NO HAY CUENTA PADRE';
-        }
-
-        $codigoPadre = $padre['codigo_contable'];
-
-        // Buscar último hijo directo
-        $sqlHijos = "SELECT MAX(codigo_contable) AS ultimo 
-                    FROM cuentas_contables 
-                    WHERE cuenta_padreid = :codPadre";
-        $stmtHijos = $this->conex->prepare($sqlHijos);
-        $stmtHijos->bindParam(':codPadre', $codPadre);
-        $stmtHijos->execute();
-        $hijo = $stmtHijos->fetch(PDO::FETCH_ASSOC);
-
-        if ($hijo && $hijo['ultimo']) {
-            $partes = explode('.', $hijo['ultimo']);
-            $ultimoSegmento = (int) end($partes) + 1;
-
-            if ($nivel == 2) {
-                $nuevoCodigo = $codigoPadre . '.' . $ultimoSegmento; // sin ceros
-            } else {
-                $nuevoCodigo = $codigoPadre . '.' . str_pad($ultimoSegmento, 2, '0', STR_PAD_LEFT);
+            if (!$padre) {
+                return 'NO HAY CUENTA PADRE';
             }
 
-            return $nuevoCodigo;
-        } else {
-            // Primer hijo
-            if ($nivel == 2) {
-                return $codigoPadre . '.1'; // sin ceros
-            } else {
-                return $codigoPadre . '.01'; // con ceros
-            }
-        }
+            $codigoPadre = $padre['codigo_contable'];
 
-    } catch (Exception $e) {
-        return 'CATCH ' . $e->getMessage();
-    } finally {
-        parent::desconectarBD();
+            // Buscar último hijo directo
+            $sqlHijos = "SELECT MAX(codigo_contable) AS ultimo 
+                        FROM cuentas_contables 
+                        WHERE cuenta_padreid = :codPadre";
+            $stmtHijos = $this->conex->prepare($sqlHijos);
+            $stmtHijos->bindParam(':codPadre', $codPadre);
+            $stmtHijos->execute();
+            $hijo = $stmtHijos->fetch(PDO::FETCH_ASSOC);
+
+            if ($hijo && $hijo['ultimo']) {
+                $partes = explode('.', $hijo['ultimo']);
+                $ultimoSegmento = (int) end($partes) + 1;
+
+                if ($nivel <= 3) {
+                    $nuevoCodigo = $codigoPadre . '.' . $ultimoSegmento; // sin ceros para nivel 2 y 3
+                } else {
+                    $nuevoCodigo = $codigoPadre . '.' . str_pad($ultimoSegmento, 2, '0', STR_PAD_LEFT); // con ceros desde nivel 4
+                }
+                return $nuevoCodigo;
+
+            } else {
+                // Primer hijo
+                if ($nivel <= 3) {
+                    return $codigoPadre . '.1'; // sin ceros
+                } else {
+                    return $codigoPadre . '.01'; // con ceros desde nivel 4
+                }
+            }
+
+        } catch (Exception $e) {
+            return 'CATCH ' . $e->getMessage();
+        } finally {
+            parent::desconectarBD();
+        }
     }
-}
 
 
 }

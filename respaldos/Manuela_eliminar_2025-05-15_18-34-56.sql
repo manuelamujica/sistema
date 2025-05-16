@@ -45,7 +45,7 @@ CREATE TABLE `backup` (
   KEY `usuariobackup` (`cod_usuario`),
   CONSTRAINT `configbackup` FOREIGN KEY (`cod_config_backup`) REFERENCES `config_backup` (`cod_config_backup`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `usuariobackup` FOREIGN KEY (`cod_usuario`) REFERENCES `usuarios` (`cod_usuario`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,7 +54,6 @@ CREATE TABLE `backup` (
 
 LOCK TABLES `backup` WRITE;
 /*!40000 ALTER TABLE `backup` DISABLE KEYS */;
-INSERT INTO `backup` VALUES (1,1,1,'Manuela','Pruebita','respaldos/Manuela_2025-05-11_01-38-45.sql','2025-05-11 05:38:47','manual',0.0794983),(2,1,1,'Respaldo2','Prueba 2\r\n','respaldos/Respaldo2_2025-05-11_02-33-59.sql','2025-05-11 06:34:00','manual',0.0797501),(3,1,1,'Respaldo3','Prueba 2','respaldos/Respaldo3_2025-05-11_02-34-14.sql','2025-05-11 06:34:14','manual',0.0799665),(4,1,1,'Respaldo4','prueba 4','respaldos/Respaldo4_2025-05-11_02-34-38.sql','2025-05-11 06:34:39','manual',0.0801792),(5,1,1,'hola_prueba','prueba 5\r\n','respaldos/hola_prueba_2025-05-11_02-34-57.sql','2025-05-11 06:34:57','manual',0.0803919);
 /*!40000 ALTER TABLE `backup` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,7 +74,7 @@ CREATE TABLE `bitacora` (
   PRIMARY KEY (`id`),
   KEY `cod_usuario` (`cod_usuario`),
   CONSTRAINT `bitacora_ibfk_1` FOREIGN KEY (`cod_usuario`) REFERENCES `usuarios` (`cod_usuario`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,7 +83,7 @@ CREATE TABLE `bitacora` (
 
 LOCK TABLES `bitacora` WRITE;
 /*!40000 ALTER TABLE `bitacora` DISABLE KEYS */;
-INSERT INTO `bitacora` VALUES (49,1,'Acceso al sistema','2025-04-18 23:39:42','admin','Inicio'),(50,1,'Acceso a Ventas','2025-04-18 23:46:53','','Ventas'),(51,1,'Acceso a Compras','2025-04-18 23:46:57','','Compras'),(52,1,'Acceso a Ventas','2025-04-18 23:46:58','','Ventas'),(53,1,'Acceso a Compras','2025-04-18 23:47:00','','Compras'),(54,1,'Acceso a Ventas','2025-04-18 23:47:01','','Ventas'),(55,1,'Acceso a Ventas','2025-04-18 23:48:24','','Ventas'),(56,1,'Acceso a Compras','2025-04-18 23:48:25','','Compras'),(57,1,'Acceso a Ventas','2025-04-18 23:48:36','','Ventas'),(58,1,'Acceso a Compras','2025-04-18 23:50:00','','Compras'),(59,1,'Acceso a Ventas','2025-04-18 23:50:03','','Ventas'),(60,1,'Acceso a Compras','2025-04-18 23:50:04','','Compras'),(61,1,'Acceso a Divisas','2025-04-18 23:50:37','','Divisas'),(62,1,'Acceso a Tipos de pago','2025-04-19 00:52:29','','Tipos de pago'),(63,1,'Acceso al sistema','2025-04-25 02:36:12','admin','Inicio'),(64,1,'Acceso a Ajuste de roles','2025-04-25 02:36:22','','Ajuste de roles'),(65,1,'Acceso a Compras','2025-04-25 15:16:46','','Compras'),(66,2,'Acceso a Tipos de pago','2025-04-26 05:23:22','','Tipos de pago'),(67,2,'Acceso a Ajuste de INventario','2025-04-26 05:29:18','','Ajuste de INventario'),(68,2,'Acceso a Carga de productos','2025-04-26 05:29:21','','Carga de productos'),(69,2,'Acceso a Compras','2025-04-26 05:29:24','','Compras'),(70,2,'Acceso a Compras','2025-04-26 05:29:27','','Compras'),(71,2,'Acceso a Ventas','2025-04-26 05:29:28','','Ventas'),(72,2,'Acceso a Reporte De proveedores','2025-04-26 05:31:57','','Reporte De proveedores'),(73,2,'Acceso a Ajuste general','2025-04-26 05:32:00','','Ajuste general'),(74,2,'Acceso a Ajuste de roles','2025-04-26 05:32:14','','Ajuste de roles'),(75,2,'Acceso a Compras','2025-04-27 00:24:49','','Compras'),(76,1,'Acceso a Compras','2025-04-28 01:34:14','','Compras'),(77,1,'Acceso al sistema','2025-04-28 04:21:54','admin','Inicio'),(78,1,'Acceso a Ajuste general','2025-04-28 04:22:05','','Ajuste general'),(79,1,'Editar empresa','2025-04-28 04:22:15','Quesera y Charcuteria Don Pedro 24','Empresas'),(80,1,'Acceso a Banco','2025-04-28 04:36:36','','Banco'),(81,1,'Acceso a Ajuste de INventario','2025-04-28 04:43:45','','Ajuste de INventario'),(82,1,'Acceso a Carga de productos','2025-04-28 04:43:46','','Carga de productos'),(83,1,'Acceso a Ajuste de INventario','2025-04-28 04:48:47','','Ajuste de INventario'),(84,1,'Acceso a Categorías','2025-04-28 05:56:24','','Categorías'),(85,1,'Registro de categoría','2025-04-28 05:56:34','Jamon ','Categorias'),(86,1,'Acceso a Compras','2025-04-28 06:29:30','','Compras'),(87,1,'Acceso a Ajuste de INventario','2025-04-28 06:30:20','','Ajuste de INventario'),(88,1,'Acceso a Carga de productos','2025-04-28 06:30:21','','Carga de productos'),(89,1,'Acceso a Categorías','2025-04-28 06:30:25','','Categorías'),(90,1,'Acceso a Banco','2025-04-28 06:31:06','','Banco'),(91,1,'Acceso a Compras','2025-04-28 06:31:10','','Compras'),(92,1,'Acceso a Ajuste de INventario','2025-04-28 06:41:25','','Ajuste de INventario'),(93,1,'Acceso a Descarga de productos','2025-04-28 06:41:26','','Descarga de productos'),(94,1,'Acceso a Divisas','2025-04-28 06:59:24','','Divisas'),(95,1,'Registro de divisa','2025-04-28 07:01:58','Binance','Divisas'),(96,1,'Editar divisa','2025-04-28 07:03:07','Binances','Divisas'),(97,1,'Acceso a Compras','2025-04-28 07:23:30','','Compras'),(98,1,'Acceso a Ajuste de INventario','2025-04-28 07:23:53','','Ajuste de INventario'),(99,1,'Acceso a Carga de productos','2025-04-28 07:23:54','','Carga de productos'),(100,1,'Acceso al sistema','2025-04-28 14:25:46','admin','Inicio'),(101,1,'Acceso a Ajuste de INventario','2025-04-28 14:25:52','','Ajuste de INventario'),(102,1,'Acceso a Carga de productos','2025-04-28 14:25:53','','Carga de productos'),(103,1,'Acceso a Ajuste de INventario','2025-04-28 14:25:54','','Ajuste de INventario'),(104,1,'Acceso a Ajuste de INventario','2025-04-28 14:25:55','','Ajuste de INventario'),(105,1,'Acceso a Categorías','2025-04-29 17:10:58','','Categorías'),(106,1,'Acceso a Unidades de medida','2025-04-29 17:11:09','','Unidades de medida'),(107,1,'Acceso a Banco','2025-04-29 18:54:46','','Banco'),(108,1,'Acceso a Ajuste general','2025-04-29 18:55:16','','Ajuste general'),(109,1,'Acceso a Ajuste de roles','2025-04-29 18:55:35','','Ajuste de roles'),(110,1,'Acceso a Divisas','2025-04-30 01:28:22','','Divisas'),(111,1,'Acceso a Tipos de pago','2025-04-30 01:29:58','','Tipos de pago'),(112,1,'Buscar producto','2025-04-30 02:10:53','Jma','Productos'),(113,1,'Buscar producto','2025-04-30 02:10:55','Ja,','Productos'),(114,1,'Buscar producto','2025-04-30 02:10:56','Jam','Productos'),(115,1,'Buscar producto','2025-04-30 02:10:56','Jamo','Productos'),(116,1,'Buscar producto','2025-04-30 02:10:56','Jamon','Productos'),(117,1,'Buscar producto','2025-04-30 02:10:56','Jamon ','Productos'),(118,1,'Buscar producto','2025-04-30 02:10:56','Jamon d','Productos'),(119,1,'Buscar producto','2025-04-30 02:10:56','Jamon de','Productos'),(120,1,'Buscar producto','2025-04-30 02:10:57','Jamon de ','Productos'),(121,1,'Buscar producto','2025-04-30 02:10:57','Jamon de e','Productos'),(122,1,'Buscar producto','2025-04-30 02:10:57','Jamon de es','Productos'),(123,1,'Buscar producto','2025-04-30 02:10:58','Jamon de esp','Productos'),(124,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espa','Productos'),(125,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espal','Productos'),(126,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espald','Productos'),(127,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espalda','Productos'),(128,1,'Buscar producto','2025-04-30 02:18:26','Jamon de p','Productos'),(129,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pi','Productos'),(130,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pie','Productos'),(131,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pier','Productos'),(132,1,'Buscar producto','2025-04-30 02:18:27','Jamon de piern','Productos'),(133,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pierna','Productos'),(134,1,'Buscar producto','2025-04-30 02:19:39','jam','Productos'),(135,1,'Buscar producto','2025-04-30 02:19:40','jamo','Productos'),(136,1,'Buscar producto','2025-04-30 02:19:40','jamon','Productos'),(137,1,'Buscar producto','2025-04-30 02:19:40','jamon ','Productos'),(138,1,'Buscar producto','2025-04-30 02:19:40','jamon d','Productos'),(139,1,'Buscar producto','2025-04-30 02:19:40','jamon de','Productos'),(140,1,'Buscar producto','2025-04-30 02:19:40','jamon de ','Productos'),(141,1,'Buscar producto','2025-04-30 02:19:41','jamon de p','Productos'),(142,1,'Buscar producto','2025-04-30 02:19:41','jamon de pi','Productos'),(143,1,'Buscar producto','2025-04-30 02:19:41','jamon de pie','Productos'),(144,1,'Buscar producto','2025-04-30 02:19:41','jamon de pier','Productos'),(145,1,'Buscar producto','2025-04-30 02:19:41','jamon de piern','Productos'),(146,1,'Buscar producto','2025-04-30 02:19:41','jamon de pierna','Productos'),(147,1,'Registro de producto','2025-04-30 02:20:10','jamon de pierna','Productos'),(148,1,'Acceso a Ajuste de INventario','2025-04-30 02:20:36','','Ajuste de INventario'),(149,1,'Acceso a Carga de productos','2025-04-30 02:20:39','','Carga de productos'),(150,1,'Acceso a Ajuste de INventario','2025-04-30 02:20:41','','Ajuste de INventario'),(151,1,'Registro de carga','2025-04-30 02:21:21','carga prueba','Carga'),(152,1,'Acceso a Ajuste de INventario','2025-04-30 02:21:58','','Ajuste de INventario'),(153,1,'Acceso a Ajuste de INventario','2025-04-30 02:21:59','','Ajuste de INventario'),(154,1,'Acceso a Ventas','2025-04-30 02:22:04','','Ventas'),(155,1,'Acceso a Ventas','2025-04-30 02:32:39','','Ventas'),(156,1,'Registro de venta','2025-04-30 02:36:52','4.31','Venta'),(157,1,'Acceso a Compras','2025-04-30 02:40:42','','Compras'),(158,1,'Registro de compra','2025-04-30 02:42:34','55.00','Compras'),(159,1,'Registro de cliente','2025-04-30 02:44:23','Maribel','Clientes'),(160,1,'Editar producto','2025-04-30 02:45:15','jamon de piernaa','Productos'),(161,1,'Acceso a Ventas','2025-04-30 02:45:23','','Ventas'),(162,1,'Eliminar cliente','2025-04-30 02:45:48','Eliminado el cliente con el código 4','Clientes'),(163,1,'Registro de proveedor','2025-04-30 02:47:16','ST3M c.a','Proveedores'),(164,1,'Registro de representante','2025-04-30 02:48:31','samuel','Representantes'),(165,1,'Registro de teléfono','2025-04-30 02:48:46','04245645108','Teléfonos de proveedores'),(166,1,'Registro de teléfono','2025-04-30 02:48:59','12453145213','Teléfonos de proveedores'),(167,1,'Acceso a Reporte De proveedores','2025-04-30 03:33:03','','Reporte De proveedores'),(168,1,'Acceso a Ventas','2025-04-30 03:34:45','','Ventas'),(169,1,'Acceso a Ajuste general','2025-04-30 03:36:03','','Ajuste general'),(170,1,'Editar empresa','2025-04-30 03:36:21','Quesera y Charcuteria Don Pedro 24','Empresas'),(171,1,'Registro de usuario','2025-04-30 03:38:20','daniel','Usuarios'),(172,1,'Editar usuario','2025-04-30 03:38:40','jorge','Usuarios'),(173,1,'Acceso a Unidades de medida','2025-04-30 03:40:14','','Unidades de medida'),(174,1,'Registro de unidad de medida','2025-04-30 03:40:22','UND','Unidad de medida'),(175,1,'Editar unidad de medida','2025-04-30 03:40:41','UD','Unidad de medida'),(176,1,'Editar unidad de medida','2025-04-30 03:40:48','UND','Unidad de medida'),(177,1,'Editar unidad de medida','2025-04-30 03:41:33','UND','Unidad de medida'),(178,1,'Eliminar unidad de medida','2025-04-30 03:41:36','Eliminado la unidad de medida con el código 2','Unidad de medida'),(179,1,'Acceso a Categorías','2025-04-30 03:41:43','','Categorías'),(180,1,'Registro de categoría','2025-04-30 03:41:51','Embutidos','Categorias'),(181,1,'Editar categoría','2025-04-30 03:42:21','Embutido','Categorias'),(182,1,'Eliminar categoría','2025-04-30 03:42:31','Eliminada la categoría con el código 3','Categorias'),(183,1,'Acceso a Divisas','2025-04-30 03:43:04','','Divisas'),(184,1,'Registro de divisa','2025-04-30 03:45:49','libra','Divisas'),(185,1,'Acceso a Tipos de pago','2025-04-30 03:48:47','','Tipos de pago'),(186,1,'Acceso a Ajuste de INventario','2025-04-30 03:49:14','','Ajuste de INventario'),(187,1,'Acceso a Descarga de productos','2025-04-30 03:49:14','','Descarga de productos'),(188,1,'Registro de descarga','2025-04-30 03:49:47','ajuste stock prueba','Descarga'),(189,1,'Acceso a Ventas','2025-04-30 04:36:31','','Ventas'),(190,1,'Editar usuario','2025-04-30 05:32:52','daniel','Usuarios'),(191,3,'Acceso al sistema','2025-04-30 06:15:50','daniel','Inicio'),(192,3,'Acceso al sistema','2025-04-30 06:20:21','daniel','Inicio'),(193,3,'Acceso al sistema','2025-04-30 06:22:00','daniel','Inicio'),(194,3,'Acceso a Ajuste de INventario','2025-04-30 07:07:26','','Ajuste de INventario'),(195,3,'Acceso a Carga de productos','2025-04-30 07:07:27','','Carga de productos'),(196,1,'Acceso al sistema','2025-04-30 18:38:50','admin','Inicio'),(197,3,'Acceso al sistema','2025-04-30 18:48:38','daniel','Inicio'),(198,3,'Acceso a Ajuste de INventario','2025-04-30 18:48:50','','Ajuste de INventario'),(199,3,'Acceso a Ajuste de INventario','2025-04-30 18:48:57','','Ajuste de INventario'),(200,3,'Acceso a Carga de productos','2025-04-30 18:48:58','','Carga de productos'),(201,1,'Acceso al sistema','2025-05-03 04:45:14','admin','Inicio'),(202,1,'Acceso al sistema','2025-05-03 04:45:38','admin','Inicio'),(203,1,'Acceso al sistema','2025-05-07 20:46:55','admin','Inicio'),(204,1,'Acceso al sistema','2025-05-07 20:47:41','admin','Inicio'),(205,1,'Acceso al sistema','2025-05-07 21:13:27','admin','Inicio'),(206,1,'Acceso al sistema','2025-05-07 21:13:51','admin','Inicio'),(207,1,'Acceso al sistema','2025-05-07 21:15:44','admin','Inicio'),(208,1,'Acceso al sistema','2025-05-07 21:17:05','admin','Inicio'),(209,1,'Acceso al sistema','2025-05-07 21:43:20','admin','Inicio'),(210,1,'Acceso al sistema','2025-05-07 21:45:13','admin','Inicio'),(211,1,'Acceso al sistema','2025-05-07 21:47:13','admin','Inicio'),(212,1,'Acceso al sistema','2025-05-07 21:49:19','admin','Inicio'),(213,1,'Acceso al sistema','2025-05-07 21:51:20','admin','Inicio'),(214,1,'Acceso al sistema','2025-05-07 21:51:56','admin','Inicio'),(215,1,'Acceso al sistema','2025-05-07 21:54:16','admin','Inicio'),(216,1,'Acceso al sistema','2025-05-08 05:33:13','admin','Inicio'),(217,1,'Registro de Copia de Seguridad','2025-05-08 05:55:46','hola_prueba','Backup'),(218,1,'Registro de Copia de Seguridad','2025-05-08 05:58:49','hola_prueba','Backup'),(219,1,'Registro de categoría','2025-05-08 06:00:19','Euros','Categorias'),(220,1,'Registro de Copia de Seguridad','2025-05-08 06:02:21','Respaldo1','Backup'),(221,1,'Registro de Copia de Seguridad','2025-05-08 06:03:34','Respaldo2','Backup'),(222,1,'Acceso al sistema','2025-05-08 21:45:43','admin','Inicio'),(223,1,'Registro Manual de Copia de Seguridad','2025-05-08 22:02:22','Nombre Archivomanuel','Backup'),(224,1,'Acceso al sistema','2025-05-08 22:13:14','admin','Inicio'),(225,1,'Acceso al sistema','2025-05-09 15:37:10','admin','Inicio'),(226,1,'Registro Manual de Copia de Seguridad','2025-05-10 21:20:01','Nombre ArchivoManuela','Backup'),(227,1,'Se guardo la configuracion de Copia de Seguridad Manual','2025-05-11 03:24:56','Nombre Archivo','Backup'),(228,1,'Se guardo la configuracion de Copia de Seguridad Manual','2025-05-11 04:09:03','Nombre Archivo','Backup'),(229,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:10:21','','Backup'),(230,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:15:32','','Backup'),(231,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:22:56','','Backup'),(232,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:25:16','','Backup'),(233,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:28:17','','Backup'),(234,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:39:23','','Backup'),(235,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:40:35','','Backup'),(236,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:41:34','','Backup'),(237,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:49:40','','Backup'),(238,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:50:49','','Backup'),(239,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:51:28','','Backup'),(240,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:53:15','','Backup'),(241,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:53:32','','Backup'),(242,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:53:55','','Backup'),(243,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:54:28','','Backup'),(244,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 04:57:37','','Backup'),(245,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:25:15','','Backup'),(246,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:26:25','','Backup'),(247,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:26:43','','Backup'),(248,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:27:47','','Backup'),(249,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:28:23','','Backup'),(250,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:30:05','','Backup'),(251,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:30:51','','Backup'),(252,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:33:28','','Backup'),(253,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:34:31','','Backup'),(254,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:34:44','','Backup'),(255,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:36:09','','Backup'),(256,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-11 05:37:01','','Backup'),(257,1,'Registro Manual de Copia de Seguridad','2025-05-11 05:38:47','Nombre ArchivoManuela','Backup'),(258,1,'Registro Manual de Copia de Seguridad','2025-05-11 06:34:00','Nombre ArchivoRespaldo2','Backup'),(259,1,'Registro Manual de Copia de Seguridad','2025-05-11 06:34:14','Nombre ArchivoRespaldo3','Backup'),(260,1,'Registro Manual de Copia de Seguridad','2025-05-11 06:34:39','Nombre ArchivoRespaldo4','Backup'),(261,1,'Registro Manual de Copia de Seguridad','2025-05-11 06:34:57','Nombre Archivohola_prueba','Backup');
+INSERT INTO `bitacora` VALUES (49,1,'Acceso al sistema','2025-04-18 23:39:42','admin','Inicio'),(50,1,'Acceso a Ventas','2025-04-18 23:46:53','','Ventas'),(51,1,'Acceso a Compras','2025-04-18 23:46:57','','Compras'),(52,1,'Acceso a Ventas','2025-04-18 23:46:58','','Ventas'),(53,1,'Acceso a Compras','2025-04-18 23:47:00','','Compras'),(54,1,'Acceso a Ventas','2025-04-18 23:47:01','','Ventas'),(55,1,'Acceso a Ventas','2025-04-18 23:48:24','','Ventas'),(56,1,'Acceso a Compras','2025-04-18 23:48:25','','Compras'),(57,1,'Acceso a Ventas','2025-04-18 23:48:36','','Ventas'),(58,1,'Acceso a Compras','2025-04-18 23:50:00','','Compras'),(59,1,'Acceso a Ventas','2025-04-18 23:50:03','','Ventas'),(60,1,'Acceso a Compras','2025-04-18 23:50:04','','Compras'),(61,1,'Acceso a Divisas','2025-04-18 23:50:37','','Divisas'),(62,1,'Acceso a Tipos de pago','2025-04-19 00:52:29','','Tipos de pago'),(63,1,'Acceso al sistema','2025-04-25 02:36:12','admin','Inicio'),(64,1,'Acceso a Ajuste de roles','2025-04-25 02:36:22','','Ajuste de roles'),(65,1,'Acceso a Compras','2025-04-25 15:16:46','','Compras'),(66,2,'Acceso a Tipos de pago','2025-04-26 05:23:22','','Tipos de pago'),(67,2,'Acceso a Ajuste de INventario','2025-04-26 05:29:18','','Ajuste de INventario'),(68,2,'Acceso a Carga de productos','2025-04-26 05:29:21','','Carga de productos'),(69,2,'Acceso a Compras','2025-04-26 05:29:24','','Compras'),(70,2,'Acceso a Compras','2025-04-26 05:29:27','','Compras'),(71,2,'Acceso a Ventas','2025-04-26 05:29:28','','Ventas'),(72,2,'Acceso a Reporte De proveedores','2025-04-26 05:31:57','','Reporte De proveedores'),(73,2,'Acceso a Ajuste general','2025-04-26 05:32:00','','Ajuste general'),(74,2,'Acceso a Ajuste de roles','2025-04-26 05:32:14','','Ajuste de roles'),(75,2,'Acceso a Compras','2025-04-27 00:24:49','','Compras'),(76,1,'Acceso a Compras','2025-04-28 01:34:14','','Compras'),(77,1,'Acceso al sistema','2025-04-28 04:21:54','admin','Inicio'),(78,1,'Acceso a Ajuste general','2025-04-28 04:22:05','','Ajuste general'),(79,1,'Editar empresa','2025-04-28 04:22:15','Quesera y Charcuteria Don Pedro 24','Empresas'),(80,1,'Acceso a Banco','2025-04-28 04:36:36','','Banco'),(81,1,'Acceso a Ajuste de INventario','2025-04-28 04:43:45','','Ajuste de INventario'),(82,1,'Acceso a Carga de productos','2025-04-28 04:43:46','','Carga de productos'),(83,1,'Acceso a Ajuste de INventario','2025-04-28 04:48:47','','Ajuste de INventario'),(84,1,'Acceso a Categorías','2025-04-28 05:56:24','','Categorías'),(85,1,'Registro de categoría','2025-04-28 05:56:34','Jamon ','Categorias'),(86,1,'Acceso a Compras','2025-04-28 06:29:30','','Compras'),(87,1,'Acceso a Ajuste de INventario','2025-04-28 06:30:20','','Ajuste de INventario'),(88,1,'Acceso a Carga de productos','2025-04-28 06:30:21','','Carga de productos'),(89,1,'Acceso a Categorías','2025-04-28 06:30:25','','Categorías'),(90,1,'Acceso a Banco','2025-04-28 06:31:06','','Banco'),(91,1,'Acceso a Compras','2025-04-28 06:31:10','','Compras'),(92,1,'Acceso a Ajuste de INventario','2025-04-28 06:41:25','','Ajuste de INventario'),(93,1,'Acceso a Descarga de productos','2025-04-28 06:41:26','','Descarga de productos'),(94,1,'Acceso a Divisas','2025-04-28 06:59:24','','Divisas'),(95,1,'Registro de divisa','2025-04-28 07:01:58','Binance','Divisas'),(96,1,'Editar divisa','2025-04-28 07:03:07','Binances','Divisas'),(97,1,'Acceso a Compras','2025-04-28 07:23:30','','Compras'),(98,1,'Acceso a Ajuste de INventario','2025-04-28 07:23:53','','Ajuste de INventario'),(99,1,'Acceso a Carga de productos','2025-04-28 07:23:54','','Carga de productos'),(100,1,'Acceso al sistema','2025-04-28 14:25:46','admin','Inicio'),(101,1,'Acceso a Ajuste de INventario','2025-04-28 14:25:52','','Ajuste de INventario'),(102,1,'Acceso a Carga de productos','2025-04-28 14:25:53','','Carga de productos'),(103,1,'Acceso a Ajuste de INventario','2025-04-28 14:25:54','','Ajuste de INventario'),(104,1,'Acceso a Ajuste de INventario','2025-04-28 14:25:55','','Ajuste de INventario'),(105,1,'Acceso a Categorías','2025-04-29 17:10:58','','Categorías'),(106,1,'Acceso a Unidades de medida','2025-04-29 17:11:09','','Unidades de medida'),(107,1,'Acceso a Banco','2025-04-29 18:54:46','','Banco'),(108,1,'Acceso a Ajuste general','2025-04-29 18:55:16','','Ajuste general'),(109,1,'Acceso a Ajuste de roles','2025-04-29 18:55:35','','Ajuste de roles'),(110,1,'Acceso a Divisas','2025-04-30 01:28:22','','Divisas'),(111,1,'Acceso a Tipos de pago','2025-04-30 01:29:58','','Tipos de pago'),(112,1,'Buscar producto','2025-04-30 02:10:53','Jma','Productos'),(113,1,'Buscar producto','2025-04-30 02:10:55','Ja,','Productos'),(114,1,'Buscar producto','2025-04-30 02:10:56','Jam','Productos'),(115,1,'Buscar producto','2025-04-30 02:10:56','Jamo','Productos'),(116,1,'Buscar producto','2025-04-30 02:10:56','Jamon','Productos'),(117,1,'Buscar producto','2025-04-30 02:10:56','Jamon ','Productos'),(118,1,'Buscar producto','2025-04-30 02:10:56','Jamon d','Productos'),(119,1,'Buscar producto','2025-04-30 02:10:56','Jamon de','Productos'),(120,1,'Buscar producto','2025-04-30 02:10:57','Jamon de ','Productos'),(121,1,'Buscar producto','2025-04-30 02:10:57','Jamon de e','Productos'),(122,1,'Buscar producto','2025-04-30 02:10:57','Jamon de es','Productos'),(123,1,'Buscar producto','2025-04-30 02:10:58','Jamon de esp','Productos'),(124,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espa','Productos'),(125,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espal','Productos'),(126,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espald','Productos'),(127,1,'Buscar producto','2025-04-30 02:10:59','Jamon de espalda','Productos'),(128,1,'Buscar producto','2025-04-30 02:18:26','Jamon de p','Productos'),(129,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pi','Productos'),(130,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pie','Productos'),(131,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pier','Productos'),(132,1,'Buscar producto','2025-04-30 02:18:27','Jamon de piern','Productos'),(133,1,'Buscar producto','2025-04-30 02:18:27','Jamon de pierna','Productos'),(134,1,'Buscar producto','2025-04-30 02:19:39','jam','Productos'),(135,1,'Buscar producto','2025-04-30 02:19:40','jamo','Productos'),(136,1,'Buscar producto','2025-04-30 02:19:40','jamon','Productos'),(137,1,'Buscar producto','2025-04-30 02:19:40','jamon ','Productos'),(138,1,'Buscar producto','2025-04-30 02:19:40','jamon d','Productos'),(139,1,'Buscar producto','2025-04-30 02:19:40','jamon de','Productos'),(140,1,'Buscar producto','2025-04-30 02:19:40','jamon de ','Productos'),(141,1,'Buscar producto','2025-04-30 02:19:41','jamon de p','Productos'),(142,1,'Buscar producto','2025-04-30 02:19:41','jamon de pi','Productos'),(143,1,'Buscar producto','2025-04-30 02:19:41','jamon de pie','Productos'),(144,1,'Buscar producto','2025-04-30 02:19:41','jamon de pier','Productos'),(145,1,'Buscar producto','2025-04-30 02:19:41','jamon de piern','Productos'),(146,1,'Buscar producto','2025-04-30 02:19:41','jamon de pierna','Productos'),(147,1,'Registro de producto','2025-04-30 02:20:10','jamon de pierna','Productos'),(148,1,'Acceso a Ajuste de INventario','2025-04-30 02:20:36','','Ajuste de INventario'),(149,1,'Acceso a Carga de productos','2025-04-30 02:20:39','','Carga de productos'),(150,1,'Acceso a Ajuste de INventario','2025-04-30 02:20:41','','Ajuste de INventario'),(151,1,'Registro de carga','2025-04-30 02:21:21','carga prueba','Carga'),(152,1,'Acceso a Ajuste de INventario','2025-04-30 02:21:58','','Ajuste de INventario'),(153,1,'Acceso a Ajuste de INventario','2025-04-30 02:21:59','','Ajuste de INventario'),(154,1,'Acceso a Ventas','2025-04-30 02:22:04','','Ventas'),(155,1,'Acceso a Ventas','2025-04-30 02:32:39','','Ventas'),(156,1,'Registro de venta','2025-04-30 02:36:52','4.31','Venta'),(157,1,'Acceso a Compras','2025-04-30 02:40:42','','Compras'),(158,1,'Registro de compra','2025-04-30 02:42:34','55.00','Compras'),(159,1,'Registro de cliente','2025-04-30 02:44:23','Maribel','Clientes'),(160,1,'Editar producto','2025-04-30 02:45:15','jamon de piernaa','Productos'),(161,1,'Acceso a Ventas','2025-04-30 02:45:23','','Ventas'),(162,1,'Eliminar cliente','2025-04-30 02:45:48','Eliminado el cliente con el código 4','Clientes'),(163,1,'Registro de proveedor','2025-04-30 02:47:16','ST3M c.a','Proveedores'),(164,1,'Registro de representante','2025-04-30 02:48:31','samuel','Representantes'),(165,1,'Registro de teléfono','2025-04-30 02:48:46','04245645108','Teléfonos de proveedores'),(166,1,'Registro de teléfono','2025-04-30 02:48:59','12453145213','Teléfonos de proveedores'),(167,1,'Acceso a Reporte De proveedores','2025-04-30 03:33:03','','Reporte De proveedores'),(168,1,'Acceso a Ventas','2025-04-30 03:34:45','','Ventas'),(169,1,'Acceso a Ajuste general','2025-04-30 03:36:03','','Ajuste general'),(170,1,'Editar empresa','2025-04-30 03:36:21','Quesera y Charcuteria Don Pedro 24','Empresas'),(171,1,'Registro de usuario','2025-04-30 03:38:20','daniel','Usuarios'),(172,1,'Editar usuario','2025-04-30 03:38:40','jorge','Usuarios'),(173,1,'Acceso a Unidades de medida','2025-04-30 03:40:14','','Unidades de medida'),(174,1,'Registro de unidad de medida','2025-04-30 03:40:22','UND','Unidad de medida'),(175,1,'Editar unidad de medida','2025-04-30 03:40:41','UD','Unidad de medida'),(176,1,'Editar unidad de medida','2025-04-30 03:40:48','UND','Unidad de medida'),(177,1,'Editar unidad de medida','2025-04-30 03:41:33','UND','Unidad de medida'),(178,1,'Eliminar unidad de medida','2025-04-30 03:41:36','Eliminado la unidad de medida con el código 2','Unidad de medida'),(179,1,'Acceso a Categorías','2025-04-30 03:41:43','','Categorías'),(180,1,'Registro de categoría','2025-04-30 03:41:51','Embutidos','Categorias'),(181,1,'Editar categoría','2025-04-30 03:42:21','Embutido','Categorias'),(182,1,'Eliminar categoría','2025-04-30 03:42:31','Eliminada la categoría con el código 3','Categorias'),(183,1,'Acceso a Divisas','2025-04-30 03:43:04','','Divisas'),(184,1,'Registro de divisa','2025-04-30 03:45:49','libra','Divisas'),(185,1,'Acceso a Tipos de pago','2025-04-30 03:48:47','','Tipos de pago'),(186,1,'Acceso a Ajuste de INventario','2025-04-30 03:49:14','','Ajuste de INventario'),(187,1,'Acceso a Descarga de productos','2025-04-30 03:49:14','','Descarga de productos'),(188,1,'Registro de descarga','2025-04-30 03:49:47','ajuste stock prueba','Descarga'),(189,1,'Acceso a Ventas','2025-04-30 04:36:31','','Ventas'),(190,1,'Editar usuario','2025-04-30 05:32:52','daniel','Usuarios'),(191,3,'Acceso al sistema','2025-04-30 06:15:50','daniel','Inicio'),(192,3,'Acceso al sistema','2025-04-30 06:20:21','daniel','Inicio'),(193,3,'Acceso al sistema','2025-04-30 06:22:00','daniel','Inicio'),(194,3,'Acceso a Ajuste de INventario','2025-04-30 07:07:26','','Ajuste de INventario'),(195,3,'Acceso a Carga de productos','2025-04-30 07:07:27','','Carga de productos'),(196,1,'Acceso al sistema','2025-04-30 18:38:50','admin','Inicio'),(197,3,'Acceso al sistema','2025-04-30 18:48:38','daniel','Inicio'),(198,3,'Acceso a Ajuste de INventario','2025-04-30 18:48:50','','Ajuste de INventario'),(199,3,'Acceso a Ajuste de INventario','2025-04-30 18:48:57','','Ajuste de INventario'),(200,3,'Acceso a Carga de productos','2025-04-30 18:48:58','','Carga de productos'),(201,1,'Acceso al sistema','2025-05-03 00:17:32','admin','Inicio'),(202,1,'Acceso al sistema','2025-05-03 00:55:32','admin','Inicio'),(203,1,'Acceso al sistema','2025-05-03 01:06:08','admin','Inicio'),(204,1,'Acceso al sistema','2025-05-03 01:57:24','admin','Inicio'),(205,3,'Acceso al sistema','2025-05-03 04:23:18','daniel','Inicio'),(206,1,'Acceso al sistema','2025-05-03 05:07:07','admin','Inicio'),(207,3,'Acceso al sistema','2025-05-03 05:09:25','daniel','Inicio'),(208,3,'Acceso al sistema','2025-05-03 20:02:27','daniel','Inicio'),(209,1,'Acceso al sistema','2025-05-04 03:55:05','admin','Inicio'),(210,3,'Acceso al sistema','2025-05-04 03:55:36','daniel','Inicio'),(211,1,'Acceso al sistema','2025-05-04 04:26:43','admin','Inicio'),(212,1,'Acceso al sistema','2025-05-06 16:57:07','admin','Inicio'),(213,1,'Registro de rol','2025-05-08 04:21:02','pruebaone','Roles'),(214,1,'Registro de usuario','2025-05-08 04:25:28','manuela','Usuarios'),(215,4,'Acceso al sistema','2025-05-08 04:26:29','manuela','Inicio'),(216,1,'Acceso al sistema','2025-05-08 10:08:42','admin','Inicio'),(217,1,'Registro de rol','2025-05-08 10:09:25','pruebatwo','Roles'),(218,1,'Editar rol','2025-05-08 10:10:16','pruebatwo','Roles'),(219,1,'Eliminar rol','2025-05-08 10:10:21','Eliminado el rol con el código 4','Roles'),(220,1,'Editar rol','2025-05-09 03:07:42','pruebaaaaaa','Roles'),(221,1,'Registro de rol','2025-05-10 18:06:58','prueba','Roles'),(222,1,'Editar rol','2025-05-10 19:04:32','prueba','Roles'),(223,1,'Eliminar rol','2025-05-10 19:04:39','Eliminado el rol con el código 5','Roles'),(224,1,'Registro de rol','2025-05-10 19:09:38','prueba','Roles'),(225,1,'Registro de usuario','2025-05-10 19:14:05','prueba','Usuarios'),(226,5,'Acceso al sistema','2025-05-10 19:15:01','prueba','Inicio'),(227,1,'Acceso al sistema','2025-05-10 22:09:21','admin','Inicio'),(228,4,'Acceso al sistema','2025-05-10 23:04:48','manuela','Inicio'),(229,1,'Acceso al sistema','2025-05-10 23:30:56','admin','Inicio'),(230,1,'Registro de rol','2025-05-10 23:31:30','pruebatwo','Roles'),(231,1,'Registro de usuario','2025-05-10 23:38:47','dos','Usuarios'),(233,1,'Acceso al sistema','2025-05-11 01:48:03','admin','Inicio'),(308,1,'Acceso al sistema','2025-05-15 06:14:48','admin','Inicio'),(309,1,'Acceso a Finanzas','2025-05-15 06:15:07','','Finanzas'),(310,1,'Acceso a Contabilidad','2025-05-15 06:15:08','','Contabilidad'),(311,1,'Acceso a Catálogo de cuentas','2025-05-15 06:15:08','','Catálogo de cuentas'),(312,1,'Acceso a Gastos','2025-05-15 06:17:38','','Gastos'),(313,1,'Acceso a Gastos','2025-05-15 06:17:40','','Gastos'),(314,1,'Acceso a Cuentas pendientes','2025-05-15 06:17:41','','Cuentas pendientes'),(315,1,'Acceso a Gastos','2025-05-15 06:17:47','','Gastos'),(316,1,'Acceso a Caja','2025-05-15 06:17:49','','Caja'),(317,1,'Acceso a Gastos','2025-05-15 06:20:05','','Gastos'),(318,1,'Acceso a Gastos','2025-05-15 06:20:09','','Gastos'),(319,1,'Acceso a Gastos','2025-05-15 06:20:32','','Gastos'),(320,1,'Acceso a Productos','2025-05-15 06:20:59','','Productos'),(321,1,'Acceso a Productos','2025-05-15 06:21:21','','Productos'),(322,1,'Acceso a Ajuste de Inventario','2025-05-15 06:21:22','','Ajuste de Inventario'),(323,1,'Acceso a Carga de productos','2025-05-15 06:21:22','','Carga de productos'),(324,1,'Acceso a Ajuste de Inventario','2025-05-15 06:21:23','','Ajuste de Inventario'),(325,1,'Acceso a Productos','2025-05-15 06:21:24','','Productos'),(326,1,'Registro de producto','2025-05-15 06:31:42','jamon de piernaa','Productos'),(327,1,'Registro de producto','2025-05-15 06:34:23','Queso Amarillo','Productos'),(328,1,'Editar producto','2025-05-15 06:34:59','Jamon de Pierna','Productos'),(329,1,'Editar producto','2025-05-15 06:35:07','Jamon de Pierna','Productos'),(330,1,'Eliminar producto','2025-05-15 06:35:13','Eliminada la presentacion con el código 3','Productos'),(331,1,'Acceso a Ajuste de Inventario','2025-05-15 06:36:54','','Ajuste de Inventario'),(332,1,'Acceso a Carga de productos','2025-05-15 06:36:55','','Carga de productos'),(333,1,'Acceso a Ajuste de Inventario','2025-05-15 06:44:16','','Ajuste de Inventario'),(334,1,'Acceso a Descarga de productos','2025-05-15 06:44:17','','Descarga de productos'),(335,1,'Registro de descarga','2025-05-15 06:44:53','Ajuste manuela prueba','Descarga'),(336,1,'Acceso a Compras','2025-05-15 06:45:36','','Compras'),(337,1,'Acceso a Ventas','2025-05-15 06:45:37','','Ventas'),(338,1,'Acceso a Clientes','2025-05-15 06:45:40','','Clientes'),(339,1,'Acceso a Proveedores','2025-05-15 06:50:47','','Proveedores'),(340,1,'Buscar proveedor','2025-05-15 06:50:52','','Proveedores'),(341,1,'Buscar proveedor','2025-05-15 06:51:05','J10283114','Proveedores'),(342,1,'Buscar proveedor','2025-05-15 06:52:12','J10283114','Proveedores'),(343,1,'Registro de proveedor','2025-05-15 06:52:17','Purolomo','Proveedores'),(344,1,'Editar proveedor','2025-05-15 06:52:28','Purolomo','Proveedores'),(345,1,'Editar proveedor','2025-05-15 06:52:34','Purolomo','Proveedores'),(346,1,'Eliminar proveedor','2025-05-15 06:52:52','Eliminado el proveedor con el código 2','Proveedores'),(347,1,'Editar proveedor','2025-05-15 06:53:01','Purolomo','Proveedores'),(348,1,'Editar proveedor','2025-05-15 06:55:26','Purolomoooo','Proveedores'),(349,1,'Buscar proveedor','2025-05-15 06:55:45','J26779660','Proveedores'),(350,1,'Buscar proveedor','2025-05-15 06:55:54','J28516209','Proveedores'),(351,1,'Buscar proveedor','2025-05-15 06:55:58','J26779660','Proveedores'),(352,1,'Acceso a Contabilidad','2025-05-15 06:56:22','','Contabilidad'),(353,1,'Acceso a Catálogo de cuentas','2025-05-15 06:56:23','','Catálogo de cuentas'),(354,1,'Acceso a Contabilidad','2025-05-15 06:56:24','','Contabilidad'),(355,1,'Acceso a Gestionar asientos','2025-05-15 06:56:24','','Gestionar asientos'),(356,1,'Acceso a Contabilidad','2025-05-15 06:56:25','','Contabilidad'),(357,1,'Acceso a Reporte De proveedores','2025-05-15 06:56:35','','Reporte De proveedores'),(358,1,'Acceso a Ajuste Empresa','2025-05-15 06:56:51','','Ajuste Empresa'),(359,1,'Acceso a Finanzas','2025-05-15 06:57:01','','Finanzas'),(360,1,'Acceso a Finanzas','2025-05-15 06:57:03','','Finanzas'),(361,1,'Acceso a Cuentas pendientes','2025-05-15 06:57:05','','Cuentas pendientes'),(362,1,'Acceso a Ajuste Empresa','2025-05-15 06:57:07','','Ajuste Empresa'),(363,1,'Editar empresa','2025-05-15 06:57:12','Quesera y Charcuteria Don Pedro','Empresas'),(364,1,'Editar empresa','2025-05-15 06:57:20','Quesera y Charcuteria Don Pedro','Empresas'),(365,1,'Acceso a Usuarios','2025-05-15 06:57:44','','Usuarios'),(366,1,'Editar usuario','2025-05-15 06:59:33','dos','Usuarios'),(367,1,'Eliminar usuario','2025-05-15 07:00:05','Eliminado el usuario con el código 6','Usuarios'),(368,1,'Editar usuario','2025-05-15 07:00:45','manuela','Usuarios'),(369,1,'Editar usuario','2025-05-15 07:01:05','manuela','Usuarios'),(370,1,'Editar rol','2025-05-15 07:01:50','manuela','Roles'),(371,1,'Acceso a Unidades de medida','2025-05-15 07:01:57','','Unidades de medida'),(372,1,'Acceso a Categorías','2025-05-15 07:02:01','','Categorías'),(373,1,'Editar categoría','2025-05-15 07:02:05','Euros','Categorias'),(374,1,'Eliminar categoría','2025-05-15 07:02:08','Eliminada la categoría con el código 4','Categorias'),(375,1,'Editar categoría','2025-05-15 07:02:17','Quesos','Categorias'),(376,1,'Editar categoría','2025-05-15 07:02:22','Quesos','Categorias'),(377,1,'Editar categoría','2025-05-15 07:02:33','Jamones','Categorias'),(378,1,'Editar categoría','2025-05-15 07:02:38','Jamones','Categorias'),(379,1,'Editar categoría','2025-05-15 07:09:31','Quesos','Categorias'),(380,1,'Editar categoría','2025-05-15 07:09:42','Jamones','Categorias'),(381,1,'Acceso a Marcas','2025-05-15 07:09:59','','Marcas'),(382,1,'Acceso a Divisas','2025-05-15 07:10:25','','Divisas'),(383,1,'Acceso a Tipos de pago','2025-05-15 07:10:57','','Tipos de pago'),(384,1,'Acceso a Banco','2025-05-15 07:12:47','','Banco'),(385,1,'Registro de banco','2025-05-15 07:13:03',NULL,'Banco'),(386,1,'Eliminar Banco','2025-05-15 07:14:09','Eliminado el banco con el código 1','Banco'),(387,1,'Eliminar Banco','2025-05-15 07:14:14','Eliminado el banco con el código 2','Banco'),(388,1,'Acceso a Cuentas pendientes','2025-05-15 07:14:19','','Cuentas pendientes'),(389,1,'Acceso a Tipos de pago','2025-05-15 07:14:24','','Tipos de pago'),(390,1,'Acceso a Banco','2025-05-15 07:14:35','','Banco'),(391,1,'Registro de banco','2025-05-15 07:14:41',NULL,'Banco'),(392,1,'Acceso a Tipos de pago','2025-05-15 07:14:48','','Tipos de pago'),(393,1,'Registro de metodo de pago','2025-05-15 07:15:27','Pago movil','metodo de pago'),(394,1,'Acceso a Contabilidad','2025-05-15 07:16:13','','Contabilidad'),(395,1,'Acceso a Contabilidad','2025-05-15 07:16:14','','Contabilidad'),(396,1,'Acceso a Cuenta Bancaria','2025-05-15 07:16:16','','Cuenta Bancaria'),(397,1,'Registro de Cuenta','2025-05-15 07:18:46','01050000000000000000','Cuenta Bancaria'),(398,1,'Editar Cuenta','2025-05-15 07:19:22',NULL,'Cuenta Bancaria'),(399,1,'Editar Cuenta','2025-05-15 07:19:28',NULL,'Cuenta Bancaria'),(400,1,'Acceso a Tipos de pago','2025-05-15 07:20:29','','Tipos de pago'),(401,1,'Acceso a Gastos','2025-05-15 07:21:15','','Gastos'),(402,1,'Acceso a Banco','2025-05-15 07:21:19','','Banco'),(403,1,'Acceso a Tipos de pago','2025-05-15 07:21:31','','Tipos de pago'),(404,1,'Acceso a Divisas','2025-05-15 07:22:41','','Divisas'),(405,1,'Acceso a Finanzas','2025-05-15 07:22:45','','Finanzas'),(406,1,'Acceso a Ventas','2025-05-15 07:22:46','','Ventas'),(407,1,'Acceso a Compras','2025-05-15 07:22:48','','Compras'),(408,1,'Acceso a Ajuste de Inventario','2025-05-15 07:22:49','','Ajuste de Inventario'),(409,1,'Acceso a Productos','2025-05-15 07:22:50','','Productos'),(410,1,'Acceso a Ajuste de Inventario','2025-05-15 07:22:51','','Ajuste de Inventario'),(411,1,'Acceso a Ajuste de Inventario','2025-05-15 07:22:52','','Ajuste de Inventario'),(412,1,'Acceso a Categorías','2025-05-15 07:47:06','','Categorías'),(413,1,'Registro de categoría','2025-05-15 07:47:11','Lácteos','Categorias'),(414,1,'Acceso a Categorías','2025-05-15 07:48:55','','Categorías'),(415,1,'Registro de categoría','2025-05-15 07:49:00','Charcutería','Categorias'),(416,1,'Editar categoría','2025-05-15 07:49:08','Charcutería','Categorias'),(417,1,'Eliminar categoría','2025-05-15 07:50:46','Eliminada la categoría con el código 6','Categorias'),(418,1,'Editar categoría','2025-05-15 07:50:51','Lácteos','Categorias'),(419,1,'Eliminar categoría','2025-05-15 07:50:54','Eliminada la categoría con el código 5','Categorias'),(420,1,'Registro de categoría','2025-05-15 07:50:58','Lácteos','Categorias'),(421,1,'Editar categoría','2025-05-15 07:51:06','Quesos','Categorias'),(422,1,'Registro Manual de Copia de Seguridad','2025-05-15 16:46:22','Nombre ArchivoManuela','Backup'),(423,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-15 16:48:42','','Backup'),(424,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-15 18:07:24','','Backup'),(425,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-15 18:07:30','','Backup'),(426,1,'Se actualizo la configuracion de Copia de Seguridad','2025-05-15 18:07:38','','Backup'),(427,1,'Acceso a Contabilidad','2025-05-15 18:07:47','','Contabilidad'),(428,1,'Acceso a Catálogo de cuentas','2025-05-15 18:07:49','','Catálogo de cuentas'),(429,1,'Acceso a Productos','2025-05-15 18:36:58','','Productos'),(430,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:12:40','Nombre Archivo','Backup'),(431,1,'Registro Manual de Copia de Seguridad','2025-05-15 22:14:01','Nombre ArchivoManuela_eliminar','Backup'),(432,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:14:11','Nombre Archivo: ','Backup'),(433,1,'Registro Manual de Copia de Seguridad','2025-05-15 22:14:59','Nombre ArchivoManuela_eliminar','Backup'),(434,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:15:04','Nombre Archivo: ','Backup'),(435,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:32:36','Archivo: respaldos/Manuela_2025-05-13_10-31-58.sql','Backup'),(436,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:33:01','Archivo: respaldos/Respaldo7_2025-05-11_02-35-21.sql','Backup'),(437,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:33:04','Archivo: respaldos/Respaldo6_2025-05-11_02-35-10.sql','Backup'),(438,1,'Eliminacion de Copia de Seguridad','2025-05-15 22:33:06','Archivo: respaldos/hola_prueba_2025-05-11_02-34-57.sql','Backup');
 /*!40000 ALTER TABLE `bitacora` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,7 +113,7 @@ CREATE TABLE `config_backup` (
 
 LOCK TABLES `config_backup` WRITE;
 /*!40000 ALTER TABLE `config_backup` DISABLE KEYS */;
-INSERT INTO `config_backup` VALUES (1,'mensual','ambos',9,'09:00:00',2,NULL,1);
+INSERT INTO `config_backup` VALUES (1,'','',5,'00:00:00',0,NULL,0);
 /*!40000 ALTER TABLE `config_backup` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +128,7 @@ CREATE TABLE `modulos` (
   `cod_modulo` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) NOT NULL,
   PRIMARY KEY (`cod_modulo`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,7 +137,7 @@ CREATE TABLE `modulos` (
 
 LOCK TABLES `modulos` WRITE;
 /*!40000 ALTER TABLE `modulos` DISABLE KEYS */;
-INSERT INTO `modulos` VALUES (1,'producto'),(2,'inventario'),(3,'categoria'),(4,'compra'),(5,'venta'),(6,'cliente'),(7,'proveedor'),(8,'usuario'),(9,'reporte'),(10,'configuracion');
+INSERT INTO `modulos` VALUES (1,'producto'),(2,'inventario'),(3,'contabilidad'),(4,'compra'),(5,'venta'),(6,'cliente'),(7,'proveedor'),(8,'finanza'),(9,'reporte'),(10,'tesoreria'),(11,'gasto'),(12,'cuentas_pendiente'),(13,'seguridad'),(14,'config_producto'),(15,'config_finanza');
 /*!40000 ALTER TABLE `modulos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,7 +161,7 @@ CREATE TABLE `permisos` (
 
 LOCK TABLES `permisos` WRITE;
 /*!40000 ALTER TABLE `permisos` DISABLE KEYS */;
-INSERT INTO `permisos` VALUES (1,'crear'),(2,'actualizar'),(3,'eliminar');
+INSERT INTO `permisos` VALUES (1,'registrar'),(2,'consultar'),(3,'editar'),(4,'eliminar');
 /*!40000 ALTER TABLE `permisos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,7 +177,7 @@ CREATE TABLE `tipo_usuario` (
   `rol` varchar(50) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`cod_tipo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -187,7 +186,7 @@ CREATE TABLE `tipo_usuario` (
 
 LOCK TABLES `tipo_usuario` WRITE;
 /*!40000 ALTER TABLE `tipo_usuario` DISABLE KEYS */;
-INSERT INTO `tipo_usuario` VALUES (1,'Administrador',1),(2,'prueba',1);
+INSERT INTO `tipo_usuario` VALUES (1,'Administrador',1),(2,'pruebaaaaaa',1),(3,'pruebaone',1),(6,'prueba',1),(7,'pruebatwo',1),(8,'manuela',0);
 /*!40000 ALTER TABLE `tipo_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -217,7 +216,7 @@ CREATE TABLE `tpu_permisos` (
 
 LOCK TABLES `tpu_permisos` WRITE;
 /*!40000 ALTER TABLE `tpu_permisos` DISABLE KEYS */;
-INSERT INTO `tpu_permisos` VALUES (1,1,NULL),(1,2,NULL),(1,3,NULL),(1,4,NULL),(1,5,NULL),(1,6,NULL),(1,7,NULL),(1,8,NULL),(1,9,NULL),(1,10,NULL),(2,1,1),(2,1,2),(2,2,2),(2,3,1),(2,3,2),(2,4,2),(2,5,1),(2,5,2),(2,5,3),(2,7,2),(2,9,2);
+INSERT INTO `tpu_permisos` VALUES (2,1,1),(2,1,3),(2,2,3),(2,3,1),(2,3,3),(2,4,3),(2,5,1),(2,5,3),(2,5,4),(2,7,3),(2,9,3),(1,1,1),(1,1,3),(1,1,4),(1,2,1),(1,2,3),(1,2,4),(1,3,1),(1,3,3),(1,3,4),(1,4,1),(1,4,3),(1,4,4),(1,5,1),(1,5,3),(1,5,4),(1,6,1),(1,6,3),(1,6,4),(1,7,1),(1,7,3),(1,7,4),(1,8,1),(1,8,3),(1,8,4),(1,9,1),(1,9,3),(1,9,4),(1,10,1),(1,10,3),(1,10,4),(1,11,1),(1,11,3),(1,11,4),(1,12,1),(1,12,3),(1,12,4),(1,13,1),(1,13,3),(1,13,4),(1,14,1),(1,14,3),(1,14,4),(1,15,1),(1,15,3),(1,15,4),(3,1,1),(3,1,3),(3,2,1),(3,4,1),(3,5,1),(3,6,3),(3,6,4),(3,14,1),(6,1,2),(6,3,2),(6,5,2),(6,7,2),(7,5,2),(8,1,2),(8,2,2),(8,3,2);
 /*!40000 ALTER TABLE `tpu_permisos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,7 +238,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `user` (`user`),
   KEY `usuario-tipousuario` (`cod_tipo_usuario`),
   CONSTRAINT `usuario-tipousuario` FOREIGN KEY (`cod_tipo_usuario`) REFERENCES `tipo_usuario` (`cod_tipo_usuario`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,7 +247,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Administrador','admin','$2y$10$.nbh0vwGWNkBgsVzkBSoYurftn9Mg.TLYkxmK32KhMKOzaTjaRS3.',1,1),(2,'jorges','jorge','$2y$10$wRFU5jEfVEpp/jXR0OQ0YuycA5JvHQilBkXSwfHBds164nz1doz3e',1,1),(3,'daniel','daniel','$2y$10$ByhGqnqEywZwtEm9PlCJZuWkAvwg4X8keP1XWgLwRMnjPIZG5X3GW',2,1);
+INSERT INTO `usuarios` VALUES (1,'Administrador','admin','$2y$10$.nbh0vwGWNkBgsVzkBSoYurftn9Mg.TLYkxmK32KhMKOzaTjaRS3.',1,1),(2,'jorges','jorge','$2y$10$wRFU5jEfVEpp/jXR0OQ0YuycA5JvHQilBkXSwfHBds164nz1doz3e',1,1),(3,'daniel','daniel','$2y$10$ByhGqnqEywZwtEm9PlCJZuWkAvwg4X8keP1XWgLwRMnjPIZG5X3GW',2,1),(4,'Manuela Mujica','manuela','$2y$10$twU8vO3E8i/GLzoWi98qNOSj/jF828L3loLjBHWbNn6z5Tib9nzvi',1,0),(5,'prueba','prueba','$2y$10$49MhBngOKC4lE43UcYqMa.ST4ivaXSSUlaDRkIxfVf0dlp0O82ZBa',6,1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -335,7 +334,7 @@ CREATE TABLE `banco` (
   `cod_banco` int(11) NOT NULL AUTO_INCREMENT,
   `nombre_banco` varchar(20) NOT NULL,
   PRIMARY KEY (`cod_banco`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,7 +343,7 @@ CREATE TABLE `banco` (
 
 LOCK TABLES `banco` WRITE;
 /*!40000 ALTER TABLE `banco` DISABLE KEYS */;
-INSERT INTO `banco` VALUES (1,'Banco Provincial');
+INSERT INTO `banco` VALUES (3,'Banco Mercantil');
 /*!40000 ALTER TABLE `banco` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -472,7 +471,7 @@ CREATE TABLE `categorias` (
   `nombre` varchar(30) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`cod_categoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,7 +480,7 @@ CREATE TABLE `categorias` (
 
 LOCK TABLES `categorias` WRITE;
 /*!40000 ALTER TABLE `categorias` DISABLE KEYS */;
-INSERT INTO `categorias` VALUES (1,'queso',1),(2,'Jamones',1),(4,'Euros',1);
+INSERT INTO `categorias` VALUES (1,'Quesos',0),(2,'Jamones',1),(7,'Lácteos',1);
 /*!40000 ALTER TABLE `categorias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,7 +626,7 @@ CREATE TABLE `cuenta_bancaria` (
   CONSTRAINT `cuenta_bancaria_ibfk_1` FOREIGN KEY (`cod_banco`) REFERENCES `banco` (`cod_banco`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `cuenta_bancaria_ibfk_2` FOREIGN KEY (`cod_tipo_cuenta`) REFERENCES `tipo_cuenta` (`cod_tipo_cuenta`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `cuenta_bancaria_ibfk_3` FOREIGN KEY (`cod_divisa`) REFERENCES `divisas` (`cod_divisa`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -636,6 +635,7 @@ CREATE TABLE `cuenta_bancaria` (
 
 LOCK TABLES `cuenta_bancaria` WRITE;
 /*!40000 ALTER TABLE `cuenta_bancaria` DISABLE KEYS */;
+INSERT INTO `cuenta_bancaria` VALUES (1,3,1,'01050000000000000000',80.00,1,1);
 /*!40000 ALTER TABLE `cuenta_bancaria` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -659,7 +659,7 @@ CREATE TABLE `cuentas_contables` (
   UNIQUE KEY `codigo_contable` (`codigo_contable`),
   KEY `cuenta_padreid` (`cuenta_padreid`),
   CONSTRAINT `cuentas_contables_ibfk_1` FOREIGN KEY (`cuenta_padreid`) REFERENCES `cuentas_contables` (`cod_cuenta`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -668,6 +668,7 @@ CREATE TABLE `cuentas_contables` (
 
 LOCK TABLES `cuentas_contables` WRITE;
 /*!40000 ALTER TABLE `cuentas_contables` DISABLE KEYS */;
+INSERT INTO `cuentas_contables` VALUES (1,'1','ACTIVO','deudora',NULL,1,0.00,1),(2,'1.1','ACTIVO CORRIENTE','deudora',1,2,0.00,1),(3,'1.1.1','EFECTIVO Y EQUIVALENTE DE EFECTIVO','deudora',1,3,0.00,1),(4,'1.1.1.01','CAJA','deudora',1,4,0.00,1),(5,'1.1.1.01.01','CAJA PRINCIPAL','deudora',1,5,0.00,1),(6,'1.1.1.02','BANCOS','deudora',1,4,0.00,1),(7,'1.1.1.02.01','DISPONIBILIDADES EN BANCOS NACIONALES','deudora',1,5,0.00,1),(8,'1.1.1.02.02','DISPONIBILIDADES EN BANCOS DEL EXTERIOR','deudora',1,5,0.00,1),(9,'1.1.2','CUENTAS POR COBRAR CORRIENTES','deudora',1,3,0.00,1),(10,'1.1.2.01','CLIENTES NACIONALES','deudora',1,4,0.00,1),(11,'2','PASIVO','acreedora',NULL,1,0.00,1),(12,'2.1','PASIVO CORRIENTE','acreedora',11,2,0.00,1),(13,'2.1.1','CUENTAS POR PAGAR','acreedora',11,3,0.00,1),(14,'2.1.1.01','PROVEEDORES POR COMPRAS','acreedora',11,4,0.00,1),(15,'2.1.1.02','PROVEEDORES POR GASTOS','acreedora',11,4,0.00,1),(16,'2.1.1.03','PROVEEDORES INTERNACIONALES','acreedora',11,4,0.00,1),(17,'2.2','PASIVO NO CORRIENTE','acreedora',11,2,0.00,1),(18,'2.2.1','PRÉSTAMOS A LARGO PLAZO','acreedora',11,3,0.00,1),(19,'3','PATRIMONIO','acreedora',NULL,1,0.00,1),(20,'3.1','CAPITAL SOCIAL','acreedora',19,2,0.00,1),(21,'5','GASTOS','deudora',NULL,1,0.00,1),(22,'5.1','COSTO DE VENTAS','deudora',21,2,0.00,1),(23,'5.2','GASTOS DE OPERACIÓN','deudora',21,2,0.00,1),(24,'5.3','GASTOS FINANCIEROS','deudora',21,2,0.00,1),(25,'4','INGRESOS','acreedora',NULL,1,0.00,1),(26,'4.1','VENTAS DE PRODUCTOS','acreedora',25,2,0.00,1),(27,'4.2','SERVICIOS PRESTADOS','acreedora',25,2,0.00,1),(28,'4.3','OTROS INGRESOS','acreedora',25,2,0.00,1),(29,'6','Prueba cuenta','deudora',NULL,1,456.00,1),(30,'6.1','Prueba cuenta nivel 2','deudora',29,2,0.00,1),(31,'6.1.01','Prueba cuenta nivel 3','deudora',30,3,90.00,1),(32,'6.1.01.01','Prueba cuenta nivel 4','deudora',31,4,0.00,1),(33,'6.1.01.01.01','Prueba cuenta nivel 5','deudora',32,5,0.00,1);
 /*!40000 ALTER TABLE `cuentas_contables` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -684,7 +685,7 @@ CREATE TABLE `descarga` (
   `descripcion` varchar(100) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`cod_descarga`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -693,7 +694,7 @@ CREATE TABLE `descarga` (
 
 LOCK TABLES `descarga` WRITE;
 /*!40000 ALTER TABLE `descarga` DISABLE KEYS */;
-INSERT INTO `descarga` VALUES (1,'2025-04-29 23:49:15','ajuste stock prueba',1);
+INSERT INTO `descarga` VALUES (1,'2025-04-29 23:49:15','ajuste stock prueba',1),(2,'2025-05-15 02:44:17','Ajuste manuela prueba',1);
 /*!40000 ALTER TABLE `descarga` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -805,7 +806,7 @@ CREATE TABLE `detalle_descarga` (
   KEY `detalle_descarga-descarga` (`cod_descarga`),
   CONSTRAINT `detalle_descarga-descarga` FOREIGN KEY (`cod_descarga`) REFERENCES `descarga` (`cod_descarga`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `detalle_descarga-detallep` FOREIGN KEY (`cod_detallep`) REFERENCES `detalle_productos` (`cod_detallep`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -814,7 +815,7 @@ CREATE TABLE `detalle_descarga` (
 
 LOCK TABLES `detalle_descarga` WRITE;
 /*!40000 ALTER TABLE `detalle_descarga` DISABLE KEYS */;
-INSERT INTO `detalle_descarga` VALUES (1,5,1,0.2);
+INSERT INTO `detalle_descarga` VALUES (1,5,1,0.2),(2,5,2,2);
 /*!40000 ALTER TABLE `detalle_descarga` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -924,7 +925,7 @@ CREATE TABLE `detalle_productos` (
 
 LOCK TABLES `detalle_productos` WRITE;
 /*!40000 ALTER TABLE `detalle_productos` DISABLE KEYS */;
-INSERT INTO `detalle_productos` VALUES (1,1,0,'0000-00-00',''),(2,1,8,'0000-00-00',''),(3,1,67,'0000-00-00',''),(4,1,23.5,'0000-00-00',''),(5,2,5.478,'2025-04-29','26-12'),(6,2,5,'2025-08-21','');
+INSERT INTO `detalle_productos` VALUES (1,1,0,'0000-00-00',''),(2,1,8,'0000-00-00',''),(3,1,67,'0000-00-00',''),(4,1,23.5,'0000-00-00',''),(5,2,3.478,'2025-04-29','26-12'),(6,2,5,'2025-08-21','');
 /*!40000 ALTER TABLE `detalle_productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1100,7 +1101,7 @@ CREATE TABLE `empresa` (
 
 LOCK TABLES `empresa` WRITE;
 /*!40000 ALTER TABLE `empresa` DISABLE KEYS */;
-INSERT INTO `empresa` VALUES ('J505284797','Quesera y Charcuteria Don Pedro 24','calle 60 entre carreras 12 y 13','04245645108','queseradonpedro24@gmail.com','venta al por menor de productos alimenticios','vista/dist/img/logo-icono.png');
+INSERT INTO `empresa` VALUES ('J505284797','Quesera y Charcuteria Don Pedro','Calle 60 entre carreras 12 y 13','04245645108','queseradonpedro24@gmail.com','venta al por menor de productos alimenticios','vista/dist/img/logo-icono.png');
 /*!40000 ALTER TABLE `empresa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1169,7 +1170,7 @@ CREATE TABLE `marcas` (
   `status` int(11) NOT NULL,
   PRIMARY KEY (`cod_marca`),
   UNIQUE KEY `marca_unica` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1303,7 +1304,7 @@ CREATE TABLE `presentacion_producto` (
   KEY `cod_unidad` (`cod_unidad`),
   CONSTRAINT `presentacion_producto_ibfk_1` FOREIGN KEY (`cod_producto`) REFERENCES `productos` (`cod_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `presentacion_producto_ibfk_2` FOREIGN KEY (`cod_unidad`) REFERENCES `unidades_medida` (`cod_unidad`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1312,7 +1313,7 @@ CREATE TABLE `presentacion_producto` (
 
 LOCK TABLES `presentacion_producto` WRITE;
 /*!40000 ALTER TABLE `presentacion_producto` DISABLE KEYS */;
-INSERT INTO `presentacion_producto` VALUES (1,1,1,'pieza','10',7.00,0,1),(2,1,2,'pieza','4.5',11.00,34,1);
+INSERT INTO `presentacion_producto` VALUES (1,1,1,'pieza','10',7.00,0,1),(2,1,2,'pieza','4.5',11.00,34,1),(4,1,3,'Pieza','5kg',40.00,30,1);
 /*!40000 ALTER TABLE `presentacion_producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1364,7 +1365,7 @@ CREATE TABLE `productos` (
   KEY `cod_marca` (`cod_marca`),
   CONSTRAINT `productos-categorias` FOREIGN KEY (`cod_categoria`) REFERENCES `categorias` (`cod_categoria`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`cod_marca`) REFERENCES `marcas` (`cod_marca`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1373,7 +1374,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,1,NULL,'Queso Duro',NULL),(2,2,6,'jamon de piernaa','vista/dist/img/productos/ImgThumb2.jpg');
+INSERT INTO `productos` VALUES (1,1,NULL,'Queso Duro',NULL),(2,2,6,'Jamon de Pierna','vista/dist/img/productos/ImgThumb2.jpg'),(3,1,6,'Queso Amarillo','vista/dist/img/productos/default.png');
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1404,7 +1405,6 @@ CREATE TABLE `prov_representantes` (
 
 LOCK TABLES `prov_representantes` WRITE;
 /*!40000 ALTER TABLE `prov_representantes` DISABLE KEYS */;
-INSERT INTO `prov_representantes` VALUES (1,2,'10771716','samuel','Rojas','12453145',1);
 /*!40000 ALTER TABLE `prov_representantes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1423,7 +1423,7 @@ CREATE TABLE `proveedores` (
   `direccion` varchar(250) DEFAULT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`cod_prov`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1432,7 +1432,7 @@ CREATE TABLE `proveedores` (
 
 LOCK TABLES `proveedores` WRITE;
 /*!40000 ALTER TABLE `proveedores` DISABLE KEYS */;
-INSERT INTO `proveedores` VALUES (1,'J505284788','generico','','',1),(2,'J28516209','ST3M c.a','Pedroperez@gmail.com','av. libertador',1);
+INSERT INTO `proveedores` VALUES (1,'J505284788','generico','','',1),(3,'J10283114','Purolomo','hola@gmail.com','Barquisimeto',1);
 /*!40000 ALTER TABLE `proveedores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1618,7 +1618,7 @@ CREATE TABLE `tipo_pago` (
   `medio_pago` varchar(50) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`cod_metodo`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1627,7 +1627,7 @@ CREATE TABLE `tipo_pago` (
 
 LOCK TABLES `tipo_pago` WRITE;
 /*!40000 ALTER TABLE `tipo_pago` DISABLE KEYS */;
-INSERT INTO `tipo_pago` VALUES (1,'Efectivo en Bs',1),(2,'Efectivo USD',1);
+INSERT INTO `tipo_pago` VALUES (1,'Efectivo en Bs',1),(2,'Efectivo USD',1),(3,'Pago movil',1);
 /*!40000 ALTER TABLE `tipo_pago` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1654,7 +1654,6 @@ CREATE TABLE `tlf_proveedores` (
 
 LOCK TABLES `tlf_proveedores` WRITE;
 /*!40000 ALTER TABLE `tlf_proveedores` DISABLE KEYS */;
-INSERT INTO `tlf_proveedores` VALUES (1,2,'04245645108'),(2,2,'12453145213');
 /*!40000 ALTER TABLE `tlf_proveedores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1769,4 +1768,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-11  2:35:10
+-- Dump completed on 2025-05-15 18:34:56

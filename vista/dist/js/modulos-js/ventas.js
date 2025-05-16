@@ -396,7 +396,7 @@ function calcularTotalpago() {
     let diferencia = montoPagar - totalBs;
     document.getElementById('diferencia').value = diferencia.toFixed(2);
 }
-
+ 
 $(document).ready(function() {
     $('#pagoModal').on('hidden.bs.modal', function () {
         // Recargar la página cuando el modal se cierra

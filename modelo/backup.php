@@ -19,8 +19,6 @@ class Backup extends Conexion {
     private $modo;
     private $tipo;
 
-
-
     private $errores = [];
 
     public function __construct() {
@@ -28,84 +26,72 @@ class Backup extends Conexion {
     }
 
 
-    // ========== GETTERS Y SETTERS ==========
+    /* ==================
+    GETTERS Y SETTERS 
+    ===================*/
 
     public function getNombreArchivo() {
         return $this->nombreArchivo;
     }
 
-    public function setNombreArchivo($nombre) {
-        $r = $this->nombreArchivo($nombre);
-        if ($r === true) {
-            $this->nombreArchivo = $nombre;
-        } else {
-            $this->errores['nombre'] = $r;
+    public function setDatos($datos) {
+
+        if(isset($datos['nombre_backup'])){
+            $r = $this->nombreArchivo($datos['nombre_backup']);
+            if ($r === true) {
+                $this->nombreArchivo = $datos['nombre_backup'];
+            } else {
+                $this->errores['nombre_backup'] = $r;
+            }
         }
+
+        if(isset($datos['desc_backup'])){
+            $res= $this->validarDescripcion($datos['desc_backup'], 'descripcion', 2, 50);
+            if ($res === true) {
+                $this->descripcion = $datos['desc_backup'];
+            } else {
+                $this->errores['descripcion'] = $res;
+            }
+        }
+
+        if(isset($datos['retencion'])){
+            $valor = intval($datos['retencion']);
+            if ($valor < 5) {
+                $this->errores['retencion'] = "El valor de retención debe ser al menos 5.";
+            } else {
+                $this->retencion = $valor;
+            }
+        }
+
     }
     
     public function getDescripcion() {
         return $this->descripcion;
-    }
-    public function setDescripcion($descripcion) {
-        $r= $this->validarDescripcion($descripcion, 'descripcion', 2, 50);
-        if ($r === true) {
-            $this->descripcion = $descripcion;
-        } else {
-            $this->errores['descripcion'] = $r;
-        }
     }
 
     public function getFrecuencia() {
         return $this->frecuencia;
     }
 
-    public function setFrecuencia($frecuencia){
-        $this->frecuencia = $frecuencia;
-    }
-
     public function getDia(){
         return $this->dia;
-    }
-
-    public function setDia($dia){
-        $this->dia = $dia;
     }
 
     public function getHora(){
         return $this->hora;
     }
 
-    public function setHora($hora){
-        $this->hora = $hora;
-    }
-
     public function getRetencion(){
         return $this->retencion;
-    }
-
-    public function setRetencion($retencion){
-        $valor = intval($retencion); // aseguramos que sea entero
-        if ($valor < 5) {
-            $this->errores['retencion'] = "El valor de retención debe ser al menos 5.";
-        } else {
-            $this->retencion = $valor;
-        }
     }
 
     public function getHabilitado(){
         return $this->habilitado;
     }
 
-    public function setHabilitado($habilitado){
-        $this->habilitado = $habilitado;
-    }
 
     public function getModo(){
         return $this->modo;
-    }
-
-    public function setModo($modo){
-        $this->modo = $modo;
     }
 
     public function getErrores() {
@@ -187,7 +173,7 @@ class Backup extends Conexion {
     ==============================*/
     private function mostrar() {
         $sql = "SELECT b.*,
-        u.nombre
+        u.nombre AS nombre_usuario
         FROM backup b 
         INNER JOIN usuarios u ON b.cod_usuario = u.cod_usuario
         ORDER BY fecha DESC";
@@ -210,6 +196,7 @@ class Backup extends Conexion {
         try {
             $sql = "SELECT cod_backup, ruta FROM backup ";
     
+            // revisar para ambos
             if ($tipo == 'manual') {
                 $sql .= "WHERE tipo = 'manual' ";
             } elseif ($tipo == 'automatico') {
@@ -250,7 +237,39 @@ class Backup extends Conexion {
     public function geteliminarRetencion($retencion, $tipo) {
         return $this->eliminarRetencion($retencion, $tipo);
     }
+
+
+    /*==============================
+    ELIMINAR MANUAL
+    ==============================*/
+    private function eliminar($cod_backup) {
+        try {
+            $sql = "SELECT ruta FROM backup WHERE cod_backup = :cod_backup";
+            parent::conectarBD();
+            $stmt = $this->conex->prepare($sql);
+            $stmt->bindParam(':cod_backup', $cod_backup);
+            $stmt->execute();
+            $ruta = $stmt->fetchColumn();
     
+            if (!empty($ruta) && file_exists($ruta)) {
+                unlink($ruta); // elimina archivo físico
+            }
+    
+            $del = $this->conex->prepare("DELETE FROM backup WHERE cod_backup = :cod_backup");
+            $del->bindParam(':cod_backup', $cod_backup);
+            return $del->execute() ? 1 : 0;
+    
+        } catch (Exception $e) {
+            throw new Exception("Error al eliminar respaldo: " . $e->getMessage());
+        } finally {
+            parent::desconectarBD(); 
+        }
+    }   
+
+    public function getEliminar($cod_backup) {
+        return $this->eliminar($cod_backup);
+    }
+
 
     /*==============================
     CONFIGURACIÓN DE BACKUP
@@ -306,4 +325,6 @@ class Backup extends Conexion {
     public function getGuardarConfig() {
         return $this->guardarConfig();
     }
+
+
 }

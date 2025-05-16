@@ -29,7 +29,7 @@ require_once "controlador/backup.php";
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="tablaRespaldos" class="table table-bordered table-striped datatable2" style="width: 100%;">
+                        <table id="tablaRespaldos" class="table table-bordered table-striped datatable1" style="width: 100%;">
                             <thead>
                                 <tr>
                                     <th>Codigo</th>
@@ -47,7 +47,7 @@ require_once "controlador/backup.php";
                                     <?php $nombreArchivo = basename($r['ruta']); ?>
                                     <tr>
                                         <td><?= $r['cod_backup'] ?></td>
-                                        <td><?= $r['nombre'] ?></td> <!-- Poner automatico si es el caso-->
+                                        <td><?= $r['nombre_usuario'] ?></td> <!-- Poner automatico si es el caso-->
                                         <td><?= $r['fecha'] ?></td>
                                         <td><?= $r['descripcion'] ?></td>
                                         <td><a href="<?= $r['ruta'] ?>" download><?= $nombreArchivo ?></a></td>
@@ -58,17 +58,16 @@ require_once "controlador/backup.php";
                                             </span>
                                         </td>
                                         <td>
-                                            <form method="POST">
-                                                <input type="hidden" name="cod_backup" value="<?= $r['cod_backup'] ?>">
-                                                <button name="eliminar_respaldo" class="btn btn-danger btn-sm" title="Eliminar">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
+                                            <button name="eliminar" class="btn btn-danger btn-sm" title="Eliminar" data-toggle="modal" data-target="#modalEliminar"
+                                            data-codigo="<?php echo $r['cod_backup']?>"
+                                            data-nombre="<?php echo $r['nombre']?>"
+                                            data-ruta="<?php echo $r['ruta']?>">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -85,9 +84,7 @@ require_once "controlador/backup.php";
                     <h5 class="modal-title">Configuración de respaldo</h5>
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
-
                     <div class="modal-body row">
-                    <!-- Frecuencia -->
                     <div class="form-group col-md-4">
                         <label for="frecuencia">Frecuencia</label>
                         <select name="frecuencia" class="form-control" required>
@@ -98,8 +95,6 @@ require_once "controlador/backup.php";
                         </select>
                         <input type="hidden" name="frecuencia_hidden" id="frecuenciaHidden">
                     </div>
-
-                    <!-- Día -->
                     <div class="form-group col-md-4">
                         <label for="dia">Día</label>
                         <select name="dia" class="form-control" required>
@@ -113,21 +108,16 @@ require_once "controlador/backup.php";
                         </select>
                         <input type="hidden" name="dia_hidden" id="diaHidden">
                     </div>
-
-                    <!-- Hora -->
                     <div class="form-group col-md-4">
                         <label for="hora">Hora</label>
                         <input type="time" name="hora" class="form-control" value="<?= $config['hora'] ?? '20:00' ?>">
                         <input type="hidden" name="hora_hidden" id="horaHidden">
                     </div>
 
-                    <!-- Retención -->
                     <div class="form-group col-md-4">
                         <label for="retencion">Retención máxima <i class="fas fa-info-circle" data-toggle="tooltip" title="Número máximo de respaldos que se conservarán."></i></label>
                         <input type="number" name="retencion" class="form-control" value="<?= $config['retencion'] ?? 10 ?>" min="5">
                     </div>
-
-                    <!-- Aplicar retención a -->
                     <div class="form-group col-md-4">
                         <label for="modo">Aplicar retención a</label>
                         <select name="modo" class="form-control">
@@ -135,8 +125,6 @@ require_once "controlador/backup.php";
                         <option value="2" <?= $config['modo'] == 'automatico' ? 'selected' : '' ?>>Solo automáticos</option>
                         </select>
                     </div>
-
-                    <!-- Activar respaldo automático -->
                     <div class="form-group col-md-4">
                         <label>¿Activar respaldo automático?</label><br>
                         <input type="checkbox" name="habilitado" id="checkAuto" data-bootstrap-switch <?= $config['habilitado'] ? 'checked' : '' ?>>
@@ -183,7 +171,34 @@ require_once "controlador/backup.php";
                         </div>
                     </form>
                 </div>
+            </div>
+
+<!-- =============================
+MODAL ELIMINAR RESPALDO 
+============================= -->
+            <div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="POST" id="formEliminar">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                        <h5 class="modal-title">Eliminar copia de seguridad</h5>
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Estás seguro de que deseas eliminar esta copia de seguridad: <b><span id="nombreE"></span></b>?</p>
+                            <small>Esta acción no se puede deshacer.</small>
+                            <input type="hidden" name="codE" id="codE">
+                            <input type="hidden" name="rutaE" id="rutaE">
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" name="eliminarR" class="btn btn-primary">Eliminar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
+            </div>
+
         </div>
     </section>
 </div>
@@ -202,41 +217,4 @@ require_once "controlador/backup.php";
         });
         </script>
 <?php endif; ?>
-
-
-<!-- JavaScript para activar/desactivar campos -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const checkbox = document.querySelector('#checkAuto');
-
-  // Campos visibles
-  const frecuencia = document.querySelector('select[name="frecuencia"]');
-  const dia = document.querySelector('select[name="dia"]');
-  const hora = document.querySelector('input[name="hora"]');
-
-  // Campos ocultos
-  const frecuenciaHidden = document.querySelector('input[name="frecuencia_hidden"]');
-  const diaHidden = document.querySelector('input[name="dia_hidden"]');
-  const horaHidden = document.querySelector('input[name="hora_hidden"]');
-
-  // Alternar si los campos están activos o no
-  function toggleCamposAuto() {
-    const activo = checkbox.checked;
-    frecuencia.disabled = !activo;
-    dia.disabled = !activo;
-    hora.disabled = !activo;
-  }
-
-  checkbox.addEventListener('change', toggleCamposAuto);
-  toggleCamposAuto(); // Ejecutar al cargar
-
-  // Al enviar el formulario, copiar valores si están deshabilitados
-  document.querySelector('#formConfigBackup').addEventListener('submit', function () {
-    if (!checkbox.checked) {
-      frecuenciaHidden.value = frecuencia.value;
-      diaHidden.value = dia.value;
-      horaHidden.value = hora.value;
-    }
-  });
-});
-</script>
+<script src="vista/dist/js/modulos-js/backup.js"></script>

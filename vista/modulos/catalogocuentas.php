@@ -64,8 +64,12 @@ require_once "controlador/catalogocuentas.php";
                                             <td><?php echo $item['naturaleza']; ?></td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <button class="btn btn-warning" data-toggle="modal" data-target="#modalEditarCuenta">Editar</button>
-                                                    <button class="btn btn-danger">Eliminar</button>
+                                                    <button class="btn btn-warning" data-toggle="modal" data-target="#modalEditarCuenta">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -147,6 +151,20 @@ require_once "controlador/catalogocuentas.php";
                     </div>
                 </div>
             </div>
+
+            <!-- Modal Eliminar Cuenta Contable -->
+            <div class="modal fade" id="modalRegistrarCuenta" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    <form id="formCuentaContable" method="post">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Registrar Cuenta Contable</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+
+
 
 
         </div>

@@ -76,6 +76,7 @@ trait ValidadorTrait {
         }
         return true;
     }
+    
     public function validarDecimal($valor, $campo, $min = 1, $max = 20) {
         $valor = trim($valor);
         

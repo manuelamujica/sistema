@@ -375,7 +375,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="backup" class="nav-link bitacora-link" data-modulo="Gastos">
+                                <a href="categoriag" class="nav-link bitacora-link" data-modulo="Gastos">
                                     <i class="fas fa-file-invoice-dollar nav-icon"></i>
                                         <p>
                                             Categoría de Gastos

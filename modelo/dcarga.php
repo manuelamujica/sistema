@@ -83,7 +83,7 @@ class Dcarga extends Conexion{
     }
     public function setDes($descripcion)
     {
-        $resultado = $this->validarTexto($descripcion, 'descripcion', 2, 50);
+        $resultado = $this->validarDescripcion($descripcion, 'descripcion', 2, 50);
         if ($resultado === true) {
             $this->descripcion = $descripcion;
         } else {

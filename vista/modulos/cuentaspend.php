@@ -55,7 +55,7 @@ require_once "controlador/cuentaspend.php";
                         <div class="card-body tab-content">
                             <!-- Cuentas por Pagar -->
                             <div class="tab-pane fade show active" id="pagos">
-                                <table id="tablaPagos" class="table table-striped">
+                                <table id="tablaPagos" class="table table-striped datatable" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Asunto/Proveedor</th>
@@ -87,7 +87,7 @@ require_once "controlador/cuentaspend.php";
                             
                             <!-- Cuentas por Cobrar (VENTA X CLIENTE) -->
                             <div class="tab-pane fade" id="cobros">
-                                <table id="tablaCobros" class="table table-striped">
+                                <table id="tablaCobros" class="table table-striped datatable" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th>Cliente</th>
@@ -107,7 +107,7 @@ require_once "controlador/cuentaspend.php";
                                             <td><?php echo $pendiente['total_cobrado']; ?></td>
                                             <td><?php echo $pendiente['total_pendiente']; ?></td>
                                             <td>
-                                                <button class="btn btn-primary" data-toggle="modal" data-target="#detallemodal"
+                                                <button title="Ver detalles" class="btn btn-primary" data-toggle="modal" data-target="#detallemodal"
                                                 data-cliente="<?php echo $pendiente["cod_cliente"];?>"
                                                 ><i class="fas fa-plus"></i></button>
                                             </td>
@@ -136,24 +136,26 @@ require_once "controlador/cuentaspend.php";
                                             <h3 class="card-title">Detalles de la cuenta</h3>
                                         </div>
                                         <div class="card-body">
-                                            <table id="tablaDetalles" class="table table-bordered table-striped table-hover" style="width: 100%;">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Codigo</th>
-                                                        <th>Fecha</th>
-                                                        <th>Importe Total</th>
-                                                        <th>Monto Pagado</th>
-                                                        <th>Saldo Pendiente</th>
-                                                        <th>Fecha de vencimiento</th>
-                                                        <th>Días Restantes</th>
-                                                        <th>Status</th>
-                                                        <th>Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="detalleBody">
-                                                    
-                                                </tbody>
-                                            </table>
+                                            <div class="table-responsive">
+                                                <table id="tablaDetalles" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Codigo</th>
+                                                            <th>Fecha</th>
+                                                            <th>Importe Total</th>
+                                                            <th>Monto Pagado</th>
+                                                            <th>Saldo Pendiente</th>
+                                                            <th>Fecha de vencimiento</th>
+                                                            <th>Días Restantes</th>
+                                                            <th>Status</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="detalleBody">
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
