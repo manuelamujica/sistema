@@ -151,27 +151,73 @@ window.UtilidadesGraficos = {
     },
 
     inicializarGraficoProyecciones: function(ctx, historico, proyeccion) {
-        const datos = {
-            labels: [...historico.labels, ...proyeccion.labels],
-            datasets: [
-                this.crearDatasetLinea(
-                    'Ventas Reales',
-                    [...historico.valores, ...Array(proyeccion.valores.length).fill(null)]
-                ),
-                this.crearDatasetLinea(
-                    'Proyecciones',
-                    [...Array(historico.valores.length - 1).fill(null), 
-                     historico.valores[historico.valores.length - 1], 
-                     ...proyeccion.valores],
-                    true
-                )
-            ]
-        };
+        console.group('Inicializando Gráfico Proyecciones');
+        console.log('Datos históricos recibidos:', historico);
+        console.log('Datos proyecciones recibidos:', proyeccion);
+        
+        const tipoAnalisis = $('#ver-historico').val();
+        let datos;
+        
+        if (tipoAnalisis === 'precision' && window.datosFinanzas?.datos_grafico_proyecciones?.historicas) {
+            const historicas = window.datosFinanzas.datos_grafico_proyecciones.historicas;
+            datos = {
+                labels: historicas.labels,
+                datasets: [
+                    this.crearDatasetLinea(
+                        'Ventas Reales',
+                        historicas.reales
+                    ),
+                    this.crearDatasetLinea(
+                        'Proyecciones Históricas',
+                        historicas.valores,
+                        true
+                    )
+                ]
+            };
+        } else {
+            datos = {
+                labels: [...historico.labels, ...proyeccion.labels],
+                datasets: [
+                    this.crearDatasetLinea(
+                        'Ventas Reales',
+                        [...historico.valores, ...Array(proyeccion.valores.length).fill(null)]
+                    ),
+                    ...(proyeccion.valores.length > 0 ? [
+                        this.crearDatasetLinea(
+                            'Proyecciones',
+                            [...Array(historico.valores.length - 1).fill(null), 
+                             historico.valores[historico.valores.length - 1], 
+                             ...proyeccion.valores],
+                            true
+                        )
+                    ] : [])
+                ]
+            };
+        }
+
+        console.log('Datos finales para el gráfico:', datos);
+        console.groupEnd();
 
         return new Chart(ctx, {
             type: 'line',
             data: datos,
-            options: this.obtenerOpciones('Proyecciones Futuras')
+            options: this.obtenerOpciones('Análisis de Ventas', {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Ventas (USD)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Período'
+                        }
+                    }
+                }
+            })
         });
     },
 

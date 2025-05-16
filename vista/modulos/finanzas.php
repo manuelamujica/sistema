@@ -4,7 +4,6 @@ require_once "controlador/finanzas.php";
 <!-- datos del controlador al js -->
 <script>
 window.datosFinanzas = <?php echo json_encode($datos_iniciales ?? [], JSON_NUMERIC_CHECK); ?>;
-console.log('Datos iniciales cargados:', window.datosFinanzas);
 </script>
 
 <div class="content-wrapper">
@@ -20,7 +19,10 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
     </section>
 
     <section class="content">
-            <ul class="nav nav-tabs mb-4" id="pestañas" role="tablist">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="pestañas" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="cuentas-tab" data-toggle="tab" data-target="#cuentas" type="button" role="tab">Análisis de Cuentas</button>
                 </li>
@@ -37,6 +39,8 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                     <button class="nav-link" id="proyecciones-tab" data-toggle="tab" data-target="#proyecciones" type="button" role="tab">Proyecciones</button>
                 </li>
             </ul>
+                </div>
+                <div class="card-body">
                 <div class="tab-content" id="contenido-pestañas">
                     <div class="tab-pane fade show active" id="cuentas" role="tabpanel">
                         <div class="card">
@@ -48,6 +52,7 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                     <div class="col-md-3">
                                         <label for="categoria" class="form-label">Categoría de Cuenta:</label>
                                         <select id="categoria" name="categoria" class="form-select">
+                                                <option value="" selected disabled>Seleccione una categoría</option>
                                 <option value="activos">Activos</option>
                                 <option value="pasivos">Pasivos</option>
                                 <option value="patrimonio">Patrimonio</option>
@@ -58,6 +63,7 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                     <div class="col-md-3">
                                         <label for="cuenta" class="form-label">Cuenta Específica:</label>
                                         <select id="cuenta" name="cuenta" class="form-select">
+                                                <option value="" selected disabled>Seleccione una cuenta</option>
                                 <option value="caja">Caja</option>
                                 <option value="bancos">Bancos</option>
                                 <option value="clientes">Clientes</option>
@@ -65,9 +71,13 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                 <option value="capital">Capital</option>
                             </select>
                         </div>
-                                    <div class="col-md-3">
-                                        <label for="mes-inicio" class="form-label">Mes Inicial:</label>
-                                        <div class="input-group">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Período de Análisis:</label>
+                                            <div class="row g-2">
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <label class="me-2 text-nowrap">Desde:</label>
+                                                        <div class="flex-grow-1">
                                             <select id="mes-inicio" name="mes-inicio" class="form-select">
                                                 <option value="1">Enero</option>
                                                 <option value="2">Febrero</option>
@@ -82,15 +92,19 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                                 <option value="11">Noviembre</option>
                                                 <option value="12">Diciembre</option>
                                             </select>
+                                                        </div>
+                                                        <div class="ms-2">
                                             <select id="año-inicio" name="año-inicio" class="form-select">
                                                 <option value="2023">2023</option>
                                                 <option value="2024" selected>2024</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="mes-fin" class="form-label">Mes Final:</label>
-                                        <div class="input-group">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <label class="me-2 text-nowrap">Hasta:</label>
+                                                        <div class="flex-grow-1">
                                             <select id="mes-fin" name="mes-fin" class="form-select">
                                                 <option value="1">Enero</option>
                                                 <option value="2">Febrero</option>
@@ -105,10 +119,15 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                                 <option value="11">Noviembre</option>
                                                 <option value="12">Diciembre</option>
                                             </select>
+                                                        </div>
+                                                        <div class="ms-2">
                                             <select id="año-fin" name="año-fin" class="form-select">
                                                 <option value="2023">2023</option>
                                                 <option value="2024" selected>2024</option>
                                             </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         </div>
                                     </div>
                                 </div>
@@ -126,12 +145,122 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                     <label class="form-check-label" for="mostrarEgresos">Egresos</label>
                     </div>
 
-                                <div class="card mb-4">
-                                    <div class="card-body">
-                                        <div style="position: relative; height: 400px; width: 100%;">
-                                            <canvas id="grafico-cuentas"></canvas>
+                                    <div class="table-responsive">
+                                        <table id="tabla-cuentas" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Descripción</th>
+                                                    <th>Tipo</th>
+                                                    <th>Monto</th>
+                                                    <th>Saldo</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
                     </div>
-                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="presupuestos" role="tabpanel">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="card-title h4 mb-4">Presupuestos</h2>
+                                    <p class="text-muted">Gestión y seguimiento de presupuestos por categoría.</p>
+                                    
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-3">
+                                            <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#modal-registro-presupuesto">
+                                                <i class="fas fa-plus-circle me-2"></i>Registrar Nuevo Presupuesto
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="categoria-gasto" class="form-label">Seleccionar Categoría:</label>
+                                            <select id="categoria-gasto" name="categoria-gasto" class="form-select">
+                                                <option value="" selected disabled>Seleccione una categoría</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Período de Visualización:</label>
+                                            <div class="row g-2">
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <label class="me-2 text-nowrap">Desde:</label>
+                                                        <div class="flex-grow-1">
+                                                            <select id="mes-inicio-vis" name="mes-inicio-vis" class="form-select">
+                                                                <option value="1">Enero</option>
+                                                                <option value="2">Febrero</option>
+                                                                <option value="3">Marzo</option>
+                                                                <option value="4">Abril</option>
+                                                                <option value="5">Mayo</option>
+                                                                <option value="6">Junio</option>
+                                                                <option value="7">Julio</option>
+                                                                <option value="8">Agosto</option>
+                                                                <option value="9">Septiembre</option>
+                                                                <option value="10">Octubre</option>
+                                                                <option value="11">Noviembre</option>
+                                                                <option value="12">Diciembre</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="ms-2">
+                                                            <select id="año-inicio-vis" name="año-inicio-vis" class="form-select">
+                                                                <option value="2023">2023</option>
+                                                                <option value="2024" selected>2024</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <label class="me-2 text-nowrap">Hasta:</label>
+                                                        <div class="flex-grow-1">
+                                                            <select id="mes-fin-vis" name="mes-fin-vis" class="form-select">
+                                                                <option value="1">Enero</option>
+                                                                <option value="2">Febrero</option>
+                                                                <option value="3">Marzo</option>
+                                                                <option value="4">Abril</option>
+                                                                <option value="5">Mayo</option>
+                                                                <option value="6">Junio</option>
+                                                                <option value="7">Julio</option>
+                                                                <option value="8">Agosto</option>
+                                                                <option value="9">Septiembre</option>
+                                                                <option value="10">Octubre</option>
+                                                                <option value="11">Noviembre</option>
+                                                                <option value="12">Diciembre</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="ms-2">
+                                                            <select id="año-fin-vis" name="año-fin-vis" class="form-select">
+                                                                <option value="2023">2023</option>
+                                                                <option value="2024" selected>2024</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <canvas id="grafico-presupuestos"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table id="tabla-presupuestos" class="table table-bordered table-striped table-hover datatable" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Categoría</th>
+                                                    <th class="text-end">Presupuesto</th>
+                                                    <th class="text-end">Gasto Real</th>
+                                                    <th class="text-end">Diferencia</th>
+                                                    <th class="text-end">% Utilizado</th>
+                                                    <th class="text-center">Estado</th>
+                                                    <th class="text-center">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
                         </div>
                             </div>
                         </div>
@@ -192,105 +321,6 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="presupuestos" role="tabpanel">
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="card-title h4 mb-4">Presupuestos</h2>
-                                <p class="text-muted">Gestión y seguimiento de presupuestos por categoría.</p>
-                                
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-4">
-                                        <label for="categoria-gasto" class="form-label">Categoría de Gasto:</label>
-                                        <select id="categoria-gasto" name="categoria-gasto" class="form-select">
-                                            <option value="" selected disabled>Seleccione una categoría</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="periodo-presupuesto" class="form-label">Período:</label>
-                                        <div class="input-group">
-                                            <select id="mes-presupuesto" name="mes-presupuesto" class="form-select">
-                                                <option value="1">Enero</option>
-                                                <option value="2">Febrero</option>
-                                                <option value="3">Marzo</option>
-                                                <option value="4">Abril</option>
-                                                <option value="5">Mayo</option>
-                                                <option value="6">Junio</option>
-                                                <option value="7">Julio</option>
-                                                <option value="8">Agosto</option>
-                                                <option value="9">Septiembre</option>
-                                                <option value="10">Octubre</option>
-                                                <option value="11">Noviembre</option>
-                                                <option value="12">Diciembre</option>
-                                            </select>
-                                            <select id="año-presupuesto" name="año-presupuesto" class="form-select">
-                                                <option value="2023">2023</option>
-                                                <option value="2024" selected>2024</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="presupuesto-mensual" class="form-label">Presupuesto Mensual:</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">$</span>
-                                            <input type="number" id="presupuesto-mensual" name="presupuesto-mensual" class="form-control" placeholder="0.00">
-                                            <button id="guardar-presupuesto" class="btn btn-primary">
-                                                <i class="bi bi-save"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card mb-4">
-                                    <div class="card-body">
-                                        <canvas id="presupuestoChart"></canvas>
-                                    </div>
-                                </div>
-
-                                <div class="table-responsive">
-                                    <table id="tabla-presupuestos" class="table table-hover">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Categoría</th>
-                                                <th class="text-end">Presupuesto</th>
-                                                <th class="text-end">Gasto Real</th>
-                                                <th class="text-end">Diferencia</th>
-                                                <th class="text-end">% Utilizado</th>
-                                                <th class="text-center">Estado</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-
-                                <!-- Summary Cards -->
-                                <div class="row mt-4">
-                                    <div class="col-md-4">
-                                        <div class="card bg-primary bg-opacity-10">
-                                            <div class="card-body">
-                                                <h6 class="card-subtitle mb-2 text-primary">Presupuesto Total</h6>
-                                                <p class="card-text h3 text-primary" id="presupuesto-total">$0.00</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card bg-success bg-opacity-10">
-                                            <div class="card-body">
-                                                <h6 class="card-subtitle mb-2 text-success">Gasto Real</h6>
-                                                <p class="card-text h3 text-success" id="gasto-real-total">$0.00</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card bg-info bg-opacity-10">
-                                            <div class="card-body">
-                                                <h6 class="card-subtitle mb-2 text-info">Diferencia</h6>
-                                                <p class="card-text h3 text-info" id="diferencia-total">$0.00</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="tab-pane fade" id="proyecciones" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
@@ -340,26 +370,7 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php foreach ($proyecciones as $p): 
-                                                        $ventasActuales = $p['ventas_actuales'];
-                                                        $proyeccion3m = $p['proyeccion_3m'];
-                                                        $proyeccion6m = $p['proyeccion_6m'];
-                                                        $proyeccion12m = $p['proyeccion_12m'];
-                                                        $tendencia = $p['tendencia'];
-                                                    ?>
-                                                    <tr data-producto="<?php echo $p['producto']; ?>" 
-                                                        data-cod-producto="<?php echo $p['cod_producto']; ?>"
-                                                        class="cursor-pointer">
-                                                        <td><?php echo $p['producto']; ?></td>
-                                                        <td class="text-end"><?php echo number_format($ventasActuales, 2); ?></td>
-                                                        <td class="text-end"><?php echo number_format($proyeccion3m, 2); ?></td>
-                                                        <td class="text-end"><?php echo number_format($proyeccion6m, 2); ?></td>
-                                                        <td class="text-end"><?php echo number_format($proyeccion12m, 2); ?></td>
-                                                        <td class="text-center">
-                                                            <i class="bi bi-arrow-<?php echo $tendencia; ?>-circle-fill text-<?php echo $tendencia === 'up' ? 'success' : 'danger'; ?>"></i>
-                                                        </td>
-                                                    </tr>
-                                                    <?php endforeach; ?>
+                                                    <!-- Los datos se cargarán dinámicamente -->
                                                 </tbody>
                                             </table>
                                         </div>
@@ -377,29 +388,14 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                                 <thead class="table-light">
                                                     <tr>
                                                         <th>Producto</th>
-                                                        <th class="text-end">Precisión Promedio</th>
-                                                        <th class="text-end">Mejor Precisión</th>
-                                                        <th class="text-end">Peor Precisión</th>
-                                                        <th class="text-end">Tendencia</th>
+                                                        <th class="text-end">Valor Proyectado</th>
+                                                        <th class="text-end">Valor Real</th>
+                                                        <th class="text-end">Precisión</th>
+                                                        <th class="text-center">Acciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php foreach ($precision as $p): 
-                                                        $precisionPromedio = $p['precision_promedio'];
-                                                        $tendencia = $precisionPromedio > 95 ? 'up' : 'down';
-                                                    ?>
-                                                    <tr data-producto="<?php echo $p['producto']; ?>"
-                                                        data-cod-producto="<?php echo $p['cod_producto']; ?>"
-                                                        class="cursor-pointer">
-                                                        <td><?php echo $p['producto']; ?></td>
-                                                        <td class="text-end"><?php echo number_format($precisionPromedio, 2); ?>%</td>
-                                                        <td class="text-end"><?php echo number_format($p['mejor_precision'], 2); ?>%</td>
-                                                        <td class="text-end"><?php echo number_format($p['peor_precision'], 2); ?>%</td>
-                                                        <td class="text-center">
-                                                            <i class="bi bi-arrow-<?php echo $tendencia; ?>-circle-fill text-<?php echo $tendencia === 'up' ? 'success' : 'danger'; ?>"></i>
-                                                        </td>
-                                                    </tr>
-                                                    <?php endforeach; ?>
+                                                    <!-- Los datos se cargarán dinámicamente -->
                                                 </tbody>
                                             </table>
                                         </div>
@@ -485,6 +481,9 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
                                             <div class="card-body">
                                                 <h6 class="card-subtitle mb-2 text-info">Margen Bruto Total</h6>
                                                 <p class="card-text h3 text-info">$2,750.00</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                             </div>
                                         </div>
                                     </div>
@@ -568,7 +567,61 @@ console.log('Datos iniciales cargados:', window.datosFinanzas);
         </div>
 </div>
 
-<!-- Scripts específicos para finanzas -->
+<!-- Modal para registrar presupuesto -->
+<div class="modal fade" id="modal-registro-presupuesto" tabindex="-1" aria-labelledby="modal-registro-presupuesto-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-registro-presupuesto-label">Registrar Nuevo Presupuesto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form-registro-presupuesto">
+                    <div class="form-group">
+                        <label for="categoria-presupuesto" class="form-label">Categoría de Gasto<span class="text-danger">*</span></label>
+                        <select id="categoria-presupuesto" name="categoria-presupuesto" class="form-select" required>
+                            <option value="" selected disabled>Seleccione una categoría</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="mes-presupuesto" class="form-label">Mes<span class="text-danger">*</span></label>
+                        <input type="date" id="mes-presupuesto" name="mes-presupuesto" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="año-presupuesto" class="form-label">Año<span class="text-danger">*</span></label>
+                        <select id="año-presupuesto" name="año-presupuesto" class="form-select" required>
+                            <option value="2023">2023</option>
+                            <option value="2024" selected>2024</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="monto-presupuesto" class="form-label">Monto Presupuestado<span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" min="0" id="monto-presupuesto" name="monto-presupuesto" class="form-control" placeholder="0.00" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion-presupuesto" class="form-label">Descripción</label>
+                        <textarea id="descripcion-presupuesto" name="descripcion-presupuesto" class="form-control" rows="3" placeholder="Ingrese una descripción o notas adicionales"></textarea>
+                    </div>
+                    <div class="alert alert-light d-flex align-items-center mt-3" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>Los campos marcados con (*) son obligatorios</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="submit" form="form-registro-presupuesto" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+</div>
+
+<!-- scripts parafinanzas -->
 <script src="vista/dist/js/modulos-js/graficos.js"></script>
 <script src="vista/dist/js/modulos-js/finanzas.js"></script>
 
