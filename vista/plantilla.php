@@ -90,6 +90,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "rep-compra" && (!empty($_SESSION["permisos"]["reporte"])) ||
     $_GET["ruta"] == "productos" && (!empty($_SESSION["permisos"]["producto"])) ||
     $_GET["ruta"] == "usuarios" && (!empty($_SESSION["permisos"]["seguridad"])) ||
+    $_GET["ruta"] == "backup" && (!empty($_SESSION["permisos"]["seguridad"])) ||
     $_GET["ruta"] == "compras" && (!empty($_SESSION["permisos"]["compra"])) ||
     $_GET["ruta"] == "banco" && (!empty($_SESSION["permisos"]["config_finanza"])) ||
     $_GET["ruta"] == "tpago" && (!empty($_SESSION["permisos"]["config_finanza"])) || 

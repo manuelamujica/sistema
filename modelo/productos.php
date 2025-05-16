@@ -114,12 +114,7 @@ class Productos extends Conexion{
         return $this->excento;
     }
     public function setExcento($excento){
-        $resultado = $this->validarStatus($excento);
-        if($resultado === true) {
-            $this->excento = $excento;
-        } else {
-            $this->errores['excento'] = $resultado;
-        }
+        $this->excento = $excento;
     }
 
 

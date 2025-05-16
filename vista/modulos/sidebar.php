@@ -687,7 +687,7 @@
                                         </p>
                                 </a>
                             </li>
-                     
+                    
                         <li class="nav-item">
                             <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
                                 <i class="fas fa-balance-scale nav-icon"></i>
@@ -696,7 +696,7 @@
                                     </p>
                             </a>
                         </li>
-                     
+                    
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">

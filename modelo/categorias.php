@@ -15,28 +15,43 @@ class Categoria extends Conexion{
     }
 
 #GETTER Y SETTER
+public function setDatos($datos){
+
+        if(isset($datos['nombre'])){
+        $resultado = $this->validarTexto($datos['nombre'], 'nombre', 2, 50);
+            if ($resultado === true) {
+                $this->nombre = $datos['nombre'];
+            } else {
+                $this->errores['nombre'] = $resultado;
+            }
+        }
+
+        if(isset($datos['statusDelete'])){
+            $res = $this->validarStatusInactivo($datos['statusDelete']);
+            if ($res === true) {
+                $this->status = $datos['statusDelete'];
+            } else {
+                $this->errores['statusDelete'] = $res;
+            }
+        }
+    
+        if(isset($datos['status'])){
+            $r = $this->validarStatus($datos['status']);
+                if ($resultado === true) {
+                    $this->status = $datos['status'];
+                } else {
+                    $this->errores['status'] = $r;
+                }
+            }
+}
+
+
 public function getNombre(){
     return $this->nombre;
-}
-public function setNombre($nombre){
-    $resultado = $this->validarTexto($nombre, 'nombre', 2, 50);
-        if ($resultado === true) {
-            $this->nombre = $nombre;
-        } else {
-            $this->errores['nombre'] = $resultado;
-        }
 }
 
 public function getStatus(){
     return $this->status;
-}
-public function setStatus($status){
-    $resultado = $this->validarStatusInactivo($status);
-    if ($resultado === true) {
-        $this->status = $status;
-    } else {
-        $this->errores['status'] = $resultado;
-    }
 }
 
 

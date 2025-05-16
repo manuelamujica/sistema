@@ -19,16 +19,13 @@ $color_t = imagecolorallocate($imagen, 0, 0, 0); // Color del texto negro
 imagefill($imagen, 0, 0, $color_fondo); // Rellenamos el fondo con blanco
 $color_linea = imagecolorallocate($imagen, 0, 0, 128); // Color de la línea
 
-imagefill($imagen, 0, 0, $color_fondo); // Rellenamos el fondo con blanco
 
-// Creamos líneas aleatorias
-for($i = 0; $i < 10; $i++) {
-    imageline($imagen, 0, rand(0, $alto), $ancho, rand(0, $alto), $color_linea);
+for($i = 0; $i < 8; $i++) { // Creamos líneas aleatorias
+    imageline($imagen, 0, rand(0, $alto), $ancho, rand(0, $alto), $color_linea); // Dibujamos la línea
 }
 
-// Creamos puntos aleatorios
-for($i = 0; $i < 200; $i++) {
-    imagesetpixel($imagen, rand(0, $ancho), rand(0, $alto), $color_linea);
+for($i = 0; $i <150; $i++) { // Creamos puntos aleatorios
+    imagesetpixel($imagen, rand(0, $ancho), rand(0, $alto), $color_linea); // Dibujamos el pixel
 }
 
 // Escribimos el texto en negro
