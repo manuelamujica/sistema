@@ -151,7 +151,7 @@
                     <?php endif; ?>
                     <?php if (!empty($_SESSION["permisos"]["finanza"])): ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link bitacora-link" data-modulo="Finanzas">
+                            <a href="finanzas" class="nav-link bitacora-link" data-modulo="Finanzas">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas
@@ -522,7 +522,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link bitacora-link" data-modulo="Finanzas">
+                            <a href="finanzas" class="nav-link bitacora-link" data-modulo="Finanzas">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas
@@ -687,7 +687,7 @@
                                         </p>
                                 </a>
                             </li>
-                     
+                    
                         <li class="nav-item">
                             <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
                                 <i class="fas fa-balance-scale nav-icon"></i>
@@ -696,7 +696,7 @@
                                     </p>
                             </a>
                         </li>
-                     
+                    
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">

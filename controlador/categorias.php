@@ -20,7 +20,7 @@ if(isset($_POST['buscar'])){
         if (!$objCategoria->getbuscar($_POST["nombre"])){ #(Si el metodo buscar no devuelve nada entonces la categoria no existe y se puede registrar)
     
             try {
-                $objCategoria->setNombre($_POST["nombre"]);
+                $objCategoria->setDatos($_POST);
                 $objCategoria->check(); 
                 } catch (Exception $e) {
                     $errores[] = $e->getMessage();
@@ -61,13 +61,12 @@ if(isset($_POST['buscar'])){
 }else if (isset($_POST['actualizar'])) {
 
     try {
-        $objCategoria->setNombre($_POST["nombre"]); // Usamos el set que valida
-        $objCategoria->check();             // Verificamos si hay errores
+        $objCategoria->setDatos($_POST);
+        $objCategoria->check();            
         
         // Si pasa el check, seguimos normalmente
-        
         if ($_POST["nombre"] === $_POST['origin']) {
-            $objCategoria->setStatus($_POST['status']);
+            
             $result = $objCategoria->geteditar($_POST['codigo']);
     
             if ($result == 1) {
@@ -88,7 +87,6 @@ if(isset($_POST['buscar'])){
         } else {
             // El nombre ha cambiado, verificar que no exista
             if (!$objCategoria->getbuscar($_POST["nombre"])) {
-                $objCategoria->setStatus($_POST['status']);
                 $result = $objCategoria->geteditar($_POST['codigo']);
     
                 if ($result == 1) {
@@ -128,7 +126,7 @@ if(isset($_POST['buscar'])){
 } else if(isset($_POST['borrar'])){
 
     try {
-        $objCategoria->setStatus($_POST['statusDelete']); 
+        $objCategoria->setDatos($_POST); 
         $objCategoria->check(); // validamos que sea inactivo
 
         // Si pasa el check, eliminamos

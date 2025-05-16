@@ -3,11 +3,8 @@ require_once "conexion.php";
 
 class CuentasPendientes extends Conexion{
 
-    private $conex;
-
     public function __construct(){
-        $this->conex = new Conexion();
-        $this->conex = $this->conex->conectar();
+        parent::__construct( _DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
 
 //BOX CUENTAS X COBRAR
@@ -24,10 +21,11 @@ private function boxcobrar(){
         GROUP BY v.cod_venta
     ) AS subconsulta
     WHERE saldo_pendiente > 0;";
-
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -54,9 +52,11 @@ private function mostrar(){
     WHERE v.status IN (1, 2) 
     GROUP BY c.cod_cliente, c.nombre
     ORDER BY cliente;";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -96,12 +96,13 @@ private function mostrar2($cod_cliente){
     WHERE v.cod_cliente = :cod_cliente AND v.status IN (1, 2)
     GROUP BY v.cod_venta, v.total, v.fecha, v.fecha_vencimiento, v.status,
     c.nombre, c.apellido, c.cedula_rif, c.direccion, c.telefono
-    ORDER BY v.fecha_vencimiento ASC;
-";
+    ORDER BY v.fecha_vencimiento ASC;";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $consulta->bindParam(':cod_cliente', $cod_cliente, PDO::PARAM_INT);
     $resul = $consulta->execute();  
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{
@@ -137,9 +138,11 @@ private function mostrarCuentasPagar(){
     WHERE c.status IN(1,2)
     GROUP BY c.cod_compra, p.razon_social, c.total, c.fecha_vencimiento, c.status  
     ORDER BY `c`.`fecha_vencimiento` ASC;";
+    parent::conectarBD();
     $consulta = $this->conex->prepare($sql);
     $resul = $consulta->execute();
     $datos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    parent::desconectarBD();
     if($resul){
         return $datos;
     }else{

@@ -25,7 +25,7 @@ class Descarga extends Conexion{
         return $this->descripcion;
     }
     public function setdescripcion($descripcion){
-        $res = $this->validarTexto($descripcion, 'descripcion', 5, 45);
+        $res = $this->validarDescripcion($descripcion, 'descripcion', 5, 45);
         if ($res === true) {
             $this->descripcion = $descripcion;
         } else {

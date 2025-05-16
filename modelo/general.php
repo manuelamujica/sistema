@@ -61,7 +61,6 @@ class General extends Conexion{
 REGISTRAR INFO DE EMPRESA
 ================================*/
     private function registrar(){
-
         $sql = "INSERT INTO empresa(rif,nombre,direccion,telefono,email,descripcion,logo) VALUES(:rif,:nombre,:direccion,:telefono,:email,:descripcion,:logo)";
         parent::conectarBD();
         $strExec = $this->conex->prepare($sql);
