@@ -131,108 +131,7 @@
                             </div>
                         </div>
                     </div>
-                <!-- Tabla de tareas -->
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="card">
-                        <div class="card-body">
-                        <h3>No se</h3>
-                            <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Task</th>
-                                <th>Progress</th>
-                                <th style="width: 40px">Label</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <td>1.</td>
-                                <td>Update software</td>
-                                <td>
-                                    <div class="progress progress-xs">
-                                    <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-danger">55%</span></td>
-                                </tr>
-                                <tr>
-                                <td>2.</td>
-                                <td>Clean database</td>
-                                <td>
-                                    <div class="progress progress-xs">
-                                    <div class="progress-bar bg-warning" style="width: 70%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-warning">70%</span></td>
-                                </tr>
-                                <tr>
-                                <td>3.</td>
-                                <td>Cron job running</td>
-                                <td>
-                                    <div class="progress progress-xs progress-striped active">
-                                    <div class="progress-bar bg-primary" style="width: 30%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-primary">30%</span></td>
-                                </tr>
-                                <tr>
-                                <td>4.</td>
-                                <td>Fix and squish bugs</td>
-                                <td>
-                                    <div class="progress progress-xs progress-striped active">
-                                    <div class="progress-bar bg-success" style="width: 90%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-success">90%</span></td>
-                                </tr>
-                                <tr>
-                                <td>5.</td>
-                                <td>Fix and squish bugs</td>
-                                <td>
-                                    <div class="progress progress-xs progress-striped active">
-                                    <div class="progress-bar bg-success" style="width: 90%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-success">90%</span></td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    </div>
-                    <!--Reporte ejemplo finanzas-->
-                <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header border-0">
-                        <div class="d-flex justify-content-between">
-                            <h3 class="card-title">reporte ej finanzas</h3>
-                            <a href="javascript:void(0);">View Report</a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <p class="d-flex flex-column">
-                                <span class="text-bold text-lg">$18,230.00</span>
-                                <span>Sales Over Time</span>
-                            </p>
-                            <p class="ml-auto d-flex flex-column text-right">
-                                <span class="text-success">
-                                    <i class="fas fa-arrow-up"></i> 33.1%
-                                </span>
-                                <span class="text-muted">Since last month</span>
-                            </p>
-                        </div>
-                        <div class="position-relative mb-4">
-                            <canvas id="sales-chart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-                
+                </div>                
         </section>
         
     <script>
@@ -317,42 +216,7 @@
 });
 </script>
 
-<script>
-    var ctx = document.getElementById('sales-chart').getContext('2d');
-    var salesChart = new Chart(ctx, {
-        type: 'line', 
-        data: {
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-            datasets: [{
-                label: 'Sales This Year', // Etiqueta para el gráfico
-                data: [12000, 15000, 18000, 20000, 17000, 22000, 25000, 28000, 20000, 22000, 19000, 22000], // Datos de las ventas
-                borderColor: 'rgba(0, 123, 255, 1)', // Color de la línea
-                backgroundColor: 'rgba(0, 123, 255, 0.2)', // Color de fondo de la línea
-                fill: true, // Rellenar el área debajo de la línea
-                tension: 0.4 // Curvatura de la línea
-            }, {
-                label: 'Sales Last Year', // Etiqueta para el gráfico
-                data: [10000, 13000, 15000, 18000, 16000, 19000, 23000, 21000, 16000, 19000, 18000, 20000, 19000], // Datos de las ventas del año pasado
-                borderColor: 'rgba(169, 169, 169, 1)', // Color de la línea
-                backgroundColor: 'rgba(169, 169, 169, 0.2)', // Color de fondo de la línea
-                fill: true, // Rellenar el área debajo de la línea
-                tension: 0.4 // Curvatura de la línea
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
+
 
         </div>
     </section>
@@ -594,7 +458,8 @@ if (isset($editar)): ?>
 </div>
 
 <?php 
-    /*$ultimo=end($consulta);
+    $ultimo=end($consulta);
+    $ultimo=end($consulta);
     if($ultimo['cod_divisa']!=1):
         if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): 
 ?>
@@ -603,10 +468,10 @@ if (isset($editar)): ?>
         var sen = "dolar";
         var tasaorig = $("#tasaactual").val();
 
-        /*Mostrar modal de carga antes de la solicitud
+        //Mostrar modal de carga antes de la solicitud
         $("#loadingModal").modal("show");
 
-        $.post('index.php?pagina=divisa', { sen }, function(response) {
+        $.post('index.php?pagina=divisa', { sen: sen }, function(response) {
             console.log("Respuesta del servidor:", response);
             let tasa = parseFloat(response.replace(',', '.'));
 
@@ -631,10 +496,11 @@ if (isset($editar)): ?>
             $("#loadingModal").modal("hide");
         });
     });
-</script>
+    </script>
 
-<?php   endif; 
-    endif; */?>
+
+<?php endif; 
+    endif;?>
 
 <script>
     const permisos = <?php echo json_encode($_SESSION["permisos"]); ?>;

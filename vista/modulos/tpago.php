@@ -30,6 +30,7 @@
                                 <tr>
                                     <th>Codigo</th>
                                     <th>Metodo de pago</th>
+                                    <th>Descripcion</th>
                                     <th>Divisa</th>
                                     <th>Status</th>
                                     <th>Acciones</th>
@@ -37,13 +38,14 @@
                             </thead>
                             <tbody>
                                 <?php foreach ($registro as $dato) { ?>
-                                <?php if ($dato['status_pago'] != 2): ?>
+                                <?php if ($dato['status_tipo_pago'] != 2): ?>
                                 <tr>
                                     <td><?php echo $dato['cod_tipo_pago']?></td>
                                     <td><?php echo $dato['medio_pago']?></td>
-                                    <td><?php echo $dato['abreviatura']?></td>
+                                    <td><?php echo $dato['descripcion'];?></td>
+                                    <td><?php echo $dato['nombre_divisa'];?></td>
                                     <td>
-                                        <?php if ($dato['status_pago']==1):?>
+                                        <?php if ($dato['status']==1):?>
                                             <span class="badge bg-success">Activo</span>
                                         <?php else:?>
                                             <span class="badge bg-danger">Inactivo</span>
@@ -54,14 +56,14 @@
                                         <button name="editar" title="Editar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#editModal" 
                                         data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
                                         data-medio="<?php echo $dato["medio_pago"]; ?>" 
-                                        data-divisa="<?php echo $dato["abreviatura"]; ?>" 
-                                        data-nombre="<?php echo $dato["nombre"]; ?>"
-                                        data-status="<?php echo $dato["status_pago"]; ?>" >
+                                        data-desc="<?php echo $dato["descripcion"]; ?>"
+                                        data-cod_metodo="<?php echo $dato["cod_metodo"]; ?>"
+                                        data-status="<?php echo $dato["status"]; ?>" >
                                         <i class="fas fa-pencil-alt"></i>
                                         </button>
                                         <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
-                                        data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
-                                        data-medio="<?php echo $dato["medio_pago"]; ?>" >
+                                        data-codigo="<?php //echo $dato["cod_tipo_pago"]; ?>" 
+                                        data-medio="<?php //echo $dato["medio_pago"]; ?>" >
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     <?php else: ?>
@@ -87,11 +89,10 @@
 <!-- /.content-wrapper -->
 
     <!-- Modal para registrar tipo de pago -->
-    <!-- Modal para registrar tipo de pago -->
 <div class="modal fade" id="addPaymentTypeModal" tabindex="-1" role="dialog" aria-labelledby="addPaymentTypeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00 ;color: #ffffff; ">
+            <div class="modal-header">
                 <h5 class="modal-title" id="addPaymentTypeModalLabel">Registrar Tipo de Pago</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -99,44 +100,47 @@
             </div>
             <form id="addPaymentTypeForm" method="post">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="nombre_tipo_pago">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                        <select class="form-control" id="nombre_tipo_pago" name="nombre_tipo_pago" required>
+                    <label for="nombre_tipo_pago">Nombre del Tipo de Pago<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                    <div class="input-group">
+                        <select class="form-control" id="nombre_tipo_pago" name="cod_metodo" required>
                             <option value="" disabled selected>Seleccione un tipo de pago</option>
-                            <?php foreach ($tipos_pago_nombres as $tipo): ?>
-                                <option value="<?= $tipo['id']; ?>"><?= $tipo['nombre']; ?></option>
+                            <?php foreach ($tipos_pago as $tipo): ?>
+                                <option value="<?= $tipo['cod_metodo']; ?>"><?= $tipo['medio_pago']; ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalmpago">+</button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label>Tipo de Moneda<span class="text-danger" style="font-size: 15px;"> *</span></label>
                         <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
                             <label class="btn btn-outline-primary active">
-                                <input type="radio" name="tipo_moneda" id="digital" value="1" checked> Digital
+                                <input type="radio" name="tipo_moneda" id="digital" value="2" checked> Digital
                             </label>
                             <label class="btn btn-outline-primary">
-                                <input type="radio" name="tipo_moneda" id="efectivo" value="2"> Efectivo
+                                <input type="radio" name="tipo_moneda" id="efectivo" value="1"> Efectivo
                             </label>
                         </div>
                     </div>
                     
                     <div class="form-group bancos-container">
                         <label for="banco">Seleccionar Banco<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                        <select class="form-control" id="banco" name="banco">
+                        <select class="form-control" id="banco" name="cod_cuenta_bancaria" required>
                             <option value="" disabled selected>Seleccione un banco</option>
                             <?php foreach ($bancos as $banco): ?>
-                                <option value="<?= $banco['id']; ?>"><?= $banco['nombre']; ?></option>
+                                <option value="<?= $banco['cod_cuenta_bancaria']; ?>"><?= $banco['nombre_banco']; ?> - <?= $banco['numero_cuenta']; ?> - <?= $banco['tipo_cuenta_nombre']; ?> - <?= $banco['divisa_nombre']; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     
                     <div class="form-group cajas-container" style="display: none;">
                         <label for="caja">Seleccionar Caja<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                        <select class="form-control" id="caja" name="caja">
+                        <select class="form-control" id="caja" name="cod_caja" required>
                             <option value="" disabled selected>Seleccione una caja</option>
                             <?php foreach ($cajas as $caja): ?>
-                                <option value="<?= $caja['id']; ?>"><?= $caja['nombre']; ?></option>
+                                <option value="<?= $caja['cod_caja']; ?>"><?= $caja['nombre']; ?> - <?= $caja['divisa_nombre']; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -189,6 +193,7 @@ MODAL EDITAR TIPO DE PAGO
                     <div class="form-group">
                         <label for="codigo">Código</label>
                         <input type="text" class="form-control" id="codigo" name="codigo" readonly>
+                        <input type="hidden" id="cod_metodo" name="cod_metodo">
                     </div>
                     <div class="form-group">
                         <label for="tpago">Tipo de Pago</label>
@@ -197,8 +202,8 @@ MODAL EDITAR TIPO DE PAGO
                         <input type="hidden" id="origin" name="origin">
                     </div>
                     <div class="form-group">
-                        <label for="divisa">Divisa</label>
-                        <input type="text" class="form-control" id="divisa1" readonly>
+                        <label for="divisa">Descripcion</label>
+                        <input type="text" class="form-control" id="descripcion" readonly>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -271,6 +276,85 @@ MODAL CONFIRMAR ELIMINAR
         });
     </script>
 <?php endif; ?>
+
+<!-- =============================
+    MODAL NUEVO METODO DE PAGO
+================================== -->
+<div class="modal fade" id="modalmpago" tabindex="-1" aria-labelledby="modalmpagoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title" id="exampleModalLabel">Registrar medio de pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formregistrarUnidad" action="index.php?pagina=tpago" method="post">
+                    <div class="form-group">
+                        <label for="tipo_medida">Medio de Pago</label>
+                        <!-- TOOLTIPS-->
+                        <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa la unidad de medida para la venta de productos, por ejemplo: Kg">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        <script>
+                            $(function () {
+                                $('[data-toggle="tooltip"]').tooltip();
+                            });
+                        </script>
+                        <input type="text" class="form-control" name="medio" id="medio" placeholder="Ej: Efectivo" required>
+                        <!--<input type="hidden" name="vista" value="unidad">-->
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="guardarm">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php if (isset($registrarm)): ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $registrarm["title"]; ?>',
+            text: '<?php echo $registrarm["message"]; ?>',
+            icon: '<?php echo $registrarm["icon"]; ?>',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.setItem('medioModal', 'true');
+                window.location='tpago';
+            }
+    });
+</script> 
+<?php endif; ?> 
+
+<script>
+    // NUEVA CATEGORIA DESDE PRODUCTO
+//(Validar nombre)
+$('#medio').blur(function (e){
+        var buscar=$('#medio').val();
+        $.post('index.php?pagina=tpago', {buscar}, function(response){
+            if(response != ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: 'La categoria ya se encuentra registrada',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        },'json');
+    });
+
+$(document).ready(function() {
+    // Verifica si el valor 'categoriaModal' está en localStorage
+    if (localStorage.getItem('medioModal') === 'true') {
+        $('#addPaymentTypeModal').modal('show');
+        localStorage.removeItem('medioModal');
+    }
+});
+</script>
 
 
 <script src="vista/dist/js/modulos-js/tpago.js"></script>

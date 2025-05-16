@@ -20,8 +20,10 @@ require_once "controlador/descarga.php";
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <?php if (!empty($_SESSION["permisos"]["inventario"]["registrar"])): ?>
                             <!-- Botón para ventana modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalRegistrarDescarga">Registrar descarga</button>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

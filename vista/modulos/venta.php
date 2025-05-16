@@ -18,8 +18,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <?php if (!empty($_SESSION["permisos"]["venta"]["registrar"])): ?>
                             <!-- Botón para abrir el modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ventaModal"> Registrar venta </button>
+                            <?php endif; ?>
                         </div>
                     
                         <div class="card-body">
@@ -46,24 +48,27 @@
                                                 <td>
                                                     <?php if ($venta['status']==1):?>
                                                         <span class="badge bg-secondary">Pendiente</span>
-                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
+                                                        <?php if (!empty($_SESSION["permisos"]["venta"]["registrar"])): ?>
+                                                            <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
                                                             data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                             data-totalv="<?php echo $venta["total"]; ?>" 
                                                             data-fecha="<?php echo $venta["fecha"]; ?>"
                                                             data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
                                                             <i class="fas fa-money-bill-wave"></i>
                                                             </button>
+                                                        <?php endif; ?>
                                                     <?php elseif ($venta['status']==2):?>
                                                         <span class="badge bg-warning">Pago parcial</span>
-                                                        <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#abonoModal" 
+                                                        <?php if (!empty($_SESSION["permisos"]["venta"]["registrar"])): ?>
+                                                            <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoModal" 
                                                             data-codventa="<?php echo $venta["cod_venta"]; ?>" 
-                                                            data-codpago="<?php echo $venta["cod_pago"]; ?>" 
+                                                            data-saldopen="<?php echo $venta["saldo_restante"]; ?>" 
                                                             data-totalv="<?php echo $venta["total"]; ?>" 
-                                                            data-montop="<?php echo $venta["monto_total"]; ?>"
                                                             data-fecha="<?php echo $venta["fecha"]; ?>"
                                                             data-nombre="<?php echo $venta["nombre"]." ".$venta["apellido"];?>" >
                                                             <i class="fas fa-money-bill-wave"></i>
-                                                        </button>
+                                                            </button>
+                                                        <?php endif; ?>
                                                     <?php elseif ($venta['status']==3):?>
                                                         <span class="badge bg-success">Completada</span>
                                                     <?php else: ?>
@@ -71,12 +76,14 @@
                                                     <?php endif;?>
                                                 </td>
                                                 <td>
-                                                <?php if ($venta['status']!=0):?>
+                                                <?php if ($venta['status']!=0):
+                                                    if (!empty($_SESSION["permisos"]["venta"]["eliminar"])): ?>
                                                     <button name="anular" title="Anular" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#anularventa" 
                                                     data-codventa="<?php echo $venta["cod_venta"]; ?>" 
                                                     data-status="<?php echo $venta["status"]; ?>">
                                                     <i class="fas fa-trash-alt"></i>
                                                     </button>
+                                                    <?php endif; ?>
                                                     <button form="facturaform_<?= $venta['cod_venta']; ?>" type="submit" name="imprimir" title="Ver factura" class="btn btn-primary btn-sm editar">
                                                     <i class="fas fa-file"></i>
                                                     </button>
@@ -117,7 +124,7 @@
 <div class="modal fade" id="ventaModal" tabindex="-1" aria-labelledby="ventaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" >
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00; color: #ffffff;">
+            <div class="modal-header">
                 <h5 class="modal-title" id="ventaModalLabel">Registrar Venta</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -179,6 +186,25 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="condicion_pago">Condición de Pago</label>
+                                <select class="form-control form-control-sm" id="condicion_pago" name="condicion" required onchange="mostrarFechaVencimiento()">
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="1">Contado</option>
+                                    <option value="2">Crédito</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group" id="div_fecha_vencimiento" style="display: none;">
+                                <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+                                <input type="date" class="form-control form-control-sm" id="fecha_vencimiento" name="fecha_v">
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tabla para agregar productos -->
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
@@ -227,9 +253,9 @@
 MODAL REGISTRAR PAGO
 ============================= -->
         <div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header" style="background: #db6a00; color: #ffffff;">
+                    <div class="modal-header bg-success">
                         <h5 class="modal-title" id="pagoLabel">Registrar Pago</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -252,19 +278,22 @@ MODAL REGISTRAR PAGO
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="fecha_venta">Fecha de la Venta</label>
-                                    <input type="text" class="form-control" id="fecha_venta" name="fecha_venta" readonly>
+                                    <label for="fecha_venta">Fecha de Pago</label>
+                                    <input type="text" class="form-control" id="fecha_pago" name="fecha_pago" readonly>
                                 </div>
                             </div>
                         </div>
                         <div class="text-center my-3">
-                            <h4>Total a Pagar:   <span id="total-pago" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                            <h4>Total de venta:   <span id="total-pago" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                        </div>
+                        <div class="text-center my-3" id="campo-saldo" style="display:none;">
+                            <h4>Saldo pendiente:   <span id="saldo_pendiente" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
                         </div>
                         <div class="form-row">
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 <h4>Tipos de Pago</h4>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <h4>Monto</h4>
                                 </div>
@@ -272,15 +301,15 @@ MODAL REGISTRAR PAGO
                         </div>
                         <div class="form-row">
                             <?php foreach ($opciones as $index => $opcion): ?>
-                                <?php if ($opcion['cod_divisa'] == 1): ?>
+                                <?php if ($opcion['cod_divisa']==1): ?>
                                     <!-- Si es bolívares (sin conversión de divisas) -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-8">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago'].' - '.$opcion['descripcion'] ?>" readonly>
                                             <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
                                         </div>
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-append">
@@ -359,7 +388,15 @@ MODAL REGISTRAR PAGO
                                 </div>
                             </div>
                         </div>
-
+                        <!-- Botón para registrar vuelto (inicialmente oculto, se mostrará con JS si la diferencia es negativa) -->
+                        <div class="form-row justify-content-end" id="div-boton-vuelto" style="display: none;">
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#vueltoModal"  id="btn-registrar-vuelto">
+                                    Registrar Vuelto
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="vuelto_data" id="vuelto_data" value="">
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -385,8 +422,133 @@ MODAL REGISTRAR PAGO
 <?php endif; ?>
 
 <!-- =======================
-MODAL ABONAR PAGO 
+MODAL REGISTRAR VUELTO 
 ============================= -->
+
+<div class="modal fade" id="vueltoModal" tabindex="-1" aria-labelledby="vueltoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="vueltoLabel">Registrar Vuelto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="vueltoForm" method="post">
+                <!--<div class="form-row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="total_pagado">Total Pagado</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Bs</span>
+                                </div>
+                                <input type="number" step="0.001" class="form-control" id="total_pagado" name="total_pagado" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="monto_compra">Monto de la venta</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Bs</span>
+                                </div>
+                                <input type="number" step="0.001" class="form-control" id="monto_compra" name="monto_compra" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <div class="text-center my-3">
+                    <h4>Vuelto:   <span id="total-vuelto" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
+                    <input type="hidden" id="vuelto_calculado" name="vuelto_calculado">
+                </div>
+                <div class="form-row">
+                    <?php foreach ($opciones as $index => $opcion): ?>
+                        <?php if ($opcion['cod_divisa']==1): ?>
+                            <!-- Si es bolívares (sin conversión de divisas) -->
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" value="<?= $opcion['medio_pago'].' - '.$opcion['descripcion'] ?>" readonly>
+                                    <input type="hidden" name="vuelto[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.01" maxlength="12" class="form-control monto-bsv" id="monto-bsv-<?= $index; ?>" name="vuelto[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalvuelto()">
+                                    </div>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <!-- Si es otra divisa (con conversión) -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                    <input type="hidden" name="vuelto[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
+                                        </div>
+                                        <input type="number" step="0.01" maxlength="12" class="form-control monto-divisav" id="monto-divisav-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalvuelto(<?= $index; ?>)">
+                                        <input type="hidden" class="form-control tasa-conversionv" id="tasa-conversionv-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Bs</span>
+                                        </div>
+                                        <input type="number" step="0.01" maxlength="12" class="form-control monto-bsv monto-conv" id="monto-bs-conv-<?= $index; ?>" name="vuelto[<?= $index; ?>][monto]" placeholder="Monto en Bs" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </form>
+                <div class="form-row justify-content-end">
+                    <div class="form-group">
+                    <label for="">vuelto emitido</label>
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Bs</span>
+                            </div>
+                            <input type="number" step="0.001" class="form-control" id="vuelto_pagado" name="vuelto_pagado" readonly>
+                            <input type="hidden" step="0.001" class="form-control" id="monto_pagarv" name="monto_pagarv" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label for="">Diferencia</label>
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Bs</span>
+                            </div>
+                            <input type="number" step="0.001" class="form-control" id="diferenciav" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-success" form="vueltoForm" id="registrarVueltoBtn" name="registrarvuelto">Registrar Vuelto</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =======================
+MODAL ABONAR PAGO 
+============================= 
 
         <div class="modal fade" id="abonoModal" tabindex="-1" aria-labelledby="abonoLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -440,7 +602,7 @@ MODAL ABONAR PAGO
                         <div class="form-row">
                             <?php foreach ($opciones as $index => $opcion): ?>
                                 <?php if ($opcion['cod_divisa'] == 1): ?>
-                                    <!-- Si es bolívares (sin conversión de divisas) -->
+                                    <!-- Si es bolívares (sin conversión de divisas) --
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
@@ -458,7 +620,7 @@ MODAL ABONAR PAGO
                                         </div>
                                     </div>
                                 <?php else: ?>
-                                    <!-- Si es otra divisa (con conversión) -->
+                                    <!-- Si es otra divisa (con conversión) --
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
@@ -549,7 +711,7 @@ MODAL ABONAR PAGO
             }
         });
     </script>
-<?php endif; ?>
+<?php endif; ?>-->
 
 
 
@@ -682,6 +844,22 @@ MODAL CONFIRMAR ELIMINAR
         });
     </script>
 <?php endif; ?>
+
+<script>
+    function mostrarFechaVencimiento() {
+        var condicionPago = document.getElementById("condicion_pago").value;
+        var divFechaVencimiento = document.getElementById("div_fecha_vencimiento");
+        
+        if (condicionPago === "2") {
+            divFechaVencimiento.style.display = "block";
+            document.getElementById("fecha_vencimiento").required = true;
+        } else {
+            divFechaVencimiento.style.display = "none";
+            document.getElementById("fecha_vencimiento").required = false;
+            document.getElementById("fecha_vencimiento").value = "";
+        }
+    }
+</script>
 
 <script src="vista/dist/js/modulos-js/ventas.js"></script>
 

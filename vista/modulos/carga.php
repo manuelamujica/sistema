@@ -18,10 +18,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <?php //if (!empty($_SESSION["permisos"][2][1])): ?>
+                            <?php if (!empty($_SESSION["permisos"]["inventario"]["registrar"])): ?>
                             <!-- Botón para ventana modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalregistrarCarga">Registrar Carga</button>
-                            <?php //endif; ?>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

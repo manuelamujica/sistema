@@ -4,8 +4,19 @@ trait ValidadorTrait {
 
     public function validarTexto($valor, $campo, $min = 1, $max = 255) {
         $valor = trim($valor);
-        if (!preg_match("/^[\p{L}\s]+$/u", $valor)) {
+        if (!preg_match("/^[\p{L}\s]+$/u", $valor)) {  
             return "El campo $campo solo puede contener letras y espacios.";
+        }
+        if (mb_strlen($valor) < $min || mb_strlen($valor) > $max) {
+            return "El campo $campo debe tener entre $min y $max caracteres.";
+        }
+        return true;
+    }
+
+    public function validarDescripcion($valor, $campo, $min = 1, $max = 255) {
+        $valor = trim($valor);
+        if (!preg_match("/^[\p{L}ñÑ\d\s\.,\-#áéíóúÁÉÍÓÚüÜ]+$/u", $valor)) { // nuevo, agregado por manu
+            return "El campo $campo solo puede contener letras, números y algunos signos (.,-#).";
         }
         if (mb_strlen($valor) < $min || mb_strlen($valor) > $max) {
             return "El campo $campo debe tener entre $min y $max caracteres.";
@@ -65,6 +76,7 @@ trait ValidadorTrait {
         }
         return true;
     }
+    
     public function validarDecimal($valor, $campo, $min = 1, $max = 20) {
         $valor = trim($valor);
         
@@ -81,6 +93,37 @@ trait ValidadorTrait {
         return true;
     }
 
+    public function validarFecha($valor, $campo) {
+        $valor = trim($valor);
+        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $valor)) {
+            return "El campo $campo no es una fecha válida.";
+        }
+        return true;
+    }
+
+    public function validardatetime($valor, $campo) {
+        $valor = trim($valor);
+        if (!preg_match("/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/", $valor)) {
+            return "El campo $campo no es una fecha y hora válida.";
+        }
+        return true;
+    }
+
+    //BACKUP nuevo, agregado por manu
+    public function nombreArchivo($nombre) {
+        $nombre = trim($nombre);
+    
+        if (strlen($nombre) < 3 || strlen($nombre) > 50) {
+            $this->errores['nombre'] = "El nombre debe tener entre 3 y 50 caracteres.";
+        } elseif (!preg_match('/^[a-zA-Z0-9_-]+$/', $nombre)) {
+            $this->errores['nombre'] = "Solo se permiten letras, números, guiones y guiones bajos.";
+        } else {
+            $this->nombreArchivo = $nombre;
+        }
+        return true;
+
+    }
+    
 
 }
 

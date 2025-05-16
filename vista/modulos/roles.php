@@ -75,71 +75,89 @@
 MODAL REGISTRAR ROLES
 ============================= -->
 
-                    <div class="modal fade" id="modalregistrarroles" tabindex="-1" aria-labelledby="modalregistrarrolLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Registar Rol</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+<div class="modal fade" id="modalregistrarroles" tabindex="-1" aria-labelledby="modalregistrarrolLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registrar Rol</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-                                <div class="modal-body">
-                                    <form id="formAgregarRol" method="post">
-                                        <!--   NOMBRE DEL ROL     -->
-                                        <div class="form-group">
-                                            <label for="rol">Rol<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                                            <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Ingresa el rol para un usuario. Ej: Vendedor.">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </button>
-                                                <script>
-                                                    $(function () {
-                                                        $('[data-toggle="tooltip"]').tooltip();
-                                                    });
-                                                </script>
-                                            <input type="text" class="form-control" id="rol1" name="rol" placeholder="Ej: Vendedor." maxlength="30">
-                                            <div class="invalid-feedback" style="display: none;"></div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="permisos">Selecciona los permisos:<span class="text-danger" style="font-size: 15px;"> *</span></label>
-                                            <!-- TOOLTIPS-->
-                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Asigna a cuáles módulos tendrá acceso este rol de usuario. Selecciona mínimo 1.">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </button>
-                                                <script>
-                                                    $(function () {
-                                                        $('[data-toggle="tooltip"]').tooltip();
-                                                    });
-                                                </script>
-                                            <br>
-                                            <?php foreach ($permiso as $datos): ?>
-                                                <div class="icheck-primary d-inline">
-                                                    <input type="checkbox" id="campo" name="permisos[]" value="<?php echo $datos['cod_modulo']; ?>" id="categoria<?php echo $datos['cod_modulo']; ?>">
-                                                    <label for="categoria<?php echo $datos['cod_modulo']; ?>">
-                                                        <?php echo $datos['nombre'] ?>
+            <div class="modal-body">
+                <form id="formAgregarRol" method="post">
+                    <!--   NOMBRE DEL ROL     -->
+                    <div class="form-group">
+                        <label for="rol">Rol<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                        <input type="text" class="form-control" id="rol1" name="rol" placeholder="Ej: Vendedor." maxlength="30">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Permisos por Módulo:</label>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th style="width: 40%;">Módulo</th>
+                                        <th style="width: 60%;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($modulos as $modulo): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="modulo[]" value="<?php echo $modulo['cod_modulo']; ?>" 
+                                                    id="modulo<?php echo $modulo['cod_modulo']; ?>" 
+                                                    class="form-check-input check-modulo">
+                                                <label class="form-check-label" for="modulo<?php echo $modulo['cod_modulo']; ?>">
+                                                    <?php 
+                                                    $nombresMostrados = [
+                                                        'cuentas_pendiente' => 'Cuentas Pendientes',
+                                                        'config_producto' => 'Configuración de Producto',
+                                                        'config_finanza' => 'Configuración de Finanza'
+                                                    ];
+                                                    
+                                                    echo isset($nombresMostrados[$modulo['nombre']]) ? $nombresMostrados[$modulo['nombre']] : $modulo['nombre']; 
+                                                    ?>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="permisos-container" id="permisos-modulo-<?php echo $modulo['cod_modulo']; ?>" style="display: none;">
+                                                <?php foreach ($permisos as $permiso): ?>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" 
+                                                        name="permisos[<?php echo $modulo['cod_modulo']; ?>][]" 
+                                                        value="<?php echo $permiso['cod_crud']; ?>" 
+                                                        id="permiso<?php echo $modulo['cod_modulo']; ?>-<?php echo $permiso['cod_crud']; ?>" 
+                                                        class="form-check-input check-permiso">
+                                                    <label class="form-check-label" for="permiso<?php echo $modulo['cod_modulo']; ?>-<?php echo $permiso['cod_crud']; ?>">
+                                                        <?php echo $permiso['nombre']; ?>
                                                     </label>
                                                 </div>
-                                                <br>
-                                            <?php endforeach; ?>
-                                        </div>
-                                        <!-- Alert Message -->
-                                        <div class="alert alert-light d-flex align-items-center" role="alert">
-                                            <i class="fas fa-exclamation-triangle mr-2"></i>
-                                            <span>Todos los campos marcados con (*) son obligatorios</span>
-                                        </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary" name="guardar" onclick="return validacion();">Guardar</button>
-                                </div>
-                                </form>
-                            </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
+                    </div>
+                    
                 </div>
-    </section>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="guardar">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</section>
 </div>
 
 <?php
@@ -263,6 +281,73 @@ if (isset($editar)): ?>
         });
     </script>
 <?php endif; ?>
+
+<script>
+$(document).ready(function() {
+    // Mostrar/ocultar permisos cuando se selecciona un módulo
+    $('.check-modulo').change(function() {
+        var moduloId = $(this).val();
+        var permisosContainer = $('#permisos-modulo-' + moduloId);
+        
+        if($(this).is(':checked')) {
+            permisosContainer.slideDown();
+            
+            // NUEVO CÓDIGO: Seleccionar automáticamente el permiso de consulta (ID 2)
+            var checkboxConsulta = $('#permiso' + moduloId + '-2');
+            checkboxConsulta.prop('checked', true);
+            checkboxConsulta.prop('disabled', true); // No se puede deseleccionar
+            
+            // Añadir un campo hidden para asegurar que el valor se envíe aunque esté disabled
+            if ($('#hidden-permiso-' + moduloId + '-2').length === 0) {
+                $('<input>').attr({
+                    type: 'hidden',
+                    id: 'hidden-permiso-' + moduloId + '-2',
+                    name: 'permisos[' + moduloId + '][]',
+                    value: '2' // El valor del permiso de consulta
+                }).appendTo(permisosContainer);
+            }
+        } else {
+            permisosContainer.slideUp();
+            // Desmarcar todos los permisos de este módulo
+            permisosContainer.find('.check-permiso').prop('checked', false).prop('disabled', false);
+            
+            // Eliminar el campo hidden si existe
+            $('#hidden-permiso-' + moduloId + '-2').remove();
+        }
+        
+    });
+    
+    // Capturar el envío del formulario para mostrar lo que se enviará
+    $('#formAgregarRol').submit(function(e) {
+        // No detener el envío pero mostrar lo que se enviará
+        console.log('Datos del formulario que se enviarán:');
+        
+        // Crear un objeto FormData para ver todos los datos
+        var formData = new FormData(this);
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+        
+        // Opcionalmente, puedes agregar aquí un return false; para evitar el envío real
+        // y solo ver lo que se enviaría en la consola.
+        // return false;
+    });
+    
+    // NUEVO CÓDIGO: Evitar que se deseleccione el permiso de consulta si el módulo está marcado
+    $(document).on('click', '.check-permiso', function(e) {
+        var permisoParts = $(this).attr('id').split('-');
+        var moduloId = permisoParts[0].replace('permiso', '');
+        var permisoId = permisoParts[1];
+        
+        // Si es el permiso de consulta (ID 2) y el módulo está marcado, evitar desmarcar
+        if (permisoId == '2' && $('#modulo' + moduloId).is(':checked')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+
 
 <script src="vista/dist/js/modulos-js/rol.js"></script>
 

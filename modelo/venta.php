@@ -1,14 +1,50 @@
 <?php
 require_once 'conexion.php';
+require_once 'validaciones.php';
 class Venta extends Conexion{
-    
+
+    use ValidadorTrait;
     private $total;
     private $fecha;
     private $descuento;
+    private $condicion;
+    private $fecha_v;
+    private $errores=[];
 
     public function __construct(){
         parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
     }
+
+    public function setdatav($data){
+        if($this->validarDecimal($data['total_general'], 'total_general')){
+            $this->total = $data['total_general'];
+        }else{
+            $this->errores['total']=$this->validarDecimal($data['total_general'], 'total_general');
+        }
+        if($this->validardatetime($data['fecha_hora'], 'fecha_hora')){
+            $this->fecha = $data['fecha_hora'];
+        }else{
+            $this->errores['fecha']=$this->validardatetime($data['fecha_hora'], 'fecha_hora');
+        }
+        if(isset($data['fecha_v'])){
+            if($this->validarFecha($data['fecha_v'], 'fecha_v')){
+                $this->fecha_v = $data['fecha_v'];
+            }else{
+                $this->errores['fecha_v']=$this->validarFecha($data['fecha_v'], 'fecha_v');
+            }
+        }else{
+            $this->fecha_v=null;
+        }
+        $this->condicion = $data['condicion'];
+    }
+
+    public function check(){
+        if(!empty($this->errores)){
+            return $this->errores;
+        }else{
+            return true;
+        }
+    }   
 
     public function get_total(){
         return $this->total;
@@ -32,11 +68,21 @@ class Venta extends Conexion{
     }
 
     public function consultar(){
-        $registro="SELECT v.*, c.nombre, c.apellido, c.cedula_rif ,c.telefono, c.email, c.direccion, p.cod_pago, p.monto_total, p.cod_venta AS codigov 
-    FROM ventas v 
-    INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente 
-    LEFT JOIN pago_recibido p ON v.cod_venta = p.cod_venta 
-    ORDER BY v.cod_venta;";
+        $registro="SELECT 
+                        v.*,
+                        c.nombre, 
+                        c.apellido, 
+                        c.cedula_rif,
+                        c.telefono, 
+                        c.email, 
+                        c.direccion, 
+                        IFNULL(SUM(p.monto_total), 0) AS total_pagado,
+                        (v.total - IFNULL(SUM(p.monto_total), 0)) AS saldo_restante
+                    FROM ventas v 
+                    INNER JOIN clientes c ON v.cod_cliente = c.cod_cliente 
+                    LEFT JOIN pago_recibido p ON v.cod_venta = p.cod_venta 
+                    GROUP BY v.cod_venta
+                    ORDER BY v.cod_venta;";
     parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
@@ -94,9 +140,11 @@ class Venta extends Conexion{
                 }
             }
             //registro de la venta
-            $registro = "INSERT INTO ventas(cod_cliente, total, fecha, status) VALUES(:cod_cliente, :total, :fecha, 1)";
+            $registro = "INSERT INTO ventas(cod_cliente, condicion_pago, fecha_vencimiento, total, fecha, status) VALUES(:cod_cliente, :condicion_pago, :fecha_vencimiento, :total, :fecha, 1)";
             $strExec = $this->conex->prepare($registro);
             $strExec->bindParam(':cod_cliente', $cliente);
+            $strExec->bindParam(':condicion_pago', $this->condicion);
+            $strExec->bindParam(':fecha_vencimiento', $this->fecha_v);
             $strExec->bindParam(':total', $this->total);
             $strExec->bindParam(':fecha', $this->fecha);
             $resul = $strExec->execute();
@@ -321,5 +369,13 @@ class Venta extends Conexion{
         }
     }
 
+    public function rmovimiento($resul){
+        $sql="CALL RegistrarMovimientoVenta(:cod_venta);";
+        parent::conectarBD();
+        $stmt = $this->conex->prepare($sql);
+        $stmt->bindParam(':cod_venta', $resul);
+        $resul=$stmt->execute();
+        parent::desconectarBD();
+    }
 
 }

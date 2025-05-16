@@ -26,19 +26,21 @@ $(document).ready(function() {
                                 '<td>' + c.dias_restantes + '</td>' +
                                 '<td><span class="badge bg-' + (c.estado == '1' ? 'danger' : 'warning') + '">' + c.estado + '</span></td>' +
                                 '<td>' +
-                                    '<button class="btn-sm btn btn-primary">' +
-                                        '<i class="fas fa-money-bill-wave"></i>' +
-                                    '</button>' +
-                                    '<button class="btn-sm btn btn-primary btn-factura"' +
-                                        ' data-codventa="' + c.cod_venta + '"' +
-                                        ' data-total="' + c.total + '"' +
-                                        ' data-fecha="' + c.fecha + '"' +
-                                        ' data-cliente="' + c.nombre + ' ' + c.apellido + '"' +
-                                        ' data-cedula="' + c.cedula_rif + '"' +
-                                        ' data-direccion="' + c.direccion + '"' +
-                                        ' data-telefono="' + c.telefono + '">' +
-                                        '<i class="fas fa-file-invoice"></i>' +
-                                    '</button>' +
+                                    '<div class="btn-group">' +
+                                        '<button title="Agregar pago" class="btn btn-primary" data-target="#pagarModal" data-toggle="modal">' +
+                                            '<i class="fas fa-money-bill-wave"></i>' +
+                                        '</button>' +
+                                        '<button title="Exportar detalle PDF" class="btn btn-primary btn-factura"' +
+                                            ' data-codventa="' + c.cod_venta + '"' +
+                                            ' data-total="' + c.total + '"' +
+                                            ' data-fecha="' + c.fecha + '"' +
+                                            ' data-cliente="' + c.nombre + ' ' + c.apellido + '"' +
+                                            ' data-cedula="' + c.cedula_rif + '"' +
+                                            ' data-direccion="' + c.direccion + '"' +
+                                            ' data-telefono="' + c.telefono + '">' +
+                                            '<i class="fas fa-file-invoice"></i>' +
+                                        '</button>' +
+                                    '</div>' +
                                 '</td>' +
                             '</tr>'
                         );

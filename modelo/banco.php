@@ -26,7 +26,7 @@ class Banco extends Conexion {
     }
 
      // Chequear si hay errores
-     public function check() {
+    public function check() {
         if (!empty($this->errores)) {
             $mensajes = implode(" | ", $this->errores);
             throw new Exception("Errores de validación: $mensajes");

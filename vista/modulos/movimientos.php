@@ -48,22 +48,16 @@ require_once "controlador/movimientos.php";
                             </thead>
                             <tbody>
                             <!-- Ejemplo de datos -->
+                            <?php foreach($mov as $mov){ ?>
                             <tr>
-                                <td><input type="checkbox" class="mov-checkbox" data-id="1" disabled></td>
-                                <td>2023-10-05</td>
-                                <td><span class="badge bg-success">Venta</span></td>
-                                <td>Venta #001</td>
-                                <td>$1,000.00</td>
+                                <td><input type="checkbox" class="mov-checkbox" data-id="1"></td>
+                                <td><?= $mov['fecha']; ?> </td>
+                                <td><span class="badge bg-success"><?= $mov['tipo_operacion']; ?></span></td>
+                                <td><?= $mov['tipo_operacion']." ".$mov['detalle_operacion']." #".$mov['cod_operacion']; ?></td>
+                                <td><?= $mov['monto']."Bs"; ?></td>
                                 <td><span class="badge bg-danger">Pendiente</span></td>
                             </tr>
-                            <tr>
-                                <td><input type="checkbox" class="mov-checkbox" data-id="2"></td>
-                                <td>2023-10-05</td>
-                                <td><span class="badge bg-warning">Gasto</span></td>
-                                <td>Pago servicios</td>
-                                <td>$200.00</td>
-                                <td><span class="badge bg-danger">Pendiente</span></td>
-                            </tr>
+                            <?php } ?>
                             </tbody>
                         </table>
                         </div>

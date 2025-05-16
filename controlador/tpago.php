@@ -14,21 +14,16 @@ if(isset($_POST['buscar'])){
     exit;
 
 }else if(isset($_POST['registrar'])){
-    if(!empty($_POST['tipo_pago']) && !empty($_POST['divisa'])){
+    if(!empty($_POST['cod_metodo']) && !empty($_POST['tipo_moneda']) && (!empty($_POST['cod_cuenta_bancaria']) || !empty($_POST['cod_caja']))){
 
-        if (preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['tipo_pago'])){
-
-            if(!$obj->buscar($_POST['tipo_pago'])){
-            $obj->setmetodo($_POST['tipo_pago']);
-
-                $result=$obj->incluir($_POST['divisa']);
+                $result=$obj->registrar($_POST);
                 if($result == 1){
                     $registrar = [
                         "title" => "Registrado con éxito",
                         "message" => "El tipo de pago ha sido registrado",
                         "icon" => "success"
                     ];
-                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de tipo de pago', $_POST["tipo_pago"], 'Tipo de pago');
+                    $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de tipo de pago', $_POST["cod_metodo"], 'Tipo de pago');
                 }else{
                     $registrar = [
                         "title" => "Error",
@@ -36,20 +31,6 @@ if(isset($_POST['buscar'])){
                         "icon" => "error"
                     ];
                 }
-            }else{
-                $registrar = [
-                    "title" => "Error",
-                    "message" => "El tipo de pago ya se encuentra registrado",
-                    "icon" => "error"
-                ];
-            }
-        }else{
-            $registrar = [
-                "title" => "Error",
-                "message" => "Algunos caracteres ingresados no son permitidos.",
-                "icon" => "error"
-            ];
-        }
     } else{
         $registrar = [
             "title" => "Error",
@@ -68,12 +49,11 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }else{
-
             if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['tpago'])){
                 
                 $obj->setmetodo($_POST['tpago']);
                 $obj->setstatus($_POST['status']);
-                $result=$obj->editar($_POST['codigo']);
+                $result=$obj->editar($_POST['codigo'], $_POST['cod_metodo']);
                 if($result==1){
                     $editar = [
                         "title" => "Editado con éxito",
@@ -128,9 +108,52 @@ if(isset($_POST['buscar'])){
             ];
         }
     }
+} else if(isset($_POST['guardarm'])){
+    $errores = [];
+        try {
+            $obj->setmetodo($_POST["medio"]);
+            $obj->check(); // Lanza excepción si hay errores
+        } catch (Exception $e) {
+            $errores[] = $e->getMessage();
+        }
+          // Si hay errores, se muestra el mensaje de error
+    if (!empty($errores)) {
+        $registrar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+        ];
+    } else{
+        if (!$obj->buscar($_POST['medio'])) {
+            $resul = $obj->incluir();
+            if ($resul == 1) {
+                $registrarm = [
+                    "title" => "Exito",
+                    "message" => "¡Registro exitoso!",
+                    "icon" => "success"
+                ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de metodo de pago', $_POST["medio"], 'metodo de pago');
+            } else {
+                $registrarm = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al intentar registrar el metodo de pago..",
+                    "icon" => "error"
+                ];
+            }
+        } else {
+            $registrarm = [
+                "title" => "Error",
+                "message" => "No se pudo registrar. El metodo de pago ya existe.",
+                "icon" => "error"
+            ];
+        }
+    }
 }
 
-//$registro=$obj->consultar();
+$tipos_pago=$obj->mediopago();
+$bancos=$obj->cuenta();
+$cajas=$obj->caja();
+$registro=$obj->consultar();
 //$divisas=$objdivisa->consultar();
 $_GET['ruta'] = 'tpago';
 require_once 'plantilla.php';

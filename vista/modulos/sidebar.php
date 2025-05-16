@@ -19,8 +19,10 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent text-sm" data-widget="treeview" role="menu" data-accordion="false">
+                <?php if(!empty($_SESSION["permisos"]["producto"])||!empty($_SESSION["permisos"]["inventario"])): ?>
                 <li class="nav-header">INVENTARIO</li>
-                    <?php //if (!empty($_SESSION["permisos"][1])): ?>
+                <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["producto"])): ?>
                         <li class="nav-item">
                             <a href="productos" class="nav-link bitacora-link" data-modulo="Productos">
                                 <i class="nav-icon fa fa-shopping-bag"></i>
@@ -29,10 +31,9 @@
                                 </p>
                             </a>
                         </li>
-                    <?php //endif; ?>
+                    <?php endif; ?>
 
-                    <?php //if (!empty($_SESSION["permisos"][2])):
-                        if ($_SESSION["inventario"]==1): ?>
+                    <?php if (!empty($_SESSION["permisos"]["inventario"])): ?>
                         <li class="nav-item">
                             <a href="#" class="nav-link bitacora-link" data-modulo="Ajuste de Inventario">
                                 <i class="fas fa-dolly-flatbed nav-icon"></i>
@@ -58,9 +59,10 @@
                         <?php endif; ?>
                     </li> 
 
-            
-                <li class="nav-header">COMERCIO</li>
-                <?php if ($_SESSION["compra"]==1): ?>
+                <?php if (!empty($_SESSION["permisos"]["compra"])||!empty($_SESSION["permisos"]["venta"])): ?>
+                    <li class="nav-header">COMERCIO</li>
+                <?php endif; ?>
+                <?php if (!empty($_SESSION["permisos"]["compra"])): ?>
                 <li class="nav-item">
                     <a href="compras" class="nav-link bitacora-link" data-modulo="Compras">
                         <i class="nav-icon fa fa-shopping-cart"></i>
@@ -70,7 +72,7 @@
                     </a>
                 </li>
                 <?php endif; ?>
-                <?php if ($_SESSION["venta"]==1): //if (!empty($_SESSION["permisos"][5])): ?>
+                <?php if (!empty($_SESSION["permisos"]["venta"])): ?>
                 <li class="nav-item">
                     <a href="venta" class="nav-link bitacora-link" data-modulo="Ventas">
                         <i class="nav-icon fa fa-file"></i>
@@ -80,7 +82,8 @@
                     </a>
                 </li>
                 <?php endif;?>
-
+                
+                <?php if (!empty($_SESSION["permisos"]["cliente"])||!empty($_SESSION["permisos"]["proveedor"])): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                     <i class="fas fa-user-circle nav-icon"></i>
@@ -89,7 +92,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <?php if ($_SESSION["cliente"]==1): ?>
+                        <?php if (!empty($_SESSION["permisos"]["cliente"])): ?>
                         <li class="nav-item">
                         
                             <a href="clientes" class="nav-link bitacora-link" data-modulo="Clientes">
@@ -100,7 +103,7 @@
                             </a>
                         </li>
                         <?php endif; ?>
-                        <?php if ($_SESSION["proveedor"]==1): ?>
+                        <?php if (!empty($_SESSION["permisos"]["proveedor"])): ?>
                         <li class="nav-item">
                             <a href="proveedores" class="nav-link  bitacora-link" data-modulo="Proveedores">
                                 <i class="nav-icon far fa fa-truck"></i>
@@ -112,7 +115,11 @@
                         <?php endif; ?>
                     </ul>
                 </li>
+                <?php endif; ?>
+                <?php if (!empty($_SESSION["permisos"]["contabilidad"])||!empty($_SESSION["permisos"]["finanza"])): ?>
                     <li class="nav-header">ADMINISTRACIÓN</li>
+                <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["contabilidad"])): ?>
                         <li class="nav-item">
                             <a href="#" class="nav-link bitacora-link" data-modulo="Contabilidad">
                             <i class="fas fa-coins nav-icon"></i>
@@ -141,15 +148,21 @@
                                 </li>
                             </ul>
                         </li>
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["finanza"])): ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link bitacora-link" data-modulo="Finanzas">
+                            <a href="finanzas" class="nav-link bitacora-link" data-modulo="Finanzas">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas
                                 </p>
                             </a>
                         </li>
+                    <?php endif; ?>
+                <?php if (!empty($_SESSION["permisos"]["tesoreria"])||!empty($_SESSION["permisos"]["gasto"])||!empty($_SESSION["permisos"]["cuentas_pendiente"])): ?>
                     <li class="nav-header">TESORERÍA</li>
+                <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["tesoreria"])): ?>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                             <i class="fas fa-coins nav-icon"></i>
@@ -184,6 +197,8 @@
                         </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["gasto"])): ?>
                         <li class="nav-item">
                         <a href="gastos" class="nav-link bitacora-link" data-modulo="Gastos">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
@@ -192,7 +207,8 @@
                                 </p>
                             </a>
                         </li>
-                    
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["cuentas_pendiente"])): ?>
                         <li class="nav-item">
                             <a href="cuentaspend" class="nav-link bitacora-link" data-modulo="Cuentas pendientes">
                             <i class="fas fa-wallet nav-icon"></i>                                 
@@ -201,9 +217,9 @@
                                 </p>
                             </a>
                         </li>
-        
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["reporte"])): ?>
                     <li class="nav-header">INFORMES</li>
-                    <?php if ($_SESSION["reporte"]==1): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="fas fa-chart-line nav-icon"></i>
@@ -247,9 +263,8 @@
                     </ul>
                 </li>
                 <?php endif;?>
-
+            <?php if (!empty($_SESSION["permisos"]["seguridad"])||!empty($_SESSION["permisos"]["config_producto"])||!empty($_SESSION["permisos"]["config_finanza"])): ?>
                 <li class="nav-header">AJUSTES</li>
-                <?php if ($_SESSION["configuracion"]==1): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fas fa-cog  nav-icon"></i>
@@ -257,8 +272,8 @@
                             Configuración<i class="right fas fa-angle-left"></i>
                             </p>
                     </a>
-
                     <ul class="nav nav-treeview">
+                    <?php if (!empty($_SESSION["permisos"]["seguridad"])): ?>
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">
                                 <a href="general" class="nav-link bitacora-link" data-modulo="Ajuste Empresa">
@@ -268,9 +283,7 @@
                                         </p>
                                 </a>
                             </li>
-
                         <li class="nav-header">SEGURIDAD Y ACCESOS</li>
-                        <?php if ($_SESSION["usuario"]==1): ?>
                             <li class="nav-item">
                                 <a href="usuarios" class="nav-link bitacora-link" data-modulo="Usuarios">
                                     <i class="nav-icon fas fa-users-cog"></i>
@@ -279,81 +292,35 @@
                                         </p>
                                 </a>
                             </li>
-                        <?php endif;?>
-                        
-                        <!--php... -->
                         <li class="nav-item">
-                            <a href="roles" class="nav-link bitacora-link" data-modulo="Ajuste de roles">
+
+                            <a href="roles" class="nav-link">
                                 <i class="nav-icon fas fa-user-tag"></i>
                                     <p>
-                                        Ajuste general
+                                        Roles y Permisos
                                     </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="divisa" class="nav-link bitacora-link" data-modulo="Divisas">
-                                <i class="fas fa-dollar-sign nav-icon"></i>
-                                    <p>
-                                        Divisas
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="tpago" class="nav-link bitacora-link" data-modulo="Tipos de pago">
-                                <i class="fas fa-money-bill nav-icon"></i>
-                                    <p>
-                                        Tipos de pago
-                                    </p>
-                            </a>
-                        </li>
-                    
-                        <li class="nav-item">
-                            <a href="unidad" class="nav-link  bitacora-link" data-modulo="Unidades de medida">
-                                <i class="fas fa-balance-scale nav-icon"></i>
-                                    <p>
-                                        Unidades de medida
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="banco" class="nav-link bitacora-link" data-modulo="Banco">
-                            <i class="fas fa-landmark nav-icon"></i>
-
-                                    <p>
-                                     Banco
-                                    </p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                                <a href="tipocuenta" class="nav-link bitacora-link" data-modulo="Tipo de cuenta">
-                                <i class="fas fa-money-check-alt nav-icon"></i>
-
-
-                                        <p>
-                                            Tipo de cuenta
-                                        </p>
-                                </a>
-                            </li>
-                        <li class="nav-item">
-                            <a href="roles" class="nav-link bitacora-link" data-modulo="Ajuste de roles">
-                                <i class="fas fa-user-cog nav-icon"></i>
-                                    <p>
-                                        Ajuste de roles
-                                    </p>
-                            </a>
-                        </li>
-
-                        <!--php... -->
                         <li class="nav-item">
                             <a href="bitacora" class="nav-link">
                                 <i class="nav-icon fas fa-user-shield"></i>
+
                                     <p>
                                         Bitacora
                                     </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="backup" class="nav-link">
+                                <i class="nav-icon fas fa-user-shield"></i>
+                                    <p>
+                                        Copias de Seguridad
+                                    </p>
+                            </a>
+                        </li>
+                    <?php endif; ?>
 
+                    <?php if (!empty($_SESSION["permisos"]["config_producto"])): ?>
                         <li class="nav-header">PRODUCTOS</li>
                             <li class="nav-item">
                                 <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
@@ -363,7 +330,6 @@
                                         </p>
                                 </a>
                             </li>
-                            <?php if ($_SESSION["categoria"]==1): ?>
                             <li class="nav-item">
                                 <a href="categorias" class="nav-link bitacora-link" data-modulo="Categorías">
                                     <i class="nav-icon fa fa-table"></i>
@@ -372,8 +338,6 @@
                                         </p>
                                 </a>
                             </li>
-                            <?php endif;?>
-
                             <li class="nav-item">
                                 <a href="marcas" class="nav-link bitacora-link" data-modulo="Marcas">
                                     <i class="fas fa-tags nav-icon"></i>
@@ -382,6 +346,8 @@
                                         </p>
                                 </a>
                             </li>
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION["permisos"]["config_finanza"])): ?>
                             <li class="nav-header">FINANZAS</li>
                             <li class="nav-item">
                                 <a href="divisa" class="nav-link bitacora-link" data-modulo="Divisas">
@@ -416,10 +382,12 @@
                                         </p>
                                 </a>
                             </li>
-
+                            <br>
+                            <br>
+                    <?php endif; ?>
                     </ul>
                 </li>
-                <?php endif;?>
+            <?php endif;?>
             </ul>
         </nav>
     </div>
@@ -544,7 +512,9 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+
                                     <a href="descarga" class="nav-link bitacora-link" data-modulo="Reporte contables">
+
                                     <i class="fas fa-chart-line nav-icon"></i>
                                         <p>Reportes contables</p>
                                     </a>
@@ -552,7 +522,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link bitacora-link" data-modulo="Finanzas">
+                            <a href="finanzas" class="nav-link bitacora-link" data-modulo="Finanzas">
                                 <i class="fas fa-chart-bar nav-icon"></i>
                                 <p>
                                     Finanzas
@@ -561,6 +531,7 @@
                         </li>
                     <li class="nav-header">TESORERÍA</li>
                         <li class="nav-item">
+
                             <a href="cajacopia" class="nav-link bitacora-link" data-modulo="Caja">
                             <i class="fas fa-cash-register nav-icon"></i>
 
@@ -583,19 +554,22 @@
                             <i class="fas fa-check-circle nav-icon"></i>
 
                                     <p>
-                                     Conciliación bancaria
+                                        Banco y Caja<i class="right fas fa-angle-left"></i>
                                     </p>
-                            </a>
-                        </li>
-                      
+                                </a>
+                            <ul class="nav nav-treeview">
                             <li class="nav-item">
+
                                 <a href="tipocuenta" class="nav-link bitacora-link" data-modulo="Tipo de cuenta">
                                     <i class="fas fa-university nav-icon"></i>
+
                                         <p>
-                                            Tipo de cuenta
+                                        Conciliación bancaria
                                         </p>
                                 </a>
                             </li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
                         <a href="gastos" class="nav-link bitacora-link" data-modulo="Gastos">
                             <i class="fas fa-file-invoice-dollar nav-icon"></i>
@@ -635,7 +609,7 @@
                             <a href="rep-inventario" class="nav-link bitacora-link" data-modulo="Reporte De inventario">
                                 <i class="fas fa-pallet nav-icon"></i>                                        
                                     <p>
-                                        De Inventario
+                                        De inventario
                                     </p>
                             </a>
                         </li>
@@ -661,6 +635,7 @@
 
                 <li class="nav-header">AJUSTES</li>
                 <?php if ($_SESSION["configuracion"]==1): ?>
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fas fa-cog  nav-icon"></i>
@@ -712,7 +687,7 @@
                                         </p>
                                 </a>
                             </li>
-                     
+                    
                         <li class="nav-item">
                             <a href="unidad" class="nav-link bitacora-link" data-modulo="Unidades de medida">
                                 <i class="fas fa-balance-scale nav-icon"></i>
@@ -721,7 +696,7 @@
                                     </p>
                             </a>
                         </li>
-                     
+                    
                     <ul class="nav nav-treeview">
                         <li class="nav-header">GENERAL</li>
                             <li class="nav-item">
@@ -744,8 +719,6 @@
                                 </a>
                             </li>
                         <?php endif;?>
-                        
-                        <!--php... -->
                         <li class="nav-item">
                             <a href="roles" class="nav-link bitacora-link" data-modulo="Ajuste de roles">
                                 <i class="nav-icon fas fa-user-tag"></i>
@@ -754,8 +727,6 @@
                                     </p>
                             </a>
                         </li>
-
-                        <!--php... -->
                         <li class="nav-item">
                             <a href="bitacora" class="nav-link">
                                 <i class="nav-icon fas fa-user-shield"></i>
@@ -810,8 +781,15 @@
                                         </p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="categoriag" class="nav-link">
+                                    <i class="fas fa-file-invoice-dollar nav-icon"></i>
+                                        <p>
+                                            Categoría de Gastos
+                                        </p>
+                                </a>
+                            </li>
 
-                          
                         </ul>
                     </li>
                     <?php endif;?>
@@ -819,6 +797,7 @@
             </nav>
         </div>
 <?php endif;?>
+
 
 </aside>
 
@@ -836,3 +815,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
