@@ -56,7 +56,7 @@
                                                     <button name="ajustar" class="btn btn-secondary btn-sm movimientos" title="Ver Movimientos" data-toggle="modal" data-target="#modalmovimientos"> <i class="fas fa-eye"></i> </button>
                                                     <button name="ajustar" class="btn btn-secondary btn-sm movimientos" title="Ver detalles" data-toggle="modal" data-target="#modalcontrol"><i class="fas fa-list"></i></button>
 
-                                                    <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarunidad"
+                                                    <button name="ajustar" class="btn btn-primary btn-sm editar" title="Editar" data-toggle="modal" data-target="#modalmodificarcaja"
                                                             data-cod="<?php echo $dato['cod_caja']; ?>"
                                                             data-nombre="<?php echo $dato['nombre']; ?>"
                                                             data-saldo="<?php echo $dato['saldo']; ?>"
@@ -165,63 +165,71 @@ MODAL REGISTRAR CAJA
                     <?php endif; ?>
 
                     <!-- MODAL EDITAR -->
-                    <div class="modal fade" id="modalmodificarunidad">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header" style="background: #db6a00; color: #ffffff;">
-                                    <h4 class="modal-title">Editar Caja</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <form role="form" method="post" id="form-editar-unidad">
+   <!-- MODAL EDITAR MEJORADO -->
+<div class="modal fade" id="modalmodificarcaja">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:rgb(0, 102, 219); color: #ffffff;">
+                <h4 class="modal-title">Editar Caja</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-                                    <!--   CODIGO DE LA CAJA   -->
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="cod_caja_oculto" id="cod_caja_oculto" value="<?php echo $dato['cod_caja'] ?>">
-                                        <div class="form-group">
-                                            <label for="cod_caja">Código</label>
-                                            <input type="text" class="form-control" name="cod_caja" id="cod_caja" value="<?php echo $dato['cod_caja'] ?>" readonly>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="nombre1">Nombre de la Caja</label>
-                                            <input type="text" class="form-control" name="nombre1" id="nombre1" value="<?php echo $dato['nombre'] ?>" maxlength="20">
-                                            <div class="invalid-feedback" style="display: none;"></div>
-                                            <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="saldo1">Saldo inicial en caja</label>
-                                            <input type="text" class="form-control" name="saldo1" id="saldo1" value="<?php echo $dato['saldo'] ?>" maxlength="20">
-                                            <div class="invalid-feedback" style="display: none;"></div>
-                                            <input type="hidden" id="origin" class="form-control" name="origin" maxlength="10">
-                                        </div>
-                                        <div class="form-group">
-                                        <label for="divisa1">Divisa</label>
-                                        <select class="form-control" name="divisa1" id="divisa1" required>
-                                            <?php foreach($divisas as $div): ?>
-                                                <option value="<?php echo $div['cod_divisa']; ?>"><?php echo $div['nombre']; ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <div class="invalid-feedback" style="display: none;"></div>
-                                    </div>
-                                        <div class="form-group">
-                                            <label for="status">Estatus</label>
-                                            <select name="status" id="status">
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer justify-content-between">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                        <button type="submit" class="btn btn-primary" name="editar">Editar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+            <form role="form" method="post" id="form-editar-caja">
+                <div class="modal-body">
+                    <!-- Código -->
+                    <div class="form-group">
+                        <label for="cod_caja">Código</label>
+                        <input type="text" class="form-control" name="cod_caja" id="cod_caja" readonly>
                     </div>
-                    <?php
+
+                    <!-- Nombre de la Caja -->
+                    <div class="form-group">
+                        <label for="nombre1">Nombre de la Caja</label>
+                        <input type="text" class="form-control" name="nombre1" id="nombre1" required>
+                        <div class="invalid-feedback">Por favor ingrese el nombre de la caja</div>
+                    </div>
+
+                    <!-- Saldo -->
+                    <div class="form-group">
+                        <label for="saldo1">Saldo inicial en caja</label>
+                        <input type="number" step="0.01" class="form-control" name="saldo1" id="saldo1" required>
+                        <div class="invalid-feedback">Por favor ingrese un saldo válido</div>
+                    </div>
+
+                    <!-- Divisa -->
+                    <div class="form-group">
+                        <label for="divisa1">Divisa</label>
+                        <select class="form-control" name="divisa1" id="divisa1" required>
+                            <?php foreach($divisas as $div): ?>
+                                <option value="<?php echo $div['cod_divisa']; ?>">
+                                    <?php echo htmlspecialchars($div['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione una divisa</div>
+                    </div>
+
+                    <!-- Estatus -->
+                    <div class="form-group">
+                        <label for="status">Estatus</label>
+                        <select class="form-control" name="status" id="status" required>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="editar">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+  <?php
                     if (isset($editar)): ?>
                         <script>
                             Swal.fire({
@@ -358,10 +366,12 @@ MODAL REGISTRAR CAJA
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                
             </div>
             <div class="modal-body">
                 <!-- Información básica de la caja -->
                 <div class="row mb-4">
+                    
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Código</label>
@@ -431,9 +441,9 @@ MODAL REGISTRAR CAJA
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     <?php 
-                                    // Aquí deberías incluir el código para mostrar los movimientos
-                                    // Ejemplo ficticio:
+                                    
                                     /*
                                     foreach($movimientos as $mov) {
                                         echo '<tr>';
@@ -463,6 +473,10 @@ MODAL REGISTRAR CAJA
                                     </tr>
                                 </tbody>
                             </table>
+                            <button type="button" class="btn btn-success text-white" onclick="exportarMovimientosPDF()">
+                        Exportar PDF de movimientos
+                    </button>
+
                         </div>
                     </div>
                 </div>

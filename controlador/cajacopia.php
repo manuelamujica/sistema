@@ -82,6 +82,8 @@ if (isset($_POST['buscar'])) {
     $errores = [];
 
     try {
+     
+        $cod_caja = $_POST['cod_caja']; 
         
         // Preparar datos para edición
         $data = [
@@ -89,15 +91,22 @@ if (isset($_POST['buscar'])) {
             'cod_divisa' => $_POST["divisa1"],
             'saldo' => $_POST["saldo1"],
             'status' => $_POST["status"],
-            'cod_caja' => $_POST["cod_caja"], 
+            'cod_caja' => $cod_caja, 
         ];
 
         $objCaja->setData($data);
         $objCaja->check();
 
+        // Verificar si el nombre ya existe (excluyendo la caja actual)
+        $cajaExistente = $objCaja->getbuscar($_POST["nombre1"]);
+        if ($cajaExistente && $cajaExistente['cod_caja'] != $cod_caja) {
+            throw new Exception("El nombre de caja ya está en uso por otra caja.");
+        }
+
         $resul = $objCaja->geteditar($cod_caja); 
 
         if ($resul == 1) {
+            $nombre = $_POST["nombre1"]; // Definir $nombre para la bitácora
             $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar Caja', $nombre, 'Caja');
             $editar = [
                 "title" => "Editado con éxito",
