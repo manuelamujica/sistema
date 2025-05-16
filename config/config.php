@@ -1,6 +1,6 @@
 <?php
 #BASE DE DATOS SAVYC
-define ('_DB_NAME_', 'savycplus'); 
+define ('_DB_NAME_', 'savyc'); 
 define ('_DB_HOST_', 'localhost'); 
 define ('_DB_USER_', 'root'); 
 define ('_DB_PASS_', '');

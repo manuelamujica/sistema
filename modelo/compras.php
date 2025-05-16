@@ -248,9 +248,55 @@ class Compra extends Conexion{
 
    //inicio de consultar  //
    private function consultar(){
-      $registro = "SELECT c.*, c.status AS compra_status, p.*, p.status AS proveedor_status 
-      FROM compras AS c
-      JOIN proveedores AS p ON c.cod_prov = p.cod_prov;";
+      $registro = "SELECT 
+    c.cod_compra,
+    pr.razon_social,
+    c.subtotal,
+    c.fecha,
+    c.total,
+    c.status,
+    pe.cod_pago_emitido,  -- Ahora se obtiene de la subconsulta pe
+    COALESCE(pe.fecha, 'Sin fecha') AS fecha_pago,
+    COALESCE(pe.monto_total, 0) AS monto_ultimo_pago,
+    COALESCE(tp.total_pagos_emitidos, 0) AS total_pagos_emitidos
+FROM 
+    compras AS c
+LEFT JOIN 
+    proveedores AS pr ON c.cod_prov = pr.cod_prov
+LEFT JOIN 
+    (
+        SELECT 
+            pe.cod_compra, 
+            pe.cod_pago_emitido,
+            pe.fecha,
+            pe.monto_total
+        FROM 
+            pago_emitido AS pe
+        INNER JOIN 
+            (
+                SELECT 
+                    cod_compra, 
+                    MAX(fecha) AS max_fecha
+                FROM 
+                    pago_emitido
+                GROUP BY 
+                    cod_compra
+            ) max_pe ON pe.cod_compra = max_pe.cod_compra AND pe.fecha = max_pe.max_fecha
+    ) AS pe ON c.cod_compra = pe.cod_compra
+LEFT JOIN 
+    (
+        SELECT 
+            cod_compra, 
+            SUM(monto_total) AS total_pagos_emitidos
+        FROM 
+            pago_emitido
+        GROUP BY 
+            cod_compra
+    ) tp ON c.cod_compra = tp.cod_compra
+
+GROUP BY 
+    c.cod_compra, pr.razon_social, c.subtotal, c.fecha, c.total, c.status, 
+    pe.cod_pago_emitido, pe.fecha, pe.monto_total, tp.total_pagos_emitidos";
       parent::conectarBD();
       $consulta = $this->conex->prepare($registro);
       $resul = $consulta->execute();

@@ -458,7 +458,8 @@ if (isset($editar)): ?>
 </div>
 
 <?php 
-    /*$ultimo=end($consulta);
+    $ultimo=end($consulta);
+    $ultimo=end($consulta);
     if($ultimo['cod_divisa']!=1):
         if($ultimo['fecha'] != date('Y-m-d') && $_SESSION["cod_usuario"] != 1): 
 ?>
@@ -467,10 +468,10 @@ if (isset($editar)): ?>
         var sen = "dolar";
         var tasaorig = $("#tasaactual").val();
 
-        /*Mostrar modal de carga antes de la solicitud
+        //Mostrar modal de carga antes de la solicitud
         $("#loadingModal").modal("show");
 
-        $.post('index.php?pagina=divisa', { sen }, function(response) {
+        $.post('index.php?pagina=divisa', { sen: sen }, function(response) {
             console.log("Respuesta del servidor:", response);
             let tasa = parseFloat(response.replace(',', '.'));
 
@@ -495,10 +496,11 @@ if (isset($editar)): ?>
             $("#loadingModal").modal("hide");
         });
     });
-</script>
+    </script>
 
-<?php   endif; 
-    endif; */?>
+
+<?php endif; 
+    endif;?>
 
 <script>
     const permisos = <?php echo json_encode($_SESSION["permisos"]); ?>;

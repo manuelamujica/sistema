@@ -70,6 +70,7 @@ REGISTRAR TIPOS DE USUARIO
         }else{
             $r = 0;
         }
+        $this->desconectarBD();
         return $r;
 
     }
@@ -78,6 +79,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     public function consultar(){
+        $this->conectarBD();
         $registro="select * from tipo_usuario";
         parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
@@ -93,6 +95,7 @@ REGISTRAR TIPOS DE USUARIO
 
     //Para usuario
     private function consultarUsuario(){
+        $this->conectarBD();
         $registro="SELECT * FROM tipo_usuario WHERE status=1";
         parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
@@ -112,6 +115,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     public function consultarLogin($cod){
+        $this->conectarBD();
         $registro="SELECT rol FROM tipo_usuario WHERE cod_tipo_usuario=:cod_tipo_usuario";
         parent::conectarBD();
         $resul=$this->conex->prepare($registro);
@@ -127,6 +131,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     public function buscar($valor){
+        $this->conectarBD();
         $this->rol=$valor;
         $registro = "select * from tipo_usuario where rol='".$this->rol."'";
         $resutado= "";
@@ -140,11 +145,13 @@ REGISTRAR TIPOS DE USUARIO
             }else{
                 return false;
             }
-    
+        
     }
 
     public function buscarcod($valor){
+
         $this->rol=$valor;
+        $this->conectarBD();
         $registro = "select * from tipo_usuario where rol='".$this->rol."'";
         $resutado= "";
         parent::conectarBD();
@@ -190,6 +197,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     private function editar(){
+        $this->conectarBD();
         $registro = "UPDATE tipo_usuario SET rol = :rol, status = :status WHERE cod_tipo_usuario = :cod_tipo_usuario";
         parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
@@ -211,6 +219,7 @@ REGISTRAR TIPOS DE USUARIO
     }
 
     private function eliminar($valor) {
+        $this->conectarBD();
         // Verificar el status del rol
         parent::conectarBD();
         $consultaStatus = "SELECT status FROM tipo_usuario WHERE cod_tipo_usuario = :valor";

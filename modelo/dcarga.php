@@ -177,7 +177,7 @@ class Dcarga extends Conexion{
     {
         $r = 0;
         $registro = "INSERT INTO carga(fecha, descripcion, status) VALUES(:fecha, :descripcion, 1)";
-
+        parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $strExec->bindParam(':fecha', $this->fecha);
         $strExec->bindParam(':descripcion', $this->descripcion);
@@ -199,6 +199,7 @@ class Dcarga extends Conexion{
                         $detallep = $producto['cod_detallep'];
                         $this->setcodp($detallep);
                     } else {
+                        parent::desconectarBD();
                         return 0; // Producto no encontrado
                     }
                     $this->setcantidad($cantidad);
@@ -208,6 +209,7 @@ class Dcarga extends Conexion{
                     $strExec = $this->conex->prepare($eliminarerror);
                     $strExec->bindParam(':cod_carga', $this->cod_carga);
                     $strExec->execute();
+                    parent::desconectarBD();
                     return 0; // Código o cantidad vacía
                 }
                 if ($r > 0 && $detallep) {
@@ -230,13 +232,16 @@ class Dcarga extends Conexion{
                         $strExec = $this->conex->prepare($eliminarerror);
                         $strExec->bindParam(':cod_carga', $this->cod_carga);
                         $strExec->execute();
+                        parent::desconectarBD();
                         return 0; // Fallo en el registro
                     }
                 }
             }
         } else {
+            parent::desconectarBD();
             return 0;
         }
+        parent::desconectarBD();
         return $r; // Registro exitoso
     }
 

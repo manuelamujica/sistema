@@ -101,6 +101,7 @@ PLUGINGS DE CSS
     $_GET["ruta"] == "clientes" && (!empty($_SESSION["permisos"]["cliente"])) ||
     $_GET["ruta"] == "roles" && (!empty($_SESSION["permisos"]["seguridad"])) ||
     $_GET["ruta"] == "bitacora" && (!empty($_SESSION["permisos"]["seguridad"])) ||
+    $_GET["ruta"] == "finanzas" && (!empty($_SESSION["permisos"]["finanza"])) ||
     $_GET["ruta"] == "categoriag" && (!empty($_SESSION["permisos"]["config_finanza"])) ||
     $_GET["ruta"] == "cajacopia" && (!empty($_SESSION["permisos"]["tesoreria"])) ||
     $_GET["ruta"] == "cuentabancariacopia" && (!empty($_SESSION["permisos"]["tesoreria"])) ||

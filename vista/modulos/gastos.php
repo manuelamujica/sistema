@@ -88,7 +88,7 @@ require_once "controlador/gastos.php";
                                             <th>Código</th>
                                             <th>Descripción</th>
                                             <th>Monto</th>
-                                            <th>Último pago</th> 
+                                            <th>Último pago</th>
                                             <th>Inicios de pago</th>
                                             <!--<th>Días restantes</th>-->
                                             <th>Status</th>
@@ -120,18 +120,18 @@ require_once "controlador/gastos.php";
                                                         <button name="abono" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
                                                             data-cod_gasto="<?php echo $F["cod_gasto"]; ?>"
                                                             data-totalgastos="<?php echo $F["monto"];  ?>"
-                                                            data-nombre="<?php echo $F["nombret"]; ?>">
+                                                            data-nombre="<?php echo $F["nombre_naturaleza"]; ?>">
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
                                                     <?php elseif ($F['status'] == 2): ?>
                                                         <span class="badge bg-warning">Pago parcial</span>
                                                         <button name="partes" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
-                                                            data-cod_gasto="<?php echo ($F["cod_gasto"]);  //MODIFICACIÓN 11/05/2025?>" 
-                                                            data-codpago="<?php echo ($F["cod_pago_emitido"])  ?>"
-                                                            data-fecha="<?php echo ($F["fecha"])  ?>"
-                                                            data-totalgastos="<?php echo ($F["monto"]) ?>"
-                                                            data-montop="<?php echo ($F["monto_total"])?>"
-                                                            data-nombre="<?php echo ($F["nombret"])?>">
+                                                            data-cod_gasto="<?php echo ($F["cod_gasto"]);  ?>"
+                                                            data-codpago="<?php echo ($F["cod_pago_emitido"]); ?>"
+                                                            data-fecha="<?php echo ($F["fecha"]);  ?>"
+                                                            data-totalgastos="<?php echo ($F["monto"]); ?>"
+                                                            data-montop="<?php echo ($F["total_pagos_emitidos"]); ?>"
+                                                            data-nombre="<?php echo ($F["nombre_naturaleza"]); ?>">
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
                                                     <?php elseif ($F['status'] == 3): ?>
@@ -206,19 +206,18 @@ require_once "controlador/gastos.php";
                                                                             ?>"
                                                             data-totalgastos="<?php echo $v["monto"];
                                                                                 ?>"
-                                                            data-nombre="<?php echo $v["nombret"];
-                                                                            ?>">
+                                                            data-nombre="<?php echo $v["nombre_naturaleza"]; ?>">
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
                                                     <?php elseif ($v['status'] == 2): ?>
                                                         <span class="badge bg-warning">Pago parcial</span>
                                                         <button name="partes" title="Pagar" class="btn btn-primary btn-sm editar" data-toggle="modal" data-target="#pagoGModal"
-                                                            data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
-                                                            data-codpago="<?php echo $v["cod_pago_emitido"]; ?>"
-                                                            data-fecha="<?php echo $v["fecha"]; ?>"
-                                                            data-totalgastos="<?php echo $v["monto"];  ?>"
-                                                            data-montop="<?php echo $v["monto_total"];  ?>"
-                                                            data-nombre="<?php echo $v["nombret"];  ?>">
+                                                            data-cod_gasto="<?php echo ($v["cod_gasto"]);  //MODIFICACIÓN 11/05/2025  ?>"
+                                                            data-codpago="<?php echo ($v["cod_pago_emitido"]); ?>"
+                                                            data-fecha="<?php echo ($v["fecha"]);  ?>"
+                                                            data-totalgastos="<?php echo ($v["monto"]); ?>"
+                                                            data-montop="<?php echo ($v["total_pagos_emitidos"]); ?>"
+                                                            data-nombre="<?php echo ($v["nombre_naturaleza"]); ?>">
                                                             <i class="fas fa-money-bill-wave"></i>
                                                         </button>
                                                     <?php elseif ($v['status'] == 3): ?>
@@ -228,13 +227,13 @@ require_once "controlador/gastos.php";
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <button name="ajustar" class="btn btn-warning btn-sm editar" title="Editar" data-toggle="modal" data-target="#modificargasto"
+                                                    <button name="ajustar" class="btn btn-warning btn-sm editar" title="Editar" data-toggle="modal" data-target="#vueltoModal"
                                                         data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
                                                         data-nombre=" <?php echo $v["descripcion"]; ?> ">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </button>
                                                     <button name="confirmar" class="btn btn-danger btn-sm eliminar" title="Eliminar" data-toggle="modal" id="modificar" data-target="#eliminarG"
-                                                        data-cod="<?php echo $v['cod_gasto']; ?>"
+                                                        data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"data-cod_gasto="<?php echo $v["cod_gasto"]; ?>"
                                                         data-eliminar="<?php echo $v['descripcion']; ?>">
                                                         <i class="fas fa-trash-alt"></i></button>
 
@@ -254,7 +253,7 @@ require_once "controlador/gastos.php";
                 </div>
 
                 <!-- =============================
-                    MODAL REGISTRAR GASTOS  (100% FUNCIONAL)
+                    MODAL REGISTRAR GASTOS  (100% FUNCIONAL) EN REVISIÓN
                 ================================== -->
                 <div class="modal fade" id="modalRGasto" tabindex="-1" aria-labelledby="modalRegistrarGastoLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -282,6 +281,12 @@ require_once "controlador/gastos.php";
                                             <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese una descripción del gasto" maxlength="45" required>
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="fecha_del_pago">Fecha</label> <!-- Fecha de creación del gasto -->
+                                                <input type="text" class="form-control" id="fecha_del_pago" name="fecha">
+                                            </div>
+                                        </div>
                                         <div class="col-6">
                                             <label for="categoriaG">Categoría del gasto<span class="text-danger" style="font-size: 15px;"> *</span></label>
                                             <!-- TOOLTIPS-->
@@ -297,9 +302,11 @@ require_once "controlador/gastos.php";
                                                 <select class="form-control" id="categoriaG" name="cod_cat_gasto" required>
                                                     <option value="" selected disabled>Seleccione una opción</option>
                                                     <?php foreach ($categorias as $c): ?>
+                                                        <?php if($c['status_cat_gasto'] == 1): ?>
                                                         <option value="<?php echo $c['cod_cat_gasto']; ?>">
-                                                            <?php echo $c['nombre']; ?>
+                                                            <?php echo $c['categoria']; ?>
                                                         </option>
+                                                        <?php endif; ?>
                                                     <?php endforeach; ?>
                                                 </select>
                                                 <div class="input-group-append">
@@ -307,7 +314,14 @@ require_once "controlador/gastos.php";
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-6">
+                                            <label for="Tgasto">Tipo de Gasto</label>
+                                            <input type="text" class="form-control" id="Tgasto" placeholder="Tipo de gasto" readonly>
+                                            <div class="invalid-feedback" style="display: none;"></div>
+                                        </div>
+
                                     </div>
+
                                     <hr>
                                     <div class="form-group row">
                                         <div class="col-6">
@@ -325,10 +339,26 @@ require_once "controlador/gastos.php";
                                             <div class="invalid-feedback" style="display: none;"></div>
                                         </div>
                                         <div class="col-6">
-                                            <label for="Tgasto">Tipo de Gasto</label>
-                                            <input type="text" class="form-control" id="Tgasto" placeholder="Tipo de gasto" readonly>
-                                            <div class="invalid-feedback" style="display: none;"></div>
+                                            <label for="condicion">Condición del gasto<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                            <!-- TOOLTIPS-->
+                                            <button class="btn btn-xs" data-toggle="tooltip" data-placement="top" title="Seleccione la opción del pago, por ejemplo: Al contado.">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <script>
+                                                $(function() {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
+                                            </script>
+                                            <div class="input-group">
+                                                <select class="form-control" id="condicion" name="cod_condicion" required>
+                                                   
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalCategoria">+</button>
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
                                     <!-- Alert Message -->
                                     <div class="alert alert-light d-flex align-items-center" role="alert">
@@ -366,7 +396,7 @@ require_once "controlador/gastos.php";
                 <div class="modal fade" id="pagoGModal" tabindex="-1" aria-labelledby="pagoGLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header bg-success">
                                 <h5 class="modal-title" id="pagoLabel">Registrar Pago para Gastos</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -392,21 +422,20 @@ require_once "controlador/gastos.php";
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="fecha_del_pago">Fecha de pago</label>
-                                                <input type="text" class="form-control" id="fecha_del_pago" name="fecha" readonly>
+                                                <input type="text" class="form-control" id="fecha_del_pago" name="fecha" readonly> <!--"-->
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="monto-section">
                                         <div class="text-center my-3">
+                                            <input type="hidden" name="monto_pagar" id="total-pagop">
                                             <h4>Monto pagado: <span id="total-pago1" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
                                         </div>
                                         <div class="text-center my-3">
                                             <h4>Monto a Pagar: <span id="total-pago" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
                                         </div>
                                     </div>
-                                    <?php /*}
-                                    } }*/ ?>
                                     <div class="text-center my-3">
                                         <h4>Total del gasto : <span id="total-gasto" class="font-weight-bold" style="font-size: 3rem;">0.00</span></h4>
                                         <input type="hidden" name="montototal" id="total-gasto-oculto">
@@ -552,12 +581,12 @@ require_once "controlador/gastos.php";
                 <?php endif; ?>
 
                 <!-- =======================
-                    MODAL REGISTRAR VUELTO EN OBSERVACIÓN
+                    MODAL REGISTRAR VUELTO
                 ============================= -->
                 <div class="modal fade" id="vueltoModal" tabindex="-1" aria-labelledby="vueltoModalBtn" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header bg-warning">
                                 <h5 class="modal-title" id="pagoLabel">Registrar vuelto a recibir</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -593,7 +622,7 @@ require_once "controlador/gastos.php";
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
-                                                        <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8">
@@ -602,6 +631,7 @@ require_once "controlador/gastos.php";
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">Bs</span>
                                                             </div>
+                                                            <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
                                                             <input type="number" step="0.01" class="form-control monto-bs1" id="monto-bs1-<?= $index; ?>" name="pago[<?= $index; ?>][monto]" placeholder="Ingrese monto" oninput="calcularTotalvuelto()">
                                                         </div>
                                                     </div>
@@ -611,7 +641,7 @@ require_once "controlador/gastos.php";
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
-                                                        <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -620,6 +650,7 @@ require_once "controlador/gastos.php";
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
                                                             </div>
+                                                            <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
                                                             <input type="number" step="0.01" class="form-control monto-divisa1" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalvuelto(<?= $index; ?>)">
                                                             <input type="hidden" class="form-control tasa-conversion1" id="tasa-conversion1-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
                                                         </div>

@@ -76,15 +76,13 @@ public function accesos($valor){
     }else{
         return $res=[];
     }
-
 }
 //FIN LOGIN
 
 /*==============================
 REGISTRAR USUARIO
 ================================*/
-private function registrar($rol){
-
+private function registrar($rol){ 
     $sql = "INSERT INTO usuarios(nombre,user,password,cod_tipo_usuario,status) VALUES(:nombre,:user,:password,:cod_tipo_usuario,1)";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);
@@ -195,8 +193,6 @@ EDITAR USUARIO
 ELIMINAR USUARIO
 ================================*/
 public function eliminar($valor) {
-
-    // el usuario a eliminar es administrador?
     $sql = "SELECT cod_tipo_usuario, status FROM usuarios WHERE cod_usuario = :valor";
     parent::conectarBD();
     $strExec = $this->conex->prepare($sql);

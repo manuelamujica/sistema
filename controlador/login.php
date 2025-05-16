@@ -19,6 +19,7 @@ $objRol= new Rol();
 $objbitacora = new Bitacora();
 
 
+
 if (isset($_POST["ingresar"])) {
 	// Validar CAPTCHA Cloudflare (si hay internet)
 	if ($cloudflare && isset($_POST['cf-turnstile-response'])) {
@@ -132,7 +133,9 @@ if (isset($_POST["ingresar"])) {
 	} else{
 		$login = [
 			"title" => "Error",
+
 			"message" => "Intenta nuevamente.",
+
 			"icon" => "error"
 		];
 	}

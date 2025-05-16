@@ -1,5 +1,5 @@
 
-$('#descripcion').blur(function (e) {
+$('#descripcion').blur(function (e) {//LISTO CONFIRMADO 14/05/2025
     var buscar = $('#descripcion').val();
     $.post('index.php?pagina=gastos', { buscar }, function (response) {
         if (response != '') {
@@ -12,7 +12,7 @@ $('#descripcion').blur(function (e) {
     }, 'json');
 });
 
-$(document).ready(function () {
+$(document).ready(function () { //LISTO CONFIRMADO 14/05/2025 (FALTA DESARROLLAR OARA MAS FLEXIBILIDAD)
     $('#formregistrarFrecuancia').on('input', '#frecuencia', function () {
 
         var frecuencia = $('#frecuencia').val().toLowerCase();
@@ -64,77 +64,93 @@ $(document).ready(function () {
 
 });
 
-$(document).ready(function () {
-    $('#frecuenciaC').on('change', function () {
-        var codigoFrecuencia = $(this).val();
-        var nombreFrecuencia = $(this).find('option:selected').data('nombre');
-        var now = new Date();
-        var fechaRegistro;
-        console.log("Frecuencia seleccionada:", nombreFrecuencia);
+function showError(selector, message) {
+    $(selector).addClass('is-invalid');
+    $(selector).siblings('.invalid-feedback').text(message).show();
+}
 
-        switch (nombreFrecuencia) {
-            case 'diario':
-            case 'semanal':
-            case 'quincenal':
-                fechaRegistro = now;
-                console.log("Frecuencia seleccionada:", frecuencia, "Fecha registrada:", fechaRegistro);
-                break;
-            case 'mensual':
-                now.setMonth(now.getMonth() + 1);
-                now.setDate(1);
-                fechaRegistro = now;
-                console.log("Avanzando a mensual. Nueva fecha:", fechaRegistro);
-                break;
-            case 'bimestral':
-                now.setMonth(now.getMonth() + 2);
-                now.setDate(1);
-                fechaRegistro = now;
-                console.log("Avanzando a bimestral. Nueva fecha:", fechaRegistro);
-                break;
-            case 'trimestral':
-                now.setMonth(now.getMonth() + 3);
-                now.setDate(1);
-                fechaRegistro = now;
-                console.log("Avanzando a trimestral. Nueva fecha:", fechaRegistro);
-                break;
-            case 'semestral':
-                now.setMonth(now.getMonth() + 6);
-                now.setDate(1);
-                fechaRegistro = now;
-                console.log("Avanzando a semestral. Nueva fecha:", fechaRegistro);
-                break;
-            case 'anual':
-                now.setFullYear(now.getFullYear() + 1);
-                now.setDate(1);
-                fechaRegistro = now;
-                console.log("Avanzando a anual. Nueva fecha:", fechaRegistro);
-                break;
-            case 'cuatrimestral':
-                now.setMonth(now.getMonth() + 4);
-                now.setDate(1);
-                fechaRegistro = now;
-                console.log("Avanzando a cuatrimestral. Nueva fecha:", fechaRegistro);
-                break;
-            default:
-                fechaRegistro = now;
-                console.log("Frecuencia no válida. Fecha registrada:", fechaRegistro);
+function hideError(selector) {
+    $(selector).removeClass('is-invalid');
+    $(selector).siblings('.invalid-feedback').hide();
+}
+
+$(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
+    $('#fecha').on('blur', function () {
+        var fecha = $(this).val();
+        var fechactual = new Date();
+        fechactual.setHours(0, 0, 0, 0);
+
+        var anual = fechactual.getFullYear();
+        var mes = String(fechactual.getMonth() + 1).padStart(2, '0');
+        var dia = String(fechactual.getDate()).padStart(2, '0');
+        var fechactualformateada = `${anual}-${mes}-${dia}`;
+        console.log(fecha);
+        console.log(fechactualformateada);
+
+        if (fecha.trim() === '') {
+            showError('#fecha', 'El campo fecha no puede estar vacío');
         }
 
-        var fechaFormateada = fechaRegistro.getFullYear() + '-' +
-            String(fechaRegistro.getMonth() + 1).padStart(2, '0') + '-' +
-            String(fechaRegistro.getDate()).padStart(2, '0');
+        else if (fecha < fechactualformateada) {
+            showError('#fecha', 'La fecha no puede ser una fecha pasada');
 
-        $('#fecha').val(fechaFormateada);
-        $('#fecha-hora').val(fechaFormateada);
+        }
 
-        console.log("Fecha calculada:", fechaFormateada);
+        else {
+            hideError('#fecha');
+        }
+    });
+
+    $('#formregistrarCategoria').on('submit', function (e) {
+        var fecha = $('#fecha').val();
+        var fechactual = new Date();
+        fechactual.setHours(0, 0, 0, 0);
+
+        var anual = fechactual.getFullYear();
+        var mes = String(fechactual.getMonth() + 1).padStart(2, '0');
+        var dia = String(fechactual.getDate()).padStart(2, '0');
+        var fechactualformateada = `${anual}-${mes}-${dia}`;
+
+        if (fecha < fechactualformateada) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'La fecha no puede ser una fecha pasada.',
+                icon: 'warning'
+            }).then(() => {
+                location.reload();
+            });
+            return;
+        }
+    });
+});
+
+$('#fecha').on('blur', function () {//LISTO CONFIRMADO 14/05/2025
+    var fecha = $(this).val();
+    if (fecha.trim() === '') {
+        showError('#fecha', 'el campo fecha no puede estar vacío');
+    } else {
+        hideError('#fecha');
+    }
+});
+
+$(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
+    $('#naturaleza').on('input', function () {
+        var selectedValue = $(this).val();
+        console.log(selectedValue + " :naturaleza");
+
+        if (selectedValue === '1') {
+            $('#frecuenciaContainer').show();
+        } else {
+            $('#frecuenciaContainer').hide();
+        }
     });
 });
 
 //AJUSTE DE GASTOS LISTOS
 
 //Nuevo
-$(document).ready(function () {
+$(document).ready(function () {//LISTO CONFIRMADO 14/05/2025
     $('#categoriaG').on('change', function () {
         var codCategoria = $(this).val();
         console.log(codCategoria);
@@ -147,6 +163,18 @@ $(document).ready(function () {
                     console.log(response.tipo_gasto + "cod_tipo");
                     if (response.tipo_gasto) {
                         $('#Tgasto').val(response.tipo_gasto);
+                        console.log("Tipo de gasto: " + response.tipo_gasto);
+                        if (response.tipo_gasto === 'producto') {
+                            $('#condicion').empty();
+                            $('#condicion').append('<option value="">Seleccione una opción</option>');
+                            $('#condicion').append('<option value="3">A crédito</option>');
+                            $('#condicion').append('<option value="4">Al contado</option>');
+                        } else {
+                            $('#condicion').empty();
+                            $('#condicion').append('<option value="" >Seleccione una opción</option>');
+                            $('#condicion').append('<option value="1">Prepago</option>');
+                            $('#condicion').append('<option value="2">Pospago</option>');
+                        }
                     } else {
                         $('#Tgasto').val('');
                     }
@@ -159,11 +187,22 @@ $(document).ready(function () {
             }
         });
     });
+    $('#modalRGasto').on('show.bs.modal', function (event) {
+        var fechactual = new Date();
+        fechactual.setHours(0, 0, 0, 0);
+        var anual = fechactual.getFullYear();
+        var mes = String(fechactual.getMonth() + 1).padStart(2, '0');
+        var dia = String(fechactual.getDate()).padStart(2, '0');
+        var fechactualformateada = `${anual}-${mes}-${dia}`;
+        $('#fecha_del_pago').val(fechactualformateada);
+    });
+
 });
 
 //PAGOS DE GASTOS
-$('#pagoGModal').on('show.bs.modal', function (event) { 
+$('#pagoGModal').on('show.bs.modal', function (event) {
     var modal = $(this);
+    console.log("abri el modal");
     /* LIMPIO EL MODAL Y EL CALCULO DE ESTE */
     modal.find('.modal-body #total-pago1').text('0.00 Bs');
     modal.find('.modal-body #total-pago2').text('0.00 Bs');
@@ -188,8 +227,9 @@ $('#pagoGModal').on('show.bs.modal', function (event) {
         String(fecha.getMonth() + 1).padStart(2, '0') + '-' +
         String(fecha.getDate()).padStart(2, '0');
     var nombre = button.data('nombre');
-    var montop = button.data('montop') || 0;
-    var total = button.data('totalgastos');
+    var montop = parseFloat(button.data('montop')) || 0;
+    console.log("muestra el montop? "+montop);
+    var total = parseFloat(button.data('totalgastos')) || 0;
     var modal = $(this);
 
     modal.find('.modal-body #cod_gasto1').val(codigo);
@@ -203,6 +243,7 @@ $('#pagoGModal').on('show.bs.modal', function (event) {
 
     var totalGastoOculto = $('#total-gasto-oculto').val();
 
+
     $.ajax({
         url: 'index.php?pagina=gastos',
         method: 'POST',
@@ -210,16 +251,19 @@ $('#pagoGModal').on('show.bs.modal', function (event) {
         dataType: 'json',
         success: function (response) {
             var modal = $('#pagoGModal');
+
             if (response.success) {
-                var montoTotal = parseFloat(response.monto_total) || 0; 
+                var montoTotal = parseFloat(response.monto_total) || 0;
 
                 console.log("Monto total como número:", montoTotal);
+                console.log(montop);
 
 
-                modal.find('.modal-body #total-pago1').text(montoTotal.toFixed(2) + ' Bs');
+                modal.find('.modal-body #total-pago1').text(montop.toFixed(2) + ' Bs');
+                modal.find('.modal-body #total-pagop').val(montop.toFixed(2) + ' Bs');
                 modal.find('.modal-body #total-gasto').text(total.toFixed(2) + ' Bs');
 
-                var montopagar = Math.abs(total - montoTotal);
+                var montopagar = Math.abs(total - montop);
                 modal.find('.modal-body #total-pago').text(montopagar.toFixed(2) + ' Bs');
                 modal.find('.modal-body #monto_pagar').val(montopagar.toFixed(2));
 
@@ -255,7 +299,7 @@ $('#vueltoModal').on('show.bs.modal', function (event) {
     modal.find('.modal-body #nro_gasto').val(codigo);
     modal.find('.modal-body #montoV').text(vuelto);
     modal.find('.modal-body #monto_vuelto').val(vuelto);
-    
+
 
 });
 
@@ -360,12 +404,34 @@ function calcularTotalvuelto() {
 
 $(document).ready(function () {
     $('#vueltoModalBtn').on('click', function (e) {
-        e.preventDefault(); 
+        e.preventDefault();
 
-        // Obtén los datos del formulario
         let vuelto = $('#monto_vuelto').val();
+        let montoPagado = parseFloat($('#monto_pagado1').val()) || 0;
+        console.log("Vuelto:", vuelto);
+        console.log("Monto Pagado:", montoPagado);
 
- 
+        if (parseFloat(vuelto) > montoPagado) {
+            Swal.fire({
+                title: 'Error',
+                text: 'El vuelto no puede ser mayor que el monto pagado.',
+                icon: 'error',
+            }).then(() => {
+                location.reload();
+            });
+            return;
+        } else if (parseFloat(vuelto) < montoPagado) {
+            Swal.fire({
+                title: 'Error',
+                text: 'El vuelto no puede ser menor que el monto pagado.',
+                icon: 'error',
+            }).then(() => {
+                location.reload();
+            });
+            return;
+        }
+
+
         if (!vuelto) {
             Swal.fire({
                 title: 'Error',
@@ -375,11 +441,42 @@ $(document).ready(function () {
             return;
         }
 
+        let arrayConDetalles = [];
+
+        $('.monto-bs1').each(function () {
+            let monto = parseFloat($(this).val()) || 0;
+            let cod_tipo_pago = $(this).closest('.form-group').find('input[type="hidden"][name*="cod_tipo_pago"]').val();
+            console.log('Bs:', monto, 'Tipo:', cod_tipo_pago);
+            if (monto > 0 && cod_tipo_pago) {
+                arrayConDetalles.push({
+                    cod_tipo_pago: cod_tipo_pago,
+                    monto: monto
+                });
+            }
+        });
+        // Captura de montos en divisas
+        $('.monto-divisa1').each(function () {
+            let montoDivisa = parseFloat($(this).val()) || 0;
+            let cod_tipo_pago = $(this).closest('.form-group').find('input[type="hidden"][name*="cod_tipo_pago"]').val();
+            console.log('Bs:', monto, 'Tipo:', cod_tipo_pago);
+            // El monto en Bs está en el input readonly asociado
+            let index = $(this).attr('id').split('-').pop();
+            let montoBs = parseFloat($('#monto-bs-con1-' + index).val()) || 0;
+            if (montoBs > 0 && cod_tipo_pago) {
+                arrayConDetalles.push({
+                    cod_tipo_pago: cod_tipo_pago,
+                    monto: montoBs
+                });
+            }
+        });
+        console.log(arrayConDetalles);
+
         $.ajax({
             url: 'index.php?pagina=gastos',
             method: 'POST',
             data: {
                 vuelto: vuelto,
+                pago: arrayConDetalles
             },
             dataType: 'json',
             success: function (response) {
@@ -389,7 +486,7 @@ $(document).ready(function () {
                         text: 'El vuelto se registró correctamente.',
                         icon: 'success',
                     }).then(() => {
-                        
+
                         $('#vueltoModal').modal('hide');
                         $('#vueltoForm')[0].reset();
                     });
@@ -416,7 +513,7 @@ $(document).ready(function () {
 
 //EDITAR
 /* Listo */
-$('#modificat').on('show.bs.modal', function (event) {
+$('#modificat').on('show.bs.modal', function (event) { //LISTO CONFIRMADO 14/05/2025
     console.log("Modal de EDICIÓN abierto");
 
     var button = $(event.relatedTarget);
@@ -438,7 +535,7 @@ $('#modificat').on('show.bs.modal', function (event) {
 });
 
 
-$('#modaleliminar').on('show.bs.modal', function (event) {
+$('#modaleliminar').on('show.bs.modal', function (event) { 
     var button = $(event.relatedTarget);
     var codigo = button.data('codigo');
     var nombre = button.data('nombre');
@@ -452,15 +549,12 @@ $('#modaleliminar').on('show.bs.modal', function (event) {
 
 //GASTO
 
-$('#modificargasto').on('show.bs.modal', function (event) {
+$('#modificargasto').on('show.bs.modal', function (event) { //LISTO CONFIRMADO 14/05/2025
     console.log("Modal de EDICIÓN abierto");
 
     var button = $(event.relatedTarget);
-    var codigo = button.data('codigo_gasto');
+    var codigo = button.data('cod_gasto');
     var nombre = button.data('nombre');
-
-    console.log("Nombre del gasto:", nombre);
-    console.log("Código del gasto:", codigo);
 
     // Modal
     var modal = $(this);
@@ -472,10 +566,10 @@ $('#modificargasto').on('show.bs.modal', function (event) {
 
 });
 
-$('#eliminarG').on('show.bs.modal', function (event) {
+$('#eliminarG').on('show.bs.modal', function (event) { //LISTO CONFIRMADO 14/05/2025
     console.log("MODAL DE ELIMINACIÓN");
     var button = $(event.relatedTarget);
-    var codigo = button.data('cod');
+    var codigo = button.data('cod_gasto');
     var nombre = button.data('eliminar');
 
     var modal = $(this);
@@ -485,8 +579,3 @@ $('#eliminarG').on('show.bs.modal', function (event) {
     console.log(codigo);
     console.log(nombre);
 });
-
-
-
-
-
