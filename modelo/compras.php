@@ -1,7 +1,7 @@
 <?php
 
 require_once 'conexion.php';
-
+require_once 'modelo/validaciones.php';
 class Compra extends Conexion{
    private $cod_compra;
    private $cod_prov;
@@ -13,10 +13,49 @@ class Compra extends Conexion{
    private $status;
    private $cantidad;
    private $monto;
+   private $errores=[];
+   private $fecha_v;
+   use ValidadorTrait;
+   private $condicion;
 
    public function __construct(){
       parent::__construct(_DB_HOST_, _DB_NAME_, _DB_USER_, _DB_PASS_);
    }
+
+   public function setdatac($data){
+      $this->cod_prov = $data['cod_prov'];
+      $this->condicion = $data['condicion'];
+      if($this->validarDecimal($data['subtotal'], 'Subtotal')){
+         $this->subtotal = $data['subtotal'];
+      }else{
+         $this->errores['subtotal'] = $this->validarDecimal($data['subtotal'], 'Subtotal');
+      }
+      if($this->validarDecimal($data['total_general'], 'Total')){
+         $this->total = $data['total_general'];
+      }else{
+         $this->errores['total'] = $this->validarDecimal($data['total_general'], 'Total');
+      }
+      if($this->validarDecimal($data['impuesto_total'], 'Impuesto')){
+         $this->impuesto_total = $data['impuesto_total'];
+      }else{
+         $this->errores['impuesto'] = $this->validarDecimal($data['impuesto_total'], 'Impuesto');
+      }
+      if($this->validarFecha($data['fecha'], 'Fecha')){
+         $this->fecha = $data['fecha'];
+      }else{
+         $this->errores['fecha'] = $this->validarFecha($data['fecha'], 'Fecha');
+      }
+      if(!empty($data['fecha_v'])){
+         if($this->validarFecha($data['fecha_v'], 'Fecha Vencimiento')){
+            $this->fecha_v = $data['fecha_v'];
+         }else{
+            $this->errores['fecha_v'] = $this->validarFecha($data['fecha_v'], 'Fecha Vencimiento');
+         }
+      }else{
+         $this->fecha_v = null;
+      }
+   }
+
    // SETTER Y GETTER
    public function setCod1($cod_prov){
       $this->cod_prov = $cod_prov;
@@ -85,9 +124,11 @@ class Compra extends Conexion{
       try{
          parent::conectarBD();
          $this->conex->beginTransaction();
-      $sql = "INSERT INTO compras (cod_prov, subtotal,total, impuesto_total, fecha, status) VALUES (:cod_prov, :subtotal,:total, :impuesto_total, :fecha, 1)";  
+      $sql = "INSERT INTO compras (cod_prov, condicion_pago, fecha_vencimiento, subtotal,total, impuesto_total, fecha, status) VALUES (:cod_prov, :condicion, :fecha_vencimiento, :subtotal,:total, :impuesto_total, :fecha, 1)";  
       $strExec = $this->conex->prepare($sql);  
-      $strExec->bindParam(':cod_prov', $this->cod_prov);  
+      $strExec->bindParam(':cod_prov', $this->cod_prov); 
+      $strExec->bindParam(':condicion', $this->condicion);
+      $strExec->bindParam(':fecha_vencimiento', $this->fecha_v);
       $strExec->bindParam(':subtotal', $this->subtotal);  
       $strExec->bindParam(':impuesto_total', $this->impuesto_total);  
       $strExec->bindParam(':total', $this->total);  
@@ -249,54 +290,54 @@ class Compra extends Conexion{
    //inicio de consultar  //
    private function consultar(){
       $registro = "SELECT 
-    c.cod_compra,
-    pr.razon_social,
-    c.subtotal,
-    c.fecha,
-    c.total,
-    c.status,
-    pe.cod_pago_emitido,  -- Ahora se obtiene de la subconsulta pe
-    COALESCE(pe.fecha, 'Sin fecha') AS fecha_pago,
-    COALESCE(pe.monto_total, 0) AS monto_ultimo_pago,
-    COALESCE(tp.total_pagos_emitidos, 0) AS total_pagos_emitidos
-FROM 
-    compras AS c
-LEFT JOIN 
-    proveedores AS pr ON c.cod_prov = pr.cod_prov
-LEFT JOIN 
-    (
-        SELECT 
-            pe.cod_compra, 
-            pe.cod_pago_emitido,
-            pe.fecha,
-            pe.monto_total
-        FROM 
-            pago_emitido AS pe
-        INNER JOIN 
+            c.cod_compra,
+            pr.razon_social,
+            c.subtotal,
+            c.fecha,
+            c.total,
+            c.status,
+            pe.cod_pago_emitido,  -- Ahora se obtiene de la subconsulta pe
+            COALESCE(pe.fecha, 'Sin fecha') AS fecha_pago,
+            COALESCE(pe.monto_total, 0) AS monto_ultimo_pago,
+            COALESCE(tp.total_pagos_emitidos, 0) AS total_pagos_emitidos
+         FROM 
+            compras AS c
+         LEFT JOIN 
+            proveedores AS pr ON c.cod_prov = pr.cod_prov
+         LEFT JOIN 
             (
-                SELECT 
-                    cod_compra, 
-                    MAX(fecha) AS max_fecha
-                FROM 
-                    pago_emitido
-                GROUP BY 
-                    cod_compra
-            ) max_pe ON pe.cod_compra = max_pe.cod_compra AND pe.fecha = max_pe.max_fecha
-    ) AS pe ON c.cod_compra = pe.cod_compra
-LEFT JOIN 
-    (
-        SELECT 
-            cod_compra, 
-            SUM(monto_total) AS total_pagos_emitidos
-        FROM 
-            pago_emitido
-        GROUP BY 
-            cod_compra
-    ) tp ON c.cod_compra = tp.cod_compra
+               SELECT 
+                     pe.cod_compra, 
+                     pe.cod_pago_emitido,
+                     pe.fecha,
+                     pe.monto_total
+               FROM 
+                     pago_emitido AS pe
+               INNER JOIN 
+                     (
+                        SELECT 
+                           cod_compra, 
+                           MAX(fecha) AS max_fecha
+                        FROM 
+                           pago_emitido
+                        GROUP BY 
+                           cod_compra
+                     ) max_pe ON pe.cod_compra = max_pe.cod_compra AND pe.fecha = max_pe.max_fecha
+            ) AS pe ON c.cod_compra = pe.cod_compra
+         LEFT JOIN 
+            (
+               SELECT 
+                     cod_compra, 
+                     SUM(monto_total) AS total_pagos_emitidos
+               FROM 
+                     pago_emitido
+               GROUP BY 
+                     cod_compra
+            ) tp ON c.cod_compra = tp.cod_compra
 
-GROUP BY 
-    c.cod_compra, pr.razon_social, c.subtotal, c.fecha, c.total, c.status, 
-    pe.cod_pago_emitido, pe.fecha, pe.monto_total, tp.total_pagos_emitidos";
+         GROUP BY 
+            c.cod_compra, pr.razon_social, c.subtotal, c.fecha, c.total, c.status, 
+            pe.cod_pago_emitido, pe.fecha, pe.monto_total, tp.total_pagos_emitidos";
       parent::conectarBD();
       $consulta = $this->conex->prepare($registro);
       $resul = $consulta->execute();
@@ -315,9 +356,22 @@ GROUP BY
    //fin de consultar//
 
    public function divisas(){
-      $sql="SELECT d.cod_divisa, d.nombre, d.abreviatura, c.tasa, c.fecha 
-      FROM divisas d 
-      JOIN cambio_divisa c ON d.cod_divisa=c.cod_divisa ORDER BY d.cod_divisa;";
+      $sql="SELECT 
+               d.cod_divisa,
+               d.nombre,
+               d.abreviatura,
+               cd.tasa,
+               cd.fecha AS fecha_tasa
+            FROM divisas d
+            LEFT JOIN cambio_divisa cd
+            ON cd.cod_cambio = (
+                  SELECT cd2.cod_cambio
+                  FROM cambio_divisa cd2
+                  WHERE cd2.cod_divisa = d.cod_divisa
+                  ORDER BY cd2.fecha DESC
+                  LIMIT 1
+            )
+            ORDER BY d.nombre;";
       parent::conectarBD();
       $consulta = $this->conex->prepare($sql);
       $resul = $consulta->execute();

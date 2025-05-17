@@ -3,17 +3,17 @@
 require_once "modelo/cuentabancariacopia.php";
 require_once "modelo/bitacora.php";
 require_once "modelo/banco.php";
-require_once "modelo/tipocuenta.php";
+//require_once "modelo/tipocuenta.php";
 require_once "modelo/divisa.php";
 
 $objBanco = new Banco;
 $objDivisa = new Divisa;
 $objCuenta = new CuentaBancaria;
-$objTipoCuenta = new Tipo_Cuenta;
+//$objTipoCuenta = new Tipo_Cuenta;
 $objbitacora = new Bitacora();
 
 $banco=$objBanco->consultar();
-$tipo=$objTipoCuenta->consultarTipo();
+//$tipo=$objTipoCuenta->consultarTipo();
 $Cuenta=$objCuenta->consultarCuenta();
 $divisas=$objDivisa->consultarDivisas();
 

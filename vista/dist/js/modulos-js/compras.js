@@ -797,3 +797,17 @@ $(document).ready(function () {
         });
     });
 });
+
+function mostrarFechaVencimiento() {
+    var condicionPago = document.getElementById("condicion_pago").value;
+    var divFechaVencimiento = document.getElementById("div_fecha_vencimiento");
+    
+    if (condicionPago === "2") {
+        divFechaVencimiento.style.display = "block";
+        document.getElementById("fecha_vencimiento").required = true;
+    } else {
+        divFechaVencimiento.style.display = "none";
+        document.getElementById("fecha_vencimiento").required = false;
+        document.getElementById("fecha_vencimiento").value = "";
+    }
+}

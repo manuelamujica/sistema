@@ -113,7 +113,7 @@
 <div class="modal fade" id="modalcom" tabindex="-1" role="dialog" aria-labelledby="compraModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" style="max-width: 96%;">
         <div class="modal-content">
-            <div class="modal-header" style="background: #db6a00; color: #ffffff;">
+            <div class="modal-header" >
                 <h5 class="modal-title" id="compraModalLabel">Registrar compra</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -169,9 +169,29 @@
                                             </select>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="condicion_pago">Condición de Pago</label>
+                                    <select class="form-control form-control-sm" id="condicion_pago" name="condicion" required onchange="mostrarFechaVencimiento()">
+                                        <option value="" selected disabled>Seleccione una opción</option>
+                                        <option value="1">Contado</option>
+                                        <option value="2">Crédito</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="div_fecha_vencimiento" style="display: none;">
+                                    <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+                                    <input type="date" class="form-control form-control-sm" id="fecha_vencimiento" name="fecha_v">
+                                </div>
+                            </div>
+                        </div>
+                        
 
                         <!-- Tabla de productos -->
                         <div class="table-responsive">
@@ -473,6 +493,8 @@ if (isset($registrar)): ?>
         });
     </script>
 <?php endif; ?>
+
+<!-- Modal para registrar pago -->
 <div class="modal fade" id="pagoGModal" tabindex="-1" aria-labelledby="pagoGLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -531,17 +553,17 @@ if (isset($registrar)): ?>
                         </div>
                     </div>
                     <div class="form-row">
-                        <?php foreach ($formaspago as $index => $opcion): ?>
-                            <?php if ($opcion['tipo_moneda'] == 'bolivares'): ?>
-
-                                <div class="col-md-4">
+                        <?php foreach ($formaspago as $index => $opcion): 
+                                if($opcion['status']==1):?>
+                            <?php if ($opcion['cod_divisa'] == 1): ?>
+                                <div class="col-md-8">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago'].' - '.$opcion['descripcion'] ?>" readonly>
                                         <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
 
                                     </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <div class="input-group">
                                             <div class="input-group-append">
@@ -555,7 +577,7 @@ if (isset($registrar)): ?>
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                        <input type="text" class="form-control" value="<?= $opcion['medio_pago'].' - '.$opcion['descripcion'] ?>" readonly>
                                         <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
                                     </div>
                                 </div>
@@ -563,10 +585,10 @@ if (isset($registrar)): ?>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <div class="input-group-append">
-                                                <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
+                                                <span class="input-group-text"><?= $opcion['abreviatura_divisa']; ?></span>
                                             </div>
-                                            <input type="number" step="0.01" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
-                                            <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
+                                            <input type="number" step="0.01" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura_divisa']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
+                                            <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['ultima_tasa']; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -580,7 +602,8 @@ if (isset($registrar)): ?>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endif; ?>
+                            <?php endif; 
+                                endif; ?>
                         <?php endforeach; ?>
                     </div>
                     <div class="form-row justify-content-end">

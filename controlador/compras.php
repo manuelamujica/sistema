@@ -3,12 +3,14 @@ require_once 'modelo/compras.php';
 require_once 'modelo/productos.php';
 require_once 'modelo/bitacora.php';
 require_once 'modelo/pago_emitido.php';
+require_once 'modelo/tpago.php';
 
 
 $objbitacora = new Bitacora();
 $objCompras = new Compra();
 $objProducto = new Productos();
 $objpago = new Pagos();
+$objtp=new Tpago();
 $categoria = $objProducto->consultarCategoria();
 $unidad = $objProducto->consultarUnidad();
 
@@ -29,16 +31,9 @@ if (isset($_POST['buscar'])) {
     echo json_encode($detalle);
     exit;
 } else if (isset($_POST["registrar"])) {
-    if (
-        !empty($_POST["subtotal"]) && !empty($_POST["total_general"]) &&
-        !empty($_POST["cod_prov"]) && !empty($_POST["fecha"])
-    ) {
-        if (isset($_POST['productos'])) {
-            $objCompras->setCod1($_POST['cod_prov']);
-            $objCompras->setsubtotal($_POST['subtotal']);
-            $objCompras->settotal($_POST['total_general']);
-            $objCompras->setimpuesto_total($_POST['impuesto_total']);
-            $objCompras->setfecha($_POST['fecha']);
+    if (!empty($_POST["subtotal"]) && !empty($_POST["total_general"]) && !empty($_POST["cod_prov"]) && !empty($_POST["fecha"])) {
+        if (isset($_POST['productos'])){
+            $objCompras->setdatac($_POST);
             $resul = $objCompras->getRegistrarr($_POST['productos']);
             if ($resul == 1) {
                 $registrar = [
@@ -175,6 +170,6 @@ if (isset($_POST['buscar'])) {
 
 $opciones = $objCompras->divisas();
 $compra = $objCompras->getconsultar();
-$formaspago = $objpago->consultar();
+$formaspago = $objtp->consultar();
 $_GET['ruta'] = 'compras';
 require_once 'plantilla.php';

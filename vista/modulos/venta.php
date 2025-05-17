@@ -300,7 +300,8 @@ MODAL REGISTRAR PAGO
                             </div>
                         </div>
                         <div class="form-row">
-                            <?php foreach ($opciones as $index => $opcion): ?>
+                            <?php foreach ($opciones as $index => $opcion): 
+                                    if($opcion['status']==1): ?>
                                 <?php if ($opcion['cod_divisa']==1): ?>
                                     <!-- Si es bolívares (sin conversión de divisas) -->
                                     <div class="col-md-8">
@@ -323,7 +324,7 @@ MODAL REGISTRAR PAGO
                                     <!-- Si es otra divisa (con conversión) -->
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago']; ?>" readonly>
+                                            <input type="text" class="form-control" value="<?= $opcion['medio_pago'].' - '.$opcion['descripcion']; ?>" readonly>
                                             <input type="hidden" name="pago[<?= $index; ?>][cod_tipo_pago]" value="<?= $opcion['cod_tipo_pago']; ?>">
                                         </div>
                                     </div>
@@ -331,10 +332,10 @@ MODAL REGISTRAR PAGO
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-append">
-                                                    <span class="input-group-text"><?= $opcion['abreviatura']; ?></span>
+                                                    <span class="input-group-text"><?= $opcion['abreviatura_divisa']; ?></span>
                                                 </div>
-                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
-                                                <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['tasa']; ?>">
+                                                <input type="number" step="0.01" maxlength="12" class="form-control monto-divisa" id="monto-divisa-<?= $index; ?>" placeholder="Monto en <?= $opcion['abreviatura_divisa']; ?>" oninput="calcularTotalpago(<?= $index; ?>)">
+                                                <input type="hidden" class="form-control tasa-conversion" id="tasa-conversion-<?= $index; ?>" value="<?= $opcion['ultima_tasa']; ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -348,7 +349,8 @@ MODAL REGISTRAR PAGO
                                             </div>
                                         </div>
                                     </div>
-                                <?php endif; ?>
+                                <?php endif; 
+                                    endif;?>
                             <?php endforeach; ?>
                         </div>
                         <div class="form-row justify-content-end">

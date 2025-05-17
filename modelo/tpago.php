@@ -77,7 +77,6 @@ class Tpago extends Conexion{
                                 'Sin descripción'
                         END AS descripcion,
 
-                        -- Divisa asociada (de cuenta o caja, según el tipo)
                         CASE 
                             WHEN dtp.tipo_moneda = 'digital' THEN dcb.nombre
                             WHEN dtp.tipo_moneda = 'efectivo' THEN dc.nombre
@@ -89,13 +88,28 @@ class Tpago extends Conexion{
                             WHEN dtp.tipo_moneda = 'efectivo' THEN dc.abreviatura
                             ELSE '-'
                         END AS abreviatura_divisa,
-                        
-                        CASE 
-                            WHEN dtp.tipo_moneda = 'digital' THEN dcb.cod_divisa
-                            WHEN dtp.tipo_moneda = 'efectivo' THEN dc.cod_divisa
-                            ELSE '-'
-                        END AS cod_divisa
 
+                        CASE 
+                            WHEN dtp.tipo_moneda = 'digital' THEN cb.cod_divisa
+                            WHEN dtp.tipo_moneda = 'efectivo' THEN c.cod_divisas
+                            ELSE NULL
+                        END AS cod_divisa,
+
+                        (
+                            SELECT cd.tasa
+                            FROM cambio_divisa cd
+                            WHERE cd.cod_divisa = 
+                                CASE 
+                                    WHEN dtp.tipo_moneda = 'digital' THEN cb.cod_divisa
+                                    WHEN dtp.tipo_moneda = 'efectivo' THEN c.cod_divisas
+                                    ELSE NULL
+                                END
+                            ORDER BY cd.fecha DESC
+                            LIMIT 1
+                        ) AS ultima_tasa
+
+                        -- Equivalente en moneda local (solo si tiene tasa)
+                    
                     FROM detalle_tipo_pago dtp
 
                     LEFT JOIN tipo_pago tp ON dtp.cod_metodo = tp.cod_metodo
@@ -106,7 +120,8 @@ class Tpago extends Conexion{
                     LEFT JOIN divisas dcb ON cb.cod_divisa = dcb.cod_divisa
 
                     LEFT JOIN caja c ON dtp.cod_caja = c.cod_caja
-                    LEFT JOIN divisas dc ON c.cod_divisas = dc.cod_divisa;";
+                    LEFT JOIN divisas dc ON c.cod_divisas = dc.cod_divisa;
+                    ";
         parent::conectarBD();
         $consulta=$this->conex->prepare($registro);
         $resul=$consulta->execute();
@@ -214,7 +229,19 @@ class Tpago extends Conexion{
     }
 
     public function eliminar($valor){
-        $registro="SELECT COUNT(*) AS v_count FROM detalle_pagos dp WHERE dp.cod_tipo_pago=$valor;";
+        $registro="SELECT SUM(total) AS v_count
+                    FROM (
+                        SELECT COUNT(*) AS total
+                        FROM detalle_pago_emitido dpe
+                        WHERE dpe.cod_tipo_pagoe = $valor
+
+                        UNION ALL
+
+                        SELECT COUNT(*) AS total
+                        FROM detalle_pago_recibido dpr
+                        WHERE dpr.cod_tipo_pago = $valor
+                    ) AS union_totales;
+                    ";
         parent::conectarBD();
         $strExec = $this->conex->prepare($registro);
         $resul = $strExec->execute();
@@ -223,7 +250,7 @@ class Tpago extends Conexion{
             if ($resultado['v_count']>0){
                 $r='error';
             }else{
-                $fisico="DELETE FROM tipo_pago WHERE cod_tipo_pago=$valor";
+                $fisico="DELETE FROM detalle_tipo_pago WHERE cod_tipo_pago=$valor";
                 $strExec=$this->conex->prepare($fisico);
                 $strExec->execute();
                 $r='success';
