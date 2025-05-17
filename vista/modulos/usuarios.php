@@ -63,7 +63,10 @@ require_once "controlador/usuarios.php";
                                                 <i class="fas fa-pencil-alt"></i></button>
 
                                                 <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminarModal"
-                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>"data-nombre="<?php echo $usuario["user"]; ?>">
+                                                data-codigo="<?php echo $usuario["cod_usuario"]; ?>"
+                                                data-nombre="<?php echo $usuario["user"]; ?>"
+                                                data-status="<?php echo $usuario["status"];?>">
+
                                                 <i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
@@ -258,6 +261,7 @@ if (isset($editar)): ?>
                                 <div class="form-group">
                                     <p>¿Estás seguro que deseas eliminar al usuario: <b><span id="username"></b></span>?</p>
                                     <input type="hidden" id="usercode" name="usercode">
+                                    <input type="hidden" id="statusDelete" name="statusDelete">
                                 </div>
                             </form>
                         </div>

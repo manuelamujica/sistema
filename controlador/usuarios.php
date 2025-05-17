@@ -9,6 +9,7 @@ $objroles = new Rol();
 $objbitacora = new Bitacora();
 $roles = $objroles->getconsultarUsuario(); // Obtener los roles para pasarlos a la vista
 
+//Buscar si existe un usuario con el mismo username
 if(isset($_POST['buscar'])){
     $user = $_POST['buscar']; 
     $result = $objuser->buscar($user);
@@ -17,78 +18,51 @@ if(isset($_POST['buscar'])){
     exit;
 
 }else if (isset($_POST['guardar'])){
+
     if(!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['pass']) && !empty($_POST['rol'])){
         if (!$objuser->buscar($_POST["user"])){ #Que no sea el mismo user
             
-            $nombre = strlen($_POST['nombre']);
-            $user = strlen($_POST['user']);
+            $errores=[];
 
-            if($nombre < 50){
-                if($user < 20){
-                    if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z0-9]+$/', $_POST['user'])){
-                        
-                        #Validar la longitud + formato de la contraseña
-                        $longitud = strlen($_POST["pass"]);
+            try {
+                $objuser->setDatos($_POST);
+                $objuser->check();
 
-                        if($longitud >= 8 && preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/',$_POST["pass"] ) && $_POST["pass"] !== $_POST["user"]){
+                $result = $objuser->getregistrar($_POST['rol']);
 
-                            $password = password_hash($_POST["pass"], PASSWORD_DEFAULT); // guardar la contraseña cifrada con HASH
-                            
-                            $objuser->setNombre($_POST["nombre"]);
-                            $objuser->setUser($_POST["user"]);
-                            $objuser->setPassword($password);
-                            $rol = $_POST["rol"];
-                            $result = $objuser->getregistrar($rol);
-
-                            if($result == 1){
-                                $registrar = [
-                                    "title" => "Registrado con éxito",
-                                    "message" => "El usuario ha sido registrado",
-                                    "icon" => "success"
-                                ];
-                                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de usuario', $_POST["user"], 'Usuarios');
-                            }else{
-                                $registrar = [
-                                    "title" => "Error",
-                                    "message" => "Hubo un problema al registrar el usuario",
-                                    "icon" => "error"
-                                ];
-                            }
-                        } else {
-                            $registrar = [
-                            "title" => "Error",
-                            "message" => "La contraseña no cumple con los requisitos. Intenta de nuevo",
-                            "icon" => "error"
-                            ];
-                        }
-                    } else {
+                    if($result == 1){
+                    $registrar = [
+                        "title" => "Registrado con éxito",
+                        "message" => "El usuario ha sido registrado",
+                        "icon" => "success"
+                    ];
+                        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Registro de usuario', $_POST["user"], 'Usuarios');
+                    }else{
                         $registrar = [
                             "title" => "Error",
-                            "message" => "No se pudo registrar. Caracteres no permitidos.",
+                            "message" => "Hubo un problema al registrar el usuario",
                             "icon" => "error"
-                            ];
+                        ];
                     }
-                } else {
+
+            } catch (Exception $e) {
+                $errores[] = $e->getMessage();
+                if (!empty($errores)) {
                     $registrar = [
                         "title" => "Error",
-                        "message" => "No se pudo registrar. El user excede la longitud permitida.",
+                        "message" => implode(" ", $errores),
                         "icon" => "error"
-                        ];
+                    ];
+                    } 
                 }
+                
             } else {
                 $registrar = [
                     "title" => "Error",
-                    "message" => "No se pudo registrar. El nombre excede la longitud permitida.",
+                    "message" => "No se pudo registrar porque el nombre de usuario ya existe.",
                     "icon" => "error"
                     ];
             }
-        } else {
-            $registrar = [
-                "title" => "Error",
-                "message" => "No se pudo registrar porque el nombre de usuario ya existe.",
-                "icon" => "error"
-                ];
-        }
     }else{
         $registrar = [
             "title" => "Error",
@@ -96,12 +70,12 @@ if(isset($_POST['buscar'])){
             "icon" => "error"
         ];
     }
-}
 
 
-else if (isset($_POST['actualizar'])) {
-    
-    $passwordCambiada=0;
+} else if (isset($_POST['actualizar'])) {
+
+    $passwordCambiada = 0;
+    $errores = [];
 
     if (!empty($_POST['nombre']) && !empty($_POST['user']) && !empty($_POST['roles']) && isset($_POST['status'])) {
 
@@ -115,120 +89,100 @@ else if (isset($_POST['actualizar'])) {
                 ];
             }
         }
+        try {
+            $objuser->setDatos($_POST);
+            $objuser->check();
 
-        $nombre = strlen($_POST['nombre']);
-        $user = strlen($_POST['user']);
+            if (!empty($_POST['pass']) && !isset($objuser->getErrores()['pass'])) {
+                $passwordCambiada = 1;
+            }
 
-            if($nombre < 50){
-                if($user < 20){
-                    if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $_POST['nombre']) && preg_match('/^[a-zA-Z0-9]+$/', $_POST['user'])){
-                        //Password
-                        if (!empty($_POST['pass'])) {
-                            $longitud = strlen($_POST['pass']);
-                    
-                            if($longitud >= 8 && preg_match('/^[a-zA-Z0-9!@#$%^&*()\/,.?":{}|<>]+$/',$_POST["pass"]) && $_POST["pass"] != $_POST["user"]) {
-                                
-                                $password = password_hash($_POST['pass'], PASSWORD_DEFAULT);
-                                $passwordCambiada = 1;
+            if ($passwordCambiada == 1) {
+                // Si se cambió la contraseña, usamos el método que también actualiza la contraseña
+                $result = $objuser->editar2($_POST['codigo'], $_POST['roles']);
+                
+            } else {
+                // Si no se cambió la contraseña, usamos el método que no la modifica
+                $result = $objuser->editar($_POST['codigo'], $_POST['roles']);
+            }
 
-                            } else {
-                                $editar = [
-                                    "title" => "Error",
-                                    "message" => "La contraseña no con los requisitos. Intenta de nuevo",
-                                    "icon" => "error"
-                                ];
-                            }
-                        } 
-
-                        $objuser->setNombre($_POST['nombre']);
-                        $objuser->setUser($_POST['user']);
-                        $objuser->setStatus($_POST['status']);
-
-                    if ($passwordCambiada == 1) {
-                        // Si se cambió la contraseña, usamos el método que también actualiza la contraseña
-                        $objuser->setPassword($password);
-                        $result = $objuser->editar2($_POST['codigo'], $_POST['roles']);
-                        
-                    } else {
-                        // Si no se cambió la contraseña, usamos el método que no la modifica
-                        $result = $objuser->editar($_POST['codigo'], $_POST['roles']);
-                    }
-
-                    if ($result == 1) {
-                        $editar = [
-                            "title" => "Editado con éxito",
-                            "message" => "El usuario ha sido actualizado correctamente",
-                            "icon" => "success"
-                        ];
-                        $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar usuario', $_POST["user"], 'Usuarios');
-                    } else {
-                        $editar = [
-                            "title" => "Error",
-                            "message" => "Hubo un problema al editar el usuario",
-                            "icon" => "error"
-                        ];
-                    }
-                } else {
-                        $editar = [
-                            "title" => "Error",
-                            "message" => "No se pudo registrar. Caracteres no permitidos.",
-                            "icon" => "error"
-                        ];
-                    }
-                } else {
-                    $editar = [
-                        "title" => "Error",
-                        "message" => "No se pudo editar. El user excede la longitud permitida.",
-                        "icon" => "error"
-                        ];
-                }
+            if ($result == 1) {
+                $editar = [
+                    "title" => "Editado con éxito",
+                    "message" => "El usuario ha sido actualizado correctamente",
+                    "icon" => "success"
+                ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Editar usuario', $_POST["user"], 'Usuarios');
             } else {
                 $editar = [
                     "title" => "Error",
-                    "message" => "No se pudo editar. El nombre excede la longitud permitida.",
-                    "icon" => "error"
-                    ];
-            }
-        } else {
-            $editar = [
-                "title" => "Error",
-                "message" => "No se permiten campos vacíos",
-                "icon" => "error"
-            ];
-        }
-
-}else if(isset($_POST['borrar'])){
-    if(!empty($_POST['usercode'])){
-    $result = $objuser->eliminar($_POST["usercode"]);
-    
-        if ($result == 'success') {
-            $eliminar = [
-                "title" => "Eliminado con éxito",
-                "message" => "El usuario ha sido eliminado",
-                "icon" => "success"
-            ];
-            $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar usuario', "Eliminado el usuario con el código ".$_POST["usercode"], 'Usuarios');
-        } elseif ($result == 'error_status') {
-            $eliminar = [
-                "title" => "Error",
-                "message" => "No se puede eliminar un usuario con status activo.",
-                "icon" => "error"
-            ];
-        } elseif ($result == 'error_ultimo') {
-                $eliminar = [
-                    "title" => "Error",
-                    "message" => "El usuario no se puede eliminar porque es el último administrador",
+                    "message" => "Hubo un problema al editar el usuario",
                     "icon" => "error"
                 ];
-        } elseif ($result == 'error_delete') {
-            $eliminar = [
+            }
+
+        } catch (Exception $e) {
+            $errores[] = $e->getMessage();
+            
+            if (!empty($errores)) {
+            $editar = [
                 "title" => "Error",
-                "message" => "Hubo un problema al eliminar el usuario",
+                "message" => implode(" ", $errores),
                 "icon" => "error"
             ];
-        } 
+            }
+        }
+        
+    } else {
+        $editar = [
+            "title" => "Error",
+            "message" => "No se permiten campos vacíos",
+            "icon" => "error"
+        ];
+    }
+
+}else if(isset($_POST['borrar'])){
+
+    try{
+        $objuser->setDatos($_POST);
+        $objuser->check();
+
+        $result = $objuser->eliminar($_POST["usercode"]);
+        
+            if ($result == 'success') {
+                $eliminar = [
+                    "title" => "Eliminado con éxito",
+                    "message" => "El usuario ha sido eliminado",
+                    "icon" => "success"
+                ];
+                $objbitacora->registrarEnBitacora($_SESSION['cod_usuario'], 'Eliminar usuario', "Eliminado el usuario con el código ".$_POST["usercode"], 'Usuarios');
+            
+            } elseif ($result == 'error_ultimo') {
+                    $eliminar = [
+                        "title" => "Error",
+                        "message" => "El usuario no se puede eliminar porque es el último administrador",
+                        "icon" => "error"
+                    ];
+            } elseif ($result == 'error_delete') {
+                $eliminar = [
+                    "title" => "Error",
+                    "message" => "Hubo un problema al eliminar el usuario",
+                    "icon" => "error"
+                ];
+            } 
+
+    }catch(Exception $e) {
+        $errores[] = $e->getMessage();
+        if (!empty($errores)) {
+        $eliminar = [
+            "title" => "Error",
+            "message" => implode(" ", $errores),
+            "icon" => "error"
+            ];
+        }
     }
 }
+
 
 $registro = $objuser->listar();
 $_GET['ruta'] = 'usuarios';

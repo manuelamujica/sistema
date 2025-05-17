@@ -197,10 +197,14 @@ $('#eliminarModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); 
     var codigo = button.data('codigo');
     var nombre = button.data('nombre');      
+    var status = button.data('status'); 
 
     var modal = $(this);
     modal.find('#username').text(nombre);
     modal.find('.modal-body #usercode').val(codigo);
+    modal.find('.modal-body #statusDelete').val(status);
+
+    console.log(nombre,codigo,status);
 });
 
 /*OJITO CONTRASEÑA (LOGIN Y USUARIO)*/

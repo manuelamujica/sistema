@@ -8,7 +8,7 @@ require_once "controlador/cuentaspend.php";
             <div class="row mb-2">
                 <div class="col-sm-9">
                     <h1>Cuentas pendientes</h1>
-                    <p>Centraliza la informacion de las cuentas por pagar y cuentas por cobrar de tu empresa.</p>
+                    <p>Consulta la informacion de las cuentas por pagar provenientes de las compras y gastos y cuentas por cobrar provenientes de las ventas de tu empresa.</p>
                 </div>
             </div>
         </div>
