@@ -123,7 +123,45 @@ trait ValidadorTrait {
         return true;
 
     }
+
+    //Nuevo, agregado por manu
+    public function validarTextoNumero($valor, $campo, $min = 1, $max = 255){
+        $user = trim($valor);
     
+        if ((mb_strlen($valor) < $min || mb_strlen($valor) > $max)) {
+            return "El campo $campo debe tener entre $min y $max caracteres.";
+        } elseif (!preg_match('/^[a-zA-Z0-9]+$/', $valor)) {
+            return "El campo $campo solo puede contener letras y números.";
+        } 
+        return true;
+    }
+    
+    //Nuevo, agregado por manu
+    public function password($password, $username){
+    $password = trim($password);
+    $username = trim($username);
+
+    if ($password === '') {
+        $this->errores['password'] = "La contraseña no puede estar vacía.";
+    }
+    elseif (strlen($password) < 8) {
+        $this->errores['password'] = "La contraseña debe tener al menos 8 caracteres.";
+    }
+    elseif ($password === $username) {
+        $this->errores['password'] = "La contraseña no puede ser igual al nombre de usuario.";
+    }
+    elseif (!preg_match('/[!@#$%^&*()\/,.\?":{}\[\]|<>]/', $password)) {
+        $this->errores['password'] = "La contraseña debe contener al menos un carácter especial.";
+    }
+    elseif (strlen($password) > 255) {
+        $this->errores['password'] = "La contraseña no debe exceder los 255 caracteres.";
+    }
+    else {
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
+    return true;
+}
+
 
 }
 
