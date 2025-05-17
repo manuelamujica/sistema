@@ -22,7 +22,7 @@ require_once "controlador/cuentaspend.php";
                             
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3 id="totalPagos">$668,40</h3>
+                                    <h3 id="totalPagos">668,40BS</h3>
                                     <p>Cuentas por Pagar</p>
                                 </div>
                                 <div class="icon">

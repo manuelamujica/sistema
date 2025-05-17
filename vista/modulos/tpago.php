@@ -62,8 +62,8 @@
                                         <i class="fas fa-pencil-alt"></i>
                                         </button>
                                         <button name="eliminar" title="Eliminar" class="btn btn-danger btn-sm eliminar" data-toggle="modal" data-target="#eliminartpago"
-                                        data-codigo="<?php //echo $dato["cod_tipo_pago"]; ?>" 
-                                        data-medio="<?php //echo $dato["medio_pago"]; ?>" >
+                                        data-codigo="<?php echo $dato["cod_tipo_pago"]; ?>" 
+                                        data-medio="<?php echo $dato["medio_pago"]." - ".$dato["descripcion"]; ?>" >
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     <?php else: ?>

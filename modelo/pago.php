@@ -83,7 +83,38 @@ class Pago extends Conexion{
                         $sentencia->bindParam(':cod_vuelto', $this->cod_vuelto);
                         $sentencia->bindParam(':cod_tipo_pago', $dvuelto['cod_tipo_pago']);
                         $sentencia->bindParam(':monto', $dvuelto['monto']);
-                        $sentencia->execute();
+                        $r=$sentencia->execute();
+                        if($r){
+                            $tp="SELECT cod_cuenta_bancaria, cod_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago;";
+                            $sentencia=$this->conex->prepare($tp); 
+                            $sentencia->bindParam(':cod_tipo_pago', $dvuelto['cod_tipo_pago']);
+                            $sentencia->execute();
+                            $result=$sentencia->fetch(PDO::FETCH_ASSOC);
+                            if(!empty($result['cod_cuenta_bancaria'])){
+                                $sql="UPDATE cuenta_bancaria SET saldo=saldo-:monto WHERE cod_cuenta_bancaria= :cod_cuenta_bancaria;";
+                                $sen=$this->conex->prepare($sql);
+                                $sen->bindParam(':monto', $dvuelto['monto']);
+                                $sen->bindParam(':cod_cuenta_bancaria', $result['cod_cuenta_bancaria']);
+                                $r=$sen->execute();
+                                if(!$r){
+                                    throw new Exception("Error al actualizar el saldo de la cuenta bancaria");
+                                }
+                            } else if(!empty($result['cod_caja'])){
+                                $sql="UPDATE caja SET saldo=saldo-:monto WHERE cod_caja = :cod_caja;";
+                                $sen=$this->conex->prepare($sql);
+                                $sen->bindParam(':monto', $dvuelto['monto']);
+                                $sen->bindParam(':cod_caja', $result['cod_caja']);
+                                $r=$sen->execute();
+                                if(!$r){
+                                    throw new Exception("Error al actualizar el saldo de la caja");
+                                }
+                            }else{
+                                throw new Exception("Error al obtener la cuenta bancaria o caja");
+                            }
+                        }else{
+                            throw new Exception("Error al registrar el detalle del vuelto");
+                        }
+
                     }
                 }
             }else{
@@ -106,7 +137,37 @@ class Pago extends Conexion{
                     $sentencia=$this->conex->prepare($registro);
                     $sentencia->bindParam(':cod_tipo_pago', $pagos['cod_tipo_pago']);
                     $sentencia->bindParam(':monto', $pagos['monto']);
-                    $sentencia->execute();
+                    $r=$sentencia->execute();
+                    if($r){
+                        $tp="SELECT cod_cuenta_bancaria, cod_caja FROM detalle_tipo_pago WHERE cod_tipo_pago = :cod_tipo_pago;";
+                        $sentencia=$this->conex->prepare($tp); 
+                        $sentencia->bindParam(':cod_tipo_pago', $pagos['cod_tipo_pago']);
+                        $sentencia->execute();
+                        $result=$sentencia->fetch(PDO::FETCH_ASSOC);
+                        if(!empty($result['cod_cuenta_bancaria'])){
+                            $sql="UPDATE cuenta_bancaria SET saldo=saldo+:monto WHERE cod_cuenta_bancaria= :cod_cuenta_bancaria;";
+                            $sen=$this->conex->prepare($sql);
+                            $sen->bindParam(':monto', $pagos['monto']);
+                            $sen->bindParam(':cod_cuenta_bancaria', $result['cod_cuenta_bancaria']);
+                            $r=$sen->execute();
+                            if(!$r){
+                                throw new Exception("Error al actualizar el saldo de la cuenta bancaria");
+                            }
+                        } else if(!empty($result['cod_caja'])){
+                            $sql="UPDATE caja SET saldo=saldo+:monto WHERE cod_caja = :cod_caja;";
+                            $sen=$this->conex->prepare($sql);
+                            $sen->bindParam(':monto', $pagos['monto']);
+                            $sen->bindParam(':cod_caja', $result['cod_caja']);
+                            $r=$sen->execute();
+                            if(!$r){
+                                throw new Exception("Error al actualizar el saldo de la caja");
+                            }
+                        }else{
+                            throw new Exception("Error al obtener la cuenta bancaria o caja");
+                        }
+                    }else{
+                        throw new Exception("Error al registrar el detalle del vuelto");
+                    }
                 }
             }
             if($monto_venta > $this->monto_total){

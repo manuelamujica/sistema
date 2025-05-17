@@ -49,10 +49,22 @@ if(isset($_POST['buscar'])){
                 "icon" => "error"
             ];
         }else{
-            if(preg_match('/^[a-zA-ZÀ-ÿ\s]+$/',$_POST['tpago'])){
-                
+            $errores = [];
+            try {
                 $obj->setmetodo($_POST['tpago']);
                 $obj->setstatus($_POST['status']);
+                $obj->check();
+                
+            } catch (Exception $e) {
+                $errores[] = $e->getMessage();
+            }
+            if (!empty($errores)) {
+                $editar = [
+                    "title" => "Error",
+                    "message" => implode(" ", $errores),
+                    "icon" => "error"
+                ];
+            }else{
                 $result=$obj->editar($_POST['codigo'], $_POST['cod_metodo']);
                 if($result==1){
                     $editar = [
@@ -68,14 +80,8 @@ if(isset($_POST['buscar'])){
                         "icon" => "error"
                     ];
                 }
-            } else {
-                $editar = [
-                    "title" => "Error",
-                    "message" => "Algunos caracteres ingresados no son permitidos.",
-                    "icon" => "error"
-                ];
             }
-        }
+            }
     } else{
         $editar = [
             "title" => "Error",
