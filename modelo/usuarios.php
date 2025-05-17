@@ -1,44 +1,110 @@
 <?php
 require_once "conexion.php";
+require_once "validaciones.php";
 
 class Usuario extends Conexion{
 
-    //private $conex;
+    use ValidadorTrait;
+
     private $nombre;
     private $user;
     private $password;
     private $status;
+
+    private $errores = [];
 
     public function __construct(){
         parent::__construct(_SEC_DB_HOST_, _SEC_DB_NAME_, _SEC_DB_USER_, _SEC_DB_PASS_);
     }
 
 /*GETTER Y SETTER*/
+
+    public function setDatos($datos){
+
+        //Registro de Usuario
+        if(isset($datos['nombre'])){
+            $r = $this->validarTexto($datos['nombre'], 'nombre', 2, 50);
+            if ($r === true) {
+                $this->nombre = $datos['nombre'];
+            } else {
+                $this->errores['nombre'] = $r;
+            }
+        }
+
+        if (isset($datos['user'])){
+            $res = $this->validarTextoNumero($datos['user'], 'user', 2, 20);
+            if ($res === true) {
+                $this->user = $datos['user'];
+            } else {
+                $this->errores['user'] = $res;
+            }
+
+        }
+        
+        if(isset($datos['pass']) && !empty($datos['pass']) && isset($datos['user'])){
+            $resp = $this->password($datos['pass'], $datos['user']);
+            if ($resp === true) {
+                $this->password = password_hash($datos['pass'], PASSWORD_DEFAULT);
+            } else {
+                $this->errores['pass'] = $resp;
+            }
+        }
+
+        if(isset($datos['statusDelete'])){
+            $rp = $this->validarStatusInactivo($datos['statusDelete']);
+            if ($rp === true) {
+                $this->status = $datos['statusDelete'];
+            } else {
+                $this->errores['statusDelete'] = $rp;
+            }
+        }
+        
+        if(isset($datos['status'])){
+            $rp = $this->validarStatus($datos['status']);
+            if ($rp === true) {
+                $this->status = $datos['status'];
+            } else {
+                $this->errores['status'] = $rp;
+            }
+        }
+
+        //Login
+        if(isset($datos['ingUsuario'])){
+            $r = $this->validarTextoNumero($datos['ingUsuario'], 'user', 2, 20);
+            if ($r === true) {
+                $this->user = $datos['ingUsuario'];
+            } else {
+                $this->errores['user'] = $r;
+            }
+        }
+    }
+
+    public function check(){
+    if (!empty($this->errores)) {
+        $mensajes = implode(" | ", $this->errores);
+        throw new Exception("Errores de validación: $mensajes");
+    }
+    }
+
+    #Acceder a los errores individualmente
+    public function getErrores() {
+        return $this->errores;
+    }
+
     public function getNombre(){
         return $this->nombre;
-    }
-    public function setNombre($nombre){
-        $this->nombre = $nombre;
     }
 
     public function getUser(){
         return $this->user;
     }
-    public function setUser($user){
-        $this->user = $user;
-    }
 
     public function getPassword(){
         return $this->password;
     }
-    public function setPassword($password){
-        $this->password = $password;
-    }
+
     public function getStatus(){
         return $this->status;
-    }
-    public function setStatus($status){
-        $this->status = $status;
     }
 
 //LOGIN
@@ -200,12 +266,6 @@ public function eliminar($valor) {
     $strExec->execute();
     $usuario = $strExec->fetch(PDO::FETCH_ASSOC);
     if ($usuario) {
-        // Si el usuario tiene status activo, mostrar error
-        if($usuario['status'] == 1){
-            parent::desconectarBD();
-            return 'error_status';
-        }
-        
         // Si el usuario es administrador, verificar si es el último
         if ($usuario['cod_tipo_usuario'] == 1) {
             $sql = "SELECT COUNT(*) as total FROM usuarios WHERE cod_tipo_usuario = 1";
